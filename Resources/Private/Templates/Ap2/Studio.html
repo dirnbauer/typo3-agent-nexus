@@ -1,0 +1,119 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="ap2-studio" data-ap2-studio>
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+        <div>
+            <h1 class="mb-1">AP2 Mandate Studio</h1>
+            <p class="text-body-secondary mb-0">
+                Build a signed <strong>Intent Mandate</strong>, mint a <strong>Cart Mandate</strong> for a specific order,
+                then <strong>verify the authorization chain</strong> before a payment is authorized.
+            </p>
+        </div>
+        <span class="badge bg-warning text-dark align-self-center">Sandbox-signed · no real payment</span>
+    </div>
+
+    <!-- The 2026 agent-nexus family -->
+    <div class="ap2-stack mb-3">
+        <span class="ap2-stack__label">The agent stack:</span>
+        <f:for each="{stack}" as="s">
+            <span class="ap2-stack__chip ap2-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+        </f:for>
+    </div>
+
+    <div class="row g-3">
+        <!-- Step 1: Intent Mandate -->
+        <div class="col-xl-4">
+            <div class="card h-100 ap2-step" data-ap2-step="intent">
+                <div class="card-header"><span class="ap2-step__n">1</span> Intent Mandate <span class="text-body-secondary small">authorize the agent</span></div>
+                <div class="card-body">
+                    <label class="form-label small mb-1">Spending cap (€)</label>
+                    <input type="number" class="form-control form-control-sm mb-2" data-ap2-cap value="500" min="1" />
+                    <label class="form-label small mb-1">Authorized merchant</label>
+                    <input type="text" class="form-control form-control-sm mb-2" data-ap2-merchant value="desiderio-store" />
+                    <div class="form-check form-check-sm mb-2">
+                        <input class="form-check-input" type="checkbox" data-ap2-human checked id="ap2-human" />
+                        <label class="form-check-label small" for="ap2-human">Human present at issuance</label>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-warning w-100" data-ap2-mint-intent>Mint Intent Mandate</button>
+                    <div class="ap2-token d-none" data-ap2-intent-out></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Cart Mandate -->
+        <div class="col-xl-4">
+            <div class="card h-100 ap2-step is-locked" data-ap2-step="cart">
+                <div class="card-header"><span class="ap2-step__n">2</span> Cart Mandate <span class="text-body-secondary small">lock the exact order</span></div>
+                <div class="card-body">
+                    <div class="ap2-cart" data-ap2-cart>
+                        <div class="ap2-cart__row"><span>Agency Bundle</span><span>€149.00</span></div>
+                        <div class="ap2-cart__row"><span>Onboarding Add-on</span><span>€299.00</span></div>
+                        <div class="ap2-cart__total"><span>Total</span><span>€448.00</span></div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-warning w-100 mt-2" data-ap2-mint-cart disabled>Mint Cart Mandate</button>
+                    <div class="ap2-token d-none" data-ap2-cart-out></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Verify chain -->
+        <div class="col-xl-4">
+            <div class="card h-100 ap2-step is-locked" data-ap2-step="verify">
+                <div class="card-header"><span class="ap2-step__n">3</span> Verify chain <span class="text-body-secondary small">authorize the payment</span></div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-sm btn-success w-100 mb-2" data-ap2-verify disabled>Verify authorization chain</button>
+                    <div class="ap2-checks" data-ap2-checks><span class="text-body-secondary small">Mint both mandates, then verify.</span></div>
+                    <div class="ap2-verdict d-none" data-ap2-verdict></div>
+                    <hr class="my-2" />
+                    <div class="ap2-tamper">
+                        <label class="form-label small mb-1">Tamper test — edit the Cart Mandate and re-verify:</label>
+                        <textarea class="form-control form-control-sm ap2-tamper__ta" data-ap2-tamper rows="2" placeholder="Mint the Cart Mandate first…"></textarea>
+                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 mt-1" data-ap2-retamper disabled>Re-verify edited token</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log -->
+    <div class="card mt-3 ap2-log">
+        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
+            <span><core:icon identifier="actions-clock" size="small" /> <strong>Mandate log</strong> <span class="text-body-secondary small">today · sandbox</span></span>
+            <span class="ap2-stat"><span class="ap2-stat__v">{today.minted}</span> minted</span>
+            <span class="ap2-stat"><span class="ap2-stat__v">{today.verified}</span> verified</span>
+            <span class="ap2-stat"><span class="ap2-stat__v">{today.authorized}</span> authorized</span>
+            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
+                <core:icon identifier="actions-list" size="small" /> Mandate Inspector
+            </a>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="card mt-3">
+        <div class="card-header"><h2 class="h5 mb-0">What is AP2?</h2></div>
+        <div class="card-body">
+            <p class="mb-2">
+                <strong>AP2 (Agent Payments Protocol)</strong> answers the hardest question in agentic commerce:
+                <em>how does a merchant know an agent is really allowed to pay?</em> The answer is a chain of
+                <strong>signed mandates</strong> — verifiable credentials that carry the human's authorization to the agent,
+                the merchant and the payment network.
+            </p>
+            <p class="mb-0 text-body-secondary">
+                An <strong>Intent Mandate</strong> sets the limits while the human is present; a <strong>Cart Mandate</strong>
+                locks a specific, fully-priced order; verification proves the cart is within the intent and untampered.
+                Here the tokens are <strong>sandbox-signed</strong> with a demo key — genuine JWS mechanics, no real identity or money.
+            </p>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

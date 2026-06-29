@@ -1,0 +1,60 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.css identifier="a2a-concierge" href="{f:uri.resource(path: 'Css/a2a-frontend.css', extensionName: 'agent_nexus')}" />
+
+<section class="a2a-cc"
+         data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'a2a')}"
+         data-a2a-concierge
+         data-run-url="/index.php?eID=a2a_concierge"
+         data-page="{pageId}"
+         data-placeholder="{settings.placeholder}"
+         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
+
+    <div class="a2a-cc__panel">
+        <div class="a2a-cc__head">
+            <span class="a2a-cc__badge">
+                <svg class="a2a-cc__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4L14 6.6 9.6 8 8 12 6.4 8 2 6.6 6.4 5z"/></svg>
+                Site agent · A2A
+            </span>
+            <f:if condition="{data.header}">
+                <h2 class="a2a-cc__title">{data.header}</h2>
+            </f:if>
+            <f:if condition="{settings.intro}">
+                <p class="a2a-cc__intro">{settings.intro}</p>
+            </f:if>
+        </div>
+
+        <div class="a2a-cc__skills" data-a2a-skills>
+            <button type="button" class="a2a-cc__skill is-active" data-skill="summarize_page">Summarise a page</button>
+            <button type="button" class="a2a-cc__skill" data-skill="draft_outreach">Draft an email</button>
+            <button type="button" class="a2a-cc__skill" data-skill="plan_onboarding">Plan onboarding</button>
+        </div>
+
+        <form class="a2a-cc__bar" data-a2a-form>
+            <span class="a2a-cc__bar-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8l-3.5 3v-3H3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/></svg>
+            </span>
+            <input type="text" class="a2a-cc__input" data-a2a-intent placeholder="{settings.placeholder}" aria-label="Describe the task" />
+            <button type="submit" class="a2a-cc__go" data-a2a-send>
+                <span>Delegate</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+            </button>
+        </form>
+
+        <div class="a2a-cc__thread" data-a2a-thread aria-live="polite"></div>
+
+        <div class="a2a-cc__events" data-a2a-events hidden>
+            <div class="a2a-cc__events-head"><span class="a2a-cc__events-dot" aria-hidden="true"></span> Under the hood — A2A frames <span data-a2a-eventcount>0</span></div>
+            <div class="a2a-cc__events-list" data-a2a-events-list></div>
+        </div>
+    </div>
+
+    <noscript>
+        <p class="a2a-cc__intro">This concierge needs JavaScript. Please email us instead and we will help you directly.</p>
+    </noscript>
+</section>
+
+<f:asset.script identifier="a2a-concierge" src="{f:uri.resource(path: 'JavaScript/a2a-concierge.js', extensionName: 'agent_nexus')}" type="module" />
+
+</html>

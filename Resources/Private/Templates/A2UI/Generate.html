@@ -1,0 +1,53 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="a2ui-generate" style="max-width: 1100px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="mb-0">Generated UI</h1>
+        <a href="{f:uri.action(action: 'dashboard')}" class="btn btn-outline-secondary btn-sm">
+            <core:icon identifier="actions-arrow-left" size="small" /> Back to playground
+        </a>
+    </div>
+
+    <p class="text-body-secondary">
+        Intent: <em>“{intent}”</em>
+        <f:if condition="{isLlm}">
+            <f:then><span class="badge bg-success ms-2">{provenanceLabel}</span></f:then>
+            <f:else><span class="badge bg-secondary ms-2">{provenanceLabel}</span></f:else>
+        </f:if>
+    </p>
+
+    <f:if condition="{notes}">
+        <ul class="alert alert-info small">
+            <f:for each="{notes}" as="note"><li>{note}</li></f:for>
+        </ul>
+    </f:if>
+
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header"><h2 class="h5 mb-0">Rendered (server-side)</h2></div>
+                <div class="card-body">
+                    <f:format.raw>{renderedHtml}</f:format.raw>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header"><h2 class="h5 mb-0">A2UI v1.0 payload</h2></div>
+                <div class="card-body">
+                    <pre class="a2ui-code"><code>{jsonPayload}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

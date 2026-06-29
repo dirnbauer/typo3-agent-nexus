@@ -1,0 +1,18 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="mb-3">
+    <f:if condition="{props.label}">
+        <label class="form-label" for="{id}">{props.label}<f:if condition="{props.required}"> <span class="text-danger">*</span></f:if></label>
+    </f:if>
+    <textarea
+        class="form-control"
+        id="{id}"
+        name="{id}"
+        rows="{f:if(condition: props.rows, then: props.rows, else: 4)}"
+        data-a2ui-bind="{path}"
+        <f:if condition="{props.placeholder}">placeholder="{props.placeholder}"</f:if>
+        <f:if condition="{props.required}">required</f:if>
+        <f:if condition="{props.disabled}">disabled</f:if>
+    >{value}</textarea>
+    <f:if condition="{props.helpText}"><div class="form-text">{props.helpText}</div></f:if>
+</div>
+</html>

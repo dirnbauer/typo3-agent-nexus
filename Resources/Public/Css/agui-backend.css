@@ -1,0 +1,135 @@
+/**
+ * AG-UI Playground (backend) styles.
+ * Event categories carry fixed colors so the stream is readable at a glance;
+ * surfaces follow the backend light/dark tokens.
+ */
+.agui-playground { max-width: 1400px; }
+
+.agui-code {
+  margin: 0; max-height: 260px; overflow: auto; font-size: 12px; line-height: 1.5;
+  border-radius: .5rem; padding: 1rem;
+  background: var(--bs-tertiary-bg, #f5f5f5); color: var(--bs-body-color, #1e1e1e);
+  border: 1px solid var(--bs-border-color, #d7d7d7);
+}
+.agui-code code { color: inherit !important; background: transparent; }
+
+/* ---- Event category accents ---- */
+.agui-cat--lifecycle { --c: #4f46e5; }
+.agui-cat--text { --c: #2563eb; }
+.agui-cat--tool { --c: #ea580c; }
+.agui-cat--state { --c: #0d9488; }
+.agui-cat--reason { --c: #7c3aed; }
+.agui-cat--special { --c: #6b7280; }
+
+/* ---- Stack legend (family) ---- */
+.agui-stack { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.agui-stack__label { font-size: .82rem; color: var(--bs-secondary-color, #666); }
+.agui-stack__chip {
+  display: inline-flex; align-items: baseline; gap: .35rem; padding: .25rem .6rem; border-radius: 50rem;
+  font-size: .75rem; font-weight: 700; color: #fff; background: var(--c, #64748b);
+}
+.agui-stack__chip em { font-style: normal; font-weight: 400; opacity: .85; font-size: .68rem; }
+.agui-stack__chip.is-self { outline: 2px solid var(--c); outline-offset: 2px; }
+.agui-accent--mcp { --c: #64748b; } .agui-accent--a2a { --c: #0d9488; } .agui-accent--agui { --c: #4f46e5; }
+.agui-accent--a2ui { --c: #7c5ac4; } .agui-accent--ucp { --c: #059669; } .agui-accent--ap2 { --c: #b45309; }
+
+/* ---- Event timeline ---- */
+.agui-timeline { max-height: 420px; overflow: auto; display: flex; flex-direction: column; gap: .25rem; }
+.agui-evt {
+  display: flex; align-items: baseline; gap: .5rem; padding: .3rem .5rem; border-radius: .35rem;
+  border-left: 3px solid var(--c, #6b7280); background: color-mix(in srgb, var(--c, #6b7280) 7%, transparent);
+  animation: agui-in .2s ease;
+}
+@keyframes agui-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+.agui-evt__type { font-family: var(--bs-font-monospace, monospace); font-size: .72rem; font-weight: 700; color: var(--c, #6b7280); white-space: nowrap; }
+.agui-evt__payload { font-family: var(--bs-font-monospace, monospace); font-size: .7rem; color: var(--bs-secondary-color, #777); overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- Draft / reasoning / UI slot ---- */
+.agui-draft { min-height: 2.5rem; line-height: 1.55; white-space: pre-wrap; }
+.agui-reasoning { font-size: .82rem; color: var(--bs-secondary-color, #777); background: color-mix(in srgb, #7c3aed 8%, transparent); border-radius: .4rem; padding: .5rem .7rem; margin-bottom: .6rem; }
+.agui-error { color: #b42318; font-weight: 600; }
+
+.agui-plancards { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
+.agui-plancard { position: relative; flex: 1 1 8rem; border: 1px solid var(--bs-border-color, #ddd); border-radius: .6rem; padding: .8rem; text-align: center; }
+.agui-plancard.is-rec { border-color: #4f46e5; box-shadow: 0 0 0 2px color-mix(in srgb, #4f46e5 25%, transparent); }
+.agui-plancard__tag { position: absolute; top: -.6rem; left: 50%; transform: translateX(-50%); background: #4f46e5; color: #fff; font-size: .62rem; padding: .1rem .5rem; border-radius: 50rem; }
+.agui-plancard__name { font-weight: 700; }
+.agui-plancard__price { font-size: 1.3rem; font-weight: 700; }
+.agui-plancard__price small { font-size: .7rem; font-weight: 400; color: var(--bs-secondary-color, #777); }
+.agui-plancard__seats { font-size: .78rem; color: var(--bs-secondary-color, #777); }
+
+/* ---- Human-in-the-loop ---- */
+.agui-hitl { margin-top: 1rem; border: 1px solid #f0b8bd; border-radius: .6rem; padding: .9rem 1rem; background: color-mix(in srgb, #ea580c 7%, transparent); }
+.agui-hitl__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+.agui-hitl__badge { font-weight: 700; color: #c2410c; }
+.agui-hitl__row { display: flex; justify-content: space-between; gap: 1rem; font-size: .85rem; padding: .15rem 0; }
+.agui-hitl__row span { color: var(--bs-secondary-color, #777); }
+.agui-hitl__actions { display: flex; gap: .5rem; margin-top: .7rem; }
+
+/* ---- Run log ---- */
+.agui-stat { font-size: .85rem; color: var(--bs-secondary-color, #777); }
+.agui-stat__v { font-weight: 700; color: var(--bs-body-color, #000); }
+
+/* ---- GSAP explainer ---- */
+.agui-exp { font-size: .85rem; }
+.agui-exp__cap { text-align: center; font-weight: 600; margin-bottom: .8rem; min-height: 1.4rem; }
+.agui-exp__stage { display: grid; grid-template-columns: 1fr 7rem 1fr; align-items: center; gap: .5rem; min-height: 9rem; }
+.agui-exp__node { border: 1px solid var(--bs-border-color, #ddd); border-radius: .6rem; padding: .7rem; min-height: 8rem; position: relative; background: var(--bs-body-bg, #fff); }
+.agui-exp__node--agent { text-align: right; }
+.agui-exp__node-h { font-weight: 700; margin-bottom: .4rem; } .agui-exp__node-h small { font-weight: 400; color: var(--bs-secondary-color, #777); }
+.agui-exp__draft { font-size: .78rem; min-height: 2.2rem; color: var(--bs-secondary-color, #555); }
+.agui-exp__pill { display: inline-block; border: 1px dashed #4f46e5; color: #4f46e5; border-radius: .4rem; padding: .15rem .5rem; font-size: .72rem; }
+.agui-exp__tl { display: flex; flex-direction: column; gap: .2rem; margin-top: .4rem; }
+.agui-exp__row { font-family: var(--bs-font-monospace, monospace); font-size: .64rem; font-weight: 700; color: var(--c, #6b7280); border-left: 2px solid var(--c, #6b7280); padding-left: .35rem; }
+.agui-exp__approve { position: absolute; bottom: .6rem; left: .7rem; background: #fff; border: 1px solid #16a34a; color: #16a34a; border-radius: .4rem; padding: .2rem .7rem; font-size: .72rem; font-weight: 600; }
+.agui-exp__lane { position: relative; height: 2px; background: repeating-linear-gradient(90deg, var(--bs-border-color, #ccc) 0 6px, transparent 6px 12px); }
+.agui-exp__chip { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); white-space: nowrap; font-family: var(--bs-font-monospace, monospace); font-size: .62rem; font-weight: 700; color: #fff; background: var(--c, #6b7280); padding: .12rem .5rem; border-radius: 50rem; }
+.agui-exp__pulse { position: absolute; inset: 0; border-radius: .6rem; border: 2px solid #ea580c; opacity: 0; pointer-events: none; }
+.agui-exp__legend { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: .8rem; }
+.agui-exp__legend span { font-size: .68rem; font-weight: 700; color: var(--c, #6b7280); }
+.agui-exp__legend span::before { content: "● "; }
+
+/* ---- Event Inspector (catalog) ---- */
+.agui-catalog__family { margin-bottom: 1.2rem; }
+.agui-catalog__row { display: grid; grid-template-columns: 14rem 12rem 1fr; gap: .5rem; padding: .4rem .5rem; border-bottom: 1px solid var(--bs-border-color, #eee); align-items: baseline; }
+.agui-catalog__type { font-family: var(--bs-font-monospace, monospace); font-weight: 700; color: var(--c, #6b7280); }
+.agui-catalog__fields { font-family: var(--bs-font-monospace, monospace); font-size: .78rem; color: var(--bs-secondary-color, #777); }
+.agui-catalog__desc { font-size: .88rem; }
+
+@media (max-width: 720px) {
+  .agui-evt,
+  .agui-hitl__row,
+  .agui-hitl__actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .agui-hitl__actions .btn {
+    width: 100%;
+  }
+
+  .agui-exp__stage,
+  .agui-catalog__row {
+    grid-template-columns: 1fr;
+  }
+
+  .agui-exp__node--agent {
+    text-align: left;
+  }
+
+  .agui-exp__approve {
+    position: static;
+    display: inline-flex;
+    margin-top: .7rem;
+  }
+
+  .agui-exp__lane {
+    min-height: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agui-evt {
+    animation: none;
+  }
+}

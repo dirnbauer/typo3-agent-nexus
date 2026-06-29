@@ -1,0 +1,12 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="mb-3">
+    <f:if condition="{props.label}"><label class="form-label d-block" for="{id}">{props.label}</label></f:if>
+    <div class="btn-group" role="group" id="{id}" data-a2ui-bind="{path}">
+        <f:for each="{props.options}" as="option">
+            <f:variable name="optValue" value="{f:if(condition: option.value, then: option.value, else: option)}" />
+            <f:variable name="optLabel" value="{f:if(condition: option.label, then: option.label, else: option)}" />
+            <button type="button" class="btn btn-outline-primary<f:if condition="{optValue} == {value}"> active</f:if>" data-value="{optValue}">{optLabel}</button>
+        </f:for>
+    </div>
+</div>
+</html>

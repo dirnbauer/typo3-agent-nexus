@@ -1,0 +1,55 @@
+{
+  "name": "webconsulting/agent-nexus",
+  "type": "typo3-cms-extension",
+  "description": "Agent Nexus - A unified TYPO3 v14 lab for A2UI, AG-UI, A2A, UCP and AP2 agent protocol demos.",
+  "keywords": [
+    "TYPO3",
+    "agent",
+    "A2UI",
+    "AG-UI",
+    "A2A",
+    "UCP",
+    "AP2",
+    "generative-ui",
+    "agentic-commerce"
+  ],
+  "homepage": "https://webconsulting.at",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "webconsulting GmbH",
+      "email": "office@webconsulting.at",
+      "homepage": "https://webconsulting.at"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/dirnbauer/typo3-agent-nexus/issues",
+    "source": "https://github.com/dirnbauer/typo3-agent-nexus"
+  },
+  "require": {
+    "php": "^8.3",
+    "typo3/cms-backend": "^14.3",
+    "typo3/cms-core": "^14.3",
+    "typo3/cms-extbase": "^14.3",
+    "typo3/cms-fluid": "^14.3",
+    "typo3/cms-frontend": "^14.3"
+  },
+  "suggest": {
+    "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
+    "netresearch/nr-llm": "Enables real LLM-backed A2UI generation where configured; otherwise Agent Nexus uses deterministic demos."
+  },
+  "autoload": {
+    "psr-4": {
+      "Webconsulting\\AgentNexus\\": "Classes/"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "agent_nexus",
+      "version": "1.0.0",
+      "Package": {
+        "providesPackages": {}
+      }
+    }
+  }
+}

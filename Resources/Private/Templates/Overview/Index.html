@@ -1,0 +1,147 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="agst" data-agentstack-overview>
+
+    <header class="agst-head">
+        <h1 class="agst-title">Agent Nexus</h1>
+        <p class="agst-lede">A short field guide to the 2026 agent-protocol family — what each one <strong>is</strong>, how it <strong>works</strong>, and where it runs on this site.</p>
+        <div class="agst-stack">
+            <f:for each="{stack}" as="s">
+                <span class="agst-stackchip agst-accent--{s.accent}"><i class="agst-dot"></i>{s.key}<em>{s.label}</em></span>
+            </f:for>
+        </div>
+    </header>
+
+    <section class="agst-theory" aria-label="Agent Nexus theory">
+        <div class="agst-theory__intro">
+            <span class="agst-section-label">Short theory</span>
+            <h2 class="agst-theory__title">One stack, five edges, no blurred responsibility.</h2>
+            <p>Agent protocols are easiest to reason about when every boundary is visible. The backend modules below show the wire contracts; the frontend plugins show how those contracts become trusted visitor-facing experiences.</p>
+        </div>
+        <div class="agst-theory__grid">
+            <f:for each="{theory}" as="item">
+                <article class="agst-theory-card">
+                    <img class="agst-theory-card__image" src="{item.image}" alt="{item.alt}" loading="lazy" />
+                    <div class="agst-theory-card__body">
+                        <h3>{item.title}</h3>
+                        <p>{item.text}</p>
+                    </div>
+                </article>
+            </f:for>
+        </div>
+    </section>
+
+    <nav class="agst-tabs" role="tablist" aria-label="Agent protocols">
+        <f:for each="{protocols}" as="p" iteration="it">
+            <button type="button"
+                    class="agst-tab agst-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
+                    data-agst-tab="{p.key}" role="tab"
+                    aria-selected="{f:if(condition: it.isFirst, then: 'true', else: 'false')}">
+                <i class="agst-dot"></i>
+                <span class="agst-tab__name">{p.name}</span>
+                <em class="agst-tab__edge">{p.edge}</em>
+            </button>
+        </f:for>
+    </nav>
+
+    <f:for each="{protocols}" as="p" iteration="it">
+        <section class="agst-panel agst-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
+                 data-agst-panel="{p.key}" role="tabpanel">
+
+            <div class="agst-reveal agst-intro">
+                <div>
+                    <span class="agst-kicker"><i class="agst-dot"></i>{p.name}<em>{p.edge}</em></span>
+                    <p class="agst-tagline">{p.tagline}</p>
+                    <p class="agst-short">{p.short}</p>
+                    <p class="agst-def"><f:format.raw>{p.definition}</f:format.raw></p>
+                </div>
+                <figure class="agst-media">
+                    <img src="{p.image}" alt="{p.imageAlt}" loading="lazy" />
+                </figure>
+            </div>
+
+            <div class="agst-reveal agst-card agst-flow" data-agst-motion="{p.key}" aria-hidden="true">
+                <div class="agst-flow__node">{p.flow.left}</div>
+                <div class="agst-flow__track">
+                    <span class="agst-flow__beam"></span>
+                    <f:for each="{p.flow.steps}" as="st" iteration="sit">
+                        <span class="agst-flow__step agst-flow__step--{st.side}" data-agst-step>{st.label}</span>
+                    </f:for>
+                </div>
+                <div class="agst-flow__node">{p.flow.right}</div>
+            </div>
+
+            <div class="agst-reveal agst-grid2">
+                <div class="agst-card">
+                    <h2 class="agst-h2">How it works</h2>
+                    <ol class="agst-steps">
+                        <f:for each="{p.flow.steps}" as="st" iteration="sit">
+                            <li class="agst-step">
+                                <span class="agst-step__n">{st.n}</span>
+                                <span class="agst-step__body">
+                                    <code class="agst-step__label">{st.label}</code>
+                                    <span class="agst-step__desc">{st.desc}</span>
+                                </span>
+                            </li>
+                        </f:for>
+                    </ol>
+                </div>
+                <div class="agst-card">
+                    <h2 class="agst-h2">Key facts</h2>
+                    <dl class="agst-facts">
+                        <f:for each="{p.facts}" as="fact">
+                            <div class="agst-fact">
+                                <dt class="agst-fact__term">{fact.term}</dt>
+                                <dd class="agst-fact__def">{fact.def}</dd>
+                            </div>
+                        </f:for>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="agst-reveal agst-card agst-spec">
+                <div class="agst-spec__head">
+                    <span class="agst-spec__dots"><i></i><i></i><i></i></span>
+                    <span class="agst-spec__label">{p.specLabel}</span>
+                </div>
+                <pre class="agst-spec__code"><code>{p.spec}</code></pre>
+            </div>
+
+            <div class="agst-reveal agst-examples">
+                <article class="agst-example agst-example--backend">
+                    <span class="agst-section-label">Backend example</span>
+                    <h2>{p.name} in TYPO3</h2>
+                    <p>{p.backendExample}</p>
+                </article>
+                <article class="agst-example agst-example--frontend">
+                    <span class="agst-section-label">Frontend example</span>
+                    <h2>{p.plugin}</h2>
+                    <p>{p.frontendExample}</p>
+                </article>
+            </div>
+
+            <div class="agst-reveal agst-actions">
+                <f:if condition="{p.moduleUrl}">
+                    <f:then>
+                        <a class="agst-btn agst-btn--primary" href="{p.moduleUrl}">Open the {p.name} playground</a>
+                    </f:then>
+                    <f:else>
+                        <span class="agst-btn agst-btn--ghost is-disabled">{p.name} playground — install webconsulting/{p.key}-integration</span>
+                    </f:else>
+                </f:if>
+                <a class="agst-btn agst-btn--ghost" href="{p.frontendUrl}" target="_blank" rel="noreferrer">Open frontend example</a>
+                <span class="agst-plugin">Plugin&nbsp;→&nbsp;<strong>{p.plugin}</strong></span>
+            </div>
+
+        </section>
+    </f:for>
+
+</div>
+
+</f:section>
+</html>

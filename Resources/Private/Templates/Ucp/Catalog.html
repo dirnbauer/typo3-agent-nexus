@@ -1,0 +1,55 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="ucp-console" style="max-width: 1100px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="mb-1">UCP Commerce Inspector</h1>
+            <p class="text-body-secondary mb-0">The merchant's product catalog and the checkout state machine an agent drives.</p>
+        </div>
+        <a href="{f:uri.action(action: 'console')}" class="btn btn-outline-secondary btn-sm">
+            <core:icon identifier="actions-arrow-left" size="small" /> Back to console
+        </a>
+    </div>
+
+    <div class="card ucp-catalog__sec mb-3">
+        <div class="card-header"><h2 class="h5 mb-0">Checkout state machine</h2></div>
+        <div class="card-body">
+            <f:for each="{states}" as="st">
+                <div class="ucp-catalog__row ucp-cat--{st.accent}">
+                    <span class="ucp-catalog__state">{st.state}</span>
+                    <span class="ucp-catalog__desc">{st.desc}</span>
+                </div>
+            </f:for>
+        </div>
+    </div>
+
+    <div class="card ucp-catalog__sec">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Product catalog</h2>
+            <a href="{manifestUrl}" target="_blank" rel="noreferrer" class="ucp-manifesturl">{manifestUrl}</a>
+        </div>
+        <div class="card-body">
+            <f:for each="{catalog}" as="p">
+                <div class="ucp-product">
+                    <div class="ucp-product__head">
+                        <span class="ucp-product__name">{p.name}</span>
+                        <code class="ucp-product__id">{p.id}</code>
+                        <f:for each="{p.tags}" as="tag"><span class="ucp-product__tag">{tag}</span></f:for>
+                        <span class="ucp-product__price">€<f:format.number decimals="2">{p.price / 100}</f:format.number> <small>{p.unit}</small></span>
+                    </div>
+                    <div class="ucp-product__desc">{p.description}</div>
+                </div>
+            </f:for>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

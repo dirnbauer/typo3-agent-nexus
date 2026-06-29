@@ -1,0 +1,13 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="card a2ui-card" id="{id}">
+    <f:if condition="{props.title} || {props.subtitle}">
+        <div class="card-header">
+            <f:if condition="{props.title}"><h3 class="h5 mb-0">{props.title}</h3></f:if>
+            <f:if condition="{props.subtitle}"><div class="text-body-secondary small">{props.subtitle}</div></f:if>
+        </div>
+    </f:if>
+    <div class="card-body">
+        <f:format.raw>{children}</f:format.raw>
+    </div>
+</div>
+</html>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>A2A Expert Router</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.intro>
+                        <label>Intro text</label>
+                        <description>Shown above the concierge. Invite the visitor to delegate a task.</description>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>3</rows>
+                            <default>Ask our site agent to summarise a page, draft an email or plan onboarding. Watch the task move through its lifecycle and hand you back a result.</default>
+                        </config>
+                    </settings.intro>
+                    <settings.placeholder>
+                        <label>Input placeholder</label>
+                        <config>
+                            <type>input</type>
+                            <default>e.g. "Draft an outreach email about our new plans"</default>
+                        </config>
+                    </settings.placeholder>
+                    <settings.accent>
+                        <label>Accent token</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>a2a</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label>A2A protocol accent</label>
+                                    <value>a2a</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>Theme primary</label>
+                                    <value>primary</value>
+                                </numIndex>
+                                <numIndex index="2">
+                                    <label>Theme accent</label>
+                                    <value>accent</value>
+                                </numIndex>
+                                <numIndex index="3">
+                                    <label>Theme secondary</label>
+                                    <value>secondary</value>
+                                </numIndex>
+                                <numIndex index="4">
+                                    <label>Theme destructive</label>
+                                    <value>destructive</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.accent>
+                    <settings.show_events>
+                        <label>Show the lifecycle frames</label>
+                        <description>Reveals an "under the hood" panel listing the A2A JSON-RPC frames as they arrive. Turn off for a clean production look.</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                    <value></value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.show_events>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>

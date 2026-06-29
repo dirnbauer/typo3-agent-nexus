@@ -1,0 +1,60 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.css identifier="a2ui-inquiry" href="{f:uri.resource(path: 'Css/a2ui-frontend.css', extensionName: 'agent_nexus')}" />
+
+<section class="a2ui-inquiry a2ui-inquiry--{f:if(condition: settings.display_mode, then: settings.display_mode, else: 'full')}"
+         data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'a2ui')}"
+         data-a2ui-inquiry
+         data-generate-url="/index.php?eID=a2ui_generate"
+         data-submit-url="/index.php?eID=a2ui_submit"
+         data-page="{pageId}"
+         data-business-context="{settings.business_context}"
+         data-presets="{settings.presets}"
+         data-success="{settings.success_message}">
+
+    <div class="a2ui-inquiry__panel">
+        <div class="a2ui-inquiry__head">
+            <span class="a2ui-inquiry__badge">
+                <svg class="a2ui-inquiry__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4L14 6.6 9.6 8 8 12 6.4 8 2 6.6 6.4 5z"/></svg>
+                AI&#8209;assisted
+            </span>
+            <f:if condition="{data.header}">
+                <h2 class="a2ui-inquiry__title">{data.header}</h2>
+            </f:if>
+            <f:if condition="{settings.intro}">
+                <p class="a2ui-inquiry__intro">{settings.intro}</p>
+            </f:if>
+        </div>
+
+        <form class="a2ui-inquiry__bar" data-a2ui-inquiry-form>
+            <span class="a2ui-inquiry__bar-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8l-3.5 3v-3H3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/></svg>
+            </span>
+            <input type="text"
+                   class="a2ui-inquiry__input"
+                   data-a2ui-intent
+                   placeholder="{settings.placeholder}"
+                   aria-label="Describe what you need" />
+            <button type="submit" class="a2ui-inquiry__go">
+                <span>Continue</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+            </button>
+        </form>
+
+        <div class="a2ui-inquiry__presets-wrap" data-a2ui-presets-wrap>
+            <span class="a2ui-inquiry__presets-label">Or start with</span>
+            <div class="a2ui-inquiry__presets" data-a2ui-presets></div>
+        </div>
+
+        <div class="a2ui-inquiry__live" data-a2ui-live aria-live="polite"></div>
+    </div>
+
+    <noscript>
+        <p class="a2ui-inquiry__intro">This adaptive form needs JavaScript. Please email us instead.</p>
+    </noscript>
+</section>
+
+<f:asset.script identifier="a2ui-inquiry" src="{f:uri.resource(path: 'JavaScript/a2ui-inquiry.js', extensionName: 'agent_nexus')}" type="module" />
+
+</html>

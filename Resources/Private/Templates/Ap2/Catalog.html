@@ -1,0 +1,50 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="ap2-studio" style="max-width: 1000px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="mb-1">AP2 Mandate Inspector</h1>
+            <p class="text-body-secondary mb-0">The mandate types in the authorization chain, and the checks verification enforces.</p>
+        </div>
+        <a href="{f:uri.action(action: 'studio')}" class="btn btn-outline-secondary btn-sm">
+            <core:icon identifier="actions-arrow-left" size="small" /> Back to studio
+        </a>
+    </div>
+
+    <div class="card ap2-catalog__sec mb-3">
+        <div class="card-header"><h2 class="h5 mb-0">Mandate types</h2></div>
+        <div class="card-body">
+            <f:for each="{types}" as="t">
+                <div class="ap2-catalog__row ap2-cat--{t.accent}">
+                    <span class="ap2-catalog__type">{t.type}</span>
+                    <span class="ap2-catalog__desc">{t.desc}</span>
+                </div>
+            </f:for>
+        </div>
+    </div>
+
+    <div class="card ap2-catalog__sec">
+        <div class="card-header"><h2 class="h5 mb-0">What “verify the chain” checks</h2></div>
+        <div class="card-body">
+            <ul class="ap2-checklist">
+                <li><b>Intent Mandate signature</b> — the token is intact and signed (HS256, sandbox key).</li>
+                <li><b>Cart Mandate signature</b> — likewise; tampering breaks it.</li>
+                <li><b>Cart references the Intent</b> — the cart's <code>intentRef</code> equals the intent's <code>jti</code>.</li>
+                <li><b>Same authorized merchant</b> — the cart's audience is one the intent allows.</li>
+                <li><b>Within the spending cap</b> — the cart total ≤ the intent's <code>maxAmountCents</code>.</li>
+                <li><b>Not expired</b> — both <code>exp</code> timestamps are in the future.</li>
+            </ul>
+            <p class="text-body-secondary small mb-0">Only when every check passes is a (simulated) payment authorized.</p>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

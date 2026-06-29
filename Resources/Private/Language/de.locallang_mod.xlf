@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
+    <file id="messages" original="messages">
+        <unit id="mlang_labels_tablabel">
+            <segment>
+                <source>Agent Nexus</source>
+                <target>Agent Nexus</target>
+            </segment>
+        </unit>
+        <unit id="mlang_tabs_tab">
+            <segment>
+                <source>Agent Nexus</source>
+                <target>Agent Nexus</target>
+            </segment>
+        </unit>
+        <unit id="mlang_labels_tabdescr">
+            <segment>
+                <source>One TYPO3 hub for A2UI, AG-UI, A2A, UCP and AP2 agent protocol labs.</source>
+                <target>Ein TYPO3-Hub fuer A2UI, AG-UI, A2A, UCP und AP2 Agent-Protokoll-Labs.</target>
+            </segment>
+        </unit>
+    </file>
+</xliff>

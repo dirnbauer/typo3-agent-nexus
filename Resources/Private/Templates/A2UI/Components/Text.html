@@ -1,0 +1,13 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:spaceless>
+<f:variable name="align" value="{f:if(condition: props.align, then: ' text-{props.align}', else: '')}" />
+<f:switch expression="{props.variant}">
+    <f:case value="h1"><h1 class="h3{align}" id="{id}">{props.text}</h1></f:case>
+    <f:case value="h2"><h2 class="h4{align}" id="{id}">{props.text}</h2></f:case>
+    <f:case value="h3"><h3 class="h5{align}" id="{id}">{props.text}</h3></f:case>
+    <f:case value="lead"><p class="lead{align}" id="{id}">{props.text}</p></f:case>
+    <f:case value="muted"><p class="text-body-secondary mb-2{align}" id="{id}">{props.text}</p></f:case>
+    <f:defaultCase><p class="mb-2{align}" id="{id}">{props.text}</p></f:defaultCase>
+</f:switch>
+</f:spaceless>
+</html>

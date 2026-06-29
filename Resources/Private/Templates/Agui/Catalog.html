@@ -1,0 +1,38 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="agui-playground" style="max-width: 1100px;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h1 class="mb-1">AG-UI Event Inspector</h1>
+            <p class="text-body-secondary mb-0">Every AG-UI event type, grouped by family. On the wire each is one SSE <code>data:</code> frame.</p>
+        </div>
+        <a href="{f:uri.action(action: 'console')}" class="btn btn-outline-secondary btn-sm">
+            <core:icon identifier="actions-arrow-left" size="small" /> Back to console
+        </a>
+    </div>
+
+    <f:for each="{catalog}" as="family" key="name">
+        <div class="card agui-catalog__family">
+            <div class="card-header"><h2 class="h5 mb-0">{name}</h2></div>
+            <div class="card-body">
+                <f:for each="{family.events}" as="ev">
+                    <div class="agui-catalog__row agui-cat--{family.accent}">
+                        <span class="agui-catalog__type">{ev.type}</span>
+                        <span class="agui-catalog__fields">{ev.fields}</span>
+                        <span class="agui-catalog__desc">{ev.desc}</span>
+                    </div>
+                </f:for>
+            </div>
+        </div>
+    </f:for>
+</div>
+
+</f:section>
+
+</html>

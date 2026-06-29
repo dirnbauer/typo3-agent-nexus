@@ -1,0 +1,122 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="a2a-console" data-a2a-console data-card-url="{cardUrl}">
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+        <div>
+            <h1 class="mb-1">A2A Console</h1>
+            <p class="text-body-secondary mb-0">
+                Act as a <strong>client agent</strong>: discover the site's <strong>Agent Card</strong>, delegate a task,
+                and watch it move through its <strong>lifecycle</strong> — and hand you back an <strong>artifact</strong>.
+            </p>
+        </div>
+        <span class="badge bg-secondary align-self-center">Deterministic demo · no API key needed</span>
+    </div>
+
+    <!-- The 2026 agent-nexus family -->
+    <div class="a2a-stack mb-3">
+        <span class="a2a-stack__label">The agent stack:</span>
+        <f:for each="{stack}" as="s">
+            <span class="a2a-stack__chip a2a-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+        </f:for>
+    </div>
+
+    <!-- Agent Card -->
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><core:icon identifier="actions-identifier" size="small" /> Agent Card <span class="text-body-secondary small">discovery</span></span>
+            <a href="{cardUrl}" target="_blank" rel="noreferrer" class="a2a-cardurl">{cardUrl}</a>
+        </div>
+        <div class="card-body">
+            <div class="a2a-card" data-a2a-card>
+                <span class="text-body-secondary small">Loading the published Agent Card…</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delegate controls -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="text-body-secondary small me-1">Skill:</span>
+                <f:for each="{skills}" as="skill" iteration="it">
+                    <button type="button" class="btn btn-sm btn-outline-primary a2a-preset{f:if(condition: it.isFirst, then: ' active')}"
+                            data-a2a-skill="{skill.id}" title="{skill.description}">{skill.name}</button>
+                </f:for>
+                <button type="button" class="btn btn-primary ms-auto" data-a2a-send>
+                    <core:icon identifier="actions-play" size="small" /> Delegate task
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live panes -->
+    <div class="row g-3">
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><core:icon identifier="actions-list-alternative" size="small" /> JSON-RPC frames</span>
+                    <span class="text-body-secondary small" data-a2a-eventcount>0 frames</span>
+                </div>
+                <div class="card-body">
+                    <div class="a2a-timeline" data-a2a-timeline>
+                        <div class="text-body-secondary small">Pick a skill and press <strong>Delegate task</strong> to start the stream.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><core:icon identifier="actions-cpu" size="small" /> Task</span>
+                    <span class="a2a-state a2a-state--idle" data-a2a-state>idle</span>
+                </div>
+                <div class="card-body">
+                    <div class="a2a-msg" data-a2a-msg><span class="text-body-secondary small">The agent's status messages appear here.</span></div>
+                    <div class="a2a-input d-none" data-a2a-input></div>
+                    <div class="a2a-artifact d-none" data-a2a-artifact></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task log -->
+    <div class="card mt-3 a2a-tasklog">
+        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
+            <span><core:icon identifier="actions-clock" size="small" /> <strong>Task log</strong> <span class="text-body-secondary small">today</span></span>
+            <span class="a2a-stat"><span class="a2a-stat__v">{today.tasks}</span> tasks</span>
+            <span class="a2a-stat"><span class="a2a-stat__v">{today.completed}</span> completed</span>
+            <span class="a2a-stat"><span class="a2a-stat__v">{today.artifacts}</span> artifacts</span>
+            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
+                <core:icon identifier="actions-list" size="small" /> Skill Inspector
+            </a>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="card mt-3">
+        <div class="card-header"><h2 class="h5 mb-0">What is A2A?</h2></div>
+        <div class="card-body">
+            <p class="mb-2">
+                <strong>A2A (Agent2Agent Protocol)</strong> lets independent agents discover and delegate work to each other.
+                An agent publishes an <strong>Agent Card</strong> (who it is, where to reach it, what skills it has); a client agent
+                fetches the card and sends a <strong>task</strong> over JSON-RPC, then receives a stream of lifecycle updates and
+                <strong>artifacts</strong> back.
+            </p>
+            <p class="mb-0 text-body-secondary">
+                The cooperative twist is the <strong>input-required</strong> state: an agent can pause mid-task and ask the caller
+                for one more detail before it finishes — collaboration, not fire-and-forget.
+            </p>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

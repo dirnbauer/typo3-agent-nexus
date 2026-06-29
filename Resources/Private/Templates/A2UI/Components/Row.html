@@ -1,0 +1,5 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="a2ui-row d-flex flex-row<f:if condition="{props.wrap}"> flex-wrap</f:if><f:if condition="{props.align}"> align-items-{props.align}</f:if>" id="{id}" style="gap: {f:if(condition: props.gap, then: props.gap, else: '1')}rem;">
+    <f:format.raw>{children}</f:format.raw>
+</div>
+</html>

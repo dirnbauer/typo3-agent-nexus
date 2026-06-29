@@ -1,0 +1,52 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.css identifier="ap2-surface" href="{f:uri.resource(path: 'Css/ap2-frontend.css', extensionName: 'agent_nexus')}" />
+
+<section class="ap2-ts"
+         data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ap2')}"
+         data-ap2-surface
+         data-run-url="/index.php?eID=ap2_authorize"
+         data-page="{pageId}"
+         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
+
+    <div class="ap2-ts__panel">
+        <div class="ap2-ts__head">
+            <span class="ap2-ts__badge">
+                <svg class="ap2-ts__shield" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l5 1.7V6c0 3.3-2.1 6-5 7-2.9-1-5-3.7-5-7V2.7z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 8l1.7 1.7L11 6" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Trusted surface · AP2
+            </span>
+            <f:if condition="{data.header}"><h2 class="ap2-ts__title">{data.header}</h2></f:if>
+            <f:if condition="{settings.intro}"><p class="ap2-ts__intro">{settings.intro}</p></f:if>
+            <p class="ap2-ts__sim">Sandbox demo — mandates are signed with a demo key and <strong>nothing is charged</strong>.</p>
+        </div>
+
+        <div class="ap2-ts__cart">
+            <div class="ap2-ts__cart-row"><span>Agency Bundle</span><span>€149.00</span></div>
+            <div class="ap2-ts__cart-row"><span>Onboarding Add-on</span><span>€299.00</span></div>
+            <div class="ap2-ts__cart-total"><span>Total</span><span data-ap2-total>€448.00</span></div>
+        </div>
+
+        <label class="ap2-ts__cap">
+            <span>Your spending cap (€)</span>
+            <input type="number" data-ap2-cap value="500" min="1" />
+        </label>
+
+        <button type="button" class="ap2-ts__go" data-ap2-run>
+            <span>Authorize this purchase</span>
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+        </button>
+
+        <div class="ap2-ts__result" data-ap2-result></div>
+
+        <div class="ap2-ts__mandates" data-ap2-mandates hidden></div>
+    </div>
+
+    <noscript>
+        <p class="ap2-ts__intro">This trusted surface needs JavaScript.</p>
+    </noscript>
+</section>
+
+<f:asset.script identifier="ap2-surface" src="{f:uri.resource(path: 'JavaScript/ap2-surface.js', extensionName: 'agent_nexus')}" type="module" />
+
+</html>

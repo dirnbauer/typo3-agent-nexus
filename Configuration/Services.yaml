@@ -1,0 +1,71 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  Webconsulting\AgentNexus\:
+    resource: '../Classes/*'
+    exclude:
+      - '../Classes/A2ui/Domain/Model/*'
+      - '../Classes/Agui/Event/*'
+
+  Webconsulting\AgentNexus\A2ui\Service\AgentService:
+    public: true
+
+  Webconsulting\AgentNexus\A2ui\Service\RendererService:
+    public: true
+
+  Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry:
+    public: true
+
+  Webconsulting\AgentNexus\A2a\Service\TaskRunner:
+    public: true
+
+  Webconsulting\AgentNexus\A2a\Service\AgentCard:
+    public: true
+
+  Webconsulting\AgentNexus\A2a\Service\TaskLogger:
+    public: true
+
+  Webconsulting\AgentNexus\A2a\Service\SkillCatalog:
+    public: true
+
+  Webconsulting\AgentNexus\A2a\Controller\SendController:
+    public: true
+
+  Webconsulting\AgentNexus\Agui\Service\AgentRunner:
+    public: true
+
+  Webconsulting\AgentNexus\Agui\Service\RunLogger:
+    public: true
+
+  Webconsulting\AgentNexus\Agui\Service\EventCatalog:
+    public: true
+
+  Webconsulting\AgentNexus\Agui\Controller\RunController:
+    public: true
+
+  Webconsulting\AgentNexus\Ap2\Service\MandateService:
+    public: true
+
+  Webconsulting\AgentNexus\Ap2\Service\Jwt:
+    public: true
+
+  Webconsulting\AgentNexus\Ap2\Service\MandateLog:
+    public: true
+
+  Webconsulting\AgentNexus\Ap2\Controller\MandateController:
+    public: true
+
+  Webconsulting\AgentNexus\Ucp\Service\CheckoutRunner:
+    public: true
+
+  Webconsulting\AgentNexus\Ucp\Service\Merchant:
+    public: true
+
+  Webconsulting\AgentNexus\Ucp\Service\OrderLogger:
+    public: true
+
+  Webconsulting\AgentNexus\Ucp\Controller\CheckoutController:
+    public: true

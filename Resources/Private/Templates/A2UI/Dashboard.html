@@ -1,0 +1,213 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="a2ui-playground"
+     data-a2ui-playground
+     data-a2ui-endpoint="{endpoint}"
+     data-a2ui-respond="{respondEndpoint}">
+
+    <div class="row g-3 align-items-stretch mb-3">
+        <div class="col-lg-7 col-xl-8">
+            <div class="a2ui-hero h-100">
+                <h1 class="mb-2">A2UI Playground</h1>
+                <p class="text-body-secondary mb-0">
+                    Describe what you need in plain language. An agent answers with an
+                    <strong>A2UI&nbsp;v1.0</strong> surface — declarative JSON, not code — and the backend
+                    renders it with native, trusted components.
+                </p>
+            </div>
+        </div>
+        <div class="col-lg-5 col-xl-4">
+            <div class="card a2ui-connection h-100">
+                <div class="card-body">
+                    <f:if condition="{connection}">
+                        <f:then>
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="a2ui-status a2ui-status--live">
+                                    <span class="a2ui-status-dot"></span> Live LLM connected
+                                </span>
+                                <span class="text-body-secondary small ms-auto">{connection.provider}</span>
+                            </div>
+                            <dl class="row mb-0 small a2ui-connection-meta">
+                                <dt class="col-5 text-body-secondary fw-normal">Model</dt>
+                                <dd class="col-7 mb-2 fw-semibold">{connection.model}</dd>
+
+                                <dt class="col-5 text-body-secondary fw-normal">Price / 1M tokens</dt>
+                                <dd class="col-7 mb-2">
+                                    <f:if condition="{connection.hasPricing}">
+                                        <f:then>
+                                            <span title="Input tokens">{connection.priceInput} in</span>
+                                            <span class="text-body-secondary"> · </span>
+                                            <span title="Output tokens">{connection.priceOutput} out</span>
+                                        </f:then>
+                                        <f:else><span class="text-body-secondary">not set in nr_llm</span></f:else>
+                                    </f:if>
+                                </dd>
+
+                                <dt class="col-5 text-body-secondary fw-normal">Endpoint</dt>
+                                <dd class="col-7 mb-0 text-truncate" title="{connection.endpoint}">{connection.endpoint}</dd>
+                            </dl>
+                        </f:then>
+                        <f:else>
+                            <div class="mb-2">
+                                <span class="a2ui-status a2ui-status--offline">Built-in generator</span>
+                            </div>
+                            <p class="small text-body-secondary mb-0">
+                                No LLM provider is active. Install &amp; configure
+                                <code>netresearch/nr-llm</code> (or set <code>llmEnabled</code>) to generate
+                                with a real model — the deterministic generator is used in the meantime.
+                            </p>
+                        </f:else>
+                    </f:if>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- A2UI LLM cost ledger (backend module + frontend plugin) -->
+    <div class="card a2ui-cost mb-3">
+        <div class="card-body py-2">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+                <div class="me-1">
+                    <core:icon identifier="actions-wallet" size="small" />
+                    <strong>A2UI LLM cost</strong>
+                    <span class="text-body-secondary small">module + frontend plugin</span>
+                </div>
+                <div class="a2ui-cost-figure a2ui-cost-figure--today">
+                    <div class="a2ui-cost-value">{cost.today}</div>
+                    <div class="a2ui-cost-label">today</div>
+                </div>
+                <f:for each="{cost.months}" as="m">
+                    <div class="a2ui-cost-figure">
+                        <div class="a2ui-cost-value">{m.cost}</div>
+                        <div class="a2ui-cost-label">{m.label} · {m.requests} runs</div>
+                    </div>
+                </f:for>
+                <f:if condition="{cost.instanceRange}">
+                    <div class="ms-auto text-body-secondary small text-end">
+                        Instance-wide nr_llm:<br />{cost.instanceToday} today · {cost.instanceRange} / 3&nbsp;mo
+                    </div>
+                </f:if>
+            </div>
+        </div>
+    </div>
+
+    <!-- Intent bar -->
+    <div class="card mb-3">
+        <div class="card-body a2ui-intent-bar">
+            <form data-a2ui-form action="{f:uri.action(action: 'generate')}" method="post" class="mb-3">
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text"><core:icon identifier="a2ui-module" size="small" /></span>
+                    <input type="text"
+                           class="form-control"
+                           data-a2ui-intent
+                           name="intent"
+                           placeholder="e.g. &quot;a contact form with name, email and a message&quot;"
+                           aria-label="Describe the interface you need" />
+                    <button type="submit" class="btn btn-primary">Generate UI</button>
+                </div>
+            </form>
+            <div class="a2ui-presets">
+                <span class="text-body-secondary small align-self-center me-1">Try:</span>
+                <f:for each="{presets}" as="preset">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-a2ui-preset="{preset.intent}">{preset.label}</button>
+                </f:for>
+            </div>
+        </div>
+    </div>
+
+    <!-- Server + client notes -->
+    <ul class="alert alert-info d-none small mb-3" data-a2ui-notes></ul>
+
+    <!-- The three working panes -->
+    <div class="row g-3">
+        <div class="col-xl-5">
+            <div class="card a2ui-pane h-100">
+                <div class="card-header">
+                    <span><core:icon identifier="actions-eye" size="small" /> Rendered interface</span>
+                    <span class="text-body-secondary small">what the editor sees</span>
+                </div>
+                <div class="card-body">
+                    <div class="a2ui-live-frame" data-a2ui-live></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card a2ui-pane h-100">
+                <div class="card-header">
+                    <span><core:icon identifier="actions-code" size="small" /> A2UI v1.0 payload</span>
+                    <span class="a2ui-status a2ui-status--offline" data-a2ui-provenance>—</span>
+                </div>
+                <div class="card-body">
+                    <p class="small text-body-secondary mb-2">The exact message the agent emitted. The client renders <em>only</em> this — never code.</p>
+                    <pre class="a2ui-code"><code data-a2ui-json></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3">
+            <div class="card a2ui-pane h-100">
+                <div class="card-header"><span><core:icon identifier="actions-database" size="small" /> Live data model</span></div>
+                <div class="card-body">
+                    <p class="small text-body-secondary mb-2">Inputs bind here via JSON Pointer. Type in the form and watch it update.</p>
+                    <pre class="a2ui-code a2ui-code--sm"><code data-a2ui-datamodel>{}</code></pre>
+                    <div class="mt-3 d-none" data-a2ui-action-wrap>
+                        <div class="small text-body-secondary mb-1"><core:icon identifier="actions-arrow-right" size="small" /> Last user action sent to the agent</div>
+                        <pre class="a2ui-code a2ui-code--sm"><code data-a2ui-action></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explainer: what A2UI is -->
+    <div class="card mt-4">
+        <div class="card-header"><h2 class="h5 mb-0">What is A2UI?</h2></div>
+        <div class="card-body">
+            <p>
+                <strong>A2UI (Agent-to-User Interface)</strong> is an open protocol for letting an AI agent
+                <em>describe</em> a user interface as declarative JSON. The agent never ships HTML or scripts —
+                it sends a <strong>surface</strong>, and a trusted client renders it with native components. That
+                separation is what makes agent-authored UI safe, portable and consistent.
+            </p>
+            <div class="a2ui-loop mb-3">
+                <div class="a2ui-loop-step">
+                    <div class="a2ui-loop-step__num">1 · Emit</div>
+                    The agent emits an A2UI v1.0 surface (a flat list of components + a data model).
+                </div>
+                <div class="a2ui-loop-step">
+                    <div class="a2ui-loop-step__num">2 · Render</div>
+                    The client renders it with native, trusted backend components — only the catalog below is allowed.
+                </div>
+                <div class="a2ui-loop-step">
+                    <div class="a2ui-loop-step__num">3 · Signal</div>
+                    User input updates the data model; an action sends a structured <code>userAction</code> back.
+                </div>
+                <div class="a2ui-loop-step">
+                    <div class="a2ui-loop-step__num">4 · Reason</div>
+                    The agent reacts to the signal and can update the surface — closing the loop.
+                </div>
+            </div>
+            <p class="mb-1"><strong>Trusted catalog</strong> (the only components an agent may use here):</p>
+            <div class="mb-3">
+                <f:for each="{catalog}" as="entry" key="name">
+                    <span class="badge rounded-pill text-bg-light border a2ui-catalog-chip me-1 mb-1">{name}</span>
+                </f:for>
+            </div>
+            <a href="{f:uri.action(action: 'demo')}" class="btn btn-outline-info btn-sm">
+                <core:icon identifier="actions-list" size="small" /> Browse the component gallery
+            </a>
+            <a href="https://a2ui.org/specification/v1.0-a2ui/" target="_blank" rel="noreferrer" class="btn btn-link btn-sm">A2UI v1.0 specification ↗</a>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

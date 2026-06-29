@@ -1,0 +1,14 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:if condition="{props.label}">
+    <f:then>
+        <div class="a2ui-divider d-flex align-items-center text-body-secondary my-3" id="{id}">
+            <hr class="flex-grow-1 my-0" />
+            <span class="px-2 small text-uppercase">{props.label}</span>
+            <hr class="flex-grow-1 my-0" />
+        </div>
+    </f:then>
+    <f:else>
+        <hr id="{id}" class="my-3" />
+    </f:else>
+</f:if>
+</html>

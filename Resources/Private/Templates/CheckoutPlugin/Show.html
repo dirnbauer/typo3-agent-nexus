@@ -1,0 +1,52 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.css identifier="ucp-checkout" href="{f:uri.resource(path: 'Css/ucp-frontend.css', extensionName: 'agent_nexus')}" />
+
+<section class="ucp-cc"
+         data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ucp')}"
+         data-ucp-checkout
+         data-run-url="/index.php?eID=ucp_checkout"
+         data-page="{pageId}"
+         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
+
+    <div class="ucp-cc__panel">
+        <div class="ucp-cc__head">
+            <span class="ucp-cc__badge">
+                <svg class="ucp-cc__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4L14 6.6 9.6 8 8 12 6.4 8 2 6.6 6.4 5z"/></svg>
+                Shopping agent · UCP
+            </span>
+            <f:if condition="{data.header}"><h2 class="ucp-cc__title">{data.header}</h2></f:if>
+            <f:if condition="{settings.intro}"><p class="ucp-cc__intro">{settings.intro}</p></f:if>
+            <p class="ucp-cc__sim">Demo store — every order is <strong>simulated</strong>. No payment is taken.</p>
+        </div>
+
+        <div class="ucp-cc__intents" data-ucp-intents>
+            <button type="button" class="ucp-cc__intent is-active" data-intent="pro">Set me up with Pro</button>
+            <button type="button" class="ucp-cc__intent" data-intent="agency">Full agency kit</button>
+            <button type="button" class="ucp-cc__intent" data-intent="support">Add priority support</button>
+        </div>
+
+        <div class="ucp-cc__run">
+            <button type="button" class="ucp-cc__go" data-ucp-run>
+                <span>Let the agent shop</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+            </button>
+        </div>
+
+        <div class="ucp-cc__stage" data-ucp-stage></div>
+
+        <div class="ucp-cc__events" data-ucp-events hidden>
+            <div class="ucp-cc__events-head"><span class="ucp-cc__events-dot" aria-hidden="true"></span> Under the hood — UCP events <span data-ucp-eventcount>0</span></div>
+            <div class="ucp-cc__events-list" data-ucp-events-list></div>
+        </div>
+    </div>
+
+    <noscript>
+        <p class="ucp-cc__intro">This agent checkout needs JavaScript. Please contact us to place an order.</p>
+    </noscript>
+</section>
+
+<f:asset.script identifier="ucp-checkout" src="{f:uri.resource(path: 'JavaScript/ucp-checkout.js', extensionName: 'agent_nexus')}" type="module" />
+
+</html>

@@ -1,0 +1,10 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<div class="mb-3">
+    <f:if condition="{props.label}"><label class="form-label" for="{id}">{props.label}</label></f:if>
+    <div class="d-flex align-items-center gap-2">
+        <input type="range" class="form-range" id="{id}" min="{f:if(condition: props.min, then: props.min, else: 0)}" max="{f:if(condition: props.max, then: props.max, else: 100)}" step="{f:if(condition: props.step, then: props.step, else: 1)}" value="{value}" data-a2ui-bind="{path}" />
+        <output>{value}</output>
+    </div>
+    <f:if condition="{props.helpText}"><div class="form-text">{props.helpText}</div></f:if>
+</div>
+</html>

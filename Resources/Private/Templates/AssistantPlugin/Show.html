@@ -1,0 +1,68 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:asset.css identifier="agui-assistant" href="{f:uri.resource(path: 'Css/agui-frontend.css', extensionName: 'agent_nexus')}" />
+
+<section class="agui-asst"
+         data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'agui')}"
+         data-agui-assistant
+         data-run-url="/index.php?eID=agui_assistant"
+         data-scenario="{f:if(condition: settings.scenario, then: settings.scenario, else: 'plan')}"
+         data-page="{pageId}"
+         data-presets="{settings.presets}"
+         data-success="{settings.success_message}"
+         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
+
+    <div class="agui-asst__panel">
+        <div class="agui-asst__head">
+            <span class="agui-asst__badge">
+                <svg class="agui-asst__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4L14 6.6 9.6 8 8 12 6.4 8 2 6.6 6.4 5z"/></svg>
+                Live agent
+            </span>
+            <f:if condition="{data.header}">
+                <h2 class="agui-asst__title">{data.header}</h2>
+            </f:if>
+            <f:if condition="{settings.intro}">
+                <p class="agui-asst__intro">{settings.intro}</p>
+            </f:if>
+        </div>
+
+        <form class="agui-asst__bar" data-agui-form>
+            <span class="agui-asst__bar-icon" aria-hidden="true">
+                <svg viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H8l-3.5 3v-3H3a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z"/></svg>
+            </span>
+            <input type="text"
+                   class="agui-asst__input"
+                   data-agui-intent
+                   placeholder="{settings.placeholder}"
+                   aria-label="Tell the assistant what you need" />
+            <button type="submit" class="agui-asst__go" data-agui-send>
+                <span>Ask</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+            </button>
+        </form>
+
+        <div class="agui-asst__presets-wrap" data-agui-presets-wrap>
+            <span class="agui-asst__presets-label">Or start with</span>
+            <div class="agui-asst__presets" data-agui-presets></div>
+        </div>
+
+        <div class="agui-asst__thread" data-agui-thread aria-live="polite"></div>
+
+        <div class="agui-asst__events" data-agui-events hidden>
+            <div class="agui-asst__events-head">
+                <span class="agui-asst__events-dot" aria-hidden="true"></span>
+                Under the hood — AG-UI events <span data-agui-eventcount>0</span>
+            </div>
+            <div class="agui-asst__events-list" data-agui-events-list></div>
+        </div>
+    </div>
+
+    <noscript>
+        <p class="agui-asst__intro">This live assistant needs JavaScript. Please email us instead and we will help you directly.</p>
+    </noscript>
+</section>
+
+<f:asset.script identifier="agui-client" src="{f:uri.resource(path: 'JavaScript/agui-client.js', extensionName: 'agent_nexus')}" type="module" />
+
+</html>

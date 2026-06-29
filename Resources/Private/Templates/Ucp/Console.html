@@ -1,0 +1,122 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="ucp-console" data-ucp-console data-manifest-url="{manifestUrl}">
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+        <div>
+            <h1 class="mb-1">UCP Console</h1>
+            <p class="text-body-secondary mb-0">
+                Act as a <strong>shopping agent</strong>: discover the merchant manifest, pick an intent,
+                and watch the agent <strong>build a cart</strong> and run the checkout — pausing for your
+                <strong>authorization</strong> before anything is placed.
+            </p>
+        </div>
+        <span class="badge bg-warning text-dark align-self-center">Simulated — no payment is taken</span>
+    </div>
+
+    <!-- The 2026 agent-nexus family -->
+    <div class="ucp-stack mb-3">
+        <span class="ucp-stack__label">The agent stack:</span>
+        <f:for each="{stack}" as="s">
+            <span class="ucp-stack__chip ucp-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+        </f:for>
+    </div>
+
+    <!-- Merchant manifest -->
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><core:icon identifier="actions-shopping-cart" size="small" /> Merchant manifest <span class="text-body-secondary small">discovery</span></span>
+            <a href="{manifestUrl}" target="_blank" rel="noreferrer" class="ucp-manifesturl">{manifestUrl}</a>
+        </div>
+        <div class="card-body">
+            <div class="ucp-merchant" data-ucp-merchant><span class="text-body-secondary small">Loading the merchant manifest…</span></div>
+        </div>
+    </div>
+
+    <!-- Intent controls -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="text-body-secondary small me-1">Intent:</span>
+                <f:for each="{presets}" as="preset" iteration="it">
+                    <button type="button" class="btn btn-sm btn-outline-success ucp-preset{f:if(condition: it.isFirst, then: ' active')}"
+                            data-ucp-intent="{preset.id}" title="{preset.hint}">{preset.label}</button>
+                </f:for>
+                <button type="button" class="btn btn-success ms-auto" data-ucp-run>
+                    <core:icon identifier="actions-play" size="small" /> Run checkout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live panes -->
+    <div class="row g-3">
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><core:icon identifier="actions-list-alternative" size="small" /> Commerce events</span>
+                    <span class="text-body-secondary small" data-ucp-eventcount>0 events</span>
+                </div>
+                <div class="card-body">
+                    <div class="ucp-timeline" data-ucp-timeline>
+                        <div class="text-body-secondary small">Pick an intent and press <strong>Run checkout</strong> to start the stream.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><core:icon identifier="actions-shopping-cart" size="small" /> Cart &amp; checkout</span>
+                    <span class="ucp-state ucp-state--idle" data-ucp-state>idle</span>
+                </div>
+                <div class="card-body">
+                    <div class="ucp-reasoning d-none" data-ucp-reasoning></div>
+                    <div class="ucp-cart" data-ucp-cart><span class="text-body-secondary small">The agent's cart appears here.</span></div>
+                    <div class="ucp-auth d-none" data-ucp-auth></div>
+                    <div class="ucp-receipt d-none" data-ucp-receipt></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order log -->
+    <div class="card mt-3 ucp-orderlog">
+        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
+            <span><core:icon identifier="actions-clock" size="small" /> <strong>Order log</strong> <span class="text-body-secondary small">today · simulated</span></span>
+            <span class="ucp-stat"><span class="ucp-stat__v">{today.orders}</span> checkouts</span>
+            <span class="ucp-stat"><span class="ucp-stat__v">{today.confirmed}</span> confirmed</span>
+            <span class="ucp-stat"><span class="ucp-stat__v" data-ucp-volume>{today.volume}</span> volume (cents)</span>
+            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
+                <core:icon identifier="actions-list" size="small" /> Commerce Inspector
+            </a>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="card mt-3">
+        <div class="card-header"><h2 class="h5 mb-0">What is UCP?</h2></div>
+        <div class="card-body">
+            <p class="mb-2">
+                <strong>UCP (Universal Commerce Protocol)</strong> is the emerging layer for <em>agentic commerce</em>:
+                a merchant publishes a machine-readable <strong>manifest</strong> and <strong>catalog</strong>, and a shopping
+                agent discovers it, builds a cart and runs a <strong>checkout</strong> on the shopper's behalf.
+            </p>
+            <p class="mb-0 text-body-secondary">
+                The safeguard is the <strong>authorization gate</strong>: the agent assembles the order but a human (or a
+                signed mandate — see <strong>AP2</strong>) must authorize it before any purchase. In this demo every order is
+                <strong>simulated</strong> — no payment is ever taken.
+            </p>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

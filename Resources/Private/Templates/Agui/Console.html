@@ -1,0 +1,113 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+
+<div class="agui-playground" data-agui-console>
+
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+        <div>
+            <h1 class="mb-1">AG-UI Playground</h1>
+            <p class="text-body-secondary mb-0">
+                Start a task and watch the agent <strong>stream typed events</strong> to the UI in real time
+                — text deltas, tool calls, shared state — and <strong>approve before anything is written</strong>.
+            </p>
+        </div>
+        <span class="badge bg-secondary align-self-center">Deterministic demo · no API key needed</span>
+    </div>
+
+    <!-- The 2026 agent-nexus family -->
+    <div class="agui-stack mb-3">
+        <span class="agui-stack__label">The agent stack:</span>
+        <f:for each="{stack}" as="s">
+            <span class="agui-stack__chip agui-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+        </f:for>
+    </div>
+
+    <!-- Run controls -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <span class="text-body-secondary small me-1">Task:</span>
+                <f:for each="{presets}" as="preset" iteration="it">
+                    <button type="button" class="btn btn-sm btn-outline-primary agui-preset{f:if(condition: it.isFirst, then: ' active')}"
+                            data-agui-preset="{preset.id}" title="{preset.hint}">{preset.label}</button>
+                </f:for>
+                <button type="button" class="btn btn-primary ms-auto" data-agui-run>
+                    <core:icon identifier="actions-play" size="small" /> Run agent
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live panes -->
+    <div class="row g-3">
+        <div class="col-xl-6">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><core:icon identifier="actions-list-alternative" size="small" /> Event timeline</span>
+                    <span class="text-body-secondary small" data-agui-eventcount>0 events</span>
+                </div>
+                <div class="card-body">
+                    <div class="agui-timeline" data-agui-timeline>
+                        <div class="text-body-secondary small">Pick a task and press <strong>Run agent</strong> to start the stream.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6">
+            <div class="card mb-3">
+                <div class="card-header"><core:icon identifier="actions-document" size="small" /> Draft</div>
+                <div class="card-body">
+                    <div class="agui-reasoning d-none" data-agui-reasoning></div>
+                    <div class="agui-draft" data-agui-draft><span class="text-body-secondary small">The streamed answer appears here, token by token.</span></div>
+                    <div class="agui-ui-slot" data-agui-uislot></div>
+                    <div class="agui-hitl d-none" data-agui-hitl></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><core:icon identifier="actions-database" size="small" /> Shared state</div>
+                <div class="card-body">
+                    <pre class="agui-code"><code data-agui-state>{}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Run log -->
+    <div class="card mt-3 agui-runlog">
+        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
+            <span><core:icon identifier="actions-clock" size="small" /> <strong>Activity log</strong> <span class="text-body-secondary small">today</span></span>
+            <span class="agui-stat"><span class="agui-stat__v">{today.runs}</span> runs</span>
+            <span class="agui-stat"><span class="agui-stat__v">{today.approvals}</span> approvals</span>
+            <span class="agui-stat"><span class="agui-stat__v">{today.events}</span> events streamed</span>
+            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
+                <core:icon identifier="actions-list" size="small" /> Event Inspector
+            </a>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="card mt-3">
+        <div class="card-header"><h2 class="h5 mb-0">What is AG-UI?</h2></div>
+        <div class="card-body">
+            <p class="mb-2">
+                <strong>AG-UI (Agent-User Interaction Protocol)</strong> standardises how a backend agent
+                <em>streams real-time events</em> to a frontend so people stay in the loop during long tasks.
+                The frontend POSTs a <code>RunAgentInput</code> (and declares which tools the agent may use), and the
+                agent replies with an ordered stream of typed events over SSE.
+            </p>
+            <p class="mb-0 text-body-secondary">
+                The trust model is built in: the <strong>UI declares the tools</strong>, sensitive actions are gated behind a
+                <strong>human-in-the-loop</strong> confirmation (a tool the user must answer), and nothing is written until you approve.
+            </p>
+        </div>
+    </div>
+</div>
+
+</f:section>
+
+</html>

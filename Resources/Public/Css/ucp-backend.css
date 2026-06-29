@@ -1,0 +1,146 @@
+/**
+ * UCP Console (backend) styles. Checkout states carry fixed colours so the flow
+ * is readable at a glance; surfaces follow the backend light/dark tokens.
+ */
+.ucp-console { max-width: 1400px; }
+
+/* ---- State accents ---- */
+.ucp-cat--discover { --c: #2563eb; }
+.ucp-cat--cart { --c: #059669; }
+.ucp-cat--review { --c: #0d9488; }
+.ucp-cat--auth { --c: #d97706; }
+.ucp-cat--confirmed { --c: #16a34a; }
+.ucp-cat--declined { --c: #dc2626; }
+
+/* ---- Stack legend (family) ---- */
+.ucp-stack { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; }
+.ucp-stack__label { font-size: .82rem; color: var(--bs-secondary-color, #666); }
+.ucp-stack__chip { display: inline-flex; align-items: baseline; gap: .35rem; padding: .25rem .6rem; border-radius: 50rem; font-size: .75rem; font-weight: 700; color: #fff; background: var(--c, #64748b); }
+.ucp-stack__chip em { font-style: normal; font-weight: 400; opacity: .85; font-size: .68rem; }
+.ucp-stack__chip.is-self { outline: 2px solid var(--c); outline-offset: 2px; }
+.ucp-accent--mcp { --c: #64748b; } .ucp-accent--a2a { --c: #0d9488; } .ucp-accent--agui { --c: #4f46e5; }
+.ucp-accent--a2ui { --c: #7c5ac4; } .ucp-accent--ucp { --c: #059669; } .ucp-accent--ap2 { --c: #b45309; }
+
+/* ---- Merchant manifest ---- */
+.ucp-manifesturl { font-family: var(--bs-font-monospace, monospace); font-size: .72rem; }
+.ucp-merchant__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
+.ucp-merchant__name { font-weight: 700; font-size: 1.05rem; }
+.ucp-merchant__cur { font-size: .7rem; color: var(--bs-secondary-color, #777); font-family: var(--bs-font-monospace, monospace); }
+.ucp-merchant__cap { font-size: .68rem; font-weight: 700; color: #059669; border: 1px solid #059669; border-radius: 50rem; padding: .05rem .45rem; }
+.ucp-merchant__desc { color: var(--bs-secondary-color, #555); font-size: .9rem; margin-top: .3rem; }
+.ucp-merchant__cat { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .5rem; }
+.ucp-merchant__item { font-size: .76rem; font-weight: 600; background: color-mix(in srgb, #059669 10%, transparent); color: #047857; border-radius: .4rem; padding: .2rem .55rem; }
+
+/* ---- Event timeline ---- */
+.ucp-timeline { max-height: 460px; overflow: auto; display: flex; flex-direction: column; gap: .25rem; }
+.ucp-evt { display: flex; align-items: baseline; gap: .5rem; padding: .3rem .5rem; border-radius: .35rem; border-left: 3px solid var(--c, #6b7280); background: color-mix(in srgb, var(--c, #6b7280) 7%, transparent); animation: ucp-in .2s ease; }
+@keyframes ucp-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+.ucp-evt__type { font-family: var(--bs-font-monospace, monospace); font-size: .72rem; font-weight: 700; color: var(--c, #6b7280); white-space: nowrap; }
+.ucp-evt__payload { font-family: var(--bs-font-monospace, monospace); font-size: .7rem; color: var(--bs-secondary-color, #777); overflow: hidden; text-overflow: ellipsis; }
+.ucp-type--checkout { --c: #2563eb; } .ucp-type--cart { --c: #059669; } .ucp-type--agent { --c: #7c3aed; }
+.ucp-type--authorization { --c: #d97706; } .ucp-type--order { --c: #16a34a; }
+
+/* ---- State badge ---- */
+.ucp-state { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; border-radius: 50rem; padding: .15rem .6rem; color: #fff; background: #94a3b8; }
+.ucp-state--idle { background: #94a3b8; }
+.ucp-state--discovering, .ucp-state--building_cart { background: #2563eb; }
+.ucp-state--review { background: #0d9488; }
+.ucp-state--authorization_required { background: #d97706; }
+.ucp-state--confirmed { background: #16a34a; }
+.ucp-state--declined { background: #dc2626; }
+
+.ucp-reasoning { font-size: .82rem; color: var(--bs-secondary-color, #777); background: color-mix(in srgb, #7c3aed 8%, transparent); border-radius: .4rem; padding: .5rem .7rem; margin-bottom: .6rem; }
+
+/* ---- Cart ---- */
+.ucp-cart__row { display: flex; justify-content: space-between; gap: 1rem; padding: .4rem 0; border-bottom: 1px solid var(--bs-border-color, #eee); }
+.ucp-cart__name { font-weight: 600; }
+.ucp-cart__name small { font-weight: 400; color: var(--bs-secondary-color, #777); }
+.ucp-cart__price { font-family: var(--bs-font-monospace, monospace); white-space: nowrap; }
+.ucp-cart__total { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0 0; font-weight: 700; }
+.ucp-cart__total .ucp-cart__price { font-size: 1.05rem; }
+
+/* ---- Authorization gate (HITL) ---- */
+.ucp-auth { margin-top: 1rem; border: 1px solid #f0b8bd; border-radius: .6rem; padding: .9rem 1rem; background: color-mix(in srgb, #d97706 7%, transparent); }
+.ucp-auth__badge { font-weight: 700; color: #b45309; margin-bottom: .4rem; display: block; }
+.ucp-auth__line { font-size: .85rem; color: var(--bs-secondary-color, #777); margin-bottom: .6rem; }
+.ucp-auth__total { font-weight: 700; font-size: 1.1rem; margin-bottom: .7rem; }
+.ucp-auth__actions { display: flex; gap: .5rem; }
+
+/* ---- Receipt ---- */
+.ucp-receipt { margin-top: 1rem; border: 1px solid #9ae6b4; border-radius: .6rem; padding: .9rem 1rem; background: color-mix(in srgb, #16a34a 7%, transparent); }
+.ucp-receipt__head { display: flex; align-items: center; gap: .5rem; font-weight: 700; color: #15803d; margin-bottom: .4rem; }
+.ucp-receipt__row { display: flex; justify-content: space-between; font-size: .85rem; padding: .1rem 0; }
+.ucp-receipt__row span { color: var(--bs-secondary-color, #777); }
+.ucp-receipt__sim { font-size: .72rem; color: #b45309; margin-top: .4rem; }
+
+/* ---- Order log ---- */
+.ucp-stat { font-size: .85rem; color: var(--bs-secondary-color, #777); }
+.ucp-stat__v { font-weight: 700; color: var(--bs-body-color, #000); }
+
+/* ---- GSAP explainer ---- */
+.ucp-exp { font-size: .85rem; }
+.ucp-exp__cap { text-align: center; font-weight: 600; margin-bottom: .8rem; min-height: 1.4rem; }
+.ucp-exp__stage { display: grid; grid-template-columns: 1fr 8rem 1fr; align-items: center; gap: .5rem; min-height: 9rem; }
+.ucp-exp__node { border: 1px solid var(--bs-border-color, #ddd); border-radius: .6rem; padding: .7rem; min-height: 8rem; position: relative; background: var(--bs-body-bg, #fff); }
+.ucp-exp__node--m { text-align: right; }
+.ucp-exp__node-h { font-weight: 700; margin-bottom: .4rem; } .ucp-exp__node-h small { font-weight: 400; color: var(--bs-secondary-color, #777); }
+.ucp-exp__badge { display: inline-block; font-size: .68rem; font-weight: 700; border-radius: 50rem; padding: .1rem .5rem; color: #fff; background: #94a3b8; }
+.ucp-exp__cart { font-size: .74rem; color: var(--bs-secondary-color, #555); border: 1px dashed #059669; border-radius: .4rem; padding: .25rem .5rem; margin-top: .4rem; display: inline-block; }
+.ucp-exp__lane { position: relative; height: 2px; background: repeating-linear-gradient(90deg, var(--bs-border-color, #ccc) 0 6px, transparent 6px 12px); }
+.ucp-exp__chip { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); white-space: nowrap; font-family: var(--bs-font-monospace, monospace); font-size: .62rem; font-weight: 700; color: #fff; background: var(--c, #059669); padding: .12rem .5rem; border-radius: 50rem; }
+.ucp-exp__legend { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: .8rem; }
+.ucp-exp__legend span { font-size: .68rem; font-weight: 700; }
+.ucp-exp__legend span::before { content: "● "; }
+
+/* ---- Commerce Inspector ---- */
+.ucp-catalog__sec { margin-bottom: 1.2rem; }
+.ucp-catalog__row { display: grid; grid-template-columns: 12rem 1fr; gap: .5rem; padding: .4rem .5rem; border-bottom: 1px solid var(--bs-border-color, #eee); align-items: baseline; }
+.ucp-catalog__state { font-family: var(--bs-font-monospace, monospace); font-weight: 700; color: var(--c, #6b7280); }
+.ucp-catalog__desc { font-size: .9rem; }
+.ucp-product { padding: .6rem 0; border-bottom: 1px solid var(--bs-border-color, #eee); }
+.ucp-product:last-child { border-bottom: 0; }
+.ucp-product__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; }
+.ucp-product__name { font-weight: 700; }
+.ucp-product__id { font-size: .74rem; color: var(--bs-secondary-color, #777); }
+.ucp-product__tag { font-size: .66rem; font-weight: 700; background: color-mix(in srgb, #059669 12%, transparent); color: #047857; border-radius: .3rem; padding: .05rem .4rem; }
+.ucp-product__price { margin-left: auto; font-weight: 700; font-family: var(--bs-font-monospace, monospace); }
+.ucp-product__price small { font-weight: 400; color: var(--bs-secondary-color, #777); }
+.ucp-product__desc { font-size: .9rem; margin-top: .2rem; color: var(--bs-secondary-color, #555); }
+
+@media (max-width: 720px) {
+  .ucp-evt,
+  .ucp-auth__actions,
+  .ucp-receipt__row,
+  .ucp-cart__row,
+  .ucp-cart__total {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ucp-auth__actions .btn {
+    width: 100%;
+  }
+
+  .ucp-exp__stage,
+  .ucp-catalog__row {
+    grid-template-columns: 1fr;
+  }
+
+  .ucp-exp__node--m {
+    text-align: left;
+  }
+
+  .ucp-exp__lane {
+    min-height: 2.25rem;
+  }
+
+  .ucp-product__price {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucp-evt {
+    animation: none;
+  }
+}

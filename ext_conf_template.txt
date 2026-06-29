@@ -1,0 +1,11 @@
+# cat=a2ui/enable; type=boolean; label=Enable A2UI LLM generation: When on and netresearch/nr-llm is installed with a provider, A2UI uses a model. When off, the deterministic generator is used.
+a2uiLlmEnabled = 1
+
+# cat=a2ui/model; type=string; label=A2UI LLM model: Optional model id passed to nr-llm. Leave empty to use the provider default.
+a2uiLlmModel =
+
+# cat=agui/apply; type=boolean; label=AG-UI really apply approved writes: Keep off for demos. When off, approved writes are simulated and logged only.
+aguiReallyApply = 0
+
+# cat=ucp/apply; type=boolean; label=UCP really charge: Keep off for demos. When off, every checkout is simulated and no order is placed with a real system.
+ucpReallyApply = 0

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>Smart Project Inquiry</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.intro>
+                        <label>Intro text</label>
+                        <description>Shown above the input. Invite the visitor to describe their request.</description>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>3</rows>
+                            <default>Tell us what you need in a sentence and we will build the right form for you.</default>
+                        </config>
+                    </settings.intro>
+                    <settings.placeholder>
+                        <label>Input placeholder</label>
+                        <config>
+                            <type>input</type>
+                            <default>e.g. "I need a quote for a 10-page website with a blog"</default>
+                        </config>
+                    </settings.placeholder>
+                    <settings.business_context>
+                        <label>Business context (for the AI, not shown to visitors)</label>
+                        <description>Describe your business/offering so the agent tailors the generated form.</description>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>4</rows>
+                            <default>We are a corporate consulting firm offering advisory services, implementation support and managed improvement programs.</default>
+                        </config>
+                    </settings.business_context>
+                    <settings.presets>
+                        <label>Example prompts (one per line)</label>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>4</rows>
+                            <default>Request a quote for a project
+Book an introductory call
+Ask about a service
+Apply for an open role</default>
+                        </config>
+                    </settings.presets>
+                    <settings.success_message>
+                        <label>Success message</label>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>2</rows>
+                            <default>Thank you — we have received your request and will get back to you shortly.</default>
+                        </config>
+                    </settings.success_message>
+                    <settings.accent>
+                        <label>AI accent token</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>a2ui</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label>A2UI protocol accent</label>
+                                    <value>a2ui</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>Theme primary</label>
+                                    <value>primary</value>
+                                </numIndex>
+                                <numIndex index="2">
+                                    <label>Theme accent</label>
+                                    <value>accent</value>
+                                </numIndex>
+                                <numIndex index="3">
+                                    <label>Theme secondary</label>
+                                    <value>secondary</value>
+                                </numIndex>
+                                <numIndex index="4">
+                                    <label>Theme destructive</label>
+                                    <value>destructive</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.accent>
+                    <settings.display_mode>
+                        <label>Layout</label>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>full</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label>Full (badge + intro)</label>
+                                    <value>full</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>Compact</label>
+                                    <value>compact</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.display_mode>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>
