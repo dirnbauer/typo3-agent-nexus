@@ -6,9 +6,11 @@ namespace Webconsulting\AgentNexus\Ucp\Eid;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
+use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
+use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
 use Webconsulting\AgentNexus\Ucp\Service\CheckoutRunner;
 use Webconsulting\AgentNexus\Ucp\Service\OrderLogger;
 use Webconsulting\AgentNexus\Ucp\Service\OrderStore;
@@ -26,16 +28,30 @@ use Webconsulting\AgentNexus\Ucp\Service\SseEncoder;
 final class CheckoutEndpoint
 {
     private const RATE_LIMIT = 25;
+    private const RATE_LIMIT_LLM = 10;
     private const RATE_WINDOW = 600;
 
     public function run(ServerRequestInterface $request): ResponseInterface
     {
         $input = json_decode((string)$request->getBody(), true);
         $input = is_array($input) ? $input : [];
+        unset($input['_settings'], $input['_llm'], $input['_freeIntent']);
 
-        if (!$this->passesRateLimit($request)) {
+        $rateLimiter = GeneralUtility::makeInstance(RateLimiter::class);
+        if (!$rateLimiter->passes($request, 'ucp', self::RATE_LIMIT, self::RATE_WINDOW)) {
             return new JsonResponse(['error' => 'Too many requests.'], 429);
         }
+
+        // Model-written rationale only on propose runs the element allows,
+        // within the shared guard and a tighter rate bucket. The free-text
+        // wish (if the widget sent one) grounds the rationale.
+        $settings = GeneralUtility::makeInstance(PluginSettings::class)
+            ->forContentElement((int)($input['ce'] ?? 0), 'agentnexus_checkout');
+        $input['_freeIntent'] = is_string($input['wish'] ?? null) ? $input['wish'] : '';
+        $input['_llm'] = !is_array($input['authorization'] ?? null)
+            && (string)($settings['use_llm'] ?? '1') !== '0'
+            && GeneralUtility::makeInstance(LlmGuard::class)->allows('ucp')['allowed']
+            && $rateLimiter->passes($request, 'ucp', self::RATE_LIMIT_LLM, self::RATE_WINDOW, 'llm');
 
         $runner = GeneralUtility::makeInstance(CheckoutRunner::class);
         $encoder = GeneralUtility::makeInstance(SseEncoder::class);
@@ -92,20 +108,4 @@ final class CheckoutEndpoint
         $encoder->stream($events, 60);
     }
 
-    private function passesRateLimit(ServerRequestInterface $request): bool
-    {
-        try {
-            $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('ucp');
-        } catch (\Throwable) {
-            return true;
-        }
-        $ip = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
-        $key = 'rl_' . sha1($ip);
-        $count = (int)$cache->get($key);
-        if ($count >= self::RATE_LIMIT) {
-            return false;
-        }
-        $cache->set($key, $count + 1, [], self::RATE_WINDOW);
-        return true;
-    }
 }

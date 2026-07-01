@@ -27,11 +27,13 @@ function initConcierge(root) {
   const eventCountEl = root.querySelector('[data-a2a-eventcount]');
 
   let skill = 'summarize_page';
+  let skillPinned = false; // free-text requests auto-route until a chip pins one
   root.querySelectorAll('[data-skill]').forEach((b) => {
     b.addEventListener('click', () => {
       root.querySelectorAll('[data-skill]').forEach((x) => x.classList.remove('is-active'));
       b.classList.add('is-active');
       skill = b.dataset.skill;
+      skillPinned = true;
     });
   });
   if (showEvents) eventsEl.hidden = false;
@@ -66,11 +68,14 @@ function initConcierge(root) {
     turn.append(status, ui);
     let artifactBody = null;
 
+    // A typed request without a pinned skill lets the server route it (the
+    // "expert router": model-backed when available, keyword fallback always).
+    const routedSkill = (!resume && intentLast && !skillPinned) ? '' : skill;
     const message = {
       role: 'user',
       parts: [{ kind: 'text', text: resume ? answer : (intentLast || ('Run skill: ' + skill)) }],
       messageId: 'm-' + rid(),
-      metadata: { skill, resume: !!resume, input: answer || '', page: Number(page), url: location.href },
+      metadata: { skill: routedSkill, resume: !!resume, input: answer || '', page: Number(page), ce: Number(root.dataset.ce || '0'), url: location.href },
     };
     if (resume && task.id) { message.taskId = task.id; message.contextId = task.contextId; }
     const body = { jsonrpc: '2.0', id: 1, method: 'message/stream', params: { message } };
@@ -99,6 +104,9 @@ function initConcierge(root) {
             const st = r.status && r.status.state;
             const m = r.status && r.status.message;
             const txt = (m && m.parts) ? m.parts.map((p) => p.text || '').join('') : '';
+            // Adopt the server-resolved skill (auto-routing) so a resume
+            // continues the same task instead of the local default.
+            if (m && m.metadata && m.metadata.skill) { skill = m.metadata.skill; }
             if (st === 'input-required') { renderInput(ui, txt); }
             else if (txt) setStatus(status, st, txt);
             else if (st) setStatus(status, st, null);

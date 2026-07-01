@@ -61,6 +61,20 @@
                             </items>
                         </config>
                     </settings.show_events>
+                    <settings.use_llm_explainer>
+                        <label>Plain-language chain explanation (model)</label>
+                        <description>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>0</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.use_llm_explainer>
                 </el>
             </ROOT>
         </sDEF>

@@ -6,13 +6,15 @@ namespace Webconsulting\AgentNexus\A2a\Eid;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use Webconsulting\AgentNexus\A2a\Service\RequestStore;
 use Webconsulting\AgentNexus\A2a\Service\SseEncoder;
 use Webconsulting\AgentNexus\A2a\Service\TaskLogger;
 use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
+use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
+use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
+use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
 
 /**
  * Public (frontend) endpoint for the A2A Concierge content element.
@@ -20,11 +22,13 @@ use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
  * The site's agent, made visitor-facing: it accepts an A2A `message/stream`
  * request, streams the Task lifecycle (including the cooperative `input-required`
  * pause) and, when the task completes, stores the request + returned artifact as a
- * lead. Rate-limited; the agent is deterministic and side-effect free.
+ * lead. Rate-limited (tighter for model-backed runs); side-effect free. LLM
+ * settings come from the content element server-side, never from the wire.
  */
 final class ConciergeEndpoint
 {
     private const RATE_LIMIT = 25;
+    private const RATE_LIMIT_LLM = 10;
     private const RATE_WINDOW = 600;
 
     public function run(ServerRequestInterface $request): ResponseInterface
@@ -32,16 +36,25 @@ final class ConciergeEndpoint
         $body = json_decode((string)$request->getBody(), true);
         $body = is_array($body) ? $body : [];
 
-        if (!$this->passesRateLimit($request)) {
+        $rateLimiter = GeneralUtility::makeInstance(RateLimiter::class);
+        if (!$rateLimiter->passes($request, 'a2a', self::RATE_LIMIT, self::RATE_WINDOW)) {
             return new JsonResponse(['error' => 'Too many requests.'], 429);
         }
 
         $rpcId = $body['id'] ?? 1;
         $params = is_array($body['params'] ?? null) ? $body['params'] : [];
+        unset($params['_settings'], $params['_llm']);
         $message = is_array($params['message'] ?? null) ? $params['message'] : [];
         $metadata = is_array($message['metadata'] ?? null) ? $message['metadata'] : [];
         $skill = (string)($metadata['skill'] ?? '');
         $prompt = $this->textOf($message);
+
+        $settings = GeneralUtility::makeInstance(PluginSettings::class)
+            ->forContentElement((int)($metadata['ce'] ?? 0), 'agentnexus_concierge');
+        $params['_settings'] = $settings;
+        $params['_llm'] = (string)($settings['use_llm'] ?? '1') !== '0'
+            && GeneralUtility::makeInstance(LlmGuard::class)->allows('a2a')['allowed']
+            && $rateLimiter->passes($request, 'a2a', self::RATE_LIMIT_LLM, self::RATE_WINDOW, 'llm');
 
         $runner = GeneralUtility::makeInstance(TaskRunner::class);
         $encoder = GeneralUtility::makeInstance(SseEncoder::class);
@@ -90,7 +103,7 @@ final class ConciergeEndpoint
             }
         });
 
-        $encoder->stream($frames, 55);
+        $encoder->stream($frames, $params['_llm'] ? 25 : 55);
     }
 
     private function textOf(array $message): string
@@ -102,22 +115,5 @@ final class ConciergeEndpoint
             }
         }
         return trim($text);
-    }
-
-    private function passesRateLimit(ServerRequestInterface $request): bool
-    {
-        try {
-            $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('a2a');
-        } catch (\Throwable) {
-            return true;
-        }
-        $ip = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
-        $key = 'rl_' . sha1($ip);
-        $count = (int)$cache->get($key);
-        if ($count >= self::RATE_LIMIT) {
-            return false;
-        }
-        $cache->set($key, $count + 1, [], self::RATE_WINDOW);
-        return true;
     }
 }

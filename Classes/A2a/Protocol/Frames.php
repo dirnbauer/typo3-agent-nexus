@@ -43,13 +43,20 @@ final class Frames
     }
 
     /**
-     * kind:status-update — a lifecycle transition, optionally with an agent message.
+     * kind:status-update — a lifecycle transition, optionally with an agent
+     * message. $messageMetadata rides along on the message (e.g. the routed
+     * skill, so a client can resume a server-routed task correctly).
+     *
+     * @param array<string, mixed>|null $messageMetadata
      */
-    public static function status(string $taskId, string $contextId, string $state, ?string $text = null, bool $final = false): array
+    public static function status(string $taskId, string $contextId, string $state, ?string $text = null, bool $final = false, ?array $messageMetadata = null): array
     {
         $status = ['state' => $state];
         if ($text !== null) {
             $status['message'] = self::message('agent', $text);
+            if ($messageMetadata !== null) {
+                $status['message']['metadata'] = $messageMetadata;
+            }
         }
         return [
             'kind' => 'status-update',

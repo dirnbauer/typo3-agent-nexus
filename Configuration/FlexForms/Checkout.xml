@@ -61,6 +61,20 @@
                             </items>
                         </config>
                     </settings.show_events>
+                    <settings.use_llm>
+                        <label>Model-written recommendation rationale</label>
+                        <description>The shopping agent's reasoning text is written by a real model (via nr-llm), grounded in the fixed cart. Cart contents and prices always stay deterministic. Global switch, budget and rate limits still apply.</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.use_llm>
                 </el>
             </ROOT>
         </sDEF>

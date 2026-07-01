@@ -68,6 +68,34 @@
                             </items>
                         </config>
                     </settings.show_events>
+                    <settings.use_llm>
+                        <label>Route and write with the real model</label>
+                        <description>When the visitor types a free request, a real model (via nr-llm) picks the skill and writes the artifact for their actual request. Keyword routing and scripted artifacts remain the fallback. Global switch, budget and rate limits still apply.</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.use_llm>
+                    <settings.show_rationale>
+                        <label>Show the routing rationale</label>
+                        <description>Display why the router chose a skill (one sentence) in the task status. Only applies to model-routed runs.</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.show_rationale>
                 </el>
             </ROOT>
         </sDEF>

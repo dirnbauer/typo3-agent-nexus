@@ -115,7 +115,7 @@ function initCheckout(root) {
     if (busy) return;
     busy = true; runBtn.disabled = true; runBtn.classList.add('is-busy');
     if (!extra) newStage();
-    const body = Object.assign({ intent, page: Number(page), url: location.href }, extra || {});
+    const body = Object.assign({ intent, page: Number(page), ce: Number(root.dataset.ce || '0'), url: location.href }, extra || {});
     try {
       const res = await fetch(runUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (!res.ok || !res.body) throw new Error('HTTP ' + res.status);

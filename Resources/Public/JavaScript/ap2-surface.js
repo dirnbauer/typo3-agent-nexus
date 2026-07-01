@@ -39,7 +39,7 @@ function initSurface(root) {
     mandatesEl.hidden = true; mandatesEl.innerHTML = '';
     const capCents = Math.max(1, Math.round(parseFloat(capEl.value || '500') * 100));
     try {
-      const res = await fetch(runUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cart, capCents, page: Number(page), url: location.href }) });
+      const res = await fetch(runUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cart, capCents, page: Number(page), ce: Number(root.dataset.ce || '0'), url: location.href }) });
       const r = await res.json();
       if (r.error) throw new Error(r.error);
 
@@ -50,7 +50,8 @@ function initSurface(root) {
         '<div class="ap2-ts__checks">' + checks + '</div>' +
         '<div class="ap2-ts__verdict ' + (r.authorized ? 'is-ok' : 'is-no') + '">' +
         (r.authorized ? '✓ Payment authorized' : '✕ Authorization refused') +
-        '<small>' + (r.authorized ? 'The mandate chain verified. Simulated — nothing was charged.' : 'A check failed — no payment would be made.') + '</small></div>';
+        '<small>' + (r.authorized ? 'The mandate chain verified. Simulated — nothing was charged.' : 'A check failed — no payment would be made.') + '</small></div>' +
+        (r.explanation ? '<div class="ap2-ts__explain">🛈 ' + esc(r.explanation) + '</div>' : '');
 
       if (showEvents && r.intentJwt) {
         mandatesEl.hidden = false;

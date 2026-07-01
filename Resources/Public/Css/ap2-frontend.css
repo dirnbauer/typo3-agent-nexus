@@ -160,3 +160,14 @@
 @media (prefers-reduced-motion: reduce) {
   .ap2-ts__go { transition: none; }
 }
+
+/* Optional model-written explanation of the verified chain */
+.ap2-ts__explain {
+  margin-top: .6rem;
+  padding: .55rem .75rem;
+  border: 1px solid var(--ap2-border, #d1d5db);
+  border-radius: .5rem;
+  font-size: .82rem;
+  color: var(--ap2-muted, #6b7280);
+  background: color-mix(in srgb, var(--ap2-accent, #e11d48) 5%, transparent);
+}
