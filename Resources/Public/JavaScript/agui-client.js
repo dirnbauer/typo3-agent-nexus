@@ -30,6 +30,7 @@ function initAssistant(root) {
   const runUrl = root.dataset.runUrl;
   const scenario = root.dataset.scenario || 'plan';
   const page = root.dataset.page || '0';
+  const ce = Number(root.dataset.ce || '0');
   const success = root.dataset.success || 'Thank you — we have received your request.';
   const showEvents = root.dataset.showEvents === '1';
 
@@ -140,13 +141,14 @@ function initAssistant(root) {
     busy = true; setBusy(true);
 
     const turn = bubble('agent');
+    const provenance = document.createElement('div'); provenance.className = 'agui-asst__provenance'; provenance.hidden = true;
     const think = document.createElement('div'); think.className = 'agui-asst__think'; think.hidden = true;
     const text = document.createElement('div'); text.className = 'agui-asst__text';
     const ui = document.createElement('div'); ui.className = 'agui-asst__ui';
-    turn.append(think, text, ui);
+    turn.append(provenance, think, text, ui);
 
     const input = Object.assign({
-      threadId, runId: 'r-' + rid(), preset: scenario, intent: lastIntent,
+      threadId, runId: 'r-' + rid(), preset: scenario, intent: lastIntent, ce,
       page: Number(page), url: location.href, messages: [], tools: [], state,
     }, extra || {});
 
@@ -182,6 +184,13 @@ function initAssistant(root) {
             case 'TOOL_CALL_END': onToolEnd(ev.toolCallId, ui); break;
             case 'RUN_FINISHED': onFinished(ev, ui); break;
             case 'RUN_ERROR': text.innerHTML = '<span class="agui-asst__err">⛔ ' + esc(ev.message || 'Something went wrong.') + '</span>'; break;
+            case 'CUSTOM':
+              if (ev.name === 'provenance' && ev.value) {
+                provenance.hidden = false;
+                provenance.className = 'agui-asst__provenance' + (ev.value.mode === 'llm' ? ' is-live' : '');
+                provenance.textContent = ev.value.label || (ev.value.mode === 'llm' ? 'Live model' : 'Scripted demo');
+              }
+              break;
             default: break;
           }
         }

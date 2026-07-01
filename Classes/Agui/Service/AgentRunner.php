@@ -6,29 +6,36 @@ namespace Webconsulting\AgentNexus\Agui\Service;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use Webconsulting\AgentNexus\Agui\Event\Events;
+use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
 
 /**
- * The "agent": a deterministic AG-UI event emitter.
+ * The "agent": an AG-UI event emitter.
  *
- * It turns a RunAgentInput into a strictly-ordered stream of AG-UI events,
- * scripted per task preset so the demo always works with no API key (mirroring
- * A2UI's deterministic fallback). The human-in-the-loop pause is the
- * centrepiece: the first run proposes a change and ends with a `confirm_apply`
- * (or `confirm_booking`) tool call; only a second run carrying the user's
- * approval triggers the apply phase.
+ * It turns a RunAgentInput into a strictly-ordered stream of AG-UI events.
+ * On the frontend, the assistant's answer text can come from a real model
+ * (nr-llm, soft dependency) streamed chunk by chunk; everything around it —
+ * and the whole run when no LLM is available/allowed — stays scripted per
+ * task preset so the demo always works without an API key.
  *
- * A real LLM backend can be slotted behind this later (nr-llm is a soft
- * dependency); the wire shape — RUN_STARTED … TOOL_CALL … RUN_FINISHED — is
- * identical either way.
+ * The human-in-the-loop pause is the centrepiece either way: the first run
+ * proposes and ends with a `confirm_apply`/`confirm_booking` tool call; only
+ * a second run carrying the user's approval triggers the apply phase. The
+ * gate, the apply phase and the lead write are NEVER model-controlled.
  */
 final class AgentRunner implements SingletonInterface
 {
     public function __construct(
         private readonly Applier $applier,
+        private readonly LlmClient $llmClient,
+        private readonly LlmGuard $llmGuard,
+        private readonly LlmUsageTracker $usageTracker,
     ) {}
 
     /**
      * @param array<string, mixed> $input RunAgentInput {threadId, runId, preset, messages, state, approval}
+     *                                    plus server-injected keys: _settings (FlexForm), _llm (bool)
      * @return \Generator<int, array<string, mixed>>
      */
     public function run(array $input, string $source): \Generator
@@ -42,17 +49,32 @@ final class AgentRunner implements SingletonInterface
             yield from $this->applyPhase($threadId, $preset, $config, $approval);
             return;
         }
-        yield from $this->proposePhase($threadId, $config);
+        yield from $this->proposePhase($threadId, $config, $source, $input);
     }
 
     /**
      * @param array<string, mixed> $c preset config
+     * @param array<string, mixed> $input full RunAgentInput
      * @return \Generator<int, array<string, mixed>>
      */
-    private function proposePhase(string $threadId, array $c): \Generator
+    private function proposePhase(string $threadId, array $c, string $source, array $input): \Generator
     {
         $runId = 'r-' . substr(md5($threadId . microtime(false)), 0, 8);
+        $intent = trim((string)($input['intent'] ?? ''));
+        $settings = is_array($input['_settings'] ?? null) ? $input['_settings'] : [];
+        $useLlm = (bool)($input['_llm'] ?? false) && $intent !== '';
+
         yield Events::runStarted($threadId, $runId);
+
+        // Provenance first, so the UI can label the whole run.
+        if ($useLlm) {
+            $connection = $this->llmClient->getConnectionInfo();
+            $model = $connection['model'] ?? 'default model';
+            yield Events::custom('provenance', ['mode' => 'llm', 'model' => $model, 'label' => 'Live model · ' . $model]);
+        } else {
+            yield Events::custom('provenance', ['mode' => 'scripted', 'model' => '', 'label' => 'Scripted demo']);
+        }
+
         yield Events::stepStarted('analyze');
 
         // Reasoning (chain-of-thought summary)
@@ -73,11 +95,15 @@ final class AgentRunner implements SingletonInterface
         yield Events::stepFinished('analyze');
         yield Events::stepStarted('draft');
 
-        // Streamed assistant text, word by word
+        // Assistant text: a real model answer when allowed, the scripted
+        // draft otherwise — the event shape is identical.
         $messageId = 'm-' . substr(md5($runId), 0, 6);
         yield Events::textStart($messageId);
-        foreach ($this->words($c['draft']) as $word) {
-            yield Events::textContent($messageId, $word);
+        $streamed = $useLlm ? yield from $this->streamLlmAnswer($messageId, $c, $intent, $settings) : false;
+        if (!$streamed) {
+            foreach ($this->words($c['draft']) as $word) {
+                yield Events::textContent($messageId, $word);
+            }
         }
         yield Events::textEnd($messageId);
         yield Events::stepFinished('draft');
@@ -199,6 +225,84 @@ final class AgentRunner implements SingletonInterface
         ];
 
         return $source === 'frontend' ? $frontend : $backend;
+    }
+
+    /**
+     * Stream a real model answer as TEXT_MESSAGE_CONTENT events.
+     *
+     * Returns true when at least one chunk was streamed; false lets the
+     * caller fall back to the scripted draft. A failure mid-stream degrades
+     * gracefully: whatever arrived stays, a short scripted close follows.
+     *
+     * @param array<string, mixed> $c preset config
+     * @param array<string, mixed> $settings FlexForm settings (server-loaded)
+     * @return \Generator<int, array<string, mixed>, mixed, bool>
+     */
+    private function streamLlmAnswer(string $messageId, array $c, string $intent, array $settings): \Generator
+    {
+        $systemPrompt = trim((string)($settings['llm_system_prompt'] ?? ''));
+        if ($systemPrompt === '') {
+            $systemPrompt = $this->buildSystemPrompt($c);
+        }
+        $maxTokens = $this->llmGuard->maxOutputTokens((int)($settings['llm_max_tokens'] ?? 0));
+
+        $text = '';
+        try {
+            foreach ($this->llmClient->streamText($systemPrompt, $intent, $maxTokens) as $chunk) {
+                if ($chunk === '') {
+                    continue;
+                }
+                $text .= $chunk;
+                yield Events::textContent($messageId, $chunk);
+            }
+        } catch (\Throwable) {
+            if ($text === '') {
+                return false;
+            }
+            yield Events::textContent($messageId, ' — and to keep things simple, let me hand over to the summary below.');
+        }
+
+        if ($text === '') {
+            return false;
+        }
+
+        $promptTokens = $this->llmClient->estimateTokens($systemPrompt . ' ' . $intent);
+        $completionTokens = $this->llmClient->estimateTokens($text);
+        $this->usageTracker->record(
+            'agui',
+            LlmUsageTracker::SOURCE_FRONTEND,
+            'default',
+            $promptTokens,
+            $completionTokens,
+            $this->llmClient->estimateCost($promptTokens, $completionTokens),
+        );
+
+        return true;
+    }
+
+    /**
+     * Built-in system prompt embedding the scenario's domain knowledge, used
+     * when the FlexForm does not override it.
+     *
+     * @param array<string, mixed> $c preset config
+     */
+    private function buildSystemPrompt(array $c): string
+    {
+        $knowledge = [
+            'scenario_summary' => (string)($c['reasoning'] ?? ''),
+            'confirm_tool' => (string)($c['tool'] ?? 'confirm_booking'),
+            'confirm_details' => $c['toolArgs'] ?? [],
+        ];
+        if (isset($c['uiTool']['args'])) {
+            $knowledge['offer_data'] = $c['uiTool']['args'];
+        }
+
+        return 'You are the live assistant on this website, answering one visitor question. '
+            . 'Answer helpfully and concretely in 2-4 short sentences of plain text — no markdown, no lists, no links. '
+            . 'Ground every claim in this scenario data (never invent prices or features beyond it): '
+            . json_encode($knowledge, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+            . ' After your answer the interface offers the visitor an explicit confirmation step; '
+            . 'do not tell them to click anything — just end with a sentence that naturally leads toward confirming.';
     }
 
     /** @return list<string> words with trailing spaces, for token streaming */

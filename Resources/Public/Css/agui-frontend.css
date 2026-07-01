@@ -295,3 +295,33 @@
   .agui-asst__evt { animation: none; }
   .agui-asst * { transition: none !important; }
 }
+
+/* Run provenance chip: "Live model · …" vs "Scripted demo" */
+.agui-asst__provenance {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  align-self: flex-start;
+  font-size: .68rem;
+  font-weight: 650;
+  padding: .18rem .5rem;
+  border-radius: 999px;
+  border: 1px solid var(--agui-border, #d1d5db);
+  color: var(--agui-muted, #6b7280);
+  background: transparent;
+  margin-bottom: .35rem;
+}
+.agui-asst__provenance.is-live {
+  color: var(--agui-accent, #2563eb);
+  border-color: color-mix(in srgb, var(--agui-accent, #2563eb) 45%, transparent);
+  background: color-mix(in srgb, var(--agui-accent, #2563eb) 8%, transparent);
+}
+.agui-asst__provenance.is-live::before {
+  content: "";
+  width: .45rem;
+  height: .45rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: agui-live-pulse 2s ease-in-out infinite;
+}
+@keyframes agui-live-pulse { 50% { opacity: .35; } }

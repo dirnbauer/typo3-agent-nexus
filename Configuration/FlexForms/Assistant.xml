@@ -107,6 +107,38 @@ Which plan scales with us?</default>
                             </items>
                         </config>
                     </settings.show_events>
+                    <settings.use_llm>
+                        <label>Answer with the real model</label>
+                        <description>When the visitor types a question, stream a real LLM answer (via nr-llm) instead of the scripted draft. The approval gate and lead capture stay scripted either way. Global switch, budget and rate limits still apply.</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.use_llm>
+                    <settings.llm_system_prompt>
+                        <label>System prompt override</label>
+                        <description>Optional. Replaces the built-in scenario prompt for model answers. Loaded server-side — visitors cannot see or change it.</description>
+                        <config>
+                            <type>text</type>
+                            <cols>48</cols>
+                            <rows>4</rows>
+                            <default></default>
+                        </config>
+                    </settings.llm_system_prompt>
+                    <settings.llm_max_tokens>
+                        <label>Max answer tokens</label>
+                        <description>Upper bound for one model answer. The extension-wide ceiling always wins. 0 = use the ceiling.</description>
+                        <config>
+                            <type>number</type>
+                            <default>400</default>
+                        </config>
+                    </settings.llm_max_tokens>
                 </el>
             </ROOT>
         </sDEF>
