@@ -11,6 +11,9 @@ use Webconsulting\AgentNexus\A2ui\Domain\Model\Component;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\GenerationResult;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\Surface;
 use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
+use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
 
 /**
  * The "agent": turns a natural-language intent into an A2UI v1.0 surface.
@@ -28,7 +31,8 @@ final class AgentService implements SingletonInterface
     public function __construct(
         private readonly ComponentRegistry $registry,
         private readonly LlmClient $llmClient,
-        private readonly UsageTracker $usageTracker,
+        private readonly LlmUsageTracker $usageTracker,
+        private readonly LlmGuard $llmGuard,
         private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly LoggerInterface $logger,
     ) {}
@@ -43,10 +47,20 @@ final class AgentService implements SingletonInterface
         $settings = $this->getSettings();
 
         $llmEnabled = (bool)($settings['llmEnabled'] ?? true);
+        // Frontend calls additionally pass the shared guard (global switch,
+        // per-protocol toggle, daily budget) — the backend playground only
+        // needs the module toggle.
+        if ($llmEnabled && ($context['source'] ?? '') === LlmUsageTracker::SOURCE_FRONTEND) {
+            $verdict = $this->llmGuard->allows('a2ui');
+            if (!$verdict['allowed']) {
+                $llmEnabled = false;
+                $notes[] = 'LLM skipped (' . $verdict['reason'] . '); used the built-in generator.';
+            }
+        }
         if ($intent !== '' && $llmEnabled && $this->llmClient->isAvailable()) {
             $model = (string)($settings['llmModel'] ?? '');
             try {
-                $completion = $this->llmClient->completeSurface(
+                $completion = $this->llmClient->completeJson(
                     $this->buildSystemPrompt($context),
                     $this->buildUserPrompt($intent, $context),
                     $model !== '' ? $model : null,
@@ -127,11 +141,11 @@ final class AgentService implements SingletonInterface
                 'cost' => $fmt($m['cost']),
                 'requests' => $m['requests'],
             ],
-            $this->usageTracker->getMonthlyCosts($months),
+            $this->usageTracker->getMonthlyCosts($months, 'a2ui'),
         );
 
         return [
-            'today' => $fmt($this->usageTracker->getCostToday()),
+            'today' => $fmt($this->usageTracker->getCostToday('a2ui')),
             'months' => $months,
             'instanceToday' => $fmt($this->llmClient->getInstanceCost($todayStart, $now)),
             'instanceRange' => $fmt($this->llmClient->getInstanceCost($rangeStart, $now)),
@@ -164,10 +178,11 @@ final class AgentService implements SingletonInterface
      */
     private function recordUsage(array $completion, array $context): void
     {
-        $source = ($context['source'] ?? '') === UsageTracker::SOURCE_FRONTEND
-            ? UsageTracker::SOURCE_FRONTEND
-            : UsageTracker::SOURCE_BACKEND;
+        $source = ($context['source'] ?? '') === LlmUsageTracker::SOURCE_FRONTEND
+            ? LlmUsageTracker::SOURCE_FRONTEND
+            : LlmUsageTracker::SOURCE_BACKEND;
         $this->usageTracker->record(
+            'a2ui',
             $source,
             $completion['model'] !== '' ? (string)$completion['model'] : 'default',
             (int)$completion['promptTokens'],

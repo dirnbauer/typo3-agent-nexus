@@ -1,11 +1,32 @@
+# cat=llm/enable; type=boolean; label=Enable frontend LLM calls: Global switch for all real LLM usage from the frontend plugins. When off, every plugin falls back to its deterministic scripted demo.
+llmFrontendEnabled = 1
+
+# cat=llm/enable; type=string; label=Daily LLM budget (USD): Frontend LLM calls stop (deterministic fallback) once today's combined Agent Nexus spend reaches this amount. 0 disables the cap.
+llmDailyBudget = 2.00
+
+# cat=llm/enable; type=int+; label=Max output tokens per frontend call: Hard ceiling; plugin settings may lower but never exceed it.
+llmMaxOutputTokens = 700
+
 # cat=a2ui/enable; type=boolean; label=Enable A2UI LLM generation: When on and netresearch/nr-llm is installed with a provider, A2UI uses a model. When off, the deterministic generator is used.
 a2uiLlmEnabled = 1
 
 # cat=a2ui/model; type=string; label=A2UI LLM model: Optional model id passed to nr-llm. Leave empty to use the provider default.
 a2uiLlmModel =
 
+# cat=agui/enable; type=boolean; label=Enable AG-UI LLM answers: When on, the frontend assistant streams a real model answer. The approval gate and lead write stay scripted either way.
+aguiLlmEnabled = 1
+
 # cat=agui/apply; type=boolean; label=AG-UI really apply approved writes: Keep off for demos. When off, approved writes are simulated and logged only.
 aguiReallyApply = 0
 
+# cat=a2a/enable; type=boolean; label=Enable A2A LLM routing: When on, skill routing (and the routing rationale) come from a real model; malformed answers fall back to keyword routing.
+a2aLlmEnabled = 1
+
+# cat=ucp/enable; type=boolean; label=Enable UCP LLM rationale: When on, the shopping agent's recommendation text is model-written. Cart contents and prices always stay deterministic.
+ucpLlmEnabled = 1
+
 # cat=ucp/apply; type=boolean; label=UCP really charge: Keep off for demos. When off, every checkout is simulated and no order is placed with a real system.
 ucpReallyApply = 0
+
+# cat=ap2/enable; type=boolean; label=Enable AP2 LLM explainer: When on, receipts include a model-written plain-language explanation of the verified mandate chain. The mandates themselves are always deterministic.
+ap2LlmEnabled = 0

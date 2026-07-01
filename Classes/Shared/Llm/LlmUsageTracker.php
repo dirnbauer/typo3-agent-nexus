@@ -2,33 +2,33 @@
 
 declare(strict_types=1);
 
-namespace Webconsulting\AgentNexus\A2ui\Service;
+namespace Webconsulting\AgentNexus\Shared\Llm;
 
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * Records and aggregates A2UI's own LLM spend.
+ * Records and aggregates Agent Nexus' own LLM spend across all protocols.
  *
- * Every successful LLM generation — whether from the backend playground or the
- * frontend inquiry plugin — writes one row here with the real token counts and
- * cost reported by nr-llm. This is what lets the backend show the *combined*
- * A2UI cost (today, and per month) without it being diluted by other nr-llm
- * consumers in the instance.
+ * Every LLM call — backend playground or frontend plugin, streamed or not —
+ * writes one row with token counts and cost. Streamed calls bypass nr-llm's
+ * usage middleware entirely, so this ledger is the *only* record of their
+ * spend and the source the daily frontend budget guard counts against.
  */
-final class UsageTracker implements SingletonInterface
+final class LlmUsageTracker implements SingletonInterface
 {
     public const SOURCE_BACKEND = 'backend';
     public const SOURCE_FRONTEND = 'frontend';
 
-    private const TABLE = 'tx_agentnexus_a2ui_usage';
+    private const TABLE = 'tx_agentnexus_llm_usage';
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
     ) {}
 
     public function record(
+        string $protocol,
         string $source,
         string $model,
         int $promptTokens,
@@ -41,6 +41,7 @@ final class UsageTracker implements SingletonInterface
             'pid' => 0,
             'crdate' => $now,
             'request_date' => (int)strtotime('today'),
+            'protocol' => mb_substr($protocol, 0, 12),
             'source' => $source,
             'be_user' => $beUser,
             'model' => $model,
@@ -54,10 +55,10 @@ final class UsageTracker implements SingletonInterface
     /**
      * @return array{cost: float, requests: int, tokens: int}
      */
-    public function getTotals(int $from, int $to): array
+    public function getTotals(int $from, int $to, ?string $protocol = null): array
     {
         $qb = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
-        $row = $qb
+        $qb
             ->addSelectLiteral('COALESCE(SUM(cost), 0) AS cost')
             ->addSelectLiteral('COUNT(*) AS requests')
             ->addSelectLiteral('COALESCE(SUM(total_tokens), 0) AS tokens')
@@ -65,9 +66,11 @@ final class UsageTracker implements SingletonInterface
             ->where(
                 $qb->expr()->gte('request_date', $qb->createNamedParameter($from, Connection::PARAM_INT)),
                 $qb->expr()->lte('request_date', $qb->createNamedParameter($to, Connection::PARAM_INT)),
-            )
-            ->executeQuery()
-            ->fetchAssociative();
+            );
+        if ($protocol !== null && $protocol !== '') {
+            $qb->andWhere($qb->expr()->eq('protocol', $qb->createNamedParameter($protocol)));
+        }
+        $row = $qb->executeQuery()->fetchAssociative();
 
         $row = is_array($row) ? $row : [];
         return [
@@ -77,9 +80,9 @@ final class UsageTracker implements SingletonInterface
         ];
     }
 
-    public function getCostToday(): float
+    public function getCostToday(?string $protocol = null): float
     {
-        return $this->getTotals((int)strtotime('today'), time())['cost'];
+        return $this->getTotals((int)strtotime('today'), time(), $protocol)['cost'];
     }
 
     /**
@@ -87,14 +90,14 @@ final class UsageTracker implements SingletonInterface
      *
      * @return array<int, array{label: string, year: int, month: int, cost: float, requests: int}>
      */
-    public function getMonthlyCosts(int $months = 3): array
+    public function getMonthlyCosts(int $months = 3, ?string $protocol = null): array
     {
         $result = [];
         $cursor = new \DateTimeImmutable('first day of this month 00:00:00');
         for ($i = 0; $i < $months; $i++) {
             $start = $cursor->modify('-' . $i . ' months');
             $end = $start->modify('+1 month')->modify('-1 second');
-            $totals = $this->getTotals($start->getTimestamp(), $end->getTimestamp());
+            $totals = $this->getTotals($start->getTimestamp(), $end->getTimestamp(), $protocol);
             $result[] = [
                 'label' => $start->format('M Y'),
                 'year' => (int)$start->format('Y'),

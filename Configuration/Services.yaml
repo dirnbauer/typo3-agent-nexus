@@ -69,3 +69,20 @@ services:
 
   Webconsulting\AgentNexus\Ucp\Controller\CheckoutController:
     public: true
+
+  # Shared layer — fetched via makeInstance from the eID endpoints, so the
+  # container must expose them.
+  Webconsulting\AgentNexus\Shared\Llm\LlmClient:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Llm\LlmGuard:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Http\RateLimiter:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Http\PluginSettings:
+    public: true

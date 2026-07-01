@@ -1,12 +1,14 @@
 #
-# A2UI LLM usage ledger — one row per LLM generation (backend module + frontend
-# plugin), so the backend can show the combined A2UI spend (today, per month).
+# LLM usage ledger — one row per LLM call from any protocol (backend modules +
+# frontend plugins), so the hub can show combined and per-protocol spend and
+# the frontend budget guard has something to count against.
 #
-CREATE TABLE tx_agentnexus_a2ui_usage (
+CREATE TABLE tx_agentnexus_llm_usage (
     uid int(11) unsigned NOT NULL auto_increment,
     pid int(11) unsigned DEFAULT '0' NOT NULL,
     crdate int(11) unsigned DEFAULT '0' NOT NULL,
     request_date int(11) unsigned DEFAULT '0' NOT NULL,
+    protocol varchar(12) DEFAULT '' NOT NULL,
     source varchar(16) DEFAULT '' NOT NULL,
     be_user int(11) unsigned DEFAULT '0' NOT NULL,
     model varchar(120) DEFAULT '' NOT NULL,
@@ -17,6 +19,7 @@ CREATE TABLE tx_agentnexus_a2ui_usage (
 
     PRIMARY KEY (uid),
     KEY request_date (request_date),
+    KEY protocol (protocol),
     KEY source (source)
 );
 
