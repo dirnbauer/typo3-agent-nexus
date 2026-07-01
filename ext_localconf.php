@@ -31,40 +31,22 @@ $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['ucp_manifest'] = ManifestEndpo
 $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['ucp_checkout'] = CheckoutEndpoint::class . '::run';
 $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['ap2_authorize'] = AuthorizeEndpoint::class . '::authorize';
 
-ExtensionUtility::configurePlugin(
-    'AgentNexus',
-    'Inquiry',
-    [InquiryPluginController::class => 'show'],
-    [],
-);
+$plugins = [
+    'Inquiry' => InquiryPluginController::class,
+    'Assistant' => AssistantPluginController::class,
+    'Concierge' => ConciergePluginController::class,
+    'Checkout' => CheckoutPluginController::class,
+    'TrustedSurface' => TrustedSurfacePluginController::class,
+];
 
-ExtensionUtility::configurePlugin(
-    'AgentNexus',
-    'Assistant',
-    [AssistantPluginController::class => 'show'],
-    [],
-);
-
-ExtensionUtility::configurePlugin(
-    'AgentNexus',
-    'Concierge',
-    [ConciergePluginController::class => 'show'],
-    [],
-);
-
-ExtensionUtility::configurePlugin(
-    'AgentNexus',
-    'Checkout',
-    [CheckoutPluginController::class => 'show'],
-    [],
-);
-
-ExtensionUtility::configurePlugin(
-    'AgentNexus',
-    'TrustedSurface',
-    [TrustedSurfacePluginController::class => 'show'],
-    [],
-);
+foreach ($plugins as $pluginName => $controllerClass) {
+    ExtensionUtility::configurePlugin(
+        'AgentNexus',
+        $pluginName,
+        [$controllerClass => 'show'],
+        [],
+    );
+}
 
 foreach (['a2ui', 'agui', 'a2a', 'ucp', 'ap2'] as $cacheName) {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheName] ??= [

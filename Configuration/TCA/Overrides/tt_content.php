@@ -55,15 +55,13 @@ foreach ($plugins as $plugin) {
         $plugin['description'],
     );
 
-    ExtensionManagementUtility::addPiFlexFormValue(
-        '*',
-        'FILE:EXT:agent_nexus/Configuration/FlexForms/' . $plugin['flexForm'],
-        $cType,
-    );
+    $GLOBALS['TCA']['tt_content']['types'][$cType] ??= $GLOBALS['TCA']['tt_content']['types']['header'] ?? ['showitem' => ''];
+    $GLOBALS['TCA']['tt_content']['types'][$cType]['columnsOverrides']['pi_flexform']['config']['ds']
+        = 'FILE:EXT:agent_nexus/Configuration/FlexForms/' . $plugin['flexForm'];
 
     ExtensionManagementUtility::addToAllTCAtypes(
         'tt_content',
-        '--div--;Plugin,pi_flexform',
+        '--div--;core.form.tabs:plugin, pi_flexform',
         $cType,
         'after:palette:headers',
     );
