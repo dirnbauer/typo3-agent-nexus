@@ -50,7 +50,7 @@ export async function withGsap(root) {
 export function reveal(gsap, elements, opts = {}) {
   const targets = Array.from(elements || []);
   if (!gsap || targets.length === 0) return null;
-  return gsap.fromTo(
+  return ensureFinished(gsap.fromTo(
     targets,
     { autoAlpha: 0, y: 10 },
     {
@@ -63,7 +63,7 @@ export function reveal(gsap, elements, opts = {}) {
       clearProps: 'transform',
       overwrite: 'auto',
     },
-  );
+  ));
 }
 
 /** Count a numeric element up from 0 to its data-anx-count value. */
@@ -76,7 +76,7 @@ export function countUp(gsap, el, opts = {}) {
   const prefix = el.dataset.anxPrefix ?? '';
   const suffix = el.dataset.anxSuffix ?? '';
   const state = { value: 0 };
-  return gsap.to(state, {
+  return ensureFinished(gsap.to(state, {
     value: target,
     duration: opts.duration ?? 0.9,
     delay: opts.delay ?? 0,
@@ -84,7 +84,7 @@ export function countUp(gsap, el, opts = {}) {
     onUpdate: () => {
       el.textContent = prefix + state.value.toFixed(decimals) + suffix;
     },
-  });
+  }));
 }
 
 /** Animate all [data-anx-count] descendants of a scope. */
@@ -100,4 +100,20 @@ export function killAll(...animations) {
   animations.forEach((animation) => {
     if (animation && typeof animation.kill === 'function') animation.kill();
   });
+}
+
+/**
+ * Safety net for throttled contexts: background tabs suspend rAF entirely,
+ * freezing GSAP's ticker with entrance tweens stuck at opacity 0. setTimeout
+ * still fires (throttled but eventually), so force any unfinished entrance
+ * animation to its end state. Never use on infinite loops.
+ */
+export function ensureFinished(animation, ms = 1600) {
+  if (!animation || typeof animation.progress !== 'function') return animation;
+  setTimeout(() => {
+    try {
+      if (animation.progress() < 1 && !animation.paused()) animation.progress(1);
+    } catch { /* already killed */ }
+  }, ms);
+  return animation;
 }

@@ -9,7 +9,7 @@
  * panel so nothing leaks between tab switches.
  */
 
-import { withGsap, reveal, countUpAll, killAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { withGsap, reveal, countUpAll, killAll, ensureFinished } from '@webconsulting/agent-nexus/nexus-motion.js';
 
 let panelIntro = null;
 let panelLoop = null;
@@ -39,6 +39,7 @@ function animateMap(gsap, root) {
   mapIntro
     .fromTo(nodes, { autoAlpha: 0, scale: 0.92, transformOrigin: '50% 50%' }, { autoAlpha: 1, scale: 1, duration: 0.5, stagger: 0.07 }, 0)
     .to(edges, { strokeDashoffset: 0, duration: 0.9, stagger: 0.12 }, 0.25);
+  ensureFinished(mapIntro);
 
   // A pulse dot travels each edge forever; getPointAtLength keeps us inside
   // GSAP core (no MotionPathPlugin needed).
@@ -99,6 +100,7 @@ function animatePanel(gsap, root) {
     // Message lines and their labels share indices; animate in document order.
     panelIntro.fromTo(mmSteps, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.32, stagger: 0.07, ease: 'power1.out' }, 0.3);
   }
+  ensureFinished(panelIntro, 2000);
 
   if (!beam || !steps.length) return;
 
@@ -242,11 +244,12 @@ ready(() => {
 
   gsapReady.then((gsap) => {
     if (!gsap) return;
-    const hero = root.querySelector('[data-anx-hero]');
-    if (hero) {
-      reveal(gsap, hero.querySelectorAll('.anx-reveal'));
-      countUpAll(gsap, hero);
-    }
+    // Everything outside the tab panels reveals once on load: the hero and
+    // the top-level section cards (map, theory, comparison, glossary).
+    const topReveals = Array.from(root.querySelectorAll('.anx-reveal'))
+      .filter((el) => !el.closest('.anx-panel'));
+    ensureFinished(reveal(gsap, topReveals));
+    countUpAll(gsap, root.querySelector('[data-anx-hero]') || root);
     animateMap(gsap, root);
     animatePanel(gsap, root);
   });
