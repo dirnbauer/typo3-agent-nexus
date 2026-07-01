@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    actor V as Visitor
+    participant W as Inquiry widget
+    participant E as TYPO3 eID<br/>a2ui_generate
+    participant A as Agent (nr-llm)
+    V->>W: describes need in one sentence
+    W->>E: POST intent
+    E->>A: system prompt + component catalog
+    A-->>E: surface JSON (components + data model)
+    E-->>W: validated A2UI surface
+    W->>W: render native form from JSON
+    V->>W: fills fields, submits
+    W->>E: POST a2ui_submit (data model)
+    E-->>V: stored inquiry + confirmation

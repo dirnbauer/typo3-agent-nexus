@@ -1,0 +1,12 @@
+{
+  "name": "@webconsulting/agent-nexus-build",
+  "private": true,
+  "description": "Dev-only tooling: renders the Mermaid diagram partials for the Agent Nexus overview module.",
+  "type": "module",
+  "scripts": {
+    "diagrams": "node Build/render-diagrams.mjs"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^11.12.0"
+  }
+}

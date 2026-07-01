@@ -1,0 +1,126 @@
+/* Agent Nexus design tokens.
+ *
+ * One token vocabulary (--anx-*) for both rendering contexts:
+ *   .anx--backend  — neutrals delegate to TYPO3 v14 --typo3-* tokens, so the
+ *                    module follows the backend light/dark scheme for free.
+ *   .anx--frontend — neutrals delegate to the shadcn host theme (desiderio),
+ *                    so plugins blend into whatever site embeds them.
+ *
+ * light-dark() resolves against the host's color-scheme; every such value
+ * carries a static light fallback declared first for engines without it.
+ * No raw hex outside this file (fallbacks excepted).
+ */
+
+.anx {
+  /* geometry */
+  --anx-radius: 0.625rem;
+  --anx-radius-sm: calc(var(--anx-radius) - 4px);
+  --anx-radius-full: 999px;
+
+  /* elevation */
+  --anx-shadow-color: rgba(0, 0, 0, 0.08);
+  --anx-shadow-color: light-dark(rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.45));
+  --anx-shadow-xs: 0 1px 2px 0 var(--anx-shadow-color);
+  --anx-shadow-sm: 0 1px 3px 0 var(--anx-shadow-color), 0 1px 2px -1px var(--anx-shadow-color);
+  --anx-shadow-md: 0 4px 6px -1px var(--anx-shadow-color), 0 2px 4px -2px var(--anx-shadow-color);
+
+  /* type */
+  --anx-font-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
+  --anx-text-xs: 0.72rem;
+  --anx-text-sm: 0.82rem;
+  --anx-text-base: 0.92rem;
+  --anx-text-lg: 1.18rem;
+  --anx-text-xl: 1.65rem;
+
+  /* protocol accents (static light value first, then adaptive pair) */
+  --anx-accent-a2ui: #7c3aed;
+  --anx-accent-a2ui: light-dark(#7c3aed, #a78bfa);
+  --anx-accent-agui: #2563eb;
+  --anx-accent-agui: light-dark(#2563eb, #60a5fa);
+  --anx-accent-a2a: #059669;
+  --anx-accent-a2a: light-dark(#059669, #34d399);
+  --anx-accent-ucp: #d97706;
+  --anx-accent-ucp: light-dark(#d97706, #fbbf24);
+  --anx-accent-ap2: #e11d48;
+  --anx-accent-ap2: light-dark(#e11d48, #fb7185);
+  --anx-accent-mcp: #64748b;
+  --anx-accent-mcp: light-dark(#64748b, #94a3b8);
+
+  /* status */
+  --anx-ok: #16a34a;
+  --anx-ok: light-dark(#16a34a, #4ade80);
+  --anx-warn: #d97706;
+  --anx-warn: light-dark(#d97706, #fbbf24);
+  --anx-danger: #dc2626;
+  --anx-danger: light-dark(#dc2626, #f87171);
+
+  /* default accent until a scope narrows it */
+  --accent: var(--anx-accent-mcp);
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-strong: color-mix(in srgb, var(--accent) 85%, var(--anx-fg));
+
+  color: var(--anx-fg);
+  font-size: var(--anx-text-base);
+  line-height: 1.55;
+}
+
+.anx *,
+.anx *::before,
+.anx *::after { box-sizing: border-box; }
+
+/* ---- context: TYPO3 backend ------------------------------------------- */
+/* --typo3-* tokens exist since v14 and flip via light-dark()/color-scheme;
+   static fallbacks target the light scheme only. */
+
+.anx--backend {
+  --anx-bg: var(--typo3-surface-container-base, #f5f5f5);
+  --anx-card: var(--typo3-component-bg, #ffffff);
+  --anx-fg: var(--typo3-text-color-base, #18181b);
+  --anx-muted-fg: var(--typo3-text-color-variant, #71717a);
+  --anx-border: var(--typo3-component-border-color, #e4e4e7);
+  --anx-surface-1: var(--typo3-surface-container-low, #f4f4f5);
+  --anx-surface-2: var(--typo3-surface-container-high, #e9e9eb);
+  --anx-hover: var(--typo3-component-hover-bg, #f4f4f5);
+  --anx-ring: color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* ---- context: website frontend ----------------------------------------- */
+/* Maps to shadcn semantic tokens exposed by the desiderio theme; static
+   fallbacks keep the widgets legible on hosts without those variables. */
+
+.anx--frontend {
+  --anx-bg: var(--background, #ffffff);
+  --anx-card: var(--card, #ffffff);
+  --anx-fg: var(--card-foreground, var(--foreground, #18181b));
+  --anx-muted-fg: var(--muted-foreground, #71717a);
+  --anx-border: var(--border, #e4e4e7);
+  --anx-surface-1: var(--secondary, #f4f4f5);
+  --anx-surface-2: var(--muted, #e9e9eb);
+  --anx-hover: var(--secondary, #f4f4f5);
+  --anx-ring: var(--ring, color-mix(in srgb, var(--accent) 35%, transparent));
+  --anx-radius: var(--radius, 0.625rem);
+  color-scheme: inherit;
+  font-family: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .anx--frontend {
+    --anx-bg: var(--background, #09090b);
+    --anx-card: var(--card, #18181b);
+    --anx-fg: var(--card-foreground, var(--foreground, #fafafa));
+    --anx-muted-fg: var(--muted-foreground, #a1a1aa);
+    --anx-border: var(--border, #27272a);
+    --anx-surface-1: var(--secondary, #27272a);
+    --anx-surface-2: var(--muted, #3f3f46);
+    --anx-hover: var(--secondary, #27272a);
+  }
+}
+
+/* ---- protocol accent scopes -------------------------------------------- */
+
+.anx-accent--a2ui { --accent: var(--anx-accent-a2ui); }
+.anx-accent--agui { --accent: var(--anx-accent-agui); }
+.anx-accent--a2a { --accent: var(--anx-accent-a2a); }
+.anx-accent--ucp { --accent: var(--anx-accent-ucp); }
+.anx-accent--ap2 { --accent: var(--anx-accent-ap2); }
+.anx-accent--mcp { --accent: var(--anx-accent-mcp); }

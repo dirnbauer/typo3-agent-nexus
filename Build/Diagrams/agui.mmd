@@ -1,0 +1,16 @@
+sequenceDiagram
+    autonumber
+    actor V as Visitor
+    participant W as Assistant widget
+    participant E as TYPO3 eID<br/>agui_assistant
+    participant A as Agent (nr-llm)
+    V->>W: asks a question
+    W->>E: POST RunAgentInput (SSE)
+    E-->>W: RUN_STARTED
+    E->>A: stream answer
+    A-->>W: TEXT_MESSAGE_CONTENT (chunks)
+    E-->>W: TOOL_CALL confirm_booking
+    Note over V,W: human-in-the-loop gate
+    V->>W: approves
+    W->>E: approval + lead
+    E-->>W: STATE_DELTA + RUN_FINISHED

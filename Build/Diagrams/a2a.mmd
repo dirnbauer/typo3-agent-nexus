@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    participant C as Client agent
+    participant D as Discovery<br/>/.well-known/agent.json
+    participant S as TYPO3 A2A server<br/>a2a_rpc
+    participant X as Specialist skill
+    C->>D: GET agent card
+    D-->>C: skills, transport, auth
+    C->>S: JSON-RPC message/send
+    S-->>C: task: submitted
+    S->>X: route by skill
+    S-->>C: status: working
+    X-->>S: artifact chunks
+    S-->>C: artifact + status: completed

@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    actor V as Visitor
+    participant A as Shopping agent
+    participant M as Merchant manifest<br/>ucp_manifest
+    participant C as Checkout<br/>ucp_checkout
+    A->>M: discover capabilities + catalog
+    M-->>A: products, currency, policies
+    A->>C: open checkout session (intent)
+    C-->>A: proposed cart + total
+    Note over V,C: nothing is bought yet
+    C-->>V: authorization_required
+    V->>C: approve (or reject)
+    C-->>A: order confirmed + receipt

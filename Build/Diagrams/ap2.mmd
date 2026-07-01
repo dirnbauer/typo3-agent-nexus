@@ -1,0 +1,14 @@
+sequenceDiagram
+    autonumber
+    actor V as Visitor
+    participant S as Trusted surface
+    participant M as Mandate service<br/>ap2_authorize
+    participant P as Verifier
+    V->>S: sets spending cap + approves quote
+    S->>M: mint intent mandate
+    M-->>S: signed JWT (cap, expiry)
+    S->>M: mint cart mandate (exact total)
+    M-->>S: signed JWT (chained hash)
+    S->>P: verify chain
+    P-->>S: chain valid: authorized
+    S-->>V: verifiable receipt
