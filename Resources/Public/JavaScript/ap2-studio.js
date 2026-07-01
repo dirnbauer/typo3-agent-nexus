@@ -8,6 +8,8 @@
  * Everything is sandbox-signed; no real payment is initiated.
  */
 
+import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function ajax(name) { return window.TYPO3 && TYPO3.settings && TYPO3.settings.ajaxUrls ? TYPO3.settings.ajaxUrls[name] : null; }
 async function post(name, body) {
@@ -18,13 +20,27 @@ async function post(name, body) {
 }
 function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
 
+// Entrance: staggered card reveal + stat count-up (no-op under reduced motion).
+ready(() => {
+  const anxRoot = document.querySelector('.anx');
+  if (!anxRoot) return;
+  withGsap(anxRoot).then((g) => {
+    if (!g) return;
+    reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
+    countUpAll(g, anxRoot);
+  });
+});
+
 function renderToken(host, jwt, claims) {
   const parts = jwt.split('.');
-  host.classList.remove('d-none');
+  host.classList.remove('ap2-hidden');
   host.innerHTML =
+    '<div class="anx-card anx-spec ap2-token__spec">' +
+    '<div class="anx-spec__head"><span class="anx-spec__dots"><i></i><i></i><i></i></span>' +
+    '<span class="anx-spec__label">' + esc(claims.typ || 'Mandate') + '.jwt · jti ' + esc(claims.jti || '') + '</span></div>' +
     '<div class="ap2-token__jwt"><b>' + esc(parts[0]) + '</b>.<i>' + esc(parts[1]) + '</i>.<s>' + esc(parts[2]) + '</s></div>' +
     '<pre class="ap2-token__claims">' + esc(JSON.stringify(claims, null, 2)) + '</pre>' +
-    '<div class="ap2-token__jti">jti <b>' + esc(claims.jti || '') + '</b></div>';
+    '</div>';
 }
 
 ready(() => {
@@ -67,9 +83,9 @@ ready(() => {
   function renderChecks(result) {
     const checks = result.checks || [];
     checksEl.innerHTML = checks.map((c) =>
-      '<div class="ap2-check ' + (c.pass ? 'is-pass' : 'is-fail') + '"><span class="ap2-check__icon">' + (c.pass ? '✓' : '✕') + '</span>' +
-      '<span>' + esc(c.label) + ' <span class="ap2-check__detail">' + esc(c.detail) + '</span></span></div>').join('');
-    verdictEl.classList.remove('d-none', 'is-ok', 'is-no');
+      '<div class="ap2-check"><span class="anx-badge ' + (c.pass ? 'anx-badge--ok' : 'anx-badge--danger') + '">' + (c.pass ? '✓' : '✕') + '</span>' +
+      '<span class="ap2-check__text">' + esc(c.label) + ' <span class="ap2-check__detail">' + esc(c.detail) + '</span></span></div>').join('');
+    verdictEl.classList.remove('ap2-hidden', 'is-ok', 'is-no');
     if (result.authorized) {
       verdictEl.classList.add('is-ok');
       verdictEl.innerHTML = '✓ Payment authorized<small>The chain is valid — a real deployment would now charge via the payment network.</small>';
@@ -88,7 +104,7 @@ ready(() => {
       renderToken(intentOut, intentJwt, r.claims);
       stepCart.classList.remove('is-locked');
       mintCartBtn.disabled = false;
-    } catch (e) { intentOut.classList.remove('d-none'); intentOut.innerHTML = '<span style="color:#dc2626">' + esc(e.message) + '</span>'; }
+    } catch (e) { intentOut.classList.remove('ap2-hidden'); intentOut.innerHTML = '<span class="ap2-error">' + esc(e.message) + '</span>'; }
     mintIntentBtn.disabled = false;
   });
 
@@ -102,21 +118,21 @@ ready(() => {
       verifyBtn.disabled = false;
       tamperEl.value = cartJwt;
       retamperBtn.disabled = false;
-    } catch (e) { cartOut.classList.remove('d-none'); cartOut.innerHTML = '<span style="color:#dc2626">' + esc(e.message) + '</span>'; }
+    } catch (e) { cartOut.classList.remove('ap2-hidden'); cartOut.innerHTML = '<span class="ap2-error">' + esc(e.message) + '</span>'; }
     mintCartBtn.disabled = false;
   });
 
   verifyBtn.addEventListener('click', async () => {
     verifyBtn.disabled = true;
     try { renderChecks(await post('ap2_verify', { intentJwt, cartJwt })); }
-    catch (e) { checksEl.innerHTML = '<span style="color:#dc2626">' + esc(e.message) + '</span>'; }
+    catch (e) { checksEl.innerHTML = '<span class="ap2-error">' + esc(e.message) + '</span>'; }
     verifyBtn.disabled = false;
   });
 
   retamperBtn.addEventListener('click', async () => {
     retamperBtn.disabled = true;
     try { renderChecks(await post('ap2_verify', { intentJwt, cartJwt: (tamperEl.value || '').trim() })); }
-    catch (e) { checksEl.innerHTML = '<span style="color:#dc2626">' + esc(e.message) + '</span>'; }
+    catch (e) { checksEl.innerHTML = '<span class="ap2-error">' + esc(e.message) + '</span>'; }
     retamperBtn.disabled = false;
   });
 });

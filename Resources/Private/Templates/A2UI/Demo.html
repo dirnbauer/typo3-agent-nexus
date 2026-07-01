@@ -6,38 +6,63 @@
 
 <f:section name="Content">
 
-<div class="a2ui-demo" style="max-width: 1200px;">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div>
-            <h1 class="mb-1">Component Gallery</h1>
-            <p class="text-body-secondary mb-0">
-                Each example below is an A2UI v1.0 surface rendered <strong>server-side</strong> (no JavaScript).
-                The same surfaces render live and interactively in the playground.
+<div class="anx anx--backend anx-accent--a2ui anx-module">
+
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">A2UI <em>trusted component catalog</em></span>
+            <h1 class="anx-title">Component Gallery</h1>
+            <p class="anx-lede">
+                Each example is an A2UI&nbsp;v1.0 surface rendered <strong>server-side</strong> (no JavaScript) —
+                the same surfaces render live and interactively in the playground.
             </p>
         </div>
-        <a href="{f:uri.action(action: 'dashboard')}" class="btn btn-outline-secondary btn-sm">
-            <core:icon identifier="actions-arrow-left" size="small" /> Back to playground
-        </a>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <span class="anx-badge anx-badge--sim">Simulation</span>
+                <a href="{f:uri.action(action: 'dashboard')}" class="anx-btn anx-btn--ghost anx-btn--sm">
+                    <core:icon identifier="actions-arrow-left" size="small" /> Back to playground
+                </a>
+                <a class="anx-btn anx-btn--ghost anx-btn--sm"
+                   href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2ui"
+                   target="_blank" rel="noreferrer">Frontend demo &#8599;</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{examples -> f:count()}">{examples -> f:count()}</span>
+            <span class="anx-stat__label">Example surfaces</span>
+            <span class="anx-stat__hint">deterministic generator, no LLM</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{catalog -> f:count()}">{catalog -> f:count()}</span>
+            <span class="anx-stat__label">Trusted components</span>
+            <span class="anx-stat__hint">the only ones an agent may use</span>
+        </div>
     </div>
 
     <f:for each="{examples}" as="example" key="title">
-        <div class="card mb-4">
-            <div class="card-header"><h2 class="h5 mb-0">{title}</h2></div>
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-lg-6">
-                        <div class="text-uppercase small text-body-secondary mb-2">Rendered</div>
-                        <div class="border rounded p-3">
+        <section class="anx-card anx-card--flush anx-reveal a2ui-example">
+            <div class="anx-card__head">
+                <span class="anx-console__title">{title}</span>
+            </div>
+            <div class="anx-card__body">
+                <div class="anx-grid2">
+                    <div>
+                        <span class="anx-section-label">Rendered</span>
+                        <div class="a2ui-live-frame">
                             <f:format.raw>{example.html}</f:format.raw>
                         </div>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="text-uppercase small text-body-secondary mb-2">A2UI v1.0 JSON</div>
-                        <pre class="a2ui-code"><code>{example.json}</code></pre>
+                    <div>
+                        <span class="anx-section-label">A2UI v1.0 JSON</span>
+                        <pre class="a2ui-json"><code>{example.json}</code></pre>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </f:for>
 </div>
 

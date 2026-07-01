@@ -1,0 +1,114 @@
+/* UCP module extras — only what the anx primitives cannot express.
+ * Tokens only (--anx-*, --accent); no raw colors. */
+
+/* The console JS toggles d-none; keep it working independent of host CSS. */
+.anx .d-none { display: none !important; }
+
+/* Vertical rhythm for the page's main sections. */
+.ucp-vstack { display: flex; flex-direction: column; gap: 0.9rem; }
+
+/* Agent-stack legend */
+.ucp-stack { margin-bottom: 1.1rem; }
+.anx .anx-chip.is-self {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--anx-border));
+  background: var(--accent-soft);
+}
+
+/* Active intent preset */
+.anx .ucp-preset.active {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--anx-border));
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* De-emphasized inline hints */
+.ucp-dim { font-style: normal; font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--anx-muted-fg); }
+.ucp-muted { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); margin: 0; }
+.ucp-copy { margin: 0 0 0.6rem; }
+.ucp-error { color: var(--anx-danger); font-size: var(--anx-text-sm); }
+
+/* Merchant manifest summary */
+.ucp-merchant__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.ucp-merchant__name { font-weight: 700; font-size: var(--anx-text-lg); color: var(--anx-fg); }
+.ucp-merchant__cur { font-family: var(--anx-font-mono); font-size: var(--anx-text-xs); color: var(--anx-muted-fg); }
+.ucp-merchant__cap {
+  font-size: var(--anx-text-xs);
+  font-weight: 650;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--anx-radius-full);
+  border: 1px solid color-mix(in srgb, var(--anx-ok) 45%, var(--anx-border));
+  color: var(--anx-ok);
+}
+.ucp-merchant__desc { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); margin-top: 0.3rem; }
+.ucp-merchant__cat { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.55rem; }
+.ucp-merchant__item {
+  font-size: var(--anx-text-xs);
+  font-weight: 600;
+  color: var(--anx-fg);
+  background: var(--accent-soft);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.2rem 0.55rem;
+}
+
+/* JSON payload inside console event rows */
+.ucp-evt__payload { color: var(--anx-muted-fg); }
+
+/* Agent reasoning note */
+.ucp-reasoning {
+  border-left: 2px solid var(--accent);
+  background: var(--anx-surface-1);
+  border-radius: var(--anx-radius-sm);
+  color: var(--anx-muted-fg);
+  font-size: var(--anx-text-sm);
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.7rem;
+}
+
+/* Cart */
+.ucp-cart__row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.4rem 0; border-bottom: 1px solid var(--anx-border); }
+.ucp-cart__name { font-weight: 600; }
+.ucp-cart__name small { font-weight: 400; color: var(--anx-muted-fg); }
+.ucp-cart__price { font-family: var(--anx-font-mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ucp-cart__total { display: flex; justify-content: space-between; gap: 1rem; padding-top: 0.5rem; font-weight: 700; }
+
+/* Authorization gate (human in the loop) */
+.ucp-auth {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--anx-warn) 45%, var(--anx-border));
+  border-radius: var(--anx-radius);
+  background: color-mix(in srgb, var(--anx-warn) 8%, transparent);
+}
+.ucp-auth__line { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); margin: 0.45rem 0 0.35rem; }
+.ucp-auth__total { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-bottom: 0.6rem; }
+
+/* Receipt */
+.ucp-receipt {
+  margin-top: 0.9rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--anx-ok) 45%, var(--anx-border));
+  border-radius: var(--anx-radius);
+  background: color-mix(in srgb, var(--anx-ok) 7%, transparent);
+}
+.ucp-receipt__row { display: flex; justify-content: space-between; gap: 1rem; font-size: var(--anx-text-sm); padding: 0.12rem 0; }
+.ucp-receipt__row span { color: var(--anx-muted-fg); }
+.ucp-receipt__row:first-of-type { margin-top: 0.45rem; }
+.ucp-receipt__sim { font-size: var(--anx-text-xs); color: var(--anx-warn); margin-top: 0.45rem; }
+
+/* Commerce Inspector: section head, product grid, state dots */
+.ucp-cathead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0.7rem; }
+.ucp-products { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.9rem; }
+.ucp-product__top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+.ucp-product__tags { margin: 0.35rem 0 0.55rem; gap: 0.35rem; }
+.ucp-product__desc { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); margin: 0.35rem 0 0; }
+.ucp-dot--auth { background: var(--anx-warn); }
+.ucp-dot--confirmed { background: var(--anx-ok); }
+.ucp-dot--declined { background: var(--anx-danger); }
+
+@media (max-width: 720px) {
+  .ucp-cart__row,
+  .ucp-cart__total,
+  .ucp-receipt__row { flex-direction: column; align-items: flex-start; gap: 0.15rem; }
+  .ucp-auth .anx-actions .anx-btn { width: 100%; }
+}

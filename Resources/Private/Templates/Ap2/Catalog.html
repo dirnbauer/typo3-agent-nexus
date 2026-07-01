@@ -6,43 +6,87 @@
 
 <f:section name="Content">
 
-<div class="ap2-studio" style="max-width: 1000px;">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div>
-            <h1 class="mb-1">AP2 Mandate Inspector</h1>
-            <p class="text-body-secondary mb-0">The mandate types in the authorization chain, and the checks verification enforces.</p>
+<div class="anx anx--backend anx-accent--ap2 anx-module">
+
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">AP2 <em>· Agent Payments Protocol — the authorization edge</em></span>
+            <h1 class="anx-title">AP2 Mandate Inspector</h1>
+            <p class="anx-lede">The mandate types in the authorization chain, and the checks verification enforces.</p>
         </div>
-        <a href="{f:uri.action(action: 'studio')}" class="btn btn-outline-secondary btn-sm">
-            <core:icon identifier="actions-arrow-left" size="small" /> Back to studio
-        </a>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+                <span class="anx-badge anx-badge--warn">Sandbox-signed · no real payment</span>
+            </div>
+            <div class="anx-actions">
+                <a class="anx-btn anx-btn--ghost anx-btn--sm" href="{f:uri.action(action: 'studio')}">
+                    <core:icon identifier="actions-arrow-left" size="small" /> Back to studio
+                </a>
+                <a class="anx-btn anx-btn--ghost anx-btn--sm" href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ap2" target="_blank" rel="noopener">
+                    <core:icon identifier="actions-window-open" size="small" /> Frontend demo
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{types -> f:count()}">{types -> f:count()}</span>
+            <span class="anx-stat__label">Mandate types</span>
+            <span class="anx-stat__hint">intent → cart → payment</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="6">6</span>
+            <span class="anx-stat__label">Chain checks</span>
+            <span class="anx-stat__hint">all must pass to authorize</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{stack -> f:count()}">{stack -> f:count()}</span>
+            <span class="anx-stat__label">Stack protocols</span>
+            <span class="anx-stat__hint">AP2 covers authorization</span>
+        </div>
     </div>
 
-    <div class="card ap2-catalog__sec mb-3">
-        <div class="card-header"><h2 class="h5 mb-0">Mandate types</h2></div>
-        <div class="card-body">
-            <f:for each="{types}" as="t">
-                <div class="ap2-catalog__row ap2-cat--{t.accent}">
-                    <span class="ap2-catalog__type">{t.type}</span>
-                    <span class="ap2-catalog__desc">{t.desc}</span>
-                </div>
-            </f:for>
+    <section class="ap2-sec anx-reveal">
+        <h2 class="anx-h2">Mandate types</h2>
+        <div class="anx-table-wrap">
+            <table class="anx-table">
+                <thead>
+                    <tr>
+                        <th>Mandate</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{types}" as="t">
+                        <tr class="ap2-cat--{t.accent}">
+                            <td class="ap2-cat__type"><span class="anx-dot"></span> <code>{t.type}</code></td>
+                            <td>{t.desc}</td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
         </div>
-    </div>
+    </section>
 
-    <div class="card ap2-catalog__sec">
-        <div class="card-header"><h2 class="h5 mb-0">What “verify the chain” checks</h2></div>
-        <div class="card-body">
+    <section class="ap2-sec anx-reveal">
+        <h2 class="anx-h2">What “verify the chain” checks</h2>
+        <div class="anx-card">
             <ul class="ap2-checklist">
                 <li><b>Intent Mandate signature</b> — the token is intact and signed (HS256, sandbox key).</li>
                 <li><b>Cart Mandate signature</b> — likewise; tampering breaks it.</li>
-                <li><b>Cart references the Intent</b> — the cart's <code>intentRef</code> equals the intent's <code>jti</code>.</li>
+                <li><b>Cart references the Intent</b> — the cart's <code class="anx-code">intentRef</code> equals the intent's <code class="anx-code">jti</code>.</li>
                 <li><b>Same authorized merchant</b> — the cart's audience is one the intent allows.</li>
-                <li><b>Within the spending cap</b> — the cart total ≤ the intent's <code>maxAmountCents</code>.</li>
-                <li><b>Not expired</b> — both <code>exp</code> timestamps are in the future.</li>
+                <li><b>Within the spending cap</b> — the cart total ≤ the intent's <code class="anx-code">maxAmountCents</code>.</li>
+                <li><b>Not expired</b> — both <code class="anx-code">exp</code> timestamps are in the future.</li>
             </ul>
-            <p class="text-body-secondary small mb-0">Only when every check passes is a (simulated) payment authorized.</p>
+            <p class="ap2-muted ap2-checklist__note">Only when every check passes is a (simulated) payment authorized.</p>
         </div>
-    </div>
+    </section>
 </div>
 
 </f:section>

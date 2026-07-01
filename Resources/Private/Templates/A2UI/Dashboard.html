@@ -6,206 +6,201 @@
 
 <f:section name="Content">
 
-<div class="a2ui-playground"
+<div class="anx anx--backend anx-accent--a2ui anx-module"
      data-a2ui-playground
      data-a2ui-endpoint="{endpoint}"
      data-a2ui-respond="{respondEndpoint}">
 
-    <div class="row g-3 align-items-stretch mb-3">
-        <div class="col-lg-7 col-xl-8">
-            <div class="a2ui-hero h-100">
-                <h1 class="mb-2">A2UI Playground</h1>
-                <p class="text-body-secondary mb-0">
-                    Describe what you need in plain language. An agent answers with an
-                    <strong>A2UI&nbsp;v1.0</strong> surface — declarative JSON, not code — and the backend
-                    renders it with native, trusted components.
-                </p>
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">A2UI <em>agent &#8596; UI &middot; generative surfaces</em></span>
+            <h1 class="anx-title">A2UI Playground</h1>
+            <p class="anx-lede">
+                Describe what you need in plain language — an agent answers with an
+                <strong>A2UI&nbsp;v1.0</strong> surface (declarative JSON, never code) and the backend
+                renders it with native, trusted components.
+            </p>
+        </div>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{connection}">
+                    <f:then>
+                        <span class="anx-badge anx-badge--accent"><span class="anx-dot anx-dot--pulse"></span> LLM: {connection.model}</span>
+                    </f:then>
+                    <f:else>
+                        <span class="anx-badge anx-badge--sim">Simulation</span>
+                    </f:else>
+                </f:if>
+                <a class="anx-btn anx-btn--ghost anx-btn--sm"
+                   href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2ui"
+                   target="_blank" rel="noreferrer">Frontend demo &#8599;</a>
             </div>
         </div>
-        <div class="col-lg-5 col-xl-4">
-            <div class="card a2ui-connection h-100">
-                <div class="card-body">
-                    <f:if condition="{connection}">
-                        <f:then>
-                            <div class="d-flex align-items-center gap-2 mb-3">
-                                <span class="a2ui-status a2ui-status--live">
-                                    <span class="a2ui-status-dot"></span> Live LLM connected
-                                </span>
-                                <span class="text-body-secondary small ms-auto">{connection.provider}</span>
-                            </div>
-                            <dl class="row mb-0 small a2ui-connection-meta">
-                                <dt class="col-5 text-body-secondary fw-normal">Model</dt>
-                                <dd class="col-7 mb-2 fw-semibold">{connection.model}</dd>
-
-                                <dt class="col-5 text-body-secondary fw-normal">Price / 1M tokens</dt>
-                                <dd class="col-7 mb-2">
-                                    <f:if condition="{connection.hasPricing}">
-                                        <f:then>
-                                            <span title="Input tokens">{connection.priceInput} in</span>
-                                            <span class="text-body-secondary"> · </span>
-                                            <span title="Output tokens">{connection.priceOutput} out</span>
-                                        </f:then>
-                                        <f:else><span class="text-body-secondary">not set in nr_llm</span></f:else>
-                                    </f:if>
-                                </dd>
-
-                                <dt class="col-5 text-body-secondary fw-normal">Endpoint</dt>
-                                <dd class="col-7 mb-0 text-truncate" title="{connection.endpoint}">{connection.endpoint}</dd>
-                            </dl>
-                        </f:then>
-                        <f:else>
-                            <div class="mb-2">
-                                <span class="a2ui-status a2ui-status--offline">Built-in generator</span>
-                            </div>
-                            <p class="small text-body-secondary mb-0">
-                                No LLM provider is active. Install &amp; configure
-                                <code>netresearch/nr-llm</code> (or set <code>llmEnabled</code>) to generate
-                                with a real model — the deterministic generator is used in the meantime.
-                            </p>
-                        </f:else>
-                    </f:if>
-                </div>
-            </div>
-        </div>
-    </div>
+    </header>
 
     <!-- A2UI LLM cost ledger (backend module + frontend plugin) -->
-    <div class="card a2ui-cost mb-3">
-        <div class="card-body py-2">
-            <div class="d-flex flex-wrap align-items-center gap-3">
-                <div class="me-1">
-                    <core:icon identifier="actions-wallet" size="small" />
-                    <strong>A2UI LLM cost</strong>
-                    <span class="text-body-secondary small">module + frontend plugin</span>
-                </div>
-                <div class="a2ui-cost-figure a2ui-cost-figure--today">
-                    <div class="a2ui-cost-value">{cost.today}</div>
-                    <div class="a2ui-cost-label">today</div>
-                </div>
-                <f:for each="{cost.months}" as="m">
-                    <div class="a2ui-cost-figure">
-                        <div class="a2ui-cost-value">{m.cost}</div>
-                        <div class="a2ui-cost-label">{m.label} · {m.requests} runs</div>
-                    </div>
-                </f:for>
-                <f:if condition="{cost.instanceRange}">
-                    <div class="ms-auto text-body-secondary small text-end">
-                        Instance-wide nr_llm:<br />{cost.instanceToday} today · {cost.instanceRange} / 3&nbsp;mo
-                    </div>
-                </f:if>
-            </div>
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{cost.today}" data-anx-prefix="$">{cost.today}</span>
+            <span class="anx-stat__label">Spend today</span>
+            <span class="anx-stat__hint">A2UI module + frontend plugin</span>
         </div>
+        <f:for each="{cost.months}" as="m">
+            <div class="anx-stat anx-reveal">
+                <span class="anx-stat__value" data-anx-count="{m.cost}" data-anx-prefix="$">{m.cost}</span>
+                <span class="anx-stat__label">{m.label}</span>
+                <span class="anx-stat__hint"><span data-anx-count="{m.requests}">{m.requests}</span> runs</span>
+            </div>
+        </f:for>
     </div>
 
-    <!-- Intent bar -->
-    <div class="card mb-3">
-        <div class="card-body a2ui-intent-bar">
-            <form data-a2ui-form action="{f:uri.action(action: 'generate')}" method="post" class="mb-3">
-                <div class="input-group input-group-lg">
-                    <span class="input-group-text"><core:icon identifier="a2ui-module" size="small" /></span>
-                    <input type="text"
-                           class="form-control"
-                           data-a2ui-intent
-                           name="intent"
-                           placeholder="e.g. &quot;a contact form with name, email and a message&quot;"
-                           aria-label="Describe the interface you need" />
-                    <button type="submit" class="btn btn-primary">Generate UI</button>
+    <!-- Intent bar + agent connection -->
+    <div class="anx-grid2 a2ui-block">
+        <section class="anx-card anx-card--accent anx-reveal">
+            <span class="anx-section-label">Compose an interface</span>
+            <form data-a2ui-form action="{f:uri.action(action: 'generate')}" method="post">
+                <div class="anx-field">
+                    <label class="anx-field__label" for="a2ui-intent">Describe the interface you need</label>
+                    <div class="a2ui-intent-row">
+                        <input type="text"
+                               id="a2ui-intent"
+                               class="anx-input"
+                               data-a2ui-intent
+                               name="intent"
+                               placeholder="e.g. &quot;a contact form with name, email and a message&quot;"
+                               aria-label="Describe the interface you need" />
+                        <button type="submit" class="anx-btn anx-btn--primary">Generate UI</button>
+                    </div>
                 </div>
             </form>
             <div class="a2ui-presets">
-                <span class="text-body-secondary small align-self-center me-1">Try:</span>
+                <span class="anx-field__hint">Try:</span>
                 <f:for each="{presets}" as="preset">
-                    <button type="button" class="btn btn-sm btn-outline-secondary" data-a2ui-preset="{preset.intent}">{preset.label}</button>
+                    <button type="button" class="anx-btn anx-btn--outline anx-btn--sm" data-a2ui-preset="{preset.intent}">{preset.label}</button>
                 </f:for>
             </div>
-        </div>
+        </section>
+
+        <section class="anx-card anx-reveal">
+            <span class="anx-section-label">Agent connection</span>
+            <f:if condition="{connection}">
+                <f:then>
+                    <div class="anx-actions a2ui-block--sm">
+                        <span class="anx-badge anx-badge--ok"><span class="anx-dot anx-dot--pulse"></span> Live LLM connected</span>
+                        <span class="anx-chip">{connection.provider}</span>
+                    </div>
+                    <dl class="a2ui-kv">
+                        <dt>Model</dt>
+                        <dd>{connection.model}</dd>
+                        <dt>Price / 1M tokens</dt>
+                        <dd>
+                            <f:if condition="{connection.hasPricing}">
+                                <f:then><span title="Input tokens">{connection.priceInput} in</span> &middot; <span title="Output tokens">{connection.priceOutput} out</span></f:then>
+                                <f:else><span class="a2ui-kv__muted">not set in nr_llm</span></f:else>
+                            </f:if>
+                        </dd>
+                        <dt>Endpoint</dt>
+                        <dd class="a2ui-kv__truncate" title="{connection.endpoint}">{connection.endpoint}</dd>
+                    </dl>
+                </f:then>
+                <f:else>
+                    <div class="anx-actions a2ui-block--sm">
+                        <span class="anx-badge anx-badge--sim">Built-in generator</span>
+                    </div>
+                    <p class="anx-field__hint">
+                        No LLM provider is active. Install &amp; configure
+                        <code class="anx-code">netresearch/nr-llm</code> (or set <code class="anx-code">llmEnabled</code>)
+                        to generate with a real model — the deterministic generator is used in the meantime.
+                    </p>
+                </f:else>
+            </f:if>
+            <f:if condition="{cost.instanceRange}">
+                <p class="anx-field__hint a2ui-instance-note">Instance-wide nr_llm: {cost.instanceToday} today &middot; {cost.instanceRange} / 3&nbsp;mo</p>
+            </f:if>
+        </section>
     </div>
 
     <!-- Server + client notes -->
-    <ul class="alert alert-info d-none small mb-3" data-a2ui-notes></ul>
+    <ul class="a2ui-notes d-none" data-a2ui-notes aria-live="polite"></ul>
 
     <!-- The three working panes -->
-    <div class="row g-3">
-        <div class="col-xl-5">
-            <div class="card a2ui-pane h-100">
-                <div class="card-header">
-                    <span><core:icon identifier="actions-eye" size="small" /> Rendered interface</span>
-                    <span class="text-body-secondary small">what the editor sees</span>
-                </div>
-                <div class="card-body">
-                    <div class="a2ui-live-frame" data-a2ui-live></div>
-                </div>
+    <div class="a2ui-panes a2ui-block">
+        <section class="anx-card anx-card--flush anx-reveal">
+            <div class="anx-card__head">
+                <span class="anx-console__title"><core:icon identifier="actions-eye" size="small" /> Rendered interface</span>
+                <span class="anx-field__hint">what the editor sees</span>
             </div>
-        </div>
+            <div class="anx-card__body">
+                <div class="a2ui-live-frame" data-a2ui-live aria-live="polite"></div>
+            </div>
+        </section>
 
-        <div class="col-xl-4">
-            <div class="card a2ui-pane h-100">
-                <div class="card-header">
-                    <span><core:icon identifier="actions-code" size="small" /> A2UI v1.0 payload</span>
-                    <span class="a2ui-status a2ui-status--offline" data-a2ui-provenance>—</span>
-                </div>
-                <div class="card-body">
-                    <p class="small text-body-secondary mb-2">The exact message the agent emitted. The client renders <em>only</em> this — never code.</p>
-                    <pre class="a2ui-code"><code data-a2ui-json></code></pre>
-                </div>
+        <section class="anx-card anx-card--flush anx-reveal">
+            <div class="anx-card__head">
+                <span class="anx-console__title"><core:icon identifier="actions-code" size="small" /> A2UI v1.0 payload</span>
+                <span class="anx-badge anx-badge--sim" data-a2ui-provenance>&mdash;</span>
             </div>
-        </div>
+            <div class="anx-card__body">
+                <p class="anx-field__hint a2ui-block--sm">The exact message the agent emitted. The client renders <em>only</em> this — never code.</p>
+                <pre class="a2ui-json"><code data-a2ui-json></code></pre>
+            </div>
+        </section>
 
-        <div class="col-xl-3">
-            <div class="card a2ui-pane h-100">
-                <div class="card-header"><span><core:icon identifier="actions-database" size="small" /> Live data model</span></div>
-                <div class="card-body">
-                    <p class="small text-body-secondary mb-2">Inputs bind here via JSON Pointer. Type in the form and watch it update.</p>
-                    <pre class="a2ui-code a2ui-code--sm"><code data-a2ui-datamodel>{}</code></pre>
-                    <div class="mt-3 d-none" data-a2ui-action-wrap>
-                        <div class="small text-body-secondary mb-1"><core:icon identifier="actions-arrow-right" size="small" /> Last user action sent to the agent</div>
-                        <pre class="a2ui-code a2ui-code--sm"><code data-a2ui-action></code></pre>
-                    </div>
+        <section class="anx-card anx-card--flush anx-reveal">
+            <div class="anx-card__head">
+                <span class="anx-console__title"><core:icon identifier="actions-database" size="small" /> Live data model</span>
+            </div>
+            <div class="anx-card__body">
+                <p class="anx-field__hint a2ui-block--sm">Inputs bind here via JSON Pointer. Type in the form and watch it update.</p>
+                <pre class="a2ui-json a2ui-json--sm"><code data-a2ui-datamodel>{}</code></pre>
+                <div class="a2ui-action-echo d-none" data-a2ui-action-wrap>
+                    <p class="anx-field__hint a2ui-block--sm"><core:icon identifier="actions-arrow-right" size="small" /> Last user action sent to the agent</p>
+                    <pre class="a2ui-json a2ui-json--sm"><code data-a2ui-action></code></pre>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <!-- Explainer: what A2UI is -->
-    <div class="card mt-4">
-        <div class="card-header"><h2 class="h5 mb-0">What is A2UI?</h2></div>
-        <div class="card-body">
-            <p>
-                <strong>A2UI (Agent-to-User Interface)</strong> is an open protocol for letting an AI agent
-                <em>describe</em> a user interface as declarative JSON. The agent never ships HTML or scripts —
-                it sends a <strong>surface</strong>, and a trusted client renders it with native components. That
-                separation is what makes agent-authored UI safe, portable and consistent.
-            </p>
-            <div class="a2ui-loop mb-3">
-                <div class="a2ui-loop-step">
-                    <div class="a2ui-loop-step__num">1 · Emit</div>
-                    The agent emits an A2UI v1.0 surface (a flat list of components + a data model).
-                </div>
-                <div class="a2ui-loop-step">
-                    <div class="a2ui-loop-step__num">2 · Render</div>
-                    The client renders it with native, trusted backend components — only the catalog below is allowed.
-                </div>
-                <div class="a2ui-loop-step">
-                    <div class="a2ui-loop-step__num">3 · Signal</div>
-                    User input updates the data model; an action sends a structured <code>userAction</code> back.
-                </div>
-                <div class="a2ui-loop-step">
-                    <div class="a2ui-loop-step__num">4 · Reason</div>
-                    The agent reacts to the signal and can update the surface — closing the loop.
-                </div>
+    <section class="anx-card anx-reveal">
+        <h2 class="anx-h2">What is A2UI?</h2>
+        <p>
+            <strong>A2UI (Agent-to-User Interface)</strong> is an open protocol for letting an AI agent
+            <em>describe</em> a user interface as declarative JSON. The agent never ships HTML or scripts —
+            it sends a <strong>surface</strong>, and a trusted client renders it with native components. That
+            separation is what makes agent-authored UI safe, portable and consistent.
+        </p>
+        <div class="a2ui-loop a2ui-block--sm">
+            <div class="a2ui-loop-step">
+                <span class="a2ui-loop-step__num">1 &middot; Emit</span>
+                The agent emits an A2UI v1.0 surface (a flat list of components + a data model).
             </div>
-            <p class="mb-1"><strong>Trusted catalog</strong> (the only components an agent may use here):</p>
-            <div class="mb-3">
-                <f:for each="{catalog}" as="entry" key="name">
-                    <span class="badge rounded-pill text-bg-light border a2ui-catalog-chip me-1 mb-1">{name}</span>
-                </f:for>
+            <div class="a2ui-loop-step">
+                <span class="a2ui-loop-step__num">2 &middot; Render</span>
+                The client renders it with native, trusted backend components — only the catalog below is allowed.
             </div>
-            <a href="{f:uri.action(action: 'demo')}" class="btn btn-outline-info btn-sm">
+            <div class="a2ui-loop-step">
+                <span class="a2ui-loop-step__num">3 &middot; Signal</span>
+                User input updates the data model; an action sends a structured <code class="anx-code">userAction</code> back.
+            </div>
+            <div class="a2ui-loop-step">
+                <span class="a2ui-loop-step__num">4 &middot; Reason</span>
+                The agent reacts to the signal and can update the surface — closing the loop.
+            </div>
+        </div>
+        <p class="a2ui-catalog-lede"><strong>Trusted catalog</strong> — the only {catalog -> f:count()} components an agent may use here:</p>
+        <div class="a2ui-catalog a2ui-block--sm">
+            <f:for each="{catalog}" as="entry" key="name">
+                <span class="anx-chip">{name}</span>
+            </f:for>
+        </div>
+        <div class="anx-actions">
+            <a href="{f:uri.action(action: 'demo')}" class="anx-btn anx-btn--outline anx-btn--sm">
                 <core:icon identifier="actions-list" size="small" /> Browse the component gallery
             </a>
-            <a href="https://a2ui.org/specification/v1.0-a2ui/" target="_blank" rel="noreferrer" class="btn btn-link btn-sm">A2UI v1.0 specification ↗</a>
+            <a href="https://a2ui.org/specification/v1.0-a2ui/" target="_blank" rel="noreferrer" class="anx-btn anx-btn--ghost anx-btn--sm">A2UI v1.0 specification &#8599;</a>
         </div>
-    </div>
+    </section>
 </div>
 
 </f:section>

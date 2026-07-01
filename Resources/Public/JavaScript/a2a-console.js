@@ -9,7 +9,27 @@
  * POST, so EventSource — GET only — cannot be used).
  */
 
-const KIND_CLASS = { task: 'task', 'status-update': 'status', 'artifact-update': 'artifact', message: 'message' };
+import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+
+const anxRoot = document.querySelector('.anx');
+if (anxRoot) {
+  withGsap(anxRoot).then((g) => {
+    if (!g) return;
+    reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
+    countUpAll(g, anxRoot);
+  });
+}
+
+const KIND_CLASS = { task: 'accent', 'status-update': 'warn', 'artifact-update': 'ok', message: 'muted' };
+const STATE_BADGE = {
+  idle: 'anx-badge--sim',
+  submitted: 'anx-badge--accent',
+  working: 'anx-badge--run',
+  'input-required': 'anx-badge--warn',
+  completed: 'anx-badge--ok',
+  failed: 'anx-badge--danger',
+  canceled: 'anx-badge--danger',
+};
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function rid() { return Math.random().toString(36).slice(2, 9); }
 function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
@@ -49,10 +69,10 @@ ready(() => {
       cardEl.innerHTML =
         '<div class="a2a-card__head"><span class="a2a-card__name">' + esc(card.name) + '</span>' +
         '<span class="a2a-card__ver">v' + esc(card.version) + ' · ' + esc(card.protocolVersion) + '</span>' +
-        (card.capabilities && card.capabilities.streaming ? '<span class="a2a-card__cap">streaming</span>' : '') + '</div>' +
+        (card.capabilities && card.capabilities.streaming ? '<span class="anx-badge anx-badge--accent">streaming</span>' : '') + '</div>' +
         '<div class="a2a-card__desc">' + esc(card.description) + '</div>' +
         '<div class="a2a-card__skills">' + (card.skills || []).map((s) =>
-          '<span class="a2a-card__skill">' + esc(s.name) + '</span>').join('') + '</div>';
+          '<span class="anx-chip">' + esc(s.name) + '</span>').join('') + '</div>';
     } catch (e) {
       cardEl.innerHTML = '<span class="a2a-msg__err">Could not load the Agent Card.</span>';
     }
@@ -68,16 +88,16 @@ ready(() => {
     setState('idle');
   }
 
-  function setState(s) { stateEl.textContent = s; stateEl.className = 'a2a-state a2a-state--' + s; }
+  function setState(s) { stateEl.textContent = s; stateEl.className = 'anx-badge ' + (STATE_BADGE[s] || 'anx-badge--sim'); }
 
   function addFrame(result) {
     count++; countEl.textContent = count + (count === 1 ? ' frame' : ' frames');
     const kind = result.kind || 'message';
     const row = document.createElement('div');
-    row.className = 'a2a-evt a2a-kind--' + (KIND_CLASS[kind] || 'message');
+    row.className = 'anx-console__event anx-console__event--' + (KIND_CLASS[kind] || 'muted');
     let label = kind;
     if (kind === 'status-update') label = 'status: ' + (result.status && result.status.state);
-    row.innerHTML = '<span class="a2a-evt__kind">' + esc(label) + '</span>';
+    row.innerHTML = '<span class="anx-console__kind">' + esc(label) + '</span>';
     const payload = JSON.stringify(result);
     const p = document.createElement('span'); p.className = 'a2a-evt__payload';
     p.textContent = payload.length > 110 ? payload.slice(0, 110) + '…' : payload;
@@ -86,10 +106,10 @@ ready(() => {
     timelineEl.scrollTop = timelineEl.scrollHeight;
   }
 
-  function addMessage(text, accent) {
-    const line = document.createElement('div'); line.className = 'a2a-msg__line';
-    line.innerHTML = '<span class="a2a-msg__dot" style="--c:' + (accent || '#d97706') + '"></span><span>' + esc(text) + '</span>';
-    if (msgEl.querySelector('.text-body-secondary')) msgEl.innerHTML = '';
+  function addMessage(text, tone) {
+    const line = document.createElement('div'); line.className = 'a2a-msg__line' + (tone ? ' a2a-msg__line--' + tone : '');
+    line.innerHTML = '<span class="a2a-msg__dot"></span><span>' + esc(text) + '</span>';
+    if (msgEl.querySelector('[data-a2a-msg-empty]')) msgEl.innerHTML = '';
     msgEl.appendChild(line);
   }
 
@@ -97,10 +117,10 @@ ready(() => {
     setState('input-required');
     inputEl.classList.remove('d-none');
     inputEl.innerHTML =
-      '<span class="a2a-input__badge">⏸ input-required</span>' +
+      '<span class="anx-badge anx-badge--warn a2a-input__badge">⏸ input-required</span>' +
       '<div class="a2a-input__q">' + esc(question) + '</div>' +
-      '<div class="a2a-input__row"><input type="text" class="a2a-input__field" data-a2a-answer placeholder="Type your answer…" />' +
-      '<button type="button" class="btn btn-primary btn-sm" data-a2a-answer-send>Send</button></div>';
+      '<div class="a2a-input__row"><input type="text" class="anx-input" data-a2a-answer placeholder="Type your answer…" />' +
+      '<button type="button" class="anx-btn anx-btn--primary anx-btn--sm" data-a2a-answer-send>Send</button></div>';
     const field = inputEl.querySelector('[data-a2a-answer]');
     const go = () => { const v = field.value.trim(); inputEl.classList.add('d-none'); delegate(true, v); };
     inputEl.querySelector('[data-a2a-answer-send]').addEventListener('click', go);
@@ -126,7 +146,7 @@ ready(() => {
         const st = result.status && result.status.state;
         if (st) setState(st);
         const m = result.status && result.status.message;
-        if (m && m.parts) { const txt = m.parts.map((p) => p.text || '').join(''); if (txt) addMessage(txt, st === 'completed' ? '#16a34a' : (st === 'input-required' ? '#7c3aed' : '#d97706')); }
+        if (m && m.parts) { const txt = m.parts.map((p) => p.text || '').join(''); if (txt) addMessage(txt, st === 'completed' ? 'ok' : (st === 'input-required' ? 'input' : 'warn')); }
         if (st === 'input-required') {
           const q = (m && m.parts && m.parts.map((p) => p.text || '').join('')) || 'More detail needed.';
           renderInputRequired(q);
@@ -146,7 +166,7 @@ ready(() => {
 
   async function delegate(resume, answer) {
     const url = window.TYPO3 && TYPO3.settings && TYPO3.settings.ajaxUrls ? TYPO3.settings.ajaxUrls.a2a_send : null;
-    if (!url) { addMessage('AJAX route unavailable', '#dc2626'); return; }
+    if (!url) { addMessage('AJAX route unavailable', 'danger'); return; }
     if (!resume) { reset(); task = { id: '', contextId: '' }; }
     sendBtn.disabled = true;
 
@@ -176,11 +196,11 @@ ready(() => {
           const j = line.slice(5).trim(); if (!j) continue;
           let env; try { env = JSON.parse(j); } catch { continue; }
           if (env.result) handle(env.result);
-          else if (env.error) addMessage('Error: ' + env.error.message, '#dc2626');
+          else if (env.error) addMessage('Error: ' + env.error.message, 'danger');
         }
       }
     } catch (e) {
-      addMessage('Stream failed: ' + e.message, '#dc2626');
+      addMessage('Stream failed: ' + e.message, 'danger');
     } finally {
       sendBtn.disabled = false;
     }

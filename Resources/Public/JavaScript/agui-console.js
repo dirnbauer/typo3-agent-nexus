@@ -8,6 +8,16 @@
  * cannot be used).
  */
 
+import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+
+// Entrance stagger for the anx shell (runs on Console and Catalog views alike).
+const anxRoot = document.querySelector('.anx');
+withGsap(anxRoot).then((g) => {
+  if (!g || !anxRoot) return;
+  reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
+  countUpAll(g, anxRoot);
+});
+
 const CATEGORY = {
   RUN_STARTED: 'lifecycle', RUN_FINISHED: 'lifecycle', RUN_ERROR: 'lifecycle', STEP_STARTED: 'lifecycle', STEP_FINISHED: 'lifecycle',
   TEXT_MESSAGE_START: 'text', TEXT_MESSAGE_CONTENT: 'text', TEXT_MESSAGE_END: 'text', TEXT_MESSAGE_CHUNK: 'text',
@@ -65,13 +75,31 @@ ready(() => {
     stateEl.textContent = '{}'; countEl.textContent = '0 events';
   }
 
+  // Event kind → .anx-console__event modifier: accent for tool calls, ok for a
+  // finished run, warn while a HITL tool awaits approval, danger for errors,
+  // muted for the high-volume text/reasoning deltas.
+  function eventModifier(ev) {
+    const type = String(ev.type || '');
+    if (type === 'RUN_ERROR') return 'danger';
+    if (type === 'RUN_FINISHED') return 'ok';
+    if (type.indexOf('TOOL_CALL') === 0) {
+      if (type === 'TOOL_CALL_END' && HITL_TOOLS.includes(toolNames[ev.toolCallId] || '')) return 'warn';
+      return 'accent';
+    }
+    const cat = CATEGORY[type] || 'special';
+    return (cat === 'text' || cat === 'reason') ? 'muted' : '';
+  }
+
   function addRow(ev) {
     count++; countEl.textContent = count + ' events';
-    const cat = CATEGORY[ev.type] || 'special';
+    const mod = eventModifier(ev);
     const row = document.createElement('div');
-    row.className = 'agui-evt agui-cat--' + cat;
+    row.className = 'anx-console__event' + (mod ? ' anx-console__event--' + mod : '');
     const { type, ...rest } = ev;
-    row.innerHTML = '<span class="agui-evt__type">' + type + '</span>';
+    const kind = document.createElement('span');
+    kind.className = 'anx-console__kind';
+    kind.textContent = type;
+    row.appendChild(kind);
     const payload = Object.keys(rest).length ? JSON.stringify(rest) : '';
     if (payload) { const p = document.createElement('span'); p.className = 'agui-evt__payload'; p.textContent = payload.length > 90 ? payload.slice(0, 90) + '…' : payload; row.appendChild(p); }
     timelineEl.appendChild(row);
@@ -83,7 +111,7 @@ ready(() => {
   function handle(ev) {
     addRow(ev);
     switch (ev.type) {
-      case 'REASONING_START': reasoningEl.classList.remove('d-none'); reasoningEl.textContent = '🧠 '; break;
+      case 'REASONING_START': reasoningEl.classList.remove('d-none'); reasoningEl.textContent = ''; break;
       case 'REASONING_MESSAGE_CONTENT': reasoningEl.textContent += ev.delta; break;
       case 'TEXT_MESSAGE_START': draftEl.textContent = ''; break;
       case 'TEXT_MESSAGE_CONTENT': draftEl.textContent += ev.delta; break;
@@ -121,11 +149,11 @@ ready(() => {
     const summary = Object.entries(args).map(([k, v]) =>
       '<div class="agui-hitl__row"><span>' + k + '</span><b>' + (typeof v === 'object' ? JSON.stringify(v) : v) + '</b></div>').join('');
     hitlEl.innerHTML =
-      '<div class="agui-hitl__head"><span class="agui-hitl__badge">⏸ Awaiting your approval</span>' +
-      '<span class="text-body-secondary small">' + name + '</span></div>' +
+      '<div class="agui-hitl__head"><span class="anx-badge anx-badge--warn">Awaiting your approval</span>' +
+      '<span class="anx-code">' + name + '</span></div>' +
       '<div class="agui-hitl__body">' + summary + '</div>' +
-      '<div class="agui-hitl__actions"><button type="button" class="btn btn-success btn-sm" data-decision="approved">Approve &amp; apply</button>' +
-      '<button type="button" class="btn btn-outline-secondary btn-sm" data-decision="rejected">Reject</button></div>';
+      '<div class="agui-hitl__actions"><button type="button" class="anx-btn anx-btn--primary anx-btn--sm" data-decision="approved">Approve &amp; apply</button>' +
+      '<button type="button" class="anx-btn anx-btn--ghost anx-btn--sm" data-decision="rejected">Reject</button></div>';
     hitlEl.querySelectorAll('[data-decision]').forEach((b) => {
       b.addEventListener('click', () => {
         hitlEl.classList.add('d-none');
@@ -134,7 +162,7 @@ ready(() => {
     });
   }
 
-  function addRunError(ev) { draftEl.innerHTML = '<div class="agui-error">⛔ ' + (ev.message || 'Run failed') + ' <small>(' + (ev.code || '') + ')</small></div>'; }
+  function addRunError(ev) { draftEl.innerHTML = '<div class="agui-error">' + (ev.message || 'Run failed') + ' <small>(' + (ev.code || '') + ')</small></div>'; }
 
   async function run(extra) {
     const url = window.TYPO3 && TYPO3.settings && TYPO3.settings.ajaxUrls ? TYPO3.settings.ajaxUrls.agui_run : null;

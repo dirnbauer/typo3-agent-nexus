@@ -1,0 +1,77 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<svg class="anx-protomap" data-anx-map viewBox="0 0 920 300" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-label="Protocol map: the agent in the middle, six protocol edges to user, UI, other agents, tools, merchant and payment">
+
+    <!-- edges (drawn first, under the nodes) -->
+    <g fill="none" stroke-width="1.5" stroke-linecap="round">
+        <path data-map-edge="agui" d="M 152 136 H 393" stroke="var(--anx-accent-agui)" opacity="0.85" />
+        <path data-map-edge="a2ui" d="M 152 164 H 393" stroke="var(--anx-accent-a2ui)" opacity="0.85" />
+        <path data-map-edge="ucp" d="M 460 118 V 70" stroke="var(--anx-accent-ucp)" opacity="0.85" />
+        <path data-map-edge="ap2" d="M 460 182 V 230" stroke="var(--anx-accent-ap2)" opacity="0.85" />
+        <path data-map-edge="a2a" d="M 527 132 C 640 128 660 60 758 57" stroke="var(--anx-accent-a2a)" opacity="0.85" />
+        <path data-map-edge="mcp" d="M 527 168 C 640 172 660 240 758 243" stroke="var(--anx-accent-mcp)" opacity="0.85" />
+    </g>
+
+    <!-- edge pulses (nexus-overview.js moves them along the edge paths) -->
+    <g class="anx-protomap__pulses">
+        <circle data-map-pulse="agui" cx="152" cy="136" r="4" fill="var(--anx-accent-agui)" />
+        <circle data-map-pulse="a2ui" cx="393" cy="164" r="4" fill="var(--anx-accent-a2ui)" />
+        <circle data-map-pulse="ucp" cx="460" cy="118" r="4" fill="var(--anx-accent-ucp)" />
+        <circle data-map-pulse="ap2" cx="460" cy="182" r="4" fill="var(--anx-accent-ap2)" />
+        <circle data-map-pulse="a2a" cx="527" cy="132" r="4" fill="var(--anx-accent-a2a)" />
+        <circle data-map-pulse="mcp" cx="527" cy="168" r="4" fill="var(--anx-accent-mcp)" />
+    </g>
+
+    <!-- edge labels -->
+    <g font-size="11" fill="var(--anx-muted-fg)">
+        <text x="272" y="126" text-anchor="middle"><tspan fill="var(--anx-accent-agui)" font-weight="700">AG-UI</tspan><tspan dx="4">event stream</tspan></text>
+        <text x="272" y="184" text-anchor="middle"><tspan fill="var(--anx-accent-a2ui)" font-weight="700">A2UI</tspan><tspan dx="4">surface</tspan></text>
+        <text x="472" y="97"><tspan fill="var(--anx-accent-ucp)" font-weight="700">UCP</tspan><tspan dx="4">cart + checkout</tspan></text>
+        <text x="472" y="211"><tspan fill="var(--anx-accent-ap2)" font-weight="700">AP2</tspan><tspan dx="4">signed mandate</tspan></text>
+        <text x="648" y="82" text-anchor="middle"><tspan fill="var(--anx-accent-a2a)" font-weight="700">A2A</tspan><tspan dx="4">task delegation</tspan></text>
+        <text x="648" y="226" text-anchor="middle"><tspan fill="var(--anx-accent-mcp)" font-weight="700">MCP</tspan><tspan dx="4">tool calls</tspan></text>
+    </g>
+
+    <!-- nodes -->
+    <g data-map-node="user">
+        <rect x="32" y="118" width="120" height="64" rx="10" fill="var(--anx-card)" stroke="var(--anx-border)" />
+        <text x="92" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="var(--anx-fg)">User</text>
+        <text x="92" y="164" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">person + browser</text>
+    </g>
+
+    <g data-map-node="merchant">
+        <rect x="398" y="20" width="124" height="50" rx="10" fill="var(--anx-card)" stroke="var(--anx-border)" />
+        <text x="460" y="41" text-anchor="middle" font-size="13" font-weight="600" fill="var(--anx-fg)">Merchant</text>
+        <text x="460" y="58" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">catalog + checkout</text>
+    </g>
+
+    <g data-map-node="agent">
+        <rect x="395" y="118" width="130" height="64" rx="12" fill="var(--anx-card)" stroke="var(--anx-border)" stroke-width="1.5" />
+        <rect x="399" y="122" width="122" height="56" rx="9" fill="none" stroke="var(--anx-border)" stroke-dasharray="3 3" opacity="0.6" />
+        <text x="460" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="var(--anx-fg)">Agent</text>
+        <text x="460" y="164" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">orchestrator</text>
+    </g>
+
+    <g data-map-node="payment">
+        <rect x="398" y="230" width="124" height="50" rx="10" fill="var(--anx-card)" stroke="var(--anx-border)" />
+        <text x="460" y="251" text-anchor="middle" font-size="13" font-weight="600" fill="var(--anx-fg)">Payment</text>
+        <text x="460" y="268" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">verifiable authority</text>
+    </g>
+
+    <g data-map-node="agents">
+        <rect x="760" y="30" width="130" height="54" rx="10" fill="var(--anx-card)" stroke="var(--anx-border)" />
+        <text x="825" y="53" text-anchor="middle" font-size="13" font-weight="600" fill="var(--anx-fg)">Other agents</text>
+        <text x="825" y="70" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">skills for hire</text>
+    </g>
+
+    <g data-map-node="tools">
+        <rect x="760" y="216" width="130" height="54" rx="10" fill="var(--anx-card)" stroke="var(--anx-border)" />
+        <text x="825" y="239" text-anchor="middle" font-size="13" font-weight="600" fill="var(--anx-fg)">Tools (MCP)</text>
+        <text x="825" y="256" text-anchor="middle" font-size="10" fill="var(--anx-muted-fg)">resources + actions</text>
+    </g>
+
+</svg>
+
+</html>

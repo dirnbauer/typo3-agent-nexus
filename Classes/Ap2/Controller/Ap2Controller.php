@@ -29,7 +29,13 @@ use Webconsulting\AgentNexus\Ap2\Service\MandateLog;
 #[AsController]
 final class Ap2Controller extends ActionController
 {
-    private const CSS = 'EXT:agent_nexus/Resources/Public/Css/ap2-backend.css';
+    /** Ordered design-system CSS: tokens → primitives → backend chrome → AP2 accents. */
+    private const CSS = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+        'EXT:agent_nexus/Resources/Public/Css/modules/ap2.css',
+    ];
     private const JS_STUDIO = '@webconsulting/agent-nexus/ap2-studio.js';
 
     /** Mandate types (for the Inspector). */
@@ -58,7 +64,9 @@ final class Ap2Controller extends ActionController
 
     public function studioAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_STUDIO);
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -74,7 +82,9 @@ final class Ap2Controller extends ActionController
 
     public function catalogAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setTitle('AP2 Mandate Inspector');

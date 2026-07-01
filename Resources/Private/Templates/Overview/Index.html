@@ -5,29 +5,63 @@
 
 <f:section name="Content">
 
-<div class="agst" data-agentstack-overview>
+<div class="anx anx--backend anx-accent--mcp anx-module" data-anx-overview>
 
-    <header class="agst-head">
-        <h1 class="agst-title">Agent Nexus</h1>
-        <p class="agst-lede">A short field guide to the 2026 agent-protocol family — what each one <strong>is</strong>, how it <strong>works</strong>, and where it runs on this site.</p>
-        <div class="agst-stack">
-            <f:for each="{stack}" as="s">
-                <span class="agst-stackchip agst-accent--{s.accent}"><i class="agst-dot"></i>{s.key}<em>{s.label}</em></span>
+    <!-- 1 · HERO -->
+    <header class="anx-hero" data-anx-hero>
+        <span class="anx-reveal anx-page-head__kicker"><i class="anx-dot"></i>Agent Nexus</span>
+        <h1 class="anx-reveal anx-title">A field guide to the agent-protocol family</h1>
+        <p class="anx-reveal anx-lede">This module is a <strong>study guide and playground hub</strong> for the protocols agents use to talk to tools, to each other, to users, to UIs, to merchants and to payments. Every protocol gets a definition, a sequence diagram, a live backend playground, and a real plugin on the demo site — commerce flows are simulated, and a human gate stands before every write.</p>
+        <div class="anx-reveal anx-actions anx-hero__ctas">
+            <f:if condition="{heroPlaygroundUrl}">
+                <f:then>
+                    <a class="anx-btn anx-btn--primary" href="{heroPlaygroundUrl}">Open the A2UI playground</a>
+                </f:then>
+                <f:else>
+                    <span class="anx-btn anx-btn--primary is-disabled">A2UI playground unavailable</span>
+                </f:else>
+            </f:if>
+            <a class="anx-btn anx-btn--ghost" href="{frontendDemoUrl}" target="_blank" rel="noreferrer">View the frontend demo</a>
+        </div>
+        <div class="anx-reveal anx-stats anx-hero__stats">
+            <f:for each="{stats}" as="stat">
+                <div class="anx-stat">
+                    <span class="anx-stat__value" data-anx-count="{stat.value}">{stat.value}</span>
+                    <span class="anx-stat__label">{stat.label}</span>
+                    <span class="anx-stat__hint">{stat.hint}</span>
+                </div>
             </f:for>
         </div>
     </header>
 
-    <section class="agst-theory" aria-label="Agent Nexus theory">
-        <div class="agst-theory__intro">
-            <span class="agst-section-label">Short theory</span>
-            <h2 class="agst-theory__title">One stack, five edges, no blurred responsibility.</h2>
+    <!-- 2 · PROTOCOL MAP -->
+    <section class="anx-reveal anx-card anx-card--flush anx-mapcard" aria-label="Protocol map">
+        <div class="anx-card__head">
+            <h2 class="anx-h2 anx-h2--inhead">Protocol map</h2>
+            <span class="anx-mapcard__hint">Six edges, six responsibilities — the agent sits in the middle.</span>
+        </div>
+        <div class="anx-mapcard__body">
+            <f:render partial="Overview/ProtocolMap" />
+        </div>
+        <div class="anx-mapcard__legend">
+            <f:for each="{stack}" as="s">
+                <span class="anx-chip anx-accent--{s.accent}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
+            </f:for>
+        </div>
+    </section>
+
+    <!-- 3 · THEORY -->
+    <section class="anx-theory" aria-label="Agent Nexus theory">
+        <div class="anx-theory__intro">
+            <span class="anx-section-label">Short theory</span>
+            <h2 class="anx-theory__title">One stack, five edges, no blurred responsibility.</h2>
             <p>Agent protocols are easiest to reason about when every boundary is visible. The backend modules below show the wire contracts; the frontend plugins show how those contracts become trusted visitor-facing experiences.</p>
         </div>
-        <div class="agst-theory__grid">
+        <div class="anx-theory__grid">
             <f:for each="{theory}" as="item">
-                <article class="agst-theory-card">
-                    <img class="agst-theory-card__image" src="{item.image}" alt="{item.alt}" loading="lazy" />
-                    <div class="agst-theory-card__body">
+                <article class="anx-theory-card">
+                    <img class="anx-theory-card__image" src="{item.image}" alt="{item.alt}" loading="lazy" />
+                    <div class="anx-theory-card__body">
                         <h3>{item.title}</h3>
                         <p>{item.text}</p>
                     </div>
@@ -36,110 +70,201 @@
         </div>
     </section>
 
-    <nav class="agst-tabs" role="tablist" aria-label="Agent protocols">
+    <!-- 4 · COMPARISON TABLE -->
+    <section class="anx-compare" data-anx-compare aria-label="Protocol comparison">
+        <span class="anx-section-label">Side by side</span>
+        <h2 class="anx-compare__title">Five protocols, one line each.</h2>
+        <div class="anx-table-wrap">
+            <table class="anx-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Protocol</th>
+                        <th scope="col">Edge</th>
+                        <th scope="col">Transport</th>
+                        <th scope="col">Payload unit</th>
+                        <th scope="col">Human gate</th>
+                        <th scope="col">Playground</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{comparison}" as="row">
+                        <tr class="anx-accent--{row.accent}">
+                            <td class="anx-compare__proto"><i class="anx-dot"></i><strong>{row.name}</strong></td>
+                            <td>{row.edge}</td>
+                            <td><code>{row.transport}</code></td>
+                            <td>{row.payload}</td>
+                            <td>{row.gate}</td>
+                            <td>
+                                <f:if condition="{row.moduleUrl}">
+                                    <f:then>
+                                        <a class="anx-btn anx-btn--outline anx-btn--sm" href="{row.moduleUrl}">Open</a>
+                                    </f:then>
+                                    <f:else>
+                                        <span class="anx-compare__na">not installed</span>
+                                    </f:else>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 5 · DECISION HELPER -->
+    <section class="anx-card anx-decide" data-anx-decide aria-label="Which protocol do I need?">
+        <span class="anx-section-label">Decision helper</span>
+        <h2 class="anx-decide__title">Which protocol do I need?</h2>
+        <p class="anx-decide__lede">Answer three questions — any combination resolves to a protocol.</p>
+        <div class="anx-decide__questions">
+            <f:for each="{decision.questions}" as="q" iteration="qit">
+                <div class="anx-decide__q">
+                    <span class="anx-decide__q-label"><em>{qit.cycle}</em>{q.label}</span>
+                    <div class="anx-decide__opts" role="group" aria-label="{q.label}">
+                        <f:for each="{q.options}" as="opt">
+                            <button type="button" class="anx-btn anx-btn--ghost anx-btn--sm anx-decide__opt"
+                                    data-anx-q="{q.id}" data-anx-v="{opt.value}" aria-pressed="false">{opt.label}</button>
+                        </f:for>
+                    </div>
+                </div>
+            </f:for>
+        </div>
+        <div class="anx-decide__result" data-anx-decide-result hidden aria-live="polite"></div>
+        <script type="application/json" data-anx-decide-data><f:format.raw>{decisionJson}</f:format.raw></script>
+    </section>
+
+    <!-- 6 · PROTOCOL TABS -->
+    <nav class="anx-tabs" role="tablist" aria-label="Agent protocols">
         <f:for each="{protocols}" as="p" iteration="it">
             <button type="button"
-                    class="agst-tab agst-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
-                    data-agst-tab="{p.key}" role="tab"
+                    class="anx-tab anx-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
+                    data-anx-tab="{p.key}" role="tab"
                     aria-selected="{f:if(condition: it.isFirst, then: 'true', else: 'false')}">
-                <i class="agst-dot"></i>
-                <span class="agst-tab__name">{p.name}</span>
-                <em class="agst-tab__edge">{p.edge}</em>
+                <i class="anx-dot"></i>
+                <span class="anx-tab__name">{p.name}</span>
+                <em class="anx-tab__edge">{p.edge}</em>
             </button>
         </f:for>
     </nav>
 
     <f:for each="{protocols}" as="p" iteration="it">
-        <section class="agst-panel agst-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
-                 data-agst-panel="{p.key}" role="tabpanel">
+        <section class="anx-panel anx-accent--{p.accent}{f:if(condition: it.isFirst, then: ' is-active')}"
+                 data-anx-panel="{p.key}" role="tabpanel">
 
-            <div class="agst-reveal agst-intro">
+            <div class="anx-reveal anx-intro">
                 <div>
-                    <span class="agst-kicker"><i class="agst-dot"></i>{p.name}<em>{p.edge}</em></span>
-                    <p class="agst-tagline">{p.tagline}</p>
-                    <p class="agst-short">{p.short}</p>
-                    <p class="agst-def"><f:format.raw>{p.definition}</f:format.raw></p>
+                    <span class="anx-page-head__kicker"><i class="anx-dot"></i>{p.name}<em>{p.edge}</em></span>
+                    <p class="anx-tagline">{p.tagline}</p>
+                    <p class="anx-short">{p.short}</p>
+                    <p class="anx-def"><f:format.raw>{p.definition}</f:format.raw></p>
                 </div>
-                <figure class="agst-media">
+                <figure class="anx-media">
                     <img src="{p.image}" alt="{p.imageAlt}" loading="lazy" />
                 </figure>
             </div>
 
-            <div class="agst-reveal agst-card agst-flow" data-agst-motion="{p.key}" aria-hidden="true">
-                <div class="agst-flow__node">{p.flow.left}</div>
-                <div class="agst-flow__track">
-                    <span class="agst-flow__beam"></span>
-                    <f:for each="{p.flow.steps}" as="st" iteration="sit">
-                        <span class="agst-flow__step agst-flow__step--{st.side}" data-agst-step>{st.label}</span>
-                    </f:for>
+            <div class="anx-reveal anx-card anx-card--flush anx-mm-card">
+                <div class="anx-card__head">
+                    <h2 class="anx-h2 anx-h2--inhead">Sequence</h2>
+                    <span class="anx-mm-card__hint">{p.name} on this site, end to end</span>
                 </div>
-                <div class="agst-flow__node">{p.flow.right}</div>
+                <div class="anx-mm-card__body">
+                    <f:render partial="Overview/Diagram/{p.diagram}" />
+                </div>
             </div>
 
-            <div class="agst-reveal agst-grid2">
-                <div class="agst-card">
-                    <h2 class="agst-h2">How it works</h2>
-                    <ol class="agst-steps">
-                        <f:for each="{p.flow.steps}" as="st" iteration="sit">
-                            <li class="agst-step">
-                                <span class="agst-step__n">{st.n}</span>
-                                <span class="agst-step__body">
-                                    <code class="agst-step__label">{st.label}</code>
-                                    <span class="agst-step__desc">{st.desc}</span>
+            <div class="anx-reveal anx-card anx-flow" data-anx-flow="{p.key}" aria-hidden="true">
+                <div class="anx-flow__node">{p.flow.left}</div>
+                <div class="anx-flow__track">
+                    <span class="anx-flow__beam"></span>
+                    <f:for each="{p.flow.steps}" as="st">
+                        <span class="anx-flow__step anx-flow__step--{st.side}" data-anx-flow-step>{st.label}</span>
+                    </f:for>
+                </div>
+                <div class="anx-flow__node">{p.flow.right}</div>
+            </div>
+
+            <div class="anx-reveal anx-grid2">
+                <div class="anx-card">
+                    <h2 class="anx-h2">How it works</h2>
+                    <ol class="anx-steps">
+                        <f:for each="{p.flow.steps}" as="st">
+                            <li class="anx-step">
+                                <span class="anx-step__n">{st.n}</span>
+                                <span class="anx-step__body">
+                                    <code class="anx-step__label">{st.label}</code>
+                                    <span class="anx-step__desc">{st.desc}</span>
                                 </span>
                             </li>
                         </f:for>
                     </ol>
                 </div>
-                <div class="agst-card">
-                    <h2 class="agst-h2">Key facts</h2>
-                    <dl class="agst-facts">
+                <div class="anx-card">
+                    <h2 class="anx-h2">Key facts</h2>
+                    <dl class="anx-facts">
                         <f:for each="{p.facts}" as="fact">
-                            <div class="agst-fact">
-                                <dt class="agst-fact__term">{fact.term}</dt>
-                                <dd class="agst-fact__def">{fact.def}</dd>
+                            <div class="anx-fact">
+                                <dt class="anx-fact__term">{fact.term}</dt>
+                                <dd class="anx-fact__def">{fact.def}</dd>
                             </div>
                         </f:for>
                     </dl>
                 </div>
             </div>
 
-            <div class="agst-reveal agst-card agst-spec">
-                <div class="agst-spec__head">
-                    <span class="agst-spec__dots"><i></i><i></i><i></i></span>
-                    <span class="agst-spec__label">{p.specLabel}</span>
+            <div class="anx-reveal anx-card anx-spec">
+                <div class="anx-spec__head">
+                    <span class="anx-spec__dots"><i></i><i></i><i></i></span>
+                    <span class="anx-spec__label">{p.specLabel}</span>
                 </div>
-                <pre class="agst-spec__code"><code>{p.spec}</code></pre>
+                <pre class="anx-spec__code"><code>{p.spec}</code></pre>
             </div>
 
-            <div class="agst-reveal agst-examples">
-                <article class="agst-example agst-example--backend">
-                    <span class="agst-section-label">Backend example</span>
+            <div class="anx-reveal anx-examples">
+                <article class="anx-card anx-card--accent anx-example">
+                    <span class="anx-section-label">Backend example</span>
                     <h2>{p.name} in TYPO3</h2>
                     <p>{p.backendExample}</p>
                 </article>
-                <article class="agst-example agst-example--frontend">
-                    <span class="agst-section-label">Frontend example</span>
+                <article class="anx-card anx-card--accent anx-example">
+                    <span class="anx-section-label">Frontend example</span>
                     <h2>{p.plugin}</h2>
                     <p>{p.frontendExample}</p>
                 </article>
             </div>
 
-            <div class="agst-reveal agst-actions">
+            <div class="anx-reveal anx-actions">
                 <f:if condition="{p.moduleUrl}">
                     <f:then>
-                        <a class="agst-btn agst-btn--primary" href="{p.moduleUrl}">Open the {p.name} playground</a>
+                        <a class="anx-btn anx-btn--primary" href="{p.moduleUrl}">Open the {p.name} playground</a>
                     </f:then>
                     <f:else>
-                        <span class="agst-btn agst-btn--ghost is-disabled">{p.name} playground — install webconsulting/{p.key}-integration</span>
+                        <span class="anx-btn anx-btn--ghost is-disabled">{p.name} playground unavailable</span>
                     </f:else>
                 </f:if>
-                <a class="agst-btn agst-btn--ghost" href="{p.frontendUrl}" target="_blank" rel="noreferrer">Open frontend example</a>
-                <span class="agst-plugin">Plugin&nbsp;→&nbsp;<strong>{p.plugin}</strong></span>
+                <a class="anx-btn anx-btn--ghost" href="{p.frontendUrl}" target="_blank" rel="noreferrer">Open frontend example</a>
+                <span class="anx-plugin-note">Plugin&nbsp;→&nbsp;<strong>{p.plugin}</strong></span>
             </div>
 
         </section>
     </f:for>
+
+    <!-- 7 · GLOSSARY -->
+    <section class="anx-glossary" aria-label="Glossary">
+        <span class="anx-section-label">Glossary</span>
+        <h2 class="anx-glossary__title">Terms you will meet in the playgrounds.</h2>
+        <div class="anx-glossary__grid">
+            <f:for each="{glossary}" as="g">
+                <details class="anx-glossary__item anx-accent--{g.accent}">
+                    <summary>
+                        <span class="anx-glossary__term">{g.term}</span>
+                        <span class="anx-glossary__tag">{g.tag}</span>
+                    </summary>
+                    <p>{g.def}</p>
+                </details>
+            </f:for>
+        </div>
+    </section>
 
 </div>
 

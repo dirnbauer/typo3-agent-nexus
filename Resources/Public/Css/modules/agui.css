@@ -1,0 +1,103 @@
+/* AG-UI playground — protocol-specific bits the nexus-ui primitives can't do.
+ * Tokens only (--anx-*, --accent); no raw colors. */
+
+/* ---- layout helpers ---- */
+.anx .agui-rows { display: flex; flex-direction: column; gap: 0.9rem; }
+.anx .agui-col { display: flex; flex-direction: column; gap: 0.9rem; }
+.anx .agui-spacer { flex: 1 1 auto; }
+.anx .agui-scroll { overflow-x: auto; }
+.anx .agui-muted { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); }
+
+/* ---- agent-stack legend ---- */
+.anx .agui-stack { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-bottom: 1.1rem; }
+.anx .agui-stack .anx-section-label { margin: 0; }
+.anx .agui-stack .anx-dot { width: 0.4rem; height: 0.4rem; }
+.anx .agui-stack .anx-chip.is-self {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--anx-border));
+  background: var(--accent-soft);
+}
+
+/* ---- preset toggle (JS keeps flipping .active) ---- */
+.anx .agui-preset.active {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--anx-border));
+  background: var(--accent-soft);
+}
+
+/* ---- timeline ---- */
+.anx [data-agui-timeline] { min-height: 12rem; }
+.anx .agui-evt__payload { color: var(--anx-muted-fg); font-size: 0.92em; }
+
+/* ---- draft / reasoning / error ---- */
+.anx .agui-draft { min-height: 2.5rem; white-space: pre-wrap; }
+.anx .agui-reasoning {
+  font-size: var(--anx-text-sm);
+  color: var(--anx-muted-fg);
+  background: var(--accent-soft);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.6rem;
+}
+.anx .agui-reasoning::before { content: "Reasoning — "; color: var(--accent); font-weight: 650; }
+.anx .agui-error { color: var(--anx-danger); font-weight: 600; }
+
+/* ---- shared-state inspector ---- */
+.anx .agui-state .anx-spec__code { max-height: 16rem; overflow: auto; }
+
+/* ---- generative UI slot: plan cards ---- */
+.anx .agui-plancards { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.8rem; }
+.anx .agui-plancard {
+  position: relative;
+  flex: 1 1 8rem;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius);
+  background: var(--anx-card);
+  padding: 0.8rem;
+  text-align: center;
+}
+.anx .agui-plancard.is-rec {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--anx-border));
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.anx .agui-plancard__tag {
+  position: absolute;
+  top: -0.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--anx-card);
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--anx-border));
+  color: var(--accent);
+  font-size: var(--anx-text-xs);
+  font-weight: 650;
+  line-height: 1;
+  padding: 0.14rem 0.5rem;
+  border-radius: var(--anx-radius-full);
+  white-space: nowrap;
+}
+.anx .agui-plancard__name { font-weight: 700; }
+.anx .agui-plancard__price { font-size: 1.3rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.anx .agui-plancard__price small { font-size: 0.7rem; font-weight: 400; color: var(--anx-muted-fg); }
+.anx .agui-plancard__seats { font-size: var(--anx-text-xs); color: var(--anx-muted-fg); }
+
+/* ---- human-in-the-loop gate ---- */
+.anx .agui-hitl {
+  margin-top: 1rem;
+  border: 1px solid color-mix(in srgb, var(--anx-warn) 45%, var(--anx-border));
+  border-radius: var(--anx-radius);
+  background: color-mix(in srgb, var(--anx-warn) 7%, transparent);
+  padding: 0.9rem 1rem;
+}
+.anx .agui-hitl__head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; margin-bottom: 0.5rem; }
+.anx .agui-hitl__row { display: flex; justify-content: space-between; gap: 1rem; font-size: var(--anx-text-sm); padding: 0.15rem 0; }
+.anx .agui-hitl__row span { color: var(--anx-muted-fg); }
+.anx .agui-hitl__actions { display: flex; gap: 0.5rem; margin-top: 0.7rem; }
+
+/* ---- about card / catalog ---- */
+.anx .agui-about p { margin: 0 0 0.6rem; }
+.anx .agui-about p:last-child { margin-bottom: 0; }
+.anx .agui-fields { font-family: var(--anx-font-mono); font-size: var(--anx-text-xs); color: var(--anx-muted-fg); }
+
+@media (max-width: 720px) {
+  .anx .agui-hitl__row,
+  .anx .agui-hitl__actions { flex-direction: column; align-items: flex-start; }
+  .anx .agui-hitl__actions .anx-btn { width: 100%; }
+}

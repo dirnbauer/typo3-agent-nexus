@@ -6,105 +6,182 @@
 
 <f:section name="Content">
 
-<div class="agui-playground" data-agui-console>
+<div class="anx anx--backend anx-accent--agui anx-module" data-agui-console>
 
-    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
-        <div>
-            <h1 class="mb-1">AG-UI Playground</h1>
-            <p class="text-body-secondary mb-0">
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">AG-UI <em>agent ↔ user</em></span>
+            <h1 class="anx-title">AG-UI Playground</h1>
+            <p class="anx-lede">
                 Start a task and watch the agent <strong>stream typed events</strong> to the UI in real time
                 — text deltas, tool calls, shared state — and <strong>approve before anything is written</strong>.
             </p>
         </div>
-        <span class="badge bg-secondary align-self-center">Deterministic demo · no API key needed</span>
-    </div>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+                <span class="anx-badge">POST → SSE</span>
+            </div>
+            <a class="anx-btn anx-btn--ghost anx-btn--sm"
+               href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ag-ui"
+               target="_blank" rel="noopener noreferrer">Frontend demo</a>
+        </div>
+    </header>
 
     <!-- The 2026 agent-nexus family -->
-    <div class="agui-stack mb-3">
-        <span class="agui-stack__label">The agent stack:</span>
+    <div class="agui-stack">
+        <span class="anx-section-label">Agent stack</span>
         <f:for each="{stack}" as="s">
-            <span class="agui-stack__chip agui-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
         </f:for>
     </div>
 
-    <!-- Run controls -->
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="text-body-secondary small me-1">Task:</span>
+    <!-- Today's activity (RunLogger totals) -->
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.runs}">{today.runs}</span>
+            <span class="anx-stat__label">Runs today</span>
+            <span class="anx-stat__hint">backend + frontend consoles</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.approvals}">{today.approvals}</span>
+            <span class="anx-stat__label">Approvals</span>
+            <span class="anx-stat__hint">human-in-the-loop decisions</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.events}">{today.events}</span>
+            <span class="anx-stat__label">Events streamed</span>
+            <span class="anx-stat__hint">typed AG-UI events</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{presets -> f:count()}">{presets -> f:count()}</span>
+            <span class="anx-stat__label">Task presets</span>
+            <span class="anx-stat__hint">deterministic demo flows</span>
+        </div>
+    </div>
+
+    <div class="agui-rows">
+
+        <!-- Run controls -->
+        <div class="anx-card anx-reveal">
+            <span class="anx-section-label">Run a task</span>
+            <div class="anx-actions">
                 <f:for each="{presets}" as="preset" iteration="it">
-                    <button type="button" class="btn btn-sm btn-outline-primary agui-preset{f:if(condition: it.isFirst, then: ' active')}"
+                    <button type="button"
+                            class="anx-btn anx-btn--ghost anx-btn--sm agui-preset{f:if(condition: it.isFirst, then: ' active')}"
                             data-agui-preset="{preset.id}" title="{preset.hint}">{preset.label}</button>
                 </f:for>
-                <button type="button" class="btn btn-primary ms-auto" data-agui-run>
+                <span class="agui-spacer"></span>
+                <button type="button" class="anx-btn anx-btn--primary" data-agui-run>
                     <core:icon identifier="actions-play" size="small" /> Run agent
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Live panes -->
-    <div class="row g-3">
-        <div class="col-xl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><core:icon identifier="actions-list-alternative" size="small" /> Event timeline</span>
-                    <span class="text-body-secondary small" data-agui-eventcount>0 events</span>
+        <!-- Live panes -->
+        <div class="anx-grid2">
+            <div class="anx-console anx-reveal">
+                <div class="anx-console__bar">
+                    <span class="anx-console__title"><i class="anx-dot"></i> Event timeline</span>
+                    <span class="anx-console__bar-spacer"></span>
+                    <span class="anx-badge" data-agui-eventcount>0 events</span>
+                    <a href="{f:uri.action(action: 'catalog')}" class="anx-btn anx-btn--ghost anx-btn--sm">Event Inspector</a>
                 </div>
-                <div class="card-body">
-                    <div class="agui-timeline" data-agui-timeline>
-                        <div class="text-body-secondary small">Pick a task and press <strong>Run agent</strong> to start the stream.</div>
+                <div class="anx-console__body" data-agui-timeline aria-live="polite">
+                    <div class="anx-console__empty">Pick a task and press <strong>Run agent</strong> to start the stream.</div>
+                </div>
+            </div>
+            <div class="agui-col">
+                <div class="anx-card anx-card--flush anx-reveal">
+                    <div class="anx-card__head">
+                        <span class="anx-console__title">Draft</span>
+                    </div>
+                    <div class="anx-card__body">
+                        <div class="agui-reasoning d-none" data-agui-reasoning></div>
+                        <div class="agui-draft" data-agui-draft><span class="agui-muted">The streamed answer appears here, token by token.</span></div>
+                        <div class="agui-ui-slot" data-agui-uislot></div>
+                        <div class="agui-hitl d-none" data-agui-hitl aria-live="polite"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="col-xl-6">
-            <div class="card mb-3">
-                <div class="card-header"><core:icon identifier="actions-document" size="small" /> Draft</div>
-                <div class="card-body">
-                    <div class="agui-reasoning d-none" data-agui-reasoning></div>
-                    <div class="agui-draft" data-agui-draft><span class="text-body-secondary small">The streamed answer appears here, token by token.</span></div>
-                    <div class="agui-ui-slot" data-agui-uislot></div>
-                    <div class="agui-hitl d-none" data-agui-hitl></div>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-header"><core:icon identifier="actions-database" size="small" /> Shared state</div>
-                <div class="card-body">
-                    <pre class="agui-code"><code data-agui-state>{}</code></pre>
+                <div class="anx-card anx-card--flush anx-spec agui-state anx-reveal">
+                    <div class="anx-spec__head">
+                        <span class="anx-spec__dots"><i></i><i></i><i></i></span>
+                        <span class="anx-spec__label">shared state — STATE_SNAPSHOT + STATE_DELTA</span>
+                    </div>
+                    <pre class="anx-spec__code"><code data-agui-state>{}</code></pre>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Run log -->
-    <div class="card mt-3 agui-runlog">
-        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
-            <span><core:icon identifier="actions-clock" size="small" /> <strong>Activity log</strong> <span class="text-body-secondary small">today</span></span>
-            <span class="agui-stat"><span class="agui-stat__v">{today.runs}</span> runs</span>
-            <span class="agui-stat"><span class="agui-stat__v">{today.approvals}</span> approvals</span>
-            <span class="agui-stat"><span class="agui-stat__v">{today.events}</span> events streamed</span>
-            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
-                <core:icon identifier="actions-list" size="small" /> Event Inspector
-            </a>
-        </div>
-    </div>
+        <!-- Recent runs (activity / compliance record) -->
+        <f:if condition="{recent}">
+            <div class="anx-card anx-card--flush anx-reveal">
+                <div class="anx-card__head">
+                    <span class="anx-console__title">Recent runs</span>
+                    <span class="anx-badge">{recent -> f:count()} logged</span>
+                </div>
+                <div class="agui-scroll">
+                    <table class="anx-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Source</th>
+                                <th>Task</th>
+                                <th>Events</th>
+                                <th>Approved</th>
+                                <th>Outcome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{recent}" as="run">
+                                <tr>
+                                    <td><f:format.date format="d.m.Y H:i">@{run.crdate}</f:format.date></td>
+                                    <td>{run.source}</td>
+                                    <td><code class="anx-code">{run.preset}</code></td>
+                                    <td>{run.event_count}</td>
+                                    <td>
+                                        <f:if condition="{run.approved}">
+                                            <f:then><span class="anx-badge anx-badge--ok">yes</span></f:then>
+                                            <f:else><span class="anx-badge">no</span></f:else>
+                                        </f:if>
+                                    </td>
+                                    <td>
+                                        <f:if condition="{run.outcome} == 'error'">
+                                            <f:then><span class="anx-badge anx-badge--danger">error</span></f:then>
+                                            <f:else>
+                                                <f:if condition="{run.outcome} == 'rejected'">
+                                                    <f:then><span class="anx-badge anx-badge--warn">rejected</span></f:then>
+                                                    <f:else><span class="anx-badge anx-badge--ok">{run.outcome}</span></f:else>
+                                                </f:if>
+                                            </f:else>
+                                        </f:if>
+                                    </td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </f:if>
 
-    <!-- About -->
-    <div class="card mt-3">
-        <div class="card-header"><h2 class="h5 mb-0">What is AG-UI?</h2></div>
-        <div class="card-body">
-            <p class="mb-2">
+        <!-- About -->
+        <div class="anx-card anx-reveal agui-about">
+            <h2 class="anx-h2">What is AG-UI?</h2>
+            <p>
                 <strong>AG-UI (Agent-User Interaction Protocol)</strong> standardises how a backend agent
                 <em>streams real-time events</em> to a frontend so people stay in the loop during long tasks.
-                The frontend POSTs a <code>RunAgentInput</code> (and declares which tools the agent may use), and the
+                The frontend POSTs a <code class="anx-code">RunAgentInput</code> (and declares which tools the agent may use), and the
                 agent replies with an ordered stream of typed events over SSE.
             </p>
-            <p class="mb-0 text-body-secondary">
+            <p class="agui-muted">
                 The trust model is built in: the <strong>UI declares the tools</strong>, sensitive actions are gated behind a
                 <strong>human-in-the-loop</strong> confirmation (a tool the user must answer), and nothing is written until you approve.
             </p>
         </div>
+
     </div>
 </div>
 

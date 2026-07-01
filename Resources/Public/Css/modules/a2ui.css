@@ -1,0 +1,233 @@
+/**
+ * A2UI module layer — only what the nexus primitives can't express.
+ * Consumes --anx-* tokens and var(--accent) exclusively (scope: .anx-accent--a2ui).
+ * Everything is scoped under .anx so nothing leaks into the rest of the backend.
+ */
+
+/* ---- spacing helpers ----------------------------------------------------- */
+
+.anx .a2ui-block { margin-bottom: 1rem; }
+.anx .a2ui-block--sm { margin-bottom: 0.7rem; }
+.anx .a2ui-example { margin-bottom: 1rem; }
+
+/* Guarantee the JS show/hide toggle independent of backend Bootstrap. */
+.anx .d-none { display: none !important; }
+
+/* ---- intent bar + presets ------------------------------------------------- */
+
+.anx .a2ui-intent-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: stretch;
+}
+.anx .a2ui-intent-row .anx-input { flex: 1 1 auto; }
+.anx .a2ui-intent-row .anx-btn { flex: 0 0 auto; }
+
+.anx .a2ui-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* ---- connection key/value list -------------------------------------------- */
+
+.anx .a2ui-kv {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.3rem 0.9rem;
+  margin: 0;
+  font-size: var(--anx-text-sm);
+}
+.anx .a2ui-kv dt {
+  color: var(--anx-muted-fg);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.anx .a2ui-kv dd {
+  margin: 0;
+  color: var(--anx-fg);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.anx .a2ui-kv .a2ui-kv__muted { color: var(--anx-muted-fg); font-weight: 400; }
+.anx .a2ui-kv .a2ui-kv__truncate,
+.anx .a2ui-kv dd.a2ui-kv__truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 400;
+  font-family: var(--anx-font-mono);
+  font-size: var(--anx-text-xs);
+}
+.anx .a2ui-instance-note {
+  margin: 0.7rem 0 0;
+  padding-top: 0.55rem;
+  border-top: 1px solid var(--anx-border);
+}
+
+/* ---- notes (server + client warnings) -------------------------------------- */
+
+.anx .a2ui-notes {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.9rem 0.6rem 1.9rem;
+  border: 1px solid color-mix(in srgb, var(--anx-warn) 40%, var(--anx-border));
+  border-left: 3px solid var(--anx-warn);
+  border-radius: var(--anx-radius);
+  background: color-mix(in srgb, var(--anx-warn) 7%, var(--anx-card));
+  font-size: var(--anx-text-sm);
+  color: var(--anx-fg);
+}
+.anx .a2ui-notes li { margin: 0.1rem 0; }
+
+/* ---- the three working panes ------------------------------------------------ */
+
+.anx .a2ui-panes {
+  display: grid;
+  grid-template-columns: 1.6fr 1.25fr 1fr;
+  gap: 0.9rem;
+  align-items: stretch;
+}
+@media (max-width: 1280px) {
+  .anx .a2ui-panes { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 920px) {
+  .anx .a2ui-panes { grid-template-columns: 1fr; }
+}
+
+/* The live rendering frame — visually separates "what the agent produced". */
+.anx .a2ui-live-frame {
+  min-height: 220px;
+  border: 1px dashed var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: 1rem;
+  background:
+    linear-gradient(45deg, color-mix(in srgb, var(--anx-fg) 2%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, var(--anx-fg) 2%, transparent) 75%),
+    linear-gradient(45deg, color-mix(in srgb, var(--anx-fg) 2%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, var(--anx-fg) 2%, transparent) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+}
+
+/* JSON / data-model / action viewers. */
+.anx .a2ui-json {
+  margin: 0;
+  max-height: 360px;
+  overflow: auto;
+  font-family: var(--anx-font-mono);
+  font-size: 0.74rem;
+  line-height: 1.6;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.75rem 0.85rem;
+  background: var(--anx-surface-1);
+  color: var(--anx-fg);
+}
+.anx .a2ui-json--sm { max-height: 200px; }
+.anx .a2ui-json code,
+.anx .anx-spec__code code {
+  /* The backend styles `code` with !important; force the high-contrast body color. */
+  color: inherit !important;
+  background: transparent;
+  font-family: inherit;
+  padding: 0;
+}
+.anx .a2ui-scroll { max-height: 30rem; overflow: auto; }
+.anx .a2ui-action-echo { margin-top: 0.8rem; }
+
+/* JS-injected busy + error states inside the live frame. */
+.anx .a2ui-busy {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 0.35rem;
+  color: var(--anx-muted-fg);
+  font-size: var(--anx-text-sm);
+}
+.anx .a2ui-error {
+  border: 1px solid color-mix(in srgb, var(--anx-danger) 45%, var(--anx-border));
+  border-left: 3px solid var(--anx-danger);
+  border-radius: var(--anx-radius-sm);
+  background: color-mix(in srgb, var(--anx-danger) 7%, var(--anx-card));
+  color: var(--anx-danger);
+  font-size: var(--anx-text-sm);
+  padding: 0.6rem 0.8rem;
+}
+
+/* ---- "Emit → Render → Signal → Reason" loop --------------------------------- */
+
+.anx .a2ui-loop {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+  gap: 0.7rem;
+}
+.anx .a2ui-loop-step {
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.75rem 0.85rem;
+  background: var(--anx-surface-1);
+  font-size: var(--anx-text-sm);
+  color: var(--anx-fg);
+}
+.anx .a2ui-loop-step__num {
+  display: block;
+  font-size: var(--anx-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.25rem;
+}
+.anx .a2ui-catalog-lede { margin: 0 0 0.45rem; }
+.anx .a2ui-catalog {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+/* ---- rendered-surface widgets (emitted by a2ui-renderer.js / server partials) */
+
+.anx .a2ui-tabs__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--anx-border);
+  margin-bottom: 0.85rem;
+}
+.anx .a2ui-tabs__tab {
+  padding: 0.45rem 0.9rem;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  color: var(--anx-muted-fg);
+  font-size: var(--anx-text-sm);
+}
+.anx .a2ui-tabs__tab.active {
+  border-bottom-color: var(--accent);
+  color: var(--anx-fg);
+  font-weight: 600;
+}
+.anx .a2ui-modal {
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius);
+  padding: 1.25rem;
+  max-width: 540px;
+  color: var(--anx-fg);
+  background: var(--anx-card);
+  box-shadow: var(--anx-shadow-md);
+}
+.anx .a2ui-modal::backdrop { background: var(--anx-shadow-color); }
+.anx .a2ui-modal__title { margin: 0 0 0.75rem; }
+.anx .a2ui-modal__close { margin-top: 1rem; }
+.anx .a2ui-slider__value {
+  min-width: 2.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- responsive --------------------------------------------------------------- */
+
+@media (max-width: 720px) {
+  .anx .a2ui-intent-row { flex-direction: column; align-items: stretch; }
+  .anx .a2ui-intent-row .anx-btn { width: 100%; }
+}

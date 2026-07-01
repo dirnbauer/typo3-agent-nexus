@@ -26,7 +26,12 @@ use Webconsulting\AgentNexus\Agui\Service\RunLogger;
 #[AsController]
 final class AguiController extends ActionController
 {
-    private const CSS = 'EXT:agent_nexus/Resources/Public/Css/agui-backend.css';
+    private const CSS_FILES = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+        'EXT:agent_nexus/Resources/Public/Css/modules/agui.css',
+    ];
     private const JS_CONSOLE = '@webconsulting/agent-nexus/agui-console.js';
 
     /** @var array<int, array{id: string, label: string, hint: string}> */
@@ -56,7 +61,9 @@ final class AguiController extends ActionController
 
     public function consoleAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_CONSOLE);
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -74,7 +81,9 @@ final class AguiController extends ActionController
 
     public function catalogAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_CONSOLE);
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);

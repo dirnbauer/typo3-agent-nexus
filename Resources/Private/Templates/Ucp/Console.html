@@ -6,114 +6,169 @@
 
 <f:section name="Content">
 
-<div class="ucp-console" data-ucp-console data-manifest-url="{manifestUrl}">
+<div class="anx anx--backend anx-accent--ucp anx-module" data-ucp-console data-manifest-url="{manifestUrl}">
 
-    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
-        <div>
-            <h1 class="mb-1">UCP Console</h1>
-            <p class="text-body-secondary mb-0">
-                Act as a <strong>shopping agent</strong>: discover the merchant manifest, pick an intent,
-                and watch the agent <strong>build a cart</strong> and run the checkout — pausing for your
-                <strong>authorization</strong> before anything is placed.
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">UCP <em>agent &#8596; merchant</em></span>
+            <h1 class="anx-title">UCP Console</h1>
+            <p class="anx-lede">
+                Act as a <strong>shopping agent</strong>: discover the merchant manifest, pick an intent
+                and watch the agent <strong>build a cart</strong> and stream the checkout — pausing at the
+                human <strong>authorization gate</strong> before anything is placed.
             </p>
         </div>
-        <span class="badge bg-warning text-dark align-self-center">Simulated — no payment is taken</span>
-    </div>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+                <span class="anx-badge anx-badge--warn">No payment is taken</span>
+            </div>
+            <a class="anx-btn anx-btn--ghost anx-btn--sm" href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ucp" target="_blank" rel="noreferrer">Frontend demo</a>
+        </div>
+    </header>
 
     <!-- The 2026 agent-nexus family -->
-    <div class="ucp-stack mb-3">
-        <span class="ucp-stack__label">The agent stack:</span>
+    <div class="anx-actions ucp-stack">
+        <span class="anx-console__title">Agent stack</span>
         <f:for each="{stack}" as="s">
-            <span class="ucp-stack__chip ucp-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key} <em>{s.label}</em></span>
         </f:for>
     </div>
 
-    <!-- Merchant manifest -->
-    <div class="card mb-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span><core:icon identifier="actions-shopping-cart" size="small" /> Merchant manifest <span class="text-body-secondary small">discovery</span></span>
-            <a href="{manifestUrl}" target="_blank" rel="noreferrer" class="ucp-manifesturl">{manifestUrl}</a>
+    <!-- Today's simulated activity -->
+    <div class="anx-stats anx-reveal">
+        <div class="anx-stat">
+            <span class="anx-stat__value" data-anx-count="{today.orders}">{today.orders}</span>
+            <span class="anx-stat__label">Checkouts today</span>
+            <span class="anx-stat__hint">simulated runs</span>
         </div>
-        <div class="card-body">
-            <div class="ucp-merchant" data-ucp-merchant><span class="text-body-secondary small">Loading the merchant manifest…</span></div>
+        <div class="anx-stat">
+            <span class="anx-stat__value" data-anx-count="{today.confirmed}">{today.confirmed}</span>
+            <span class="anx-stat__label">Confirmed</span>
+            <span class="anx-stat__hint">passed the human gate</span>
+        </div>
+        <div class="anx-stat">
+            <span class="anx-stat__value" data-anx-count="{today.volume}" data-ucp-volume>{today.volume}</span>
+            <span class="anx-stat__label">Volume (cents)</span>
+            <span class="anx-stat__hint">confirmed orders only</span>
+        </div>
+        <div class="anx-stat">
+            <span class="anx-stat__value" data-anx-count="{recent -> f:count()}">{recent -> f:count()}</span>
+            <span class="anx-stat__label">Recent runs</span>
+            <span class="anx-stat__hint">last 8 logged</span>
         </div>
     </div>
 
-    <!-- Intent controls -->
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="text-body-secondary small me-1">Intent:</span>
+    <div class="ucp-vstack">
+
+        <!-- Merchant manifest -->
+        <div class="anx-card anx-card--flush anx-reveal">
+            <div class="anx-card__head">
+                <span class="anx-console__title"><core:icon identifier="actions-shopping-cart" size="small" /> Merchant manifest <em class="ucp-dim">discovery</em></span>
+                <a href="{manifestUrl}" target="_blank" rel="noreferrer" class="anx-code">{manifestUrl}</a>
+            </div>
+            <div class="anx-card__body">
+                <div class="ucp-merchant" data-ucp-merchant><span class="ucp-muted">Loading the merchant manifest&#8230;</span></div>
+            </div>
+        </div>
+
+        <!-- Intent controls -->
+        <div class="anx-card anx-reveal">
+            <div class="anx-actions">
+                <span class="anx-console__title">Intent</span>
                 <f:for each="{presets}" as="preset" iteration="it">
-                    <button type="button" class="btn btn-sm btn-outline-success ucp-preset{f:if(condition: it.isFirst, then: ' active')}"
+                    <button type="button" class="anx-btn anx-btn--outline anx-btn--sm ucp-preset{f:if(condition: it.isFirst, then: ' active')}"
                             data-ucp-intent="{preset.id}" title="{preset.hint}">{preset.label}</button>
                 </f:for>
-                <button type="button" class="btn btn-success ms-auto" data-ucp-run>
+                <span class="anx-console__bar-spacer"></span>
+                <button type="button" class="anx-btn anx-btn--primary" data-ucp-run>
                     <core:icon identifier="actions-play" size="small" /> Run checkout
                 </button>
             </div>
         </div>
-    </div>
 
-    <!-- Live panes -->
-    <div class="row g-3">
-        <div class="col-xl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><core:icon identifier="actions-list-alternative" size="small" /> Commerce events</span>
-                    <span class="text-body-secondary small" data-ucp-eventcount>0 events</span>
+        <!-- Live panes -->
+        <div class="anx-grid2 anx-reveal">
+            <div class="anx-console">
+                <div class="anx-console__bar">
+                    <span class="anx-console__title"><core:icon identifier="actions-list-alternative" size="small" /> Commerce events</span>
+                    <span class="anx-console__bar-spacer"></span>
+                    <span class="anx-badge" data-ucp-eventcount>0 events</span>
                 </div>
-                <div class="card-body">
-                    <div class="ucp-timeline" data-ucp-timeline>
-                        <div class="text-body-secondary small">Pick an intent and press <strong>Run checkout</strong> to start the stream.</div>
-                    </div>
+                <div class="anx-console__body" data-ucp-timeline aria-live="polite">
+                    <div class="anx-console__empty">Pick an intent and press <strong>Run checkout</strong> to start the stream.</div>
                 </div>
             </div>
-        </div>
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><core:icon identifier="actions-shopping-cart" size="small" /> Cart &amp; checkout</span>
-                    <span class="ucp-state ucp-state--idle" data-ucp-state>idle</span>
+            <div class="anx-card anx-card--flush">
+                <div class="anx-card__head">
+                    <span class="anx-console__title"><core:icon identifier="actions-shopping-cart" size="small" /> Cart &amp; checkout</span>
+                    <span class="anx-badge" data-ucp-state>idle</span>
                 </div>
-                <div class="card-body">
+                <div class="anx-card__body" aria-live="polite">
                     <div class="ucp-reasoning d-none" data-ucp-reasoning></div>
-                    <div class="ucp-cart" data-ucp-cart><span class="text-body-secondary small">The agent's cart appears here.</span></div>
+                    <div class="ucp-cart" data-ucp-cart><span class="ucp-muted">The agent's cart appears here.</span></div>
                     <div class="ucp-auth d-none" data-ucp-auth></div>
                     <div class="ucp-receipt d-none" data-ucp-receipt></div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Order log -->
-    <div class="card mt-3 ucp-orderlog">
-        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
-            <span><core:icon identifier="actions-clock" size="small" /> <strong>Order log</strong> <span class="text-body-secondary small">today · simulated</span></span>
-            <span class="ucp-stat"><span class="ucp-stat__v">{today.orders}</span> checkouts</span>
-            <span class="ucp-stat"><span class="ucp-stat__v">{today.confirmed}</span> confirmed</span>
-            <span class="ucp-stat"><span class="ucp-stat__v" data-ucp-volume>{today.volume}</span> volume (cents)</span>
-            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
-                <core:icon identifier="actions-list" size="small" /> Commerce Inspector
-            </a>
-        </div>
-    </div>
+        <!-- Order log -->
+        <f:if condition="{recent}">
+            <section class="anx-reveal">
+                <div class="ucp-cathead">
+                    <span class="anx-section-label">Order log &#183; today &#183; simulated</span>
+                    <a href="{f:uri.action(action: 'catalog')}" class="anx-btn anx-btn--ghost anx-btn--sm">
+                        <core:icon identifier="actions-list" size="small" /> Commerce Inspector
+                    </a>
+                </div>
+                <div class="anx-table-wrap">
+                    <table class="anx-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Source</th>
+                                <th>Intent</th>
+                                <th>Final state</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{recent}" as="r">
+                                <tr>
+                                    <td><f:format.date format="d.m. H:i">@{r.crdate}</f:format.date></td>
+                                    <td>{r.source}</td>
+                                    <td><code>{r.intent}</code></td>
+                                    <td><span class="anx-badge{f:if(condition: '{r.final_state} == \'confirmed\'', then: ' anx-badge--ok')}{f:if(condition: '{r.final_state} == \'declined\'', then: ' anx-badge--danger')}">{r.final_state}</span></td>
+                                    <td>{r.item_count}</td>
+                                    <td><code>&#8364;<f:format.number decimals="2">{r.total_cents / 100}</f:format.number></code></td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </f:if>
 
-    <!-- About -->
-    <div class="card mt-3">
-        <div class="card-header"><h2 class="h5 mb-0">What is UCP?</h2></div>
-        <div class="card-body">
-            <p class="mb-2">
+        <!-- About -->
+        <div class="anx-card anx-card--accent anx-reveal">
+            <h2 class="anx-h2">What is UCP?</h2>
+            <p class="ucp-copy">
                 <strong>UCP (Universal Commerce Protocol)</strong> is the emerging layer for <em>agentic commerce</em>:
                 a merchant publishes a machine-readable <strong>manifest</strong> and <strong>catalog</strong>, and a shopping
                 agent discovers it, builds a cart and runs a <strong>checkout</strong> on the shopper's behalf.
             </p>
-            <p class="mb-0 text-body-secondary">
+            <p class="ucp-muted">
                 The safeguard is the <strong>authorization gate</strong>: the agent assembles the order but a human (or a
                 signed mandate — see <strong>AP2</strong>) must authorize it before any purchase. In this demo every order is
                 <strong>simulated</strong> — no payment is ever taken.
             </p>
         </div>
+
     </div>
 </div>
 

@@ -1,0 +1,138 @@
+/**
+ * A2A module styles — only what the nexus primitives can't do.
+ * Tokens only (--anx-*, --accent); no raw colors.
+ */
+
+/* Utility: JS toggles d-none on the input/artifact panes; guard against
+   contexts where the backend's Bootstrap utilities are absent. */
+.anx .d-none { display: none !important; }
+
+.anx .a2a-muted { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); }
+.anx .a2a-spacer { flex: 1 1 auto; }
+.anx .a2a-note { color: var(--anx-muted-fg); margin: 0; }
+
+/* Card/section heads: section labels sit inline, icons aligned. */
+.anx .anx-card__head .anx-section-label,
+.anx .a2a-stack__label { margin: 0; display: inline-flex; align-items: center; gap: 0.35rem; }
+
+/* ---- Agent stack legend ---- */
+.anx .a2a-stack { margin-bottom: 1.1rem; }
+.anx .a2a-stack__chip.is-self {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--anx-border));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* ---- Agent Card (rendered by JS) ---- */
+.anx .a2a-cardurl {
+  font-family: var(--anx-font-mono);
+  font-size: var(--anx-text-xs);
+  color: var(--accent-strong);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.anx .a2a-cardurl:hover { text-decoration: underline; }
+.anx .a2a-card { display: flex; flex-direction: column; gap: 0.5rem; }
+.anx .a2a-card__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.anx .a2a-card__name { font-weight: 700; font-size: var(--anx-text-lg); }
+.anx .a2a-card__ver { font-size: var(--anx-text-xs); color: var(--anx-muted-fg); font-family: var(--anx-font-mono); }
+.anx .a2a-card__desc { color: var(--anx-muted-fg); font-size: var(--anx-text-sm); }
+.anx .a2a-card__skills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.anx .a2a-msg__err { color: var(--anx-danger); font-weight: 600; }
+
+/* ---- Delegate controls ---- */
+.anx .a2a-delegate { margin: 0.9rem 0; }
+.anx .a2a-preset.active {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--anx-border));
+  color: var(--accent-strong);
+}
+
+/* ---- Live panes ---- */
+.anx .a2a-panes { margin-bottom: 0.9rem; }
+.anx .a2a-evt__payload { color: var(--anx-muted-fg); }
+[data-a2a-timeline] .anx-console__event { animation: a2a-frame-in 0.2s ease; }
+@keyframes a2a-frame-in { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: none; } }
+
+/* Task pane: status messages */
+.anx .a2a-msg { min-height: 2rem; line-height: 1.55; }
+.anx .a2a-msg__line { display: flex; gap: 0.5rem; align-items: baseline; padding: 0.15rem 0; }
+.anx .a2a-msg__dot {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%; flex: none; transform: translateY(-1px);
+  background: var(--anx-warn);
+}
+.anx .a2a-msg__line--ok .a2a-msg__dot { background: var(--anx-ok); }
+.anx .a2a-msg__line--input .a2a-msg__dot { background: var(--anx-accent-a2ui); }
+.anx .a2a-msg__line--danger .a2a-msg__dot { background: var(--anx-danger); }
+
+/* input-required (cooperative pause) */
+.anx .a2a-input {
+  margin-top: 1rem;
+  border: 1px solid color-mix(in srgb, var(--anx-accent-a2ui) 35%, var(--anx-border));
+  border-radius: var(--anx-radius);
+  padding: 0.9rem 1rem;
+  background: color-mix(in srgb, var(--anx-accent-a2ui) 6%, transparent);
+}
+.anx .a2a-input__badge { margin-bottom: 0.5rem; }
+.anx .a2a-input__q { margin-bottom: 0.6rem; }
+.anx .a2a-input__row { display: flex; gap: 0.5rem; }
+.anx .a2a-input__row .anx-input { flex: 1 1 auto; width: auto; }
+
+/* artifact */
+.anx .a2a-artifact { margin-top: 1rem; border: 1px solid var(--anx-border); border-radius: var(--anx-radius); overflow: hidden; }
+.anx .a2a-artifact__head {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: var(--accent-soft);
+  padding: 0.5rem 0.8rem;
+  font-weight: 600; font-size: var(--anx-text-sm);
+  border-bottom: 1px solid var(--anx-border);
+}
+.anx .a2a-artifact__name { font-family: var(--anx-font-mono); font-size: var(--anx-text-xs); color: var(--accent-strong); }
+.anx .a2a-artifact__body { padding: 0.8rem 1rem; white-space: pre-wrap; line-height: 1.55; font-size: var(--anx-text-sm); max-height: 320px; overflow: auto; }
+
+/* ---- Task log ---- */
+.anx .a2a-tasklog { margin-bottom: 0.9rem; }
+.anx .a2a-table-scroll { overflow-x: auto; }
+
+/* ---- Skill Inspector ---- */
+.anx .a2a-sechead {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 0.7rem; margin: 1.1rem 0 0.7rem;
+}
+.anx .a2a-sechead .anx-h2 { margin: 0; }
+.anx .a2a-catalog__row {
+  display: grid; grid-template-columns: 9rem 1fr; gap: 0.5rem;
+  padding: 0.4rem 0.1rem; border-bottom: 1px solid var(--anx-border); align-items: baseline;
+}
+.anx .a2a-catalog__row:last-child { border-bottom: 0; }
+.anx .a2a-catalog__state { font-family: var(--anx-font-mono); font-weight: 700; font-size: var(--anx-text-sm); }
+.anx .a2a-cat--submitted .a2a-catalog__state { color: var(--anx-accent-agui); }
+.anx .a2a-cat--working .a2a-catalog__state { color: var(--anx-warn); }
+.anx .a2a-cat--input .a2a-catalog__state { color: var(--anx-accent-a2ui); }
+.anx .a2a-cat--completed .a2a-catalog__state { color: var(--anx-ok); }
+.anx .a2a-cat--failed .a2a-catalog__state { color: var(--anx-danger); }
+.anx .a2a-catalog__desc { font-size: var(--anx-text-sm); color: var(--anx-muted-fg); }
+
+.anx .a2a-skillgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 0.9rem; }
+.anx .a2a-skill__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.anx .a2a-skill__name { font-weight: 700; }
+.anx .a2a-skill__desc { font-size: var(--anx-text-sm); color: var(--anx-muted-fg); margin: 0.35rem 0 0.5rem; }
+.anx .a2a-skill__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem; }
+.anx .a2a-skill__ex { display: flex; flex-direction: column; gap: 0.15rem; }
+.anx .a2a-skill__exitem { font-size: var(--anx-text-xs); color: var(--anx-muted-fg); font-style: italic; }
+.anx .a2a-skill__input {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: var(--anx-text-xs); font-weight: 600;
+  color: var(--anx-accent-a2ui); margin-top: 0.5rem;
+}
+
+/* ---- responsive + reduced motion ---- */
+@media (max-width: 720px) {
+  .anx .a2a-input__row { flex-direction: column; }
+  .anx .a2a-input__row .anx-input,
+  .anx .a2a-input__row .anx-btn { width: 100%; }
+  .anx .a2a-catalog__row { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-a2a-timeline] .anx-console__event { animation: none; }
+}

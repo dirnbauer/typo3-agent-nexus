@@ -30,7 +30,13 @@ use Webconsulting\AgentNexus\Ucp\Service\OrderLogger;
 #[AsController]
 final class UcpController extends ActionController
 {
-    private const CSS = 'EXT:agent_nexus/Resources/Public/Css/ucp-backend.css';
+    /** Ordered: tokens -> primitives -> backend chrome -> module extras. */
+    private const CSS_FILES = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+        'EXT:agent_nexus/Resources/Public/Css/modules/ucp.css',
+    ];
     private const JS_CONSOLE = '@webconsulting/agent-nexus/ucp-console.js';
 
     /** @var array<int, array{id: string, label: string, hint: string}> */
@@ -70,7 +76,9 @@ final class UcpController extends ActionController
 
     public function consoleAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_CONSOLE);
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -89,7 +97,9 @@ final class UcpController extends ActionController
 
     public function catalogAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setTitle('UCP Commerce Inspector');

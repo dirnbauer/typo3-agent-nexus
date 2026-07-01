@@ -28,7 +28,14 @@ use Webconsulting\AgentNexus\A2ui\Service\RendererService;
 final class A2UIController extends ActionController
 {
     private const JS_MODULE = '@webconsulting/agent-nexus/a2ui-playground.js';
-    private const CSS_FILE = 'EXT:agent_nexus/Resources/Public/Css/a2ui-backend.css';
+
+    /** Nexus design system first, then the small A2UI-specific layer. Order matters. */
+    private const CSS_FILES = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+        'EXT:agent_nexus/Resources/Public/Css/modules/a2ui.css',
+    ];
 
     /**
      * Natural-language presets that make the concept land without any typing.
@@ -56,7 +63,7 @@ final class A2UIController extends ActionController
      */
     public function dashboardAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS_FILE);
+        $this->addStylesheets();
         $this->pageRenderer->loadJavaScriptModule(self::JS_MODULE);
 
         $endpoint = $this->uriBuilder->reset()->uriFor('generate', ['format' => 'json'], 'A2UI');
@@ -114,7 +121,7 @@ final class A2UIController extends ActionController
             ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         }
 
-        $this->pageRenderer->addCssFile(self::CSS_FILE);
+        $this->addStylesheets();
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setTitle('Generated UI', $intent);
@@ -199,7 +206,7 @@ final class A2UIController extends ActionController
      */
     public function demoAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS_FILE);
+        $this->addStylesheets();
 
         $examples = [
             'Page creation' => 'create page',
@@ -228,6 +235,13 @@ final class A2UIController extends ActionController
         ]);
 
         return $moduleTemplate->renderResponse('A2UI/Demo');
+    }
+
+    private function addStylesheets(): void
+    {
+        foreach (self::CSS_FILES as $file) {
+            $this->pageRenderer->addCssFile($file);
+        }
     }
 
     /**

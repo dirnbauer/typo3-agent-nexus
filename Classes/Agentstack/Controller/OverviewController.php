@@ -15,17 +15,26 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 /**
  * Agent Nexus — Overview.
  *
- * A neutral, shadcn-style study guide for the agent-protocol family. A protocol
- * switcher reveals, for each protocol, a definition, an animated flow diagram,
- * the mechanics step by step, a grid of key facts, a spec snippet, and deep
- * links into the playground + the real-world plugin. Built on TYPO3 backend
- * design tokens, so it adapts to light/dark for free.
+ * The hub landing page: a field guide to the 2026 agent-protocol family.
+ * A hero explains what the module is, a hand-drawn protocol map shows the
+ * six edges around the agent, theory cards frame the architecture, a
+ * comparison table and a decision helper make the protocols comparable,
+ * and a tab per protocol dives into definition, sequence diagram, flow,
+ * mechanics, spec snippet and examples. A glossary closes the page.
  */
 #[AsController]
 final class OverviewController extends ActionController
 {
-    private const CSS = 'EXT:agent_nexus/Resources/Public/Css/agentstack-backend.css';
-    private const JS_OVERVIEW = '@webconsulting/agent-nexus/agentstack-overview.js';
+    /** Design-system CSS, loaded in this exact order. */
+    private const CSS_FILES = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+    ];
+
+    private const JS_OVERVIEW = '@webconsulting/agent-nexus/nexus-overview.js';
+
+    private const FRONTEND_DEMO_URL = 'https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2ui';
 
     /** The 2026 agent-nexus family — the legend shown across the hub. */
     private const STACK = [
@@ -59,6 +68,13 @@ final class OverviewController extends ActionController
         ],
     ];
 
+    /** Hero stat chips (counted up by nexus-motion). */
+    private const STATS = [
+        ['value' => 5, 'label' => 'Protocols', 'hint' => 'A2UI · AG-UI · A2A · UCP · AP2'],
+        ['value' => 9, 'label' => 'Frontend endpoints', 'hint' => 'eID JSON + SSE routes'],
+        ['value' => 5, 'label' => 'Frontend plugins', 'hint' => 'shadcn-styled site widgets'],
+    ];
+
     public function __construct(
         private readonly ModuleTemplateFactory $moduleTemplateFactory,
         private readonly PageRenderer $pageRenderer,
@@ -68,17 +84,29 @@ final class OverviewController extends ActionController
 
     public function indexAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_OVERVIEW);
 
         $protocols = [];
+        $moduleUrls = [];
         foreach ($this->protocols() as $protocol) {
             $protocol['moduleUrl'] = null;
             if ($this->moduleProvider->isModuleRegistered($protocol['module'])) {
                 $protocol['moduleUrl'] = (string)$this->backendUriBuilder->buildUriFromRoute($protocol['module']);
             }
+            $moduleUrls[$protocol['key']] = $protocol['moduleUrl'];
             $protocols[] = $protocol;
         }
+
+        $comparison = [];
+        foreach ($this->comparison() as $row) {
+            $row['moduleUrl'] = $moduleUrls[$row['key']] ?? null;
+            $comparison[] = $row;
+        }
+
+        $decisionTree = $this->decisionTree();
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setTitle('Agent Nexus', 'Overview');
@@ -86,6 +114,13 @@ final class OverviewController extends ActionController
             'protocols' => $protocols,
             'stack' => self::STACK,
             'theory' => self::THEORY,
+            'stats' => self::STATS,
+            'comparison' => $comparison,
+            'decision' => $decisionTree,
+            'decisionJson' => json_encode(['rules' => $decisionTree['rules']], JSON_THROW_ON_ERROR),
+            'glossary' => $this->glossary(),
+            'heroPlaygroundUrl' => $moduleUrls['a2ui'] ?? null,
+            'frontendDemoUrl' => self::FRONTEND_DEMO_URL,
         ]);
 
         return $moduleTemplate->renderResponse('Overview/Index');
@@ -94,6 +129,7 @@ final class OverviewController extends ActionController
     /**
      * The study-guide content for each protocol. `flow.steps[].side` is 'l'
      * (left→right) or 'r' (right→left) and drives the diagram direction.
+     * `diagram` names the generated Mermaid sequence-diagram partial.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -102,6 +138,7 @@ final class OverviewController extends ActionController
         return [
             [
                 'key' => 'a2ui', 'name' => 'A2UI', 'accent' => 'a2ui', 'edge' => 'agent ↔ UI surface',
+                'diagram' => 'A2ui',
                 'tagline' => 'The agent describes the UI as data; a trusted client renders it natively.',
                 'short' => 'A2UI is the safe way to let an agent design an interface without shipping executable frontend code.',
                 'image' => '/fileadmin/desiderio-styleguide/frontend-dashboards-forest.png',
@@ -137,6 +174,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'agui', 'name' => 'AG-UI', 'accent' => 'agui', 'edge' => 'agent ↔ user',
+                'diagram' => 'Agui',
                 'tagline' => 'The agent streams typed events to your UI in real time.',
                 'short' => 'AG-UI is for live, interruptible agent runs where people need to see progress and approve writes.',
                 'image' => '/fileadmin/desiderio-styleguide/backend-visual-editor.png',
@@ -171,6 +209,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'a2a', 'name' => 'A2A', 'accent' => 'a2a', 'edge' => 'agent ↔ agent',
+                'diagram' => 'A2a',
                 'tagline' => 'Independent agents discover each other and delegate tasks.',
                 'short' => 'A2A is the delegation layer: one agent discovers another agent and follows a task lifecycle.',
                 'image' => '/fileadmin/desiderio-styleguide/customer-data-team.jpg',
@@ -205,6 +244,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'ucp', 'name' => 'UCP', 'accent' => 'ucp', 'edge' => 'agent ↔ merchant',
+                'diagram' => 'Ucp',
                 'tagline' => 'A shopping agent negotiates a cart and checkout with a merchant.',
                 'short' => 'UCP is the commerce handshake between a buying agent and a merchant manifest.',
                 'image' => '/fileadmin/desiderio-element-library/frontend-pricing-midnight-dark.png',
@@ -238,6 +278,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'ap2', 'name' => 'AP2', 'accent' => 'ap2', 'edge' => 'authorization',
+                'diagram' => 'Ap2',
                 'tagline' => 'Cryptographically-signed mandates make an agent\'s authority verifiable.',
                 'short' => 'AP2 proves that an agent has authority for a specific purchase, within a human-approved scope.',
                 'image' => '/fileadmin/desiderio-styleguide/compliance-soc2-dashboard.jpg',
@@ -268,6 +309,167 @@ final class OverviewController extends ActionController
                 'frontendUrl' => '/desiderio/agent-nexus/ap2',
                 'module' => 'agentstack_ap2', 'plugin' => 'Signed Quote Authorization',
             ],
+        ];
+    }
+
+    /**
+     * One comparison-table row per protocol. `moduleUrl` is attached in
+     * indexAction() from the registered playground modules.
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function comparison(): array
+    {
+        return [
+            [
+                'key' => 'a2ui', 'name' => 'A2UI', 'accent' => 'a2ui',
+                'edge' => 'agent ↔ UI surface',
+                'transport' => 'JSON POST',
+                'payload' => 'surface',
+                'gate' => 'User reviews and submits the rendered form',
+            ],
+            [
+                'key' => 'agui', 'name' => 'AG-UI', 'accent' => 'agui',
+                'edge' => 'agent ↔ user',
+                'transport' => 'SSE',
+                'payload' => 'event stream',
+                'gate' => 'Confirm gate pauses the run before any write',
+            ],
+            [
+                'key' => 'a2a', 'name' => 'A2A', 'accent' => 'a2a',
+                'edge' => 'agent ↔ agent',
+                'transport' => 'JSON-RPC 2.0',
+                'payload' => 'task + artifact',
+                'gate' => 'input-required pause hands control back to the client',
+            ],
+            [
+                'key' => 'ucp', 'name' => 'UCP', 'accent' => 'ucp',
+                'edge' => 'agent ↔ merchant',
+                'transport' => 'JSON POST',
+                'payload' => 'cart',
+                'gate' => 'Human authorizes the order before confirmation',
+            ],
+            [
+                'key' => 'ap2', 'name' => 'AP2', 'accent' => 'ap2',
+                'edge' => 'authorization',
+                'transport' => 'signed JWT (JWS)',
+                'payload' => 'mandate',
+                'gate' => 'Human signs the Intent Mandate (cap + scope)',
+            ],
+        ];
+    }
+
+    /**
+     * "Which protocol do I need?" — three button-group questions plus an
+     * ordered rule list. The first rule whose `if` conditions all match the
+     * answers wins; the last rule has no conditions, so every combination
+     * resolves to a protocol.
+     *
+     * @return array{questions: array<int, array<string, mixed>>, rules: array<int, array<string, mixed>>}
+     */
+    private function decisionTree(): array
+    {
+        return [
+            'questions' => [
+                [
+                    'id' => 'who',
+                    'label' => 'Who talks?',
+                    'options' => [
+                        ['value' => 'user', 'label' => 'Agent ↔ user'],
+                        ['value' => 'ui', 'label' => 'Agent ↔ UI'],
+                        ['value' => 'agent', 'label' => 'Agent ↔ agent'],
+                        ['value' => 'merchant', 'label' => 'Agent ↔ merchant'],
+                        ['value' => 'payment', 'label' => 'Agent ↔ payment'],
+                    ],
+                ],
+                [
+                    'id' => 'streaming',
+                    'label' => 'Streaming?',
+                    'options' => [
+                        ['value' => 'yes', 'label' => 'Yes — live updates'],
+                        ['value' => 'no', 'label' => 'No — request / response'],
+                    ],
+                ],
+                [
+                    'id' => 'money',
+                    'label' => 'Money involved?',
+                    'options' => [
+                        ['value' => 'yes', 'label' => 'Yes'],
+                        ['value' => 'no', 'label' => 'No'],
+                    ],
+                ],
+            ],
+            'rules' => [
+                [
+                    'if' => ['who' => 'payment'],
+                    'key' => 'ap2', 'name' => 'AP2', 'accent' => 'ap2',
+                    'why' => 'Payment authority is exactly what AP2 proves — a human-signed Intent Mandate plus a matching Cart Mandate, verifiable end to end.',
+                ],
+                [
+                    'if' => ['who' => 'merchant'],
+                    'key' => 'ucp', 'name' => 'UCP', 'accent' => 'ucp',
+                    'why' => 'Carts and checkout against a merchant manifest are UCP\'s handshake — add AP2 when the authorization needs to be signed.',
+                ],
+                [
+                    'if' => ['money' => 'yes'],
+                    'key' => 'ap2', 'name' => 'AP2', 'accent' => 'ap2',
+                    'why' => 'Whenever money is committed, prove authority first: AP2\'s signed mandate chain makes the human-approved scope verifiable.',
+                ],
+                [
+                    'if' => ['who' => 'agent'],
+                    'key' => 'a2a', 'name' => 'A2A', 'accent' => 'a2a',
+                    'why' => 'Two independent agents cooperating is A2A: discover the Agent Card, delegate over JSON-RPC, follow the task lifecycle.',
+                ],
+                [
+                    'if' => ['who' => 'ui'],
+                    'key' => 'a2ui', 'name' => 'A2UI', 'accent' => 'a2ui',
+                    'why' => 'The agent should shape the interface as data — an A2UI surface your trusted client renders natively, never executable code.',
+                ],
+                [
+                    'if' => ['who' => 'user', 'streaming' => 'yes'],
+                    'key' => 'agui', 'name' => 'AG-UI', 'accent' => 'agui',
+                    'why' => 'A person watching an agent work in real time wants AG-UI: one SSE stream of typed events with a confirm gate before writes.',
+                ],
+                [
+                    'if' => ['streaming' => 'yes'],
+                    'key' => 'agui', 'name' => 'AG-UI', 'accent' => 'agui',
+                    'why' => 'Live, interruptible output means an event stream — AG-UI keeps the UI in lockstep while the agent thinks.',
+                ],
+                [
+                    'if' => [],
+                    'key' => 'a2ui', 'name' => 'A2UI', 'accent' => 'a2ui',
+                    'why' => 'No live stream and no money — let the agent emit a surface once and render it natively. Simple, safe, inspectable.',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Glossary terms surfaced at the end of the field guide.
+     *
+     * @return array<int, array<string, string>>
+     */
+    private function glossary(): array
+    {
+        return [
+            ['term' => 'Surface', 'tag' => 'A2UI', 'accent' => 'a2ui', 'def' => 'The unit an A2UI agent emits: a flat list of components with exactly one root, rebuilt into a native UI tree by a trusted renderer.'],
+            ['term' => 'Data model', 'tag' => 'A2UI', 'accent' => 'a2ui', 'def' => 'The live JSON document a surface binds to. Inputs read and write it via JSON-Pointer paths; it stays local until an action fires.'],
+            ['term' => 'Generative UI', 'tag' => 'AG-UI', 'accent' => 'agui', 'def' => 'Tool calls that render as real interface components — tables, cards, confirm dialogs — instead of plain text in a chat bubble.'],
+            ['term' => 'RunAgentInput', 'tag' => 'AG-UI', 'accent' => 'agui', 'def' => 'The request body that opens an AG-UI run: thread id, message history, shared state, and the tools the frontend offers the agent.'],
+            ['term' => 'SSE', 'tag' => 'transport', 'accent' => 'mcp', 'def' => 'Server-Sent Events — one long-lived HTTP response that pushes small text frames to the browser. AG-UI\'s transport of choice.'],
+            ['term' => 'Event stream', 'tag' => 'AG-UI', 'accent' => 'agui', 'def' => 'The ordered sequence of typed events (TEXT_MESSAGE, TOOL_CALL, STATE_DELTA, lifecycle markers) an agent emits during a run.'],
+            ['term' => 'Human-in-the-loop', 'tag' => 'pattern', 'accent' => 'mcp', 'def' => 'A deliberate pause where a person must approve before the agent proceeds — the confirm gate every protocol here places before a write.'],
+            ['term' => 'Agent Card', 'tag' => 'A2A', 'accent' => 'a2a', 'def' => 'A public manifest describing an agent\'s identity, skills and endpoints, fetched by clients to discover what can be delegated.'],
+            ['term' => 'Task lifecycle', 'tag' => 'A2A', 'accent' => 'a2a', 'def' => 'The defined states a delegated task moves through: submitted → working → input-required → completed (or failed).'],
+            ['term' => 'Artifact', 'tag' => 'A2A', 'accent' => 'a2a', 'def' => 'The structured result a server agent returns when a task completes — a document, a plan, a dataset; not just a chat message.'],
+            ['term' => 'JSON-RPC', 'tag' => 'transport', 'accent' => 'mcp', 'def' => 'A minimal remote-procedure-call envelope over JSON (method + params + id). A2A and MCP both speak JSON-RPC 2.0.'],
+            ['term' => 'Merchant manifest', 'tag' => 'UCP', 'accent' => 'ucp', 'def' => 'The machine-readable catalog + checkout contract a merchant publishes so shopping agents can discover products and rules.'],
+            ['term' => 'Checkout session', 'tag' => 'UCP', 'accent' => 'ucp', 'def' => 'The stateful UCP conversation that walks a cart through discovering → building_cart → review → authorization → confirmed.'],
+            ['term' => 'Intent Mandate', 'tag' => 'AP2', 'accent' => 'ap2', 'def' => 'A human-signed token granting an agent bounded purchasing authority: a spending cap, a merchant scope, and an expiry.'],
+            ['term' => 'Cart Mandate', 'tag' => 'AP2', 'accent' => 'ap2', 'def' => 'An agent-signed token for one exact order that references the Intent Mandate — the second link in the verifiable chain.'],
+            ['term' => 'JWS / JWT', 'tag' => 'crypto', 'accent' => 'ap2', 'def' => 'JSON Web Signature / Token — a compact signed payload. Change one byte and the signature no longer verifies; AP2 relies on this.'],
+            ['term' => 'eID endpoint', 'tag' => 'TYPO3', 'accent' => 'mcp', 'def' => 'A lightweight TYPO3 frontend entry point (?eID=…) that skips page rendering — how this extension serves its JSON and SSE routes.'],
+            ['term' => 'Import map', 'tag' => 'TYPO3', 'accent' => 'mcp', 'def' => 'The browser mapping from bare module names like @webconsulting/agent-nexus/ to real URLs, so backend JS loads as native ES modules.'],
         ];
     }
 }

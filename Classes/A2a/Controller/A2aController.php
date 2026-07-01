@@ -28,7 +28,12 @@ use Webconsulting\AgentNexus\A2a\Service\TaskLogger;
 #[AsController]
 final class A2aController extends ActionController
 {
-    private const CSS = 'EXT:agent_nexus/Resources/Public/Css/a2a-backend.css';
+    private const CSS_FILES = [
+        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
+        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
+        'EXT:agent_nexus/Resources/Public/Css/modules/a2a.css',
+    ];
     private const JS_CONSOLE = '@webconsulting/agent-nexus/a2a-console.js';
 
     /** The lifecycle states an A2A task moves through (for the Skill Inspector). */
@@ -61,7 +66,9 @@ final class A2aController extends ActionController
 
     public function consoleAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
         $this->pageRenderer->loadJavaScriptModule(self::JS_CONSOLE);
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
@@ -80,7 +87,9 @@ final class A2aController extends ActionController
 
     public function catalogAction(): ResponseInterface
     {
-        $this->pageRenderer->addCssFile(self::CSS);
+        foreach (self::CSS_FILES as $cssFile) {
+            $this->pageRenderer->addCssFile($cssFile);
+        }
 
         $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         $moduleTemplate->setTitle('A2A Skill Inspector');

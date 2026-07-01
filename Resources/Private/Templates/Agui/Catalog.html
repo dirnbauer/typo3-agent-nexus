@@ -6,31 +6,107 @@
 
 <f:section name="Content">
 
-<div class="agui-playground" style="max-width: 1100px;">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div>
-            <h1 class="mb-1">AG-UI Event Inspector</h1>
-            <p class="text-body-secondary mb-0">Every AG-UI event type, grouped by family. On the wire each is one SSE <code>data:</code> frame.</p>
-        </div>
-        <a href="{f:uri.action(action: 'console')}" class="btn btn-outline-secondary btn-sm">
-            <core:icon identifier="actions-arrow-left" size="small" /> Back to console
-        </a>
-    </div>
+<div class="anx anx--backend anx-accent--agui anx-module">
 
-    <f:for each="{catalog}" as="family" key="name">
-        <div class="card agui-catalog__family">
-            <div class="card-header"><h2 class="h5 mb-0">{name}</h2></div>
-            <div class="card-body">
-                <f:for each="{family.events}" as="ev">
-                    <div class="agui-catalog__row agui-cat--{family.accent}">
-                        <span class="agui-catalog__type">{ev.type}</span>
-                        <span class="agui-catalog__fields">{ev.fields}</span>
-                        <span class="agui-catalog__desc">{ev.desc}</span>
-                    </div>
-                </f:for>
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">AG-UI <em>agent ↔ user</em></span>
+            <h1 class="anx-title">Event Inspector</h1>
+            <p class="anx-lede">
+                Every AG-UI event type, grouped by family — on the wire each one is a single
+                SSE <code class="anx-code">data:</code> frame.
+            </p>
+        </div>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+            </div>
+            <div class="anx-actions">
+                <a href="{f:uri.action(action: 'console')}" class="anx-btn anx-btn--ghost anx-btn--sm">Run Console</a>
+                <a class="anx-btn anx-btn--ghost anx-btn--sm"
+                   href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ag-ui"
+                   target="_blank" rel="noopener noreferrer">Frontend demo</a>
             </div>
         </div>
-    </f:for>
+    </header>
+
+    <!-- The 2026 agent-nexus family -->
+    <div class="agui-stack">
+        <span class="anx-section-label">Agent stack</span>
+        <f:for each="{stack}" as="s">
+            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
+        </f:for>
+    </div>
+
+    <!-- Catalog counts (computed in Fluid) -->
+    <f:variable name="eventTypeCount" value="0" />
+    <f:for each="{catalog}" as="family"><f:for each="{family.events}" as="ev"><f:variable name="eventTypeCount" value="{eventTypeCount + 1}" /></f:for></f:for>
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{catalog -> f:count()}">{catalog -> f:count()}</span>
+            <span class="anx-stat__label">Event families</span>
+            <span class="anx-stat__hint">Lifecycle → Special</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{eventTypeCount}">{eventTypeCount}</span>
+            <span class="anx-stat__label">Event types</span>
+            <span class="anx-stat__hint">UPPER_SNAKE_CASE on the wire</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value">SSE</span>
+            <span class="anx-stat__label">Transport</span>
+            <span class="anx-stat__hint">one data: frame per event</span>
+        </div>
+    </div>
+
+    <div class="agui-rows">
+
+        <!-- Wire format -->
+        <div class="anx-card anx-card--flush anx-spec anx-reveal">
+            <div class="anx-spec__head">
+                <span class="anx-spec__dots"><i></i><i></i><i></i></span>
+                <span class="anx-spec__label">POST /ajax/agui/run → text/event-stream</span>
+            </div>
+            <pre class="anx-spec__code"><code>data: RUN_STARTED            threadId, runId
+data: TEXT_MESSAGE_CONTENT   messageId, delta        ← one typed event per frame
+data: TOOL_CALL_START        toolCallId, toolCallName
+data: RUN_FINISHED           threadId, runId</code></pre>
+        </div>
+
+        <!-- Families -->
+        <f:for each="{catalog}" as="family" key="name">
+            <div class="anx-card anx-card--flush anx-reveal">
+                <div class="anx-card__head">
+                    <span class="anx-console__title">{name}</span>
+                    <span class="anx-badge">{family.events -> f:count()} events</span>
+                </div>
+                <div class="agui-scroll">
+                    <table class="anx-table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Payload fields</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{family.events}" as="ev">
+                                <tr>
+                                    <td><code class="anx-code">{ev.type}</code></td>
+                                    <td><span class="agui-fields">{ev.fields}</span></td>
+                                    <td>{ev.desc}</td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </f:for>
+
+    </div>
 </div>
 
 </f:section>

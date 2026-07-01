@@ -6,45 +6,56 @@
 
 <f:section name="Content">
 
-<div class="a2ui-generate" style="max-width: 1100px;">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h1 class="mb-0">Generated UI</h1>
-        <a href="{f:uri.action(action: 'dashboard')}" class="btn btn-outline-secondary btn-sm">
-            <core:icon identifier="actions-arrow-left" size="small" /> Back to playground
-        </a>
-    </div>
+<div class="anx anx--backend anx-accent--a2ui anx-module">
 
-    <p class="text-body-secondary">
-        Intent: <em>“{intent}”</em>
-        <f:if condition="{isLlm}">
-            <f:then><span class="badge bg-success ms-2">{provenanceLabel}</span></f:then>
-            <f:else><span class="badge bg-secondary ms-2">{provenanceLabel}</span></f:else>
-        </f:if>
-    </p>
+    <header class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">A2UI <em>generated surface &middot; permalink</em></span>
+            <h1 class="anx-title">Generated UI</h1>
+            <p class="anx-lede">
+                Intent: <em>&ldquo;{intent}&rdquo;</em> — the agent's A2UI&nbsp;v1.0 answer, rendered
+                server-side with the trusted component catalog.
+            </p>
+        </div>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{isLlm}">
+                    <f:then><span class="anx-badge anx-badge--accent">{provenanceLabel}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">{provenanceLabel}</span></f:else>
+                </f:if>
+                <a href="{f:uri.action(action: 'dashboard')}" class="anx-btn anx-btn--ghost anx-btn--sm">
+                    <core:icon identifier="actions-arrow-left" size="small" /> Back to playground
+                </a>
+                <a class="anx-btn anx-btn--ghost anx-btn--sm"
+                   href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2ui"
+                   target="_blank" rel="noreferrer">Frontend demo &#8599;</a>
+            </div>
+        </div>
+    </header>
 
     <f:if condition="{notes}">
-        <ul class="alert alert-info small">
+        <ul class="a2ui-notes" aria-live="polite">
             <f:for each="{notes}" as="note"><li>{note}</li></f:for>
         </ul>
     </f:if>
 
-    <div class="row g-3">
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header"><h2 class="h5 mb-0">Rendered (server-side)</h2></div>
-                <div class="card-body">
-                    <f:format.raw>{renderedHtml}</f:format.raw>
-                </div>
+    <div class="anx-grid2">
+        <section class="anx-card anx-card--flush anx-reveal">
+            <div class="anx-card__head">
+                <span class="anx-console__title"><core:icon identifier="actions-eye" size="small" /> Rendered (server-side)</span>
             </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card h-100">
-                <div class="card-header"><h2 class="h5 mb-0">A2UI v1.0 payload</h2></div>
-                <div class="card-body">
-                    <pre class="a2ui-code"><code>{jsonPayload}</code></pre>
-                </div>
+            <div class="anx-card__body">
+                <f:format.raw>{renderedHtml}</f:format.raw>
             </div>
-        </div>
+        </section>
+
+        <section class="anx-card anx-spec anx-reveal">
+            <div class="anx-spec__head">
+                <span class="anx-spec__dots"><i></i><i></i><i></i></span>
+                <span class="anx-spec__label">a2ui.v1.payload.json</span>
+            </div>
+            <pre class="anx-spec__code a2ui-scroll"><code>{jsonPayload}</code></pre>
+        </section>
     </div>
 </div>
 

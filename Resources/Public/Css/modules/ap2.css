@@ -1,0 +1,217 @@
+/**
+ * AP2 Mandate Studio — module accents on top of nexus-tokens/nexus-ui.
+ * Only --anx-* tokens and the scoped --accent; no raw colors.
+ */
+
+/* visibility toggle used by ap2-studio.js */
+.anx .ap2-hidden { display: none !important; }
+
+/* ---- stack legend -------------------------------------------------------- */
+
+.ap2-stack {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1.1rem;
+}
+.ap2-stack__label {
+  font-size: var(--anx-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--anx-muted-fg);
+  margin-right: 0.2rem;
+}
+.ap2-chip--self {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--anx-border));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* ---- three-step flow ------------------------------------------------------ */
+
+.ap2-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+  margin-bottom: 1.1rem;
+}
+.ap2-step { transition: opacity 0.2s ease; }
+.ap2-step.is-locked { opacity: 0.55; }
+.ap2-step__t {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--anx-text-sm);
+  font-weight: 650;
+  color: var(--anx-fg);
+}
+.ap2-step__n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--anx-border));
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-size: var(--anx-text-xs);
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.ap2-step__hint { font-size: var(--anx-text-xs); color: var(--anx-muted-fg); }
+
+.ap2-checkline {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: var(--anx-text-sm);
+  color: var(--anx-fg);
+  margin-bottom: 0.8rem;
+  cursor: pointer;
+}
+.ap2-checkline input { accent-color: var(--accent); margin: 0; }
+
+.ap2-w100 { width: 100%; }
+
+.ap2-rule { border: 0; border-top: 1px solid var(--anx-border); margin: 0.9rem 0; }
+
+/* ---- demo cart ------------------------------------------------------------ */
+
+.ap2-cart { font-size: var(--anx-text-sm); margin-bottom: 0.8rem; font-variant-numeric: tabular-nums; }
+.ap2-cart__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px solid var(--anx-border);
+}
+.ap2-cart__total {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.4rem 0 0;
+  font-weight: 700;
+}
+
+/* ---- minted token (markup built by ap2-studio.js) -------------------------- */
+
+.ap2-token { margin-top: 0.8rem; }
+.ap2-token__spec { box-shadow: none; }
+.ap2-token__jwt {
+  font-family: var(--anx-font-mono);
+  font-size: 0.64rem;
+  line-height: 1.55;
+  word-break: break-all;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  max-height: 6.5rem;
+  overflow: auto;
+}
+.ap2-token__jwt b { color: var(--accent); font-weight: 650; }          /* header */
+.ap2-token__jwt i { color: var(--anx-ok); font-style: normal; }        /* payload */
+.ap2-token__jwt s { color: var(--anx-muted-fg); text-decoration: none; } /* signature */
+.ap2-token__claims {
+  font-family: var(--anx-font-mono);
+  font-size: 0.68rem;
+  line-height: 1.55;
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  max-height: 9rem;
+  overflow: auto;
+  border-top: 1px solid var(--anx-border);
+  background: var(--anx-surface-1);
+  color: var(--anx-fg);
+}
+
+/* ---- verification chain ----------------------------------------------------- */
+
+.ap2-checks { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 0.8rem; }
+.ap2-check { display: flex; align-items: baseline; gap: 0.5rem; font-size: var(--anx-text-sm); }
+.ap2-check .anx-badge { flex: 0 0 auto; }
+.ap2-check__text { color: var(--anx-fg); }
+.ap2-check__detail {
+  display: block;
+  color: var(--anx-muted-fg);
+  font-family: var(--anx-font-mono);
+  font-size: 0.68rem;
+}
+
+.ap2-verdict {
+  margin-top: 0.8rem;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.6rem 0.8rem;
+  font-size: var(--anx-text-sm);
+  font-weight: 700;
+  text-align: center;
+}
+.ap2-verdict small {
+  display: block;
+  font-weight: 400;
+  font-size: var(--anx-text-xs);
+  color: var(--anx-muted-fg);
+  margin-top: 0.2rem;
+}
+.ap2-verdict.is-ok {
+  border-color: color-mix(in srgb, var(--anx-ok) 45%, var(--anx-border));
+  background: color-mix(in srgb, var(--anx-ok) 8%, transparent);
+  color: var(--anx-ok);
+}
+.ap2-verdict.is-no {
+  border-color: color-mix(in srgb, var(--anx-danger) 45%, var(--anx-border));
+  background: color-mix(in srgb, var(--anx-danger) 8%, transparent);
+  color: var(--anx-danger);
+}
+
+.ap2-tamper__ta {
+  font-family: var(--anx-font-mono);
+  font-size: 0.62rem;
+  word-break: break-all;
+  min-height: 3.6rem;
+}
+
+/* ---- shared text helpers ------------------------------------------------------ */
+
+.ap2-card-h { margin: 0; font-size: var(--anx-text-sm); font-weight: 650; color: var(--anx-fg); }
+.ap2-p { margin: 0 0 0.6rem; }
+.ap2-p:last-child { margin-bottom: 0; }
+.ap2-muted { color: var(--anx-muted-fg); }
+.ap2-error { color: var(--anx-danger); font-size: var(--anx-text-sm); font-weight: 600; }
+
+/* ---- inspector ------------------------------------------------------------------ */
+
+.ap2-sec { margin-bottom: 1.2rem; }
+.ap2-cat--intent { --accent: var(--anx-warn); }
+.ap2-cat--cart { --accent: var(--anx-ok); }
+.ap2-cat--payment { --accent: var(--anx-accent-agui); }
+.ap2-cat__type { white-space: nowrap; }
+.ap2-cat__type .anx-dot { margin-right: 0.15rem; }
+.ap2-cat__type code { color: var(--accent); font-weight: 650; }
+
+.ap2-checklist {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: var(--anx-text-sm);
+}
+.ap2-checklist li::marker { color: var(--accent); }
+.ap2-checklist b { font-weight: 650; }
+.ap2-checklist__note { margin: 0.7rem 0 0; font-size: var(--anx-text-xs); }
+
+/* ---- responsive ------------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  .ap2-steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .ap2-cart__row,
+  .ap2-cart__total,
+  .ap2-check { flex-direction: column; align-items: flex-start; }
+  .ap2-token__jwt,
+  .ap2-token__claims,
+  .ap2-tamper__ta { max-width: 100%; }
+}

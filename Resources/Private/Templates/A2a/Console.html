@@ -6,111 +6,182 @@
 
 <f:section name="Content">
 
-<div class="a2a-console" data-a2a-console data-card-url="{cardUrl}">
+<div class="anx anx--backend anx-accent--a2a anx-module" data-a2a-console data-card-url="{cardUrl}">
 
-    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
-        <div>
-            <h1 class="mb-1">A2A Console</h1>
-            <p class="text-body-secondary mb-0">
+    <!-- Page head -->
+    <div class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">A2A <em>agent ↔ agent · JSON-RPC + agent cards</em></span>
+            <h1 class="anx-title">A2A Console</h1>
+            <p class="anx-lede">
                 Act as a <strong>client agent</strong>: discover the site's <strong>Agent Card</strong>, delegate a task,
-                and watch it move through its <strong>lifecycle</strong> — and hand you back an <strong>artifact</strong>.
+                and watch it move through its <strong>lifecycle</strong> — until it hands back an <strong>artifact</strong>.
             </p>
         </div>
-        <span class="badge bg-secondary align-self-center">Deterministic demo · no API key needed</span>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+                <span class="anx-badge">No API key needed</span>
+            </div>
+            <a href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2a" target="_blank" rel="noreferrer"
+               class="anx-btn anx-btn--ghost anx-btn--sm">Frontend demo</a>
+        </div>
     </div>
 
     <!-- The 2026 agent-nexus family -->
-    <div class="a2a-stack mb-3">
-        <span class="a2a-stack__label">The agent stack:</span>
+    <div class="anx-actions a2a-stack">
+        <span class="anx-section-label a2a-stack__label">Agent stack</span>
         <f:for each="{stack}" as="s">
-            <span class="a2a-stack__chip a2a-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}">{s.key}<em>{s.label}</em></span>
+            <span class="anx-chip anx-accent--{s.accent} a2a-stack__chip{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
         </f:for>
     </div>
 
+    <!-- Today's numbers -->
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{skills -> f:count()}">{skills -> f:count()}</span>
+            <span class="anx-stat__label">Skills advertised</span>
+            <span class="anx-stat__hint">published in the Agent Card</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.tasks}">{today.tasks}</span>
+            <span class="anx-stat__label">Tasks today</span>
+            <span class="anx-stat__hint">delegated over message/stream</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.completed}">{today.completed}</span>
+            <span class="anx-stat__label">Completed today</span>
+            <span class="anx-stat__hint">reached the completed state</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{today.artifacts}">{today.artifacts}</span>
+            <span class="anx-stat__label">Artifacts today</span>
+            <span class="anx-stat__hint">returned to the caller</span>
+        </div>
+    </div>
+
     <!-- Agent Card -->
-    <div class="card mb-3">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <span><core:icon identifier="actions-identifier" size="small" /> Agent Card <span class="text-body-secondary small">discovery</span></span>
+    <div class="anx-card anx-card--flush anx-card--accent anx-reveal">
+        <div class="anx-card__head">
+            <span class="anx-section-label"><core:icon identifier="actions-identifier" size="small" /> Agent Card <span class="a2a-muted">discovery</span></span>
             <a href="{cardUrl}" target="_blank" rel="noreferrer" class="a2a-cardurl">{cardUrl}</a>
         </div>
-        <div class="card-body">
+        <div class="anx-card__body">
             <div class="a2a-card" data-a2a-card>
-                <span class="text-body-secondary small">Loading the published Agent Card…</span>
+                <span class="a2a-muted">Loading the published Agent Card…</span>
             </div>
         </div>
     </div>
 
     <!-- Delegate controls -->
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="text-body-secondary small me-1">Skill:</span>
-                <f:for each="{skills}" as="skill" iteration="it">
-                    <button type="button" class="btn btn-sm btn-outline-primary a2a-preset{f:if(condition: it.isFirst, then: ' active')}"
-                            data-a2a-skill="{skill.id}" title="{skill.description}">{skill.name}</button>
-                </f:for>
-                <button type="button" class="btn btn-primary ms-auto" data-a2a-send>
-                    <core:icon identifier="actions-play" size="small" /> Delegate task
-                </button>
-            </div>
+    <div class="anx-card anx-reveal a2a-delegate">
+        <div class="anx-actions">
+            <span class="anx-section-label a2a-stack__label">Skill</span>
+            <f:for each="{skills}" as="skill" iteration="it">
+                <button type="button" class="anx-btn anx-btn--outline anx-btn--sm a2a-preset{f:if(condition: it.isFirst, then: ' active')}"
+                        data-a2a-skill="{skill.id}" title="{skill.description}">{skill.name}</button>
+            </f:for>
+            <span class="a2a-spacer"></span>
+            <button type="button" class="anx-btn anx-btn--primary" data-a2a-send>
+                <core:icon identifier="actions-play" size="small" /> Delegate task
+            </button>
         </div>
     </div>
 
     <!-- Live panes -->
-    <div class="row g-3">
-        <div class="col-xl-6">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><core:icon identifier="actions-list-alternative" size="small" /> JSON-RPC frames</span>
-                    <span class="text-body-secondary small" data-a2a-eventcount>0 frames</span>
-                </div>
-                <div class="card-body">
-                    <div class="a2a-timeline" data-a2a-timeline>
-                        <div class="text-body-secondary small">Pick a skill and press <strong>Delegate task</strong> to start the stream.</div>
-                    </div>
-                </div>
+    <div class="anx-grid2 a2a-panes">
+        <div class="anx-console anx-reveal">
+            <div class="anx-console__bar">
+                <span class="anx-console__title"><core:icon identifier="actions-list-alternative" size="small" /> JSON-RPC frames</span>
+                <span class="anx-console__bar-spacer"></span>
+                <span class="anx-chip" data-a2a-eventcount>0 frames</span>
+            </div>
+            <div class="anx-console__body" data-a2a-timeline aria-live="polite">
+                <div class="anx-console__empty">Pick a skill and press <strong>Delegate task</strong> to start the stream.</div>
             </div>
         </div>
-        <div class="col-xl-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span><core:icon identifier="actions-cpu" size="small" /> Task</span>
-                    <span class="a2a-state a2a-state--idle" data-a2a-state>idle</span>
-                </div>
-                <div class="card-body">
-                    <div class="a2a-msg" data-a2a-msg><span class="text-body-secondary small">The agent's status messages appear here.</span></div>
-                    <div class="a2a-input d-none" data-a2a-input></div>
-                    <div class="a2a-artifact d-none" data-a2a-artifact></div>
-                </div>
+        <div class="anx-console anx-reveal">
+            <div class="anx-console__bar">
+                <span class="anx-console__title"><core:icon identifier="actions-cpu" size="small" /> Task</span>
+                <span class="anx-console__bar-spacer"></span>
+                <span class="anx-badge anx-badge--sim" data-a2a-state>idle</span>
+            </div>
+            <div class="anx-card__body">
+                <div class="a2a-msg" data-a2a-msg aria-live="polite"><span class="a2a-muted" data-a2a-msg-empty>The agent's status messages appear here.</span></div>
+                <div class="a2a-input d-none" data-a2a-input></div>
+                <div class="a2a-artifact d-none" data-a2a-artifact></div>
             </div>
         </div>
     </div>
 
     <!-- Task log -->
-    <div class="card mt-3 a2a-tasklog">
-        <div class="card-body py-2 d-flex flex-wrap align-items-center gap-3">
-            <span><core:icon identifier="actions-clock" size="small" /> <strong>Task log</strong> <span class="text-body-secondary small">today</span></span>
-            <span class="a2a-stat"><span class="a2a-stat__v">{today.tasks}</span> tasks</span>
-            <span class="a2a-stat"><span class="a2a-stat__v">{today.completed}</span> completed</span>
-            <span class="a2a-stat"><span class="a2a-stat__v">{today.artifacts}</span> artifacts</span>
-            <a href="{f:uri.action(action: 'catalog')}" class="btn btn-outline-info btn-sm ms-auto">
+    <div class="anx-card anx-card--flush anx-reveal a2a-tasklog">
+        <div class="anx-card__head">
+            <span class="anx-section-label"><core:icon identifier="actions-clock" size="small" /> Recent tasks</span>
+            <a href="{f:uri.action(action: 'catalog')}" class="anx-btn anx-btn--ghost anx-btn--sm">
                 <core:icon identifier="actions-list" size="small" /> Skill Inspector
             </a>
         </div>
+        <f:if condition="{recent}">
+            <f:then>
+                <div class="a2a-table-scroll">
+                    <table class="anx-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Source</th>
+                                <th>Skill</th>
+                                <th>Final state</th>
+                                <th>Frames</th>
+                                <th>Artifacts</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{recent}" as="row">
+                                <tr>
+                                    <td><f:format.date format="d.m.Y H:i">@{row.crdate}</f:format.date></td>
+                                    <td><span class="anx-chip">{row.source}</span></td>
+                                    <td><code>{row.skill}</code></td>
+                                    <td>
+                                        <f:switch expression="{row.final_state}">
+                                            <f:case value="completed"><span class="anx-badge anx-badge--ok">{row.final_state}</span></f:case>
+                                            <f:case value="failed"><span class="anx-badge anx-badge--danger">{row.final_state}</span></f:case>
+                                            <f:case value="canceled"><span class="anx-badge anx-badge--danger">{row.final_state}</span></f:case>
+                                            <f:defaultCase><span class="anx-badge anx-badge--run">{row.final_state}</span></f:defaultCase>
+                                        </f:switch>
+                                    </td>
+                                    <td>{row.event_count}</td>
+                                    <td>{row.artifact_count}</td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </f:then>
+            <f:else>
+                <div class="anx-console__empty">No tasks logged yet — delegate one above.</div>
+            </f:else>
+        </f:if>
     </div>
 
     <!-- About -->
-    <div class="card mt-3">
-        <div class="card-header"><h2 class="h5 mb-0">What is A2A?</h2></div>
-        <div class="card-body">
-            <p class="mb-2">
+    <div class="anx-grid2 a2a-about">
+        <div class="anx-card anx-reveal">
+            <h2 class="anx-h2">What is A2A?</h2>
+            <p>
                 <strong>A2A (Agent2Agent Protocol)</strong> lets independent agents discover and delegate work to each other.
                 An agent publishes an <strong>Agent Card</strong> (who it is, where to reach it, what skills it has); a client agent
                 fetches the card and sends a <strong>task</strong> over JSON-RPC, then receives a stream of lifecycle updates and
                 <strong>artifacts</strong> back.
             </p>
-            <p class="mb-0 text-body-secondary">
-                The cooperative twist is the <strong>input-required</strong> state: an agent can pause mid-task and ask the caller
+        </div>
+        <div class="anx-card anx-reveal">
+            <h2 class="anx-h2">The cooperative twist</h2>
+            <p class="a2a-note">
+                The <strong>input-required</strong> state: an agent can pause mid-task and ask the caller
                 for one more detail before it finishes — collaboration, not fire-and-forget.
             </p>
         </div>

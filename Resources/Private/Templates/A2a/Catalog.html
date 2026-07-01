@@ -6,20 +6,52 @@
 
 <f:section name="Content">
 
-<div class="a2a-console" style="max-width: 1100px;">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div>
-            <h1 class="mb-1">A2A Skill Inspector</h1>
-            <p class="text-body-secondary mb-0">The skills this agent advertises in its Agent Card, and the lifecycle states a task moves through.</p>
+<div class="anx anx--backend anx-accent--a2a anx-module">
+
+    <!-- Page head -->
+    <div class="anx-page-head">
+        <div class="anx-page-head__titles">
+            <span class="anx-page-head__kicker">A2A <em>agent ↔ agent · Skill Inspector</em></span>
+            <h1 class="anx-title">A2A Skill Inspector</h1>
+            <p class="anx-lede">The skills this agent advertises in its <strong>Agent Card</strong>, and the lifecycle states a delegated task moves through.</p>
         </div>
-        <a href="{f:uri.action(action: 'console')}" class="btn btn-outline-secondary btn-sm">
-            <core:icon identifier="actions-arrow-left" size="small" /> Back to console
-        </a>
+        <div class="anx-page-head__meta">
+            <div class="anx-actions">
+                <f:if condition="{llm}">
+                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
+                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
+                </f:if>
+            </div>
+            <div class="anx-actions">
+                <a href="{f:uri.action(action: 'console')}" class="anx-btn anx-btn--ghost anx-btn--sm">
+                    <core:icon identifier="actions-arrow-left" size="small" /> Console
+                </a>
+                <a href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/a2a" target="_blank" rel="noreferrer"
+                   class="anx-btn anx-btn--ghost anx-btn--sm">Frontend demo</a>
+            </div>
+        </div>
     </div>
 
-    <div class="card a2a-catalog__sec mb-3">
-        <div class="card-header"><h2 class="h5 mb-0">Task lifecycle</h2></div>
-        <div class="card-body">
+    <!-- Catalog numbers -->
+    <div class="anx-stats">
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{skills -> f:count()}">{skills -> f:count()}</span>
+            <span class="anx-stat__label">Advertised skills</span>
+            <span class="anx-stat__hint">published in the Agent Card</span>
+        </div>
+        <div class="anx-stat anx-reveal">
+            <span class="anx-stat__value" data-anx-count="{states -> f:count()}">{states -> f:count()}</span>
+            <span class="anx-stat__label">Lifecycle states</span>
+            <span class="anx-stat__hint">from submitted to completed</span>
+        </div>
+    </div>
+
+    <!-- Task lifecycle -->
+    <div class="anx-card anx-card--flush anx-reveal">
+        <div class="anx-card__head">
+            <span class="anx-section-label">Task lifecycle</span>
+        </div>
+        <div class="anx-card__body">
             <f:for each="{states}" as="st">
                 <div class="a2a-catalog__row a2a-cat--{st.accent}">
                     <span class="a2a-catalog__state">{st.state}</span>
@@ -29,29 +61,30 @@
         </div>
     </div>
 
-    <div class="card a2a-catalog__sec">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h2 class="h5 mb-0">Advertised skills</h2>
-            <a href="{cardUrl}" target="_blank" rel="noreferrer" class="a2a-cardurl">{cardUrl}</a>
-        </div>
-        <div class="card-body">
-            <f:for each="{skills}" as="skill">
-                <div class="a2a-skill">
-                    <div class="a2a-skill__head">
-                        <span class="a2a-skill__name">{skill.name}</span>
-                        <code class="a2a-skill__id">{skill.id}</code>
-                        <f:for each="{skill.tags}" as="tag"><span class="a2a-skill__tag">{tag}</span></f:for>
-                    </div>
-                    <div class="a2a-skill__desc">{skill.description}</div>
-                    <div class="a2a-skill__ex">
-                        <f:for each="{skill.examples}" as="ex"><span class="a2a-skill__exitem">"{ex}"</span></f:for>
-                    </div>
-                    <f:if condition="{skill.inputPrompt}">
-                        <div class="a2a-skill__input"><core:icon identifier="actions-comment" size="small" /> Asks: {skill.inputPrompt}</div>
-                    </f:if>
+    <!-- Advertised skills -->
+    <div class="a2a-sechead">
+        <h2 class="anx-h2">Advertised skills</h2>
+        <a href="{cardUrl}" target="_blank" rel="noreferrer" class="a2a-cardurl">{cardUrl}</a>
+    </div>
+    <div class="a2a-skillgrid">
+        <f:for each="{skills}" as="skill">
+            <div class="anx-card anx-card--accent a2a-skill anx-reveal">
+                <div class="a2a-skill__head">
+                    <span class="a2a-skill__name">{skill.name}</span>
+                    <code class="anx-code">{skill.id}</code>
                 </div>
-            </f:for>
-        </div>
+                <p class="a2a-skill__desc">{skill.description}</p>
+                <div class="a2a-skill__tags">
+                    <f:for each="{skill.tags}" as="tag"><span class="anx-chip">{tag}</span></f:for>
+                </div>
+                <div class="a2a-skill__ex">
+                    <f:for each="{skill.examples}" as="ex"><span class="a2a-skill__exitem">"{ex}"</span></f:for>
+                </div>
+                <f:if condition="{skill.inputPrompt}">
+                    <div class="a2a-skill__input"><core:icon identifier="actions-comment" size="small" /> Asks: {skill.inputPrompt}</div>
+                </f:if>
+            </div>
+        </f:for>
     </div>
 </div>
 
