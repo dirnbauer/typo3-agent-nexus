@@ -1,9 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.css identifier="ucp-checkout" href="{f:uri.resource(path: 'Css/ucp-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
 
-<section class="ucp-cc"
+<section class="anx anx--frontend anx-accent--ucp ucp-cc"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ucp')}"
          data-ucp-checkout
          data-run-url="/index.php?eID=ucp_checkout"

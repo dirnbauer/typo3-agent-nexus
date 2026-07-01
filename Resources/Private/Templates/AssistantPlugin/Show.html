@@ -1,9 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.css identifier="agui-assistant" href="{f:uri.resource(path: 'Css/agui-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
 
-<section class="agui-asst"
+<section class="anx anx--frontend anx-accent--agui agui-asst"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'agui')}"
          data-agui-assistant
          data-run-url="/index.php?eID=agui_assistant"

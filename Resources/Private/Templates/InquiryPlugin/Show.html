@@ -1,9 +1,11 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.css identifier="a2ui-inquiry" href="{f:uri.resource(path: 'Css/a2ui-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend-a2ui" href="{f:uri.resource(path: 'Css/nexus-frontend-a2ui.css', extensionName: 'agent_nexus')}" />
 
-<section class="a2ui-inquiry a2ui-inquiry--{f:if(condition: settings.display_mode, then: settings.display_mode, else: 'full')}"
+<section class="anx anx--frontend anx-accent--a2ui a2ui-inquiry a2ui-inquiry--{f:if(condition: settings.display_mode, then: settings.display_mode, else: 'full')}"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'a2ui')}"
          data-a2ui-inquiry
          data-generate-url="/index.php?eID=a2ui_generate"

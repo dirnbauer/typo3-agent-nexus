@@ -1,9 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.css identifier="ap2-surface" href="{f:uri.resource(path: 'Css/ap2-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
 
-<section class="ap2-ts"
+<section class="anx anx--frontend anx-accent--ap2 ap2-ts"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ap2')}"
          data-ap2-surface
          data-run-url="/index.php?eID=ap2_authorize"

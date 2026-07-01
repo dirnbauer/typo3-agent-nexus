@@ -1,9 +1,10 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<f:asset.css identifier="a2a-concierge" href="{f:uri.resource(path: 'Css/a2a-frontend.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
 
-<section class="a2a-cc"
+<section class="anx anx--frontend anx-accent--a2a a2a-cc"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'a2a')}"
          data-a2a-concierge
          data-run-url="/index.php?eID=a2a_concierge"
