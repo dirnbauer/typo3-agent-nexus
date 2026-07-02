@@ -49,7 +49,7 @@
             <div class="anx-stat anx-reveal">
                 <span class="anx-stat__value" data-anx-count="{m.cost}" data-anx-prefix="$">{m.cost}</span>
                 <span class="anx-stat__label">{m.label}</span>
-                <span class="anx-stat__hint"><span data-anx-count="{m.requests}">{m.requests}</span> runs</span>
+                <span class="anx-stat__hint"><f:translate key="agent_nexus.messages:dashboard.runs" arguments="{count: m.requests}" /></span>
             </div>
         </f:for>
     </div>

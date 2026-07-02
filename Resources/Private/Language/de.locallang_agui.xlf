@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
     <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment><source>A backend agent streams typed real-time events to the UI with human approval before writes.</source><target>Ein Backend-Agent streamt typisierte Echtzeit-Events in die UI, mit menschlicher Freigabe vor Schreibaktionen.</target></segment></unit>
+        <unit id="mlang_labels_tablabel"><segment state="final"><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
+        <unit id="mlang_tabs_tab"><segment state="final"><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
+        <unit id="mlang_labels_tabdescr"><segment state="final"><source>A backend agent streams typed real-time events to the UI with human approval before writes.</source><target>Ein Backend-Agent streamt typisierte Echtzeit-Events in die UI, mit menschlicher Freigabe vor Schreibaktionen.</target></segment></unit>
     </file>
 </xliff>

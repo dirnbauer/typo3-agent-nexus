@@ -3,12 +3,12 @@
     <sheets>
         <sDEF>
             <ROOT>
-                <sheetTitle>Package &amp; Quote Builder</sheetTitle>
+                <sheetTitle>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.sheet</sheetTitle>
                 <type>array</type>
                 <el>
                     <settings.intro>
-                        <label>Intro text</label>
-                        <description>Shown above the agent checkout.</description>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:field.introText.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.intro.description</description>
                         <config>
                             <type>text</type>
                             <cols>48</cols>
@@ -17,38 +17,38 @@
                         </config>
                     </settings.intro>
                     <settings.accent>
-                        <label>Accent token</label>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:field.accent.label</label>
                         <config>
                             <type>select</type>
                             <renderType>selectSingle</renderType>
                             <default>ucp</default>
                             <items>
                                 <numIndex index="0">
-                                    <label>UCP protocol accent</label>
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:accent.ucp</label>
                                     <value>ucp</value>
                                 </numIndex>
                                 <numIndex index="1">
-                                    <label>Theme primary</label>
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:accent.primary</label>
                                     <value>primary</value>
                                 </numIndex>
                                 <numIndex index="2">
-                                    <label>Theme accent</label>
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:accent.accent</label>
                                     <value>accent</value>
                                 </numIndex>
                                 <numIndex index="3">
-                                    <label>Theme secondary</label>
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:accent.secondary</label>
                                     <value>secondary</value>
                                 </numIndex>
                                 <numIndex index="4">
-                                    <label>Theme destructive</label>
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:accent.destructive</label>
                                     <value>destructive</value>
                                 </numIndex>
                             </items>
                         </config>
                     </settings.accent>
                     <settings.show_events>
-                        <label>Show the commerce events</label>
-                        <description>Reveals an "under the hood" panel listing the UCP events as they arrive. Turn off for a clean production look.</description>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.showEvents.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.showEvents.description</description>
                         <config>
                             <type>check</type>
                             <renderType>checkboxToggle</renderType>
@@ -62,8 +62,8 @@
                         </config>
                     </settings.show_events>
                     <settings.use_llm>
-                        <label>Model-written recommendation rationale</label>
-                        <description>The shopping agent's reasoning text is written by a real model (via nr-llm), grounded in the fixed cart. Cart contents and prices always stay deterministic. Global switch, budget and rate limits still apply.</description>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.useLlm.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:checkout.useLlm.description</description>
                         <config>
                             <type>check</type>
                             <renderType>checkboxToggle</renderType>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
+    <file id="flexforms" original="flexforms">
+        <!-- shared fields -->
+        <unit id="field.introText.label"><segment state="final"><source>Intro text</source><target>Einleitungstext</target></segment></unit>
+        <unit id="field.placeholder.label"><segment state="final"><source>Input placeholder</source><target>Platzhalter im Eingabefeld</target></segment></unit>
+        <unit id="field.successMessage.label"><segment state="final"><source>Success message</source><target>Erfolgsmeldung</target></segment></unit>
+        <unit id="field.accent.label"><segment state="final"><source>Accent token</source><target>Akzent-Token</target></segment></unit>
+        <unit id="accent.primary"><segment state="final"><source>Theme primary</source><target>Theme: Primär</target></segment></unit>
+        <unit id="accent.accent"><segment state="final"><source>Theme accent</source><target>Theme: Akzent</target></segment></unit>
+        <unit id="accent.secondary"><segment state="final"><source>Theme secondary</source><target>Theme: Sekundär</target></segment></unit>
+        <unit id="accent.destructive"><segment state="final"><source>Theme destructive</source><target>Theme: Destruktiv</target></segment></unit>
+        <unit id="accent.a2ui"><segment state="final"><source>A2UI protocol accent</source><target>A2UI-Protokoll-Akzent</target></segment></unit>
+        <unit id="accent.agui"><segment state="final"><source>AG-UI protocol accent</source><target>AG-UI-Protokoll-Akzent</target></segment></unit>
+        <unit id="accent.a2a"><segment state="final"><source>A2A protocol accent</source><target>A2A-Protokoll-Akzent</target></segment></unit>
+        <unit id="accent.ucp"><segment state="final"><source>UCP protocol accent</source><target>UCP-Protokoll-Akzent</target></segment></unit>
+        <unit id="accent.ap2"><segment state="final"><source>AP2 protocol accent</source><target>AP2-Protokoll-Akzent</target></segment></unit>
+
+        <!-- A2UI: Smart Project Inquiry -->
+        <unit id="inquiry.sheet"><segment state="final"><source>Smart Project Inquiry</source><target>Smart Project Inquiry</target></segment></unit>
+        <unit id="inquiry.intro.description"><segment state="final"><source>Shown above the input. Invite the visitor to describe their request.</source><target>Wird über dem Eingabefeld angezeigt. Fordern Sie Besucher auf, ihr Anliegen zu beschreiben.</target></segment></unit>
+        <unit id="inquiry.businessContext.label"><segment state="final"><source>Business context (for the AI, not shown to visitors)</source><target>Geschäftskontext (für die KI, für Besucher nicht sichtbar)</target></segment></unit>
+        <unit id="inquiry.businessContext.description"><segment state="final"><source>Describe your business/offering so the agent tailors the generated form.</source><target>Beschreiben Sie Ihr Unternehmen/Angebot, damit der Agent das generierte Formular darauf abstimmt.</target></segment></unit>
+        <unit id="inquiry.presets.label"><segment state="final"><source>Example prompts (one per line)</source><target>Beispiel-Prompts (einer pro Zeile)</target></segment></unit>
+        <unit id="inquiry.layout.label"><segment state="final"><source>Layout</source><target>Layout</target></segment></unit>
+        <unit id="inquiry.layout.full"><segment state="final"><source>Full (badge + intro)</source><target>Vollständig (Badge + Einleitung)</target></segment></unit>
+        <unit id="inquiry.layout.compact"><segment state="final"><source>Compact</source><target>Kompakt</target></segment></unit>
+
+        <!-- AG-UI: AI Site Assistant -->
+        <unit id="assistant.sheet"><segment state="final"><source>AI Site Assistant</source><target>AI Site Assistant</target></segment></unit>
+        <unit id="assistant.intro.description"><segment state="final"><source>Shown above the assistant. Invite the visitor to state their goal.</source><target>Wird über dem Assistenten angezeigt. Fordern Sie Besucher auf, ihr Ziel zu nennen.</target></segment></unit>
+        <unit id="assistant.scenario.label"><segment state="final"><source>Assistant scenario</source><target>Assistenten-Szenario</target></segment></unit>
+        <unit id="assistant.scenario.description"><segment state="final"><source>Which scripted agent run the demo plays. Both end with a human-in-the-loop approval before any lead is captured.</source><target>Welchen skriptbasierten Agent-Run die Demo abspielt. Beide enden mit einer Human-in-the-Loop-Freigabe, bevor ein Lead erfasst wird.</target></segment></unit>
+        <unit id="assistant.scenario.plan"><segment state="final"><source>Plan advisor (recommends a plan, then confirms)</source><target>Tarifberater (empfiehlt einen Tarif, dann Bestätigung)</target></segment></unit>
+        <unit id="assistant.scenario.support"><segment state="final"><source>Consultation booking (gathers details, then confirms)</source><target>Beratungsbuchung (erfasst Details, dann Bestätigung)</target></segment></unit>
+        <unit id="assistant.presets.label"><segment state="final"><source>Quick-start prompts (one per line)</source><target>Schnellstart-Prompts (einer pro Zeile)</target></segment></unit>
+        <unit id="assistant.presets.description"><segment state="final"><source>Optional chips shown under the input.</source><target>Optionale Chips unter dem Eingabefeld.</target></segment></unit>
+        <unit id="assistant.showEvents.label"><segment state="final"><source>Show the live event stream</source><target>Live-Event-Stream anzeigen</target></segment></unit>
+        <unit id="assistant.showEvents.description"><segment state="final"><source>Reveals a small "under the hood" panel listing the AG-UI events as they arrive — great for explaining the protocol. Turn off for a clean production look.</source><target>Zeigt ein kleines "Unter der Haube"-Panel mit den AG-UI-Events, sobald sie eintreffen — ideal zur Erklärung des Protokolls. Für einen aufgeräumten Produktiv-Look ausschalten.</target></segment></unit>
+        <unit id="assistant.useLlm.label"><segment state="final"><source>Answer with the real model</source><target>Mit echtem Modell antworten</target></segment></unit>
+        <unit id="assistant.useLlm.description"><segment state="final"><source>When the visitor types a question, stream a real LLM answer (via nr-llm) instead of the scripted draft. The approval gate and lead capture stay scripted either way. Global switch, budget and rate limits still apply.</source><target>Wenn Besucher eine Frage eingeben, wird eine echte LLM-Antwort (über nr-llm) gestreamt statt des skriptbasierten Entwurfs. Freigabe-Gate und Lead-Erfassung bleiben in jedem Fall skriptbasiert. Globaler Schalter, Budget und Rate-Limits gelten weiterhin.</target></segment></unit>
+        <unit id="assistant.systemPrompt.label"><segment state="final"><source>System prompt override</source><target>System-Prompt überschreiben</target></segment></unit>
+        <unit id="assistant.systemPrompt.description"><segment state="final"><source>Optional. Replaces the built-in scenario prompt for model answers. Loaded server-side — visitors cannot see or change it.</source><target>Optional. Ersetzt den eingebauten Szenario-Prompt für Modellantworten. Serverseitig geladen — für Besucher weder sichtbar noch änderbar.</target></segment></unit>
+        <unit id="assistant.maxTokens.label"><segment state="final"><source>Max answer tokens</source><target>Maximale Antwort-Tokens</target></segment></unit>
+        <unit id="assistant.maxTokens.description"><segment state="final"><source>Upper bound for one model answer. The extension-wide ceiling always wins. 0 = use the ceiling.</source><target>Obergrenze für eine Modellantwort. Das erweiterungsweite Limit hat immer Vorrang. 0 = Limit verwenden.</target></segment></unit>
+
+        <!-- A2A: Expert Router -->
+        <unit id="concierge.sheet"><segment state="final"><source>A2A Expert Router</source><target>A2A Expert Router</target></segment></unit>
+        <unit id="concierge.intro.description"><segment state="final"><source>Shown above the concierge. Invite the visitor to delegate a task.</source><target>Wird über dem Concierge angezeigt. Fordern Sie Besucher auf, eine Aufgabe zu delegieren.</target></segment></unit>
+        <unit id="concierge.showFrames.label"><segment state="final"><source>Show the lifecycle frames</source><target>Lifecycle-Frames anzeigen</target></segment></unit>
+        <unit id="concierge.showFrames.description"><segment state="final"><source>Reveals an "under the hood" panel listing the A2A JSON-RPC frames as they arrive. Turn off for a clean production look.</source><target>Zeigt ein "Unter der Haube"-Panel mit den A2A-JSON-RPC-Frames, sobald sie eintreffen. Für einen aufgeräumten Produktiv-Look ausschalten.</target></segment></unit>
+        <unit id="concierge.useLlm.label"><segment state="final"><source>Route and write with the real model</source><target>Routing und Text mit echtem Modell</target></segment></unit>
+        <unit id="concierge.useLlm.description"><segment state="final"><source>When the visitor types a free request, a real model (via nr-llm) picks the skill and writes the artifact for their actual request. Keyword routing and scripted artifacts remain the fallback. Global switch, budget and rate limits still apply.</source><target>Wenn Besucher eine freie Anfrage eingeben, wählt ein echtes Modell (über nr-llm) den Skill und schreibt das Artefakt für die tatsächliche Anfrage. Keyword-Routing und skriptbasierte Artefakte bleiben als Fallback. Globaler Schalter, Budget und Rate-Limits gelten weiterhin.</target></segment></unit>
+        <unit id="concierge.showRationale.label"><segment state="final"><source>Show the routing rationale</source><target>Routing-Begründung anzeigen</target></segment></unit>
+        <unit id="concierge.showRationale.description"><segment state="final"><source>Display why the router chose a skill (one sentence) in the task status. Only applies to model-routed runs.</source><target>Zeigt im Task-Status, warum der Router einen Skill gewählt hat (ein Satz). Gilt nur für modellbasiertes Routing.</target></segment></unit>
+
+        <!-- UCP: Package & Quote Builder -->
+        <unit id="checkout.sheet"><segment state="final"><source>Package &amp; Quote Builder</source><target>Package &amp; Quote Builder</target></segment></unit>
+        <unit id="checkout.intro.description"><segment state="final"><source>Shown above the agent checkout.</source><target>Wird über dem Agent-Checkout angezeigt.</target></segment></unit>
+        <unit id="checkout.showEvents.label"><segment state="final"><source>Show the commerce events</source><target>Commerce-Events anzeigen</target></segment></unit>
+        <unit id="checkout.showEvents.description"><segment state="final"><source>Reveals an "under the hood" panel listing the UCP events as they arrive. Turn off for a clean production look.</source><target>Zeigt ein "Unter der Haube"-Panel mit den UCP-Events, sobald sie eintreffen. Für einen aufgeräumten Produktiv-Look ausschalten.</target></segment></unit>
+        <unit id="checkout.useLlm.label"><segment state="final"><source>Model-written recommendation rationale</source><target>Modellgeschriebene Empfehlungsbegründung</target></segment></unit>
+        <unit id="checkout.useLlm.description"><segment state="final"><source>The shopping agent's reasoning text is written by a real model (via nr-llm), grounded in the fixed cart. Cart contents and prices always stay deterministic. Global switch, budget and rate limits still apply.</source><target>Der Begründungstext des Shopping-Agents wird von einem echten Modell (über nr-llm) geschrieben, basierend auf dem festen Warenkorb. Warenkorb-Inhalte und Preise bleiben stets deterministisch. Globaler Schalter, Budget und Rate-Limits gelten weiterhin.</target></segment></unit>
+
+        <!-- AP2: Signed Quote Authorization -->
+        <unit id="trusted.sheet"><segment state="final"><source>Signed Quote Authorization</source><target>Signed Quote Authorization</target></segment></unit>
+        <unit id="trusted.intro.description"><segment state="final"><source>Shown above the trusted surface.</source><target>Wird über der Trusted Surface angezeigt.</target></segment></unit>
+        <unit id="trusted.showMandates.label"><segment state="final"><source>Show the signed mandates</source><target>Signierte Mandate anzeigen</target></segment></unit>
+        <unit id="trusted.showMandates.description"><segment state="final"><source>Reveals the issued Intent + Cart Mandate tokens (JWS) under the result. Great for explaining the protocol.</source><target>Zeigt die ausgestellten Intent- und Cart-Mandate-Tokens (JWS) unter dem Ergebnis. Ideal zur Erklärung des Protokolls.</target></segment></unit>
+        <unit id="trusted.useLlm.label"><segment state="final"><source>Plain-language chain explanation (model)</source><target>Verständliche Ketten-Erklärung (Modell)</target></segment></unit>
+        <unit id="trusted.useLlm.description"><segment state="final"><source>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</source><target>Fügt dem Beleg eine kurze modellgeschriebene Erklärung der verifizierten Mandatskette hinzu. Mandate und Verifizierung sind stets deterministisch. Erfordert zusätzlich den AP2-LLM-Schalter in den Erweiterungseinstellungen (standardmäßig aus).</target></segment></unit>
+    </file>
+</xliff>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
+    <file id="flexforms" original="flexforms">
+        <!-- shared fields -->
+        <unit id="field.introText.label"><segment><source>Intro text</source></segment></unit>
+        <unit id="field.placeholder.label"><segment><source>Input placeholder</source></segment></unit>
+        <unit id="field.successMessage.label"><segment><source>Success message</source></segment></unit>
+        <unit id="field.accent.label"><segment><source>Accent token</source></segment></unit>
+        <unit id="accent.primary"><segment><source>Theme primary</source></segment></unit>
+        <unit id="accent.accent"><segment><source>Theme accent</source></segment></unit>
+        <unit id="accent.secondary"><segment><source>Theme secondary</source></segment></unit>
+        <unit id="accent.destructive"><segment><source>Theme destructive</source></segment></unit>
+        <unit id="accent.a2ui"><segment><source>A2UI protocol accent</source></segment></unit>
+        <unit id="accent.agui"><segment><source>AG-UI protocol accent</source></segment></unit>
+        <unit id="accent.a2a"><segment><source>A2A protocol accent</source></segment></unit>
+        <unit id="accent.ucp"><segment><source>UCP protocol accent</source></segment></unit>
+        <unit id="accent.ap2"><segment><source>AP2 protocol accent</source></segment></unit>
+
+        <!-- A2UI: Smart Project Inquiry -->
+        <unit id="inquiry.sheet"><segment><source>Smart Project Inquiry</source></segment></unit>
+        <unit id="inquiry.intro.description"><segment><source>Shown above the input. Invite the visitor to describe their request.</source></segment></unit>
+        <unit id="inquiry.businessContext.label"><segment><source>Business context (for the AI, not shown to visitors)</source></segment></unit>
+        <unit id="inquiry.businessContext.description"><segment><source>Describe your business/offering so the agent tailors the generated form.</source></segment></unit>
+        <unit id="inquiry.presets.label"><segment><source>Example prompts (one per line)</source></segment></unit>
+        <unit id="inquiry.layout.label"><segment><source>Layout</source></segment></unit>
+        <unit id="inquiry.layout.full"><segment><source>Full (badge + intro)</source></segment></unit>
+        <unit id="inquiry.layout.compact"><segment><source>Compact</source></segment></unit>
+
+        <!-- AG-UI: AI Site Assistant -->
+        <unit id="assistant.sheet"><segment><source>AI Site Assistant</source></segment></unit>
+        <unit id="assistant.intro.description"><segment><source>Shown above the assistant. Invite the visitor to state their goal.</source></segment></unit>
+        <unit id="assistant.scenario.label"><segment><source>Assistant scenario</source></segment></unit>
+        <unit id="assistant.scenario.description"><segment><source>Which scripted agent run the demo plays. Both end with a human-in-the-loop approval before any lead is captured.</source></segment></unit>
+        <unit id="assistant.scenario.plan"><segment><source>Plan advisor (recommends a plan, then confirms)</source></segment></unit>
+        <unit id="assistant.scenario.support"><segment><source>Consultation booking (gathers details, then confirms)</source></segment></unit>
+        <unit id="assistant.presets.label"><segment><source>Quick-start prompts (one per line)</source></segment></unit>
+        <unit id="assistant.presets.description"><segment><source>Optional chips shown under the input.</source></segment></unit>
+        <unit id="assistant.showEvents.label"><segment><source>Show the live event stream</source></segment></unit>
+        <unit id="assistant.showEvents.description"><segment><source>Reveals a small "under the hood" panel listing the AG-UI events as they arrive — great for explaining the protocol. Turn off for a clean production look.</source></segment></unit>
+        <unit id="assistant.useLlm.label"><segment><source>Answer with the real model</source></segment></unit>
+        <unit id="assistant.useLlm.description"><segment><source>When the visitor types a question, stream a real LLM answer (via nr-llm) instead of the scripted draft. The approval gate and lead capture stay scripted either way. Global switch, budget and rate limits still apply.</source></segment></unit>
+        <unit id="assistant.systemPrompt.label"><segment><source>System prompt override</source></segment></unit>
+        <unit id="assistant.systemPrompt.description"><segment><source>Optional. Replaces the built-in scenario prompt for model answers. Loaded server-side — visitors cannot see or change it.</source></segment></unit>
+        <unit id="assistant.maxTokens.label"><segment><source>Max answer tokens</source></segment></unit>
+        <unit id="assistant.maxTokens.description"><segment><source>Upper bound for one model answer. The extension-wide ceiling always wins. 0 = use the ceiling.</source></segment></unit>
+
+        <!-- A2A: Expert Router -->
+        <unit id="concierge.sheet"><segment><source>A2A Expert Router</source></segment></unit>
+        <unit id="concierge.intro.description"><segment><source>Shown above the concierge. Invite the visitor to delegate a task.</source></segment></unit>
+        <unit id="concierge.showFrames.label"><segment><source>Show the lifecycle frames</source></segment></unit>
+        <unit id="concierge.showFrames.description"><segment><source>Reveals an "under the hood" panel listing the A2A JSON-RPC frames as they arrive. Turn off for a clean production look.</source></segment></unit>
+        <unit id="concierge.useLlm.label"><segment><source>Route and write with the real model</source></segment></unit>
+        <unit id="concierge.useLlm.description"><segment><source>When the visitor types a free request, a real model (via nr-llm) picks the skill and writes the artifact for their actual request. Keyword routing and scripted artifacts remain the fallback. Global switch, budget and rate limits still apply.</source></segment></unit>
+        <unit id="concierge.showRationale.label"><segment><source>Show the routing rationale</source></segment></unit>
+        <unit id="concierge.showRationale.description"><segment><source>Display why the router chose a skill (one sentence) in the task status. Only applies to model-routed runs.</source></segment></unit>
+
+        <!-- UCP: Package & Quote Builder -->
+        <unit id="checkout.sheet"><segment><source>Package &amp; Quote Builder</source></segment></unit>
+        <unit id="checkout.intro.description"><segment><source>Shown above the agent checkout.</source></segment></unit>
+        <unit id="checkout.showEvents.label"><segment><source>Show the commerce events</source></segment></unit>
+        <unit id="checkout.showEvents.description"><segment><source>Reveals an "under the hood" panel listing the UCP events as they arrive. Turn off for a clean production look.</source></segment></unit>
+        <unit id="checkout.useLlm.label"><segment><source>Model-written recommendation rationale</source></segment></unit>
+        <unit id="checkout.useLlm.description"><segment><source>The shopping agent's reasoning text is written by a real model (via nr-llm), grounded in the fixed cart. Cart contents and prices always stay deterministic. Global switch, budget and rate limits still apply.</source></segment></unit>
+
+        <!-- AP2: Signed Quote Authorization -->
+        <unit id="trusted.sheet"><segment><source>Signed Quote Authorization</source></segment></unit>
+        <unit id="trusted.intro.description"><segment><source>Shown above the trusted surface.</source></segment></unit>
+        <unit id="trusted.showMandates.label"><segment><source>Show the signed mandates</source></segment></unit>
+        <unit id="trusted.showMandates.description"><segment><source>Reveals the issued Intent + Cart Mandate tokens (JWS) under the result. Great for explaining the protocol.</source></segment></unit>
+        <unit id="trusted.useLlm.label"><segment><source>Plain-language chain explanation (model)</source></segment></unit>
+        <unit id="trusted.useLlm.description"><segment><source>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</source></segment></unit>
+    </file>
+</xliff>

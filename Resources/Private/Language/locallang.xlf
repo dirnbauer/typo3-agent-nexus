@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
+    <file id="messages" original="messages">
+        <!-- ICU plural: LLM generation runs shown per month on the A2UI dashboard -->
+        <unit id="dashboard.runs">
+            <segment>
+                <source>{count, plural, =0 {no runs} one {# run} other {# runs}}</source>
+            </segment>
+        </unit>
+    </file>
+</xliff>

@@ -46,7 +46,7 @@
   "extra": {
     "typo3/cms": {
       "extension-key": "agent_nexus",
-      "version": "2.0.0",
+      "version": "2.0.1",
       "Package": {
         "providesPackages": {}
       }
