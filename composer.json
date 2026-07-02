@@ -36,7 +36,7 @@
   },
   "suggest": {
     "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
-    "netresearch/nr-llm": "Enables real LLM-backed A2UI generation where configured; otherwise Agent Nexus uses deterministic demos."
+    "netresearch/nr-llm": "Enables real LLM-backed behavior across the frontend plugins (A2UI generation, AG-UI streamed answers, A2A routing, UCP rationale) where configured; otherwise Agent Nexus uses deterministic demos."
   },
   "autoload": {
     "psr-4": {
@@ -46,7 +46,7 @@
   "extra": {
     "typo3/cms": {
       "extension-key": "agent_nexus",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "Package": {
         "providesPackages": {}
       }

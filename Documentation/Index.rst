@@ -11,7 +11,7 @@ Agent Nexus
     webconsulting/agent-nexus
 
 :Version:
-    1.0.0
+    2.0.0
 
 Agent Nexus is a unified TYPO3 v14 lab for the agent-protocol family — A2UI
 (agent ↔ UI), AG-UI (agent ↔ user), A2A (agent ↔ agent), UCP (agent ↔ merchant)
