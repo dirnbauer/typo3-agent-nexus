@@ -10,6 +10,7 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 $plugins = [
     [
         'plugin' => 'Inquiry',
+        'legacyExtension' => 'A2uiIntegration',
         'title' => 'A2UI: Smart Project Inquiry',
         'icon' => 'a2ui-plugin-inquiry',
         'description' => 'AI-assisted adaptive inquiry: the visitor describes their need and the agent builds the right intake form.',
@@ -17,6 +18,7 @@ $plugins = [
     ],
     [
         'plugin' => 'Assistant',
+        'legacyExtension' => 'AguiIntegration',
         'title' => 'AG-UI: AI Site Assistant',
         'icon' => 'agui-plugin-assistant',
         'description' => 'A streaming AI assistant that answers visitor questions live and captures a lead only on approval.',
@@ -24,6 +26,7 @@ $plugins = [
     ],
     [
         'plugin' => 'Concierge',
+        'legacyExtension' => 'A2aIntegration',
         'title' => 'A2A: Expert Router',
         'icon' => 'a2a-plugin-concierge',
         'description' => 'Reads a visitor request and delegates it to the right specialist agent with the A2A task lifecycle.',
@@ -31,6 +34,7 @@ $plugins = [
     ],
     [
         'plugin' => 'Checkout',
+        'legacyExtension' => 'UcpIntegration',
         'title' => 'UCP: Package & Quote Builder',
         'icon' => 'ucp-plugin-checkout',
         'description' => 'An AI shopping agent assembles a recommended service package and simulated quote from visitor needs.',
@@ -38,6 +42,7 @@ $plugins = [
     ],
     [
         'plugin' => 'TrustedSurface',
+        'legacyExtension' => 'Ap2Integration',
         'title' => 'AP2: Signed Quote Authorization',
         'icon' => 'ap2-plugin-trusted',
         'description' => 'A visitor approves a quote up to a spending cap and receives a verifiable simulated authorization receipt.',
@@ -45,16 +50,7 @@ $plugins = [
     ],
 ];
 
-foreach ($plugins as $plugin) {
-    $cType = ExtensionUtility::registerPlugin(
-        'AgentNexus',
-        $plugin['plugin'],
-        $plugin['title'],
-        $plugin['icon'],
-        'plugins',
-        $plugin['description'],
-    );
-
+$configurePluginType = static function (string $cType, array $plugin): void {
     $GLOBALS['TCA']['tt_content']['types'][$cType] ??= $GLOBALS['TCA']['tt_content']['types']['header'] ?? ['showitem' => ''];
     $GLOBALS['TCA']['tt_content']['types'][$cType]['columnsOverrides']['pi_flexform']['config']['ds']
         = 'FILE:EXT:agent_nexus/Configuration/FlexForms/' . $plugin['flexForm'];
@@ -67,4 +63,20 @@ foreach ($plugins as $plugin) {
     );
 
     $GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes'][$cType] = $plugin['icon'];
+};
+
+foreach ($plugins as $plugin) {
+    $cType = ExtensionUtility::registerPlugin(
+        'AgentNexus',
+        $plugin['plugin'],
+        $plugin['title'],
+        $plugin['icon'],
+        'plugins',
+        $plugin['description'],
+    );
+
+    $configurePluginType($cType, $plugin);
+
+    $legacyCType = strtolower($plugin['legacyExtension'] . '_' . $plugin['plugin']);
+    $configurePluginType($legacyCType, $plugin);
 }
