@@ -1,0 +1,4 @@
+name: webconsulting/agent-nexus
+label: 'Agent Nexus: protocol plugin rendering'
+dependencies:
+  - typo3/fluid-styled-content

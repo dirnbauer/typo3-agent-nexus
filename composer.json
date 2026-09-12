@@ -48,7 +48,7 @@
     "suggest": {
         "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
         "netresearch/nr-llm": "Enables real LLM-backed behavior across the frontend plugins (A2UI generation, AG-UI streamed answers, A2A routing, UCP rationale) where configured; otherwise Agent Nexus uses deterministic demos.",
-        "webconsulting/desiderio": "Enables the AgentNexusDesiderio site set, which renders the frontend plugins with the Desiderio design-system components."
+        "webconsulting/desiderio": "^4.1 enables the \"Agent Nexus: Desiderio rendering\" site set, which renders the frontend plugins through the Desiderio component collection."
     },
     "autoload": {
         "psr-4": {

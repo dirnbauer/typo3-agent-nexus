@@ -1,0 +1,25 @@
+settings:
+  agentNexus.storagePid:
+    label: 'Storage folder'
+    description: >-
+      Page uid of the folder that holds Agent Nexus records (A2UI inquiries,
+      AG-UI leads, A2A requests, UCP orders, AP2 authorizations). The
+      agentnexus:seed-site command creates this folder and writes the uid here.
+      0 stores everything on the page that triggered the request.
+    type: int
+    default: 0
+    category: agentNexus
+
+  agentNexus.showProtocolInfo:
+    label: 'Show the protocol info element by default'
+    description: >-
+      Preselects the "diagram, endpoints and how it works" sections on newly
+      created Protocol info elements. Editors can still override this per
+      element in the plugin's FlexForm.
+    type: bool
+    default: true
+    category: agentNexus
+
+categories:
+  agentNexus:
+    label: 'Agent Nexus'

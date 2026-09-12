@@ -1,0 +1,5 @@
+name: webconsulting/agent-nexus-desiderio
+label: 'Agent Nexus: Desiderio rendering'
+dependencies:
+  - webconsulting/agent-nexus
+  - webconsulting/desiderio

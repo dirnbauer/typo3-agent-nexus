@@ -1,0 +1,24 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Default" />
+
+<f:comment>
+    Generic content-element wrapper for every Agent Nexus frontend plugin.
+
+    lib.contentElement gives us the site's element frame (spacing, frame class,
+    id anchor); this template only adds the standard element header and then
+    renders the plugin itself as cObj "20" (an EXTBASEPLUGIN, see the site set's
+    setup.typoscript). The header partial is optional so the template also works
+    in installations whose partial paths do not carry fluid_styled_content's
+    Header/All.
+</f:comment>
+
+<f:section name="Main">
+    <div class="ce-agentnexus ce-agentnexus--{data.CType}">
+        <f:render partial="Header/All" arguments="{_all}" optional="true" />
+        <f:cObject typoscriptObjectPath="tt_content.{data.CType}.20" data="{data}" table="tt_content" />
+    </div>
+</f:section>
+
+</html>

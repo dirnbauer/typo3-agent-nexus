@@ -6,7 +6,6 @@ defined('TYPO3') or die();
 
 use TYPO3\CMS\Core\Cache\Backend\FileBackend;
 use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use Webconsulting\AgentNexus\A2a\Controller\ConciergePluginController;
 use Webconsulting\AgentNexus\A2a\Eid\AgentCardEndpoint;
@@ -33,51 +32,21 @@ $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['ucp_checkout'] = CheckoutEndpo
 $GLOBALS['TYPO3_CONF_VARS']['FE']['eID_include']['ap2_authorize'] = AuthorizeEndpoint::class . '::authorize';
 
 $plugins = [
-    'Inquiry' => [
-        'controller' => InquiryPluginController::class,
-        'legacyExtension' => 'A2uiIntegration',
-    ],
-    'Assistant' => [
-        'controller' => AssistantPluginController::class,
-        'legacyExtension' => 'AguiIntegration',
-    ],
-    'Concierge' => [
-        'controller' => ConciergePluginController::class,
-        'legacyExtension' => 'A2aIntegration',
-    ],
-    'Checkout' => [
-        'controller' => CheckoutPluginController::class,
-        'legacyExtension' => 'UcpIntegration',
-    ],
-    'TrustedSurface' => [
-        'controller' => TrustedSurfacePluginController::class,
-        'legacyExtension' => 'Ap2Integration',
-    ],
+    'Inquiry' => InquiryPluginController::class,
+    'Assistant' => AssistantPluginController::class,
+    'Concierge' => ConciergePluginController::class,
+    'Checkout' => CheckoutPluginController::class,
+    'TrustedSurface' => TrustedSurfacePluginController::class,
 ];
 
-$legacyTypoScriptAliases = [];
-
-foreach ($plugins as $pluginName => $plugin) {
+foreach ($plugins as $pluginName => $controller) {
     ExtensionUtility::configurePlugin(
         'AgentNexus',
         $pluginName,
-        [$plugin['controller'] => 'show'],
+        [$controller => 'show'],
         [],
     );
-
-    $legacyCType = strtolower($plugin['legacyExtension'] . '_' . $pluginName);
-    $canonicalCType = strtolower('AgentNexus_' . $pluginName);
-    $legacyTypoScriptAliases[] = 'tt_content.' . $legacyCType . ' =< tt_content.' . $canonicalCType;
 }
-
-ExtensionManagementUtility::addTypoScript(
-    'AgentNexus',
-    'setup',
-    '
-# Render records created by the former per-protocol packages through Agent Nexus.
-' . implode("\n", $legacyTypoScriptAliases),
-    'defaultContentRendering',
-);
 
 foreach (['a2ui', 'agui', 'a2a', 'ucp', 'ap2'] as $cacheName) {
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheName] ??= [

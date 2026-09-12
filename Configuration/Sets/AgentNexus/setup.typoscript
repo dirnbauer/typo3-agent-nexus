@@ -1,0 +1,87 @@
+# Agent Nexus — frontend rendering glue.
+#
+# Every Agent Nexus content element is an Extbase plugin wrapped in the site's
+# own content-element frame (lib.contentElement), so a protocol demo sits in a
+# page like any other element: it gets the standard header, spacing and frame,
+# and the plugin output is the cObj "20".
+#
+# This set is deliberately design-system agnostic — it only needs
+# fluid_styled_content. For the Desiderio look, add the
+# "webconsulting/agent-nexus-desiderio" set instead; it depends on this one and
+# only swaps the plugin template root.
+
+lib.contentElement.templateRootPaths.1750 = EXT:agent_nexus/Resources/Private/ContentElements/Templates/
+
+plugin.tx_agentnexus {
+    view {
+        templateRootPaths.10 = EXT:agent_nexus/Resources/Private/Templates/
+        partialRootPaths.10 = EXT:agent_nexus/Resources/Private/Partials/
+        layoutRootPaths.10 = EXT:agent_nexus/Resources/Private/Layouts/
+    }
+    persistence {
+        storagePid = {$agentNexus.storagePid}
+    }
+    settings {
+        storagePid = {$agentNexus.storagePid}
+        showProtocolInfo = {$agentNexus.showProtocolInfo}
+    }
+}
+
+tt_content.agentnexus_inquiry =< lib.contentElement
+tt_content.agentnexus_inquiry {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = Inquiry
+    }
+}
+
+tt_content.agentnexus_assistant =< lib.contentElement
+tt_content.agentnexus_assistant {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = Assistant
+    }
+}
+
+tt_content.agentnexus_concierge =< lib.contentElement
+tt_content.agentnexus_concierge {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = Concierge
+    }
+}
+
+tt_content.agentnexus_checkout =< lib.contentElement
+tt_content.agentnexus_checkout {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = Checkout
+    }
+}
+
+tt_content.agentnexus_trustedsurface =< lib.contentElement
+tt_content.agentnexus_trustedsurface {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = TrustedSurface
+    }
+}
+
+# Legacy CTypes from the five per-protocol packages Agent Nexus replaced.
+# Deprecated since 3.0 and removed in 4.0 — run the "Agent Nexus: migrate legacy
+# content element types" upgrade wizard to rewrite existing records.
+tt_content.a2uiintegration_inquiry =< tt_content.agentnexus_inquiry
+tt_content.aguiintegration_assistant =< tt_content.agentnexus_assistant
+tt_content.a2aintegration_concierge =< tt_content.agentnexus_concierge
+tt_content.ucpintegration_checkout =< tt_content.agentnexus_checkout
+tt_content.ap2integration_trustedsurface =< tt_content.agentnexus_trustedsurface

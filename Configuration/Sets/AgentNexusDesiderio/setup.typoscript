@@ -1,0 +1,14 @@
+# Agent Nexus — Desiderio rendering.
+#
+# Everything the plain set configures still applies (it is a dependency); this
+# set only puts a higher-priority plugin template root in front of it, so each
+# plugin resolves the Desiderio variant of its Show template. Those templates
+# compose the same markup through Desiderio's component collection, so the demo
+# inherits the site's tokens, spacing and dark mode instead of only carrying
+# Agent Nexus' own frontend CSS.
+#
+# Add this set on its own — webconsulting/agent-nexus comes with it as a
+# dependency. Requires webconsulting/desiderio ^4.1 (a composer "suggest" of
+# agent_nexus), whose component collection lives in Resources/Private/Components.
+
+plugin.tx_agentnexus.view.templateRootPaths.100 = EXT:agent_nexus/Resources/Private/Desiderio/Templates/
