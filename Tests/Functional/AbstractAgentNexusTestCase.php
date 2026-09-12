@@ -16,6 +16,13 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 abstract class AbstractAgentNexusTestCase extends FunctionalTestCase
 {
+    /**
+     * lib.contentElement comes from fluid_styled_content, which the
+     * "webconsulting/agent-nexus" site set declares as its dependency — without
+     * it the set does not activate and its settings never reach a site.
+     */
+    protected array $coreExtensionsToLoad = ['fluid_styled_content'];
+
     protected array $testExtensionsToLoad = ['agent_nexus'];
 
     protected const SITE_IDENTIFIER = 'testing';
