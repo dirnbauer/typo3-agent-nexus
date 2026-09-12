@@ -1,127 +1,14 @@
-/* Agent Nexus — A2UI Smart Inquiry widget + A2UI renderer components.
- * Loaded only by the Inquiry plugin, on top of nexus-tokens.css and
- * nexus-frontend.css. Consumes only --anx-* / --accent tokens; the editor
- * data-accent contract and dark mode live in the token layer.
+/* Agent Nexus — A2UI renderer components.
+ *
+ * The classes below are emitted at runtime by a2ui-renderer.js when it rebuilds
+ * an agent-described surface, so they cannot live in a template and are named
+ * after the A2UI catalog rather than after this extension. Above them sit the
+ * few widget states only A2UI has — the generated surface fading in, its loading
+ * spinner and its result notice. Everything else (panel, header, bar, chips,
+ * buttons) is shared with the other four plugins and lives in nexus-frontend.css.
  */
 
-.a2ui-inquiry {
-  max-width: 760px;
-  margin: 2rem 0;
-  font-size: 1rem;
-}
-
-.a2ui-inquiry__panel {
-  position: relative;
-  padding: 1.5rem;
-  background: var(--anx-card);
-  border: 1px solid var(--anx-border);
-  border-radius: calc(var(--anx-radius) + .25rem);
-  box-shadow: var(--anx-shadow-sm);
-  overflow: hidden;
-}
-.a2ui-inquiry__panel::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 35%, transparent), transparent);
-}
-.a2ui-inquiry__head { margin-bottom: 1.1rem; }
-.a2ui-inquiry__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  padding: .2rem .58rem;
-  margin-bottom: .65rem;
-  font-size: var(--anx-text-xs);
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: var(--anx-radius-full);
-}
-.a2ui-inquiry__spark { width: .8rem; height: .8rem; fill: currentColor; }
-.a2ui-inquiry__title {
-  margin: 0 0 .3rem;
-  font-size: 1.55rem;
-  line-height: 1.2;
-  font-weight: 700;
-  color: var(--anx-fg);
-}
-.a2ui-inquiry__intro { margin: 0; color: var(--anx-muted-fg); line-height: 1.55; }
-
-.a2ui-inquiry__bar {
-  display: flex;
-  align-items: stretch;
-  gap: .45rem;
-  padding: .3rem .3rem .3rem .8rem;
-  border: 1px solid var(--anx-border);
-  border-radius: var(--anx-radius);
-  background: var(--anx-bg);
-  transition: border-color .15s ease, box-shadow .15s ease;
-}
-.a2ui-inquiry__bar:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
-}
-.a2ui-inquiry__bar-icon { display: flex; align-items: center; color: var(--accent); flex: 0 0 auto; }
-.a2ui-inquiry__bar-icon svg { width: 1.15rem; height: 1.15rem; }
-.a2ui-inquiry__input {
-  flex: 1 1 auto;
-  min-width: 0;
-  padding: .6rem .2rem;
-  font-size: 1rem;
-  font-family: inherit;
-  border: none;
-  background: transparent;
-  color: inherit;
-}
-.a2ui-inquiry__input:focus { outline: none; }
-.a2ui-inquiry__input::placeholder { color: var(--anx-muted-fg); opacity: .8; }
-
-.a2ui-inquiry__go,
-.a2ui-inquiry .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  padding: .58rem 1.05rem;
-  font-size: .95rem;
-  font-weight: 600;
-  font-family: inherit;
-  color: var(--primary-foreground, #ffffff);
-  background: var(--primary, #2563eb);
-  border: none;
-  border-radius: var(--anx-radius-sm);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: opacity .15s ease, transform .05s ease;
-}
-.a2ui-inquiry__go svg { width: .95rem; height: .95rem; }
-.a2ui-inquiry__go:hover,
-.a2ui-inquiry .btn-primary:hover { opacity: .9; }
-.a2ui-inquiry__go:active { transform: translateY(1px); }
-.a2ui-inquiry button:disabled { opacity: .5; cursor: progress; }
-
-.a2ui-inquiry__presets-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: .85rem; }
-.a2ui-inquiry__presets-label { font-size: .8rem; color: var(--anx-muted-fg); }
-.a2ui-inquiry__presets { display: contents; }
-.a2ui-inquiry__preset {
-  padding: .32rem .72rem;
-  font-size: .84rem;
-  font-family: inherit;
-  color: var(--anx-fg);
-  background: var(--anx-surface-1);
-  border: 1px solid var(--anx-border);
-  border-radius: var(--anx-radius-full);
-  cursor: pointer;
-  transition: border-color .15s ease, color .15s ease, background .15s ease;
-}
-.a2ui-inquiry__preset:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-}
+/* ---- states unique to the generated-surface widget ------------------------ */
 
 .a2ui-inquiry__live:not(:empty) {
   margin-top: 1.3rem;
@@ -170,6 +57,12 @@
   color: var(--anx-danger);
   background: color-mix(in srgb, var(--anx-danger) 12%, transparent);
   border-color: color-mix(in srgb, var(--anx-danger) 35%, transparent);
+}
+.a2ui-inquiry button:disabled { opacity: .5; cursor: progress; }
+
+@media (prefers-reduced-motion: reduce) {
+  .a2ui-inquiry__live:not(:empty) { animation: none; }
+  .a2ui-inquiry__status::before { animation-duration: 1.6s; }
 }
 
 /* ---- A2UI renderer components (classes emitted by a2ui-renderer.js) ------ */

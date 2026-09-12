@@ -3,7 +3,8 @@
  * nexus-tokens.css (load that first; templates wrap each widget in
  * "anx anx--frontend anx-accent--{proto}"). Dark mode comes from the token
  * layer — no per-widget prefers-color-scheme blocks here.
- * The A2UI Inquiry widget lives in nexus-frontend-a2ui.css.
+ * All five widgets share this shell. Only the components the A2UI renderer
+ * emits at runtime live in nexus-frontend-a2ui.css.
  */
 
 /* ---- editor accent choice (data-accent from FlexForm) -------------------- */
@@ -18,6 +19,7 @@
 
 /* ==== shared plugin shell ================================================== */
 
+.a2ui-inquiry,
 .agui-asst,
 .a2a-cc,
 .ucp-cc,
@@ -27,6 +29,7 @@
 }
 
 /* panel container */
+.a2ui-inquiry__panel,
 .agui-asst__panel,
 .a2a-cc__panel,
 .ucp-cc__panel,
@@ -39,11 +42,13 @@
 }
 
 /* header: badge, title, intro */
+.a2ui-inquiry__head,
 .agui-asst__head,
 .a2a-cc__head,
 .ucp-cc__head,
 .ap2-ts__head { margin-bottom: 1rem; }
 
+.a2ui-inquiry__badge,
 .agui-asst__badge,
 .a2a-cc__badge,
 .ucp-cc__badge,
@@ -60,10 +65,12 @@
   border-radius: var(--anx-radius-full);
   padding: .25rem .6rem;
 }
+.a2ui-inquiry__spark,
 .agui-asst__spark,
 .a2a-cc__spark,
 .ucp-cc__spark { width: 13px; height: 13px; fill: currentColor; }
 
+.a2ui-inquiry__title,
 .agui-asst__title,
 .a2a-cc__title,
 .ucp-cc__title,
@@ -73,12 +80,14 @@
   line-height: 1.25;
   color: var(--anx-fg);
 }
+.a2ui-inquiry__intro,
 .agui-asst__intro,
 .a2a-cc__intro,
 .ucp-cc__intro,
 .ap2-ts__intro { margin: 0; color: var(--anx-muted-fg); line-height: 1.5; }
 
 /* form bar */
+.a2ui-inquiry__bar,
 .agui-asst__bar,
 .a2a-cc__bar {
   display: flex;
@@ -90,15 +99,19 @@
   background: var(--anx-bg);
   transition: border-color .15s, box-shadow .15s;
 }
+.a2ui-inquiry__bar:focus-within,
 .agui-asst__bar:focus-within,
 .a2a-cc__bar:focus-within {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
 }
+.a2ui-inquiry__bar-icon,
 .agui-asst__bar-icon,
 .a2a-cc__bar-icon { display: inline-flex; color: var(--accent); }
+.a2ui-inquiry__bar-icon svg,
 .agui-asst__bar-icon svg,
 .a2a-cc__bar-icon svg { width: 20px; height: 20px; }
+.a2ui-inquiry__input,
 .agui-asst__input,
 .a2a-cc__input {
   flex: 1;
@@ -110,10 +123,12 @@
   padding: .45rem .1rem;
   min-width: 0;
 }
+.a2ui-inquiry__input::placeholder,
 .agui-asst__input::placeholder,
 .a2a-cc__input::placeholder { color: var(--anx-muted-fg); opacity: .75; }
 
 /* primary action buttons */
+.a2ui-inquiry__go,
 .agui-asst__go,
 .agui-asst__approve,
 .a2a-cc__go,
@@ -137,10 +152,12 @@
 .ucp-cc__go,
 .ucp-cc__approve,
 .ap2-ts__go { gap: .4rem; padding: .6rem 1.1rem; }
+.a2ui-inquiry__go svg,
 .agui-asst__go svg,
 .a2a-cc__go svg,
 .ucp-cc__go svg,
 .ap2-ts__go svg { width: 15px; height: 15px; }
+.a2ui-inquiry__go:hover,
 .agui-asst__go:hover,
 .agui-asst__approve:hover,
 .a2a-cc__go:hover,
@@ -148,16 +165,19 @@
 .ucp-cc__go:hover,
 .ucp-cc__approve:hover,
 .ap2-ts__go:hover { opacity: .9; }
+.a2ui-inquiry__go:disabled,
 .agui-asst__go:disabled,
 .a2a-cc__go:disabled,
 .ucp-cc__go:disabled,
 .ap2-ts__go:disabled { opacity: .55; cursor: default; }
+.a2ui-inquiry__go.is-busy span::after,
 .agui-asst__go.is-busy span::after,
 .a2a-cc__go.is-busy span::after,
 .ucp-cc__go.is-busy span::after,
 .ap2-ts__go.is-busy span::after { content: "..."; }
 
 /* preset / skill / intent chips */
+.a2ui-inquiry__preset,
 .agui-asst__preset,
 .a2a-cc__skill,
 .ucp-cc__intent {
@@ -170,9 +190,11 @@
   cursor: pointer;
   transition: border-color .15s, color .15s, background .15s;
 }
+.a2ui-inquiry__preset,
 .agui-asst__preset { padding: .25rem .7rem; }
 .a2a-cc__skill { padding: .25rem .8rem; }
 .ucp-cc__intent { padding: .3rem .85rem; }
+.a2ui-inquiry__preset:hover,
 .agui-asst__preset:hover,
 .a2a-cc__skill:hover,
 .a2a-cc__skill.is-active,
@@ -271,8 +293,11 @@
 
 .agui-asst__input:disabled { opacity: .6; }
 
+.a2ui-inquiry__presets-wrap,
 .agui-asst__presets-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
+.a2ui-inquiry__presets-label,
 .agui-asst__presets-label { font-size: .8rem; color: var(--anx-muted-fg); }
+.a2ui-inquiry__presets { display: contents; }
 .agui-asst__presets { display: flex; flex-wrap: wrap; gap: .4rem; }
 
 .agui-asst__think {
@@ -633,6 +658,13 @@
   font-size: var(--anx-text-sm);
   color: var(--anx-muted-fg);
   background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+:is(.a2ui-inquiry, .agui-asst, .a2a-cc, .ucp-cc, .ap2-ts, .anx-info)
+  :is(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--anx-radius-sm);
 }
 
 /* ==== responsive + reduced motion ========================================== */
