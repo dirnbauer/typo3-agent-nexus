@@ -49,14 +49,13 @@
   padding: 0.7rem 0.9rem 0.9rem;
 }
 
-/* pulses: hidden until GSAP drives them; gentle blink as CSS fallback */
-.anx.has-gsap [data-map-pulse] { opacity: 0; }
-.anx:not(.has-gsap) [data-map-pulse] { animation: anx-map-blink 2.4s ease-in-out infinite; }
-.anx:not(.has-gsap) [data-map-pulse="a2ui"] { animation-delay: 0.4s; }
-.anx:not(.has-gsap) [data-map-pulse="a2a"] { animation-delay: 0.8s; }
-.anx:not(.has-gsap) [data-map-pulse="ucp"] { animation-delay: 1.2s; }
-.anx:not(.has-gsap) [data-map-pulse="ap2"] { animation-delay: 1.6s; }
-.anx:not(.has-gsap) [data-map-pulse="mcp"] { animation-delay: 2s; }
+/* pulses travel their edge with a staggered blink */
+.anx [data-map-pulse] { animation: anx-map-blink 2.4s ease-in-out infinite; }
+.anx [data-map-pulse="a2ui"] { animation-delay: 0.4s; }
+.anx [data-map-pulse="a2a"] { animation-delay: 0.8s; }
+.anx [data-map-pulse="ucp"] { animation-delay: 1.2s; }
+.anx [data-map-pulse="ap2"] { animation-delay: 1.6s; }
+.anx [data-map-pulse="mcp"] { animation-delay: 2s; }
 @keyframes anx-map-blink {
   0%, 100% { opacity: 0.25; }
   50% { opacity: 1; }
@@ -386,16 +385,16 @@
   color: var(--anx-fg);
 }
 
-/* CSS fallback animation while GSAP is absent */
-.anx:not(.has-gsap) .is-active .anx-flow__beam { animation: anx-beam 3.6s linear infinite; }
+/* the beam sweeps the active panel's flow track and each step glows in turn */
+.anx .is-active .anx-flow__beam { animation: anx-beam 3.6s linear infinite; }
 @keyframes anx-beam { from { left: -12%; } to { left: 108%; } }
-.anx:not(.has-gsap) .is-active .anx-flow__step { animation: anx-stepglow 3.6s ease-in-out infinite; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(2) { animation-delay: 0s; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(3) { animation-delay: 0.34s; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(4) { animation-delay: 0.68s; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(5) { animation-delay: 1.02s; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(6) { animation-delay: 1.36s; }
-.anx:not(.has-gsap) .is-active .anx-flow__step:nth-of-type(7) { animation-delay: 1.7s; }
+.anx .is-active .anx-flow__step { animation: anx-stepglow 3.6s ease-in-out infinite; }
+.anx .is-active .anx-flow__step:nth-of-type(2) { animation-delay: 0s; }
+.anx .is-active .anx-flow__step:nth-of-type(3) { animation-delay: 0.34s; }
+.anx .is-active .anx-flow__step:nth-of-type(4) { animation-delay: 0.68s; }
+.anx .is-active .anx-flow__step:nth-of-type(5) { animation-delay: 1.02s; }
+.anx .is-active .anx-flow__step:nth-of-type(6) { animation-delay: 1.36s; }
+.anx .is-active .anx-flow__step:nth-of-type(7) { animation-delay: 1.7s; }
 @keyframes anx-stepglow {
   0%, 68%, 100% { border-color: var(--anx-border); }
   10%, 20% {
@@ -562,6 +561,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .anx .anx-reveal,
   .anx .anx-flow__beam,
   .anx .anx-flow__step,
   .anx [data-map-pulse],

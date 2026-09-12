@@ -9,17 +9,10 @@
  * and every order is SIMULATED. SSE is read over fetch() (POST, so no EventSource).
  */
 
-import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
 
-// Entrance stagger + stat count-up (no-op under reduced motion / missing GSAP).
-const anxRoot = document.querySelector('.anx');
-if (anxRoot) {
-  withGsap(anxRoot).then((gsap) => {
-    if (!gsap) return;
-    reveal(gsap, anxRoot.querySelectorAll('.anx-reveal'));
-    countUpAll(gsap, anxRoot);
-  });
-}
+// Card entrance is CSS (.anx-reveal); only the stat count-up needs JavaScript.
+countUpAll(document.querySelector('.anx'));
 
 /** Commerce event type → .anx-console__event modifier. */
 const TYPE_CLASS = {

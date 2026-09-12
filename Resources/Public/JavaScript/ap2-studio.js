@@ -8,7 +8,7 @@
  * Everything is sandbox-signed; no real payment is initiated.
  */
 
-import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
 
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function ajax(name) { return window.TYPO3 && TYPO3.settings && TYPO3.settings.ajaxUrls ? TYPO3.settings.ajaxUrls[name] : null; }
@@ -20,16 +20,8 @@ async function post(name, body) {
 }
 function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
 
-// Entrance: staggered card reveal + stat count-up (no-op under reduced motion).
-ready(() => {
-  const anxRoot = document.querySelector('.anx');
-  if (!anxRoot) return;
-  withGsap(anxRoot).then((g) => {
-    if (!g) return;
-    reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
-    countUpAll(g, anxRoot);
-  });
-});
+// Card entrance is CSS (.anx-reveal); only the stat count-up needs JavaScript.
+ready(() => countUpAll(document.querySelector('.anx')));
 
 function renderToken(host, jwt, claims) {
   const parts = jwt.split('.');

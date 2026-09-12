@@ -8,15 +8,11 @@
  * cannot be used).
  */
 
-import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
 
-// Entrance stagger for the anx shell (runs on Console and Catalog views alike).
-const anxRoot = document.querySelector('.anx');
-withGsap(anxRoot).then((g) => {
-  if (!g || !anxRoot) return;
-  reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
-  countUpAll(g, anxRoot);
-});
+// Card entrance is CSS (.anx-reveal); only the stat count-up needs JavaScript.
+// Runs on the Console and Catalog views alike.
+countUpAll(document.querySelector('.anx'));
 
 const CATEGORY = {
   RUN_STARTED: 'lifecycle', RUN_FINISHED: 'lifecycle', RUN_ERROR: 'lifecycle', STEP_STARTED: 'lifecycle', STEP_FINISHED: 'lifecycle',

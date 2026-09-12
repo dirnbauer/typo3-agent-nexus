@@ -481,21 +481,24 @@
 }
 .anx-spec__code code { white-space: pre; }
 
-/* ---- reveal animation (CSS fallback; GSAP takes over when available) ------------------ */
+/* ---- reveal animation ------------------------------------------------------------------
+ * Entrance motion for server-rendered content is CSS, not JavaScript: it starts
+ * with the first paint, needs no library, and prefers-reduced-motion switches it
+ * off below without anything having to ask. nexus-motion.js only animates markup
+ * that JavaScript itself inserts.
+ */
 
-.anx-reveal { opacity: 0; transform: translateY(8px); }
-.anx.has-gsap .anx-reveal { animation: none; }
-.anx:not(.has-gsap) .anx-reveal,
-.anx:not(.has-gsap) .is-active .anx-reveal {
+.anx-reveal,
+.anx .is-active .anx-reveal {
   animation: anx-rise 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
-.anx:not(.has-gsap) .anx-reveal:nth-child(1) { animation-delay: 0.02s; }
-.anx:not(.has-gsap) .anx-reveal:nth-child(2) { animation-delay: 0.08s; }
-.anx:not(.has-gsap) .anx-reveal:nth-child(3) { animation-delay: 0.14s; }
-.anx:not(.has-gsap) .anx-reveal:nth-child(4) { animation-delay: 0.2s; }
-.anx:not(.has-gsap) .anx-reveal:nth-child(5) { animation-delay: 0.26s; }
-.anx:not(.has-gsap) .anx-reveal:nth-child(6) { animation-delay: 0.32s; }
-@keyframes anx-rise { to { opacity: 1; transform: none; } }
+.anx-reveal:nth-child(1) { animation-delay: 0.02s; }
+.anx-reveal:nth-child(2) { animation-delay: 0.08s; }
+.anx-reveal:nth-child(3) { animation-delay: 0.14s; }
+.anx-reveal:nth-child(4) { animation-delay: 0.2s; }
+.anx-reveal:nth-child(5) { animation-delay: 0.26s; }
+.anx-reveal:nth-child(6) { animation-delay: 0.32s; }
+@keyframes anx-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 /* ---- responsive + reduced motion -------------------------------------------------------- */
 
@@ -505,8 +508,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .anx .anx-reveal,
-  .anx:not(.has-gsap) .anx-reveal {
+  .anx-reveal,
+  .anx .anx-reveal {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

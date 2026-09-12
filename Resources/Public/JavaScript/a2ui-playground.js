@@ -8,16 +8,10 @@
  * "agent → JSON → native UI → signal" loop is visible at a glance.
  */
 import { A2UIClient } from '@webconsulting/agent-nexus/a2ui-renderer.js';
-import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
 
-// Entrance stagger + stat count-ups (no-ops under prefers-reduced-motion; the
-// CSS fallback in nexus-ui.css keeps working when GSAP never arrives).
-const anxRoot = document.querySelector('.anx');
-withGsap(anxRoot).then((gsap) => {
-  if (!gsap || !anxRoot) return;
-  reveal(gsap, anxRoot.querySelectorAll('.anx-reveal'));
-  countUpAll(gsap, anxRoot);
-});
+// Card entrance is CSS (.anx-reveal); only the stat count-ups need JavaScript.
+countUpAll(document.querySelector('.anx'));
 
 function ready(fn) {
   if (document.readyState !== 'loading') {

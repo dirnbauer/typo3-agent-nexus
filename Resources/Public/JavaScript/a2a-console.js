@@ -9,16 +9,10 @@
  * POST, so EventSource — GET only — cannot be used).
  */
 
-import { withGsap, reveal, countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
 
-const anxRoot = document.querySelector('.anx');
-if (anxRoot) {
-  withGsap(anxRoot).then((g) => {
-    if (!g) return;
-    reveal(g, anxRoot.querySelectorAll('.anx-reveal'));
-    countUpAll(g, anxRoot);
-  });
-}
+// Card entrance is CSS (.anx-reveal); only the stat count-up needs JavaScript.
+countUpAll(document.querySelector('.anx'));
 
 const KIND_CLASS = { task: 'accent', 'status-update': 'warn', 'artifact-update': 'ok', message: 'muted' };
 const STATE_BADGE = {
