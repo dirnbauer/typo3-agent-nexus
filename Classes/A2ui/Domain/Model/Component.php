@@ -22,7 +22,8 @@ final class Component
      * @param string               $id         Unique component id (exactly one component must use "root")
      * @param string               $component  Catalog component name, e.g. "TextField", "Button", "Column"
      * @param array<string, mixed> $properties Component properties (label, text, value-binding, options, ...)
-     * @param array<int, string>   $children   Ids of child components (containers only)
+     * @param array<int|string, mixed> $children Ids of child components (containers only), or an A2UI
+     *                                            template descriptor ({path, componentId}) for List
      * @param array<string, mixed>|null $action Optional A2UI action ({event: {...}} or {functionCall: {...}})
      */
     public function __construct(

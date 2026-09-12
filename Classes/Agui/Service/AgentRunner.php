@@ -112,7 +112,7 @@ final class AgentRunner implements SingletonInterface
         if (isset($c['uiTool'])) {
             $uiId = 'tc-ui-' . substr(md5($runId), 0, 5);
             yield Events::toolStart($uiId, $c['uiTool']['name']);
-            yield Events::toolArgs($uiId, json_encode($c['uiTool']['args'], JSON_UNESCAPED_SLASHES));
+            yield Events::toolArgs($uiId, (string)json_encode($c['uiTool']['args'], JSON_UNESCAPED_SLASHES));
             yield Events::toolEnd($uiId);
         }
 
@@ -120,7 +120,7 @@ final class AgentRunner implements SingletonInterface
         // the run. Nothing is written — the UI now shows Approve / Reject.
         $toolId = 'tc-' . substr(md5($runId . 'confirm'), 0, 6);
         yield Events::toolStart($toolId, $c['tool']);
-        yield Events::toolArgs($toolId, json_encode($c['toolArgs'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        yield Events::toolArgs($toolId, (string)json_encode($c['toolArgs'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
         yield Events::toolEnd($toolId);
 
         yield Events::runFinished($threadId, $runId, ['awaiting' => 'approval', 'toolCallId' => $toolId]);
@@ -170,7 +170,7 @@ final class AgentRunner implements SingletonInterface
     /**
      * Task presets per surface (backend module vs frontend assistant).
      *
-     * @return array<string, array<string, array<string, mixed>>>
+     * @return array<string, array<string, mixed>>
      */
     private function presets(string $source): array
     {
@@ -318,6 +318,9 @@ final class AgentRunner implements SingletonInterface
     /** @return list<string> coarse chunks for reasoning streaming */
     private function chunks(string $text): array
     {
-        return array_map(static fn(string $s): string => $s . ' ', array_filter(explode(' ', $text), static fn($s) => $s !== ''));
+        return array_values(array_map(
+            static fn(string $s): string => $s . ' ',
+            array_filter(explode(' ', $text), static fn(string $s): bool => $s !== ''),
+        ));
     }
 }

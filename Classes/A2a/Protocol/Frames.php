@@ -19,19 +19,32 @@ namespace Webconsulting\AgentNexus\A2a\Protocol;
  */
 final class Frames
 {
-    /** Wrap an A2A result object in a JSON-RPC 2.0 response envelope. */
+    /**
+     * Wrap an A2A result object in a JSON-RPC 2.0 response envelope.
+     *
+     * @param array<string, mixed> $result
+     * @return array<string, mixed>
+     */
     public static function result(int|string $id, array $result): array
     {
         return ['jsonrpc' => '2.0', 'id' => $id, 'result' => $result];
     }
 
-    /** A JSON-RPC error envelope (e.g. method not found / invalid params). */
+    /**
+     * A JSON-RPC error envelope (e.g. method not found / invalid params).
+     *
+     * @return array<string, mixed>
+     */
     public static function error(int|string|null $id, int $code, string $message): array
     {
         return ['jsonrpc' => '2.0', 'id' => $id, 'error' => ['code' => $code, 'message' => $message]];
     }
 
-    /** kind:task — the freshly created Task. */
+    /**
+     * kind:task — the freshly created Task.
+     *
+     * @return array<string, mixed>
+     */
     public static function task(string $taskId, string $contextId, string $state = 'submitted'): array
     {
         return [
@@ -48,6 +61,7 @@ final class Frames
      * skill, so a client can resume a server-routed task correctly).
      *
      * @param array<string, mixed>|null $messageMetadata
+     * @return array<string, mixed>
      */
     public static function status(string $taskId, string $contextId, string $state, ?string $text = null, bool $final = false, ?array $messageMetadata = null): array
     {
@@ -67,7 +81,11 @@ final class Frames
         ];
     }
 
-    /** kind:artifact-update — open an artifact (no text yet). */
+    /**
+     * kind:artifact-update — open an artifact (no text yet).
+     *
+     * @return array<string, mixed>
+     */
     public static function artifactStart(string $taskId, string $artifactId, string $name, string $description = ''): array
     {
         return [
@@ -79,7 +97,11 @@ final class Frames
         ];
     }
 
-    /** kind:artifact-update — append a streamed text chunk to the artifact. */
+    /**
+     * kind:artifact-update — append a streamed text chunk to the artifact.
+     *
+     * @return array<string, mixed>
+     */
     public static function artifactChunk(string $taskId, string $artifactId, string $delta): array
     {
         return [
@@ -91,7 +113,11 @@ final class Frames
         ];
     }
 
-    /** kind:artifact-update — mark the artifact complete. */
+    /**
+     * kind:artifact-update — mark the artifact complete.
+     *
+     * @return array<string, mixed>
+     */
     public static function artifactEnd(string $taskId, string $artifactId): array
     {
         return [
@@ -103,7 +129,11 @@ final class Frames
         ];
     }
 
-    /** An A2A Message object (role + text part). */
+    /**
+     * An A2A Message object (role + text part).
+     *
+     * @return array<string, mixed>
+     */
     public static function message(string $role, string $text): array
     {
         return [

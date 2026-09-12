@@ -250,6 +250,9 @@ final class LlmClient implements SingletonInterface
         }
     }
 
+    /**
+     * @return CompletionServiceInterface
+     */
     private function completionService(): object
     {
         if (!$this->isAvailable()) {
@@ -263,6 +266,8 @@ final class LlmClient implements SingletonInterface
     /**
      * The configured default model (or first chat model), untyped to keep
      * nr-llm a soft dependency. Null when nr-llm is unavailable.
+     *
+     * @return \Netresearch\NrLlm\Domain\Model\Model|null
      */
     private function defaultModel(): ?object
     {

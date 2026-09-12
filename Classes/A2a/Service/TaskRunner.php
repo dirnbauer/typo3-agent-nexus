@@ -191,6 +191,9 @@ final class TaskRunner implements SingletonInterface
         );
     }
 
+    /**
+     * @param array<string, mixed> $message
+     */
     private function textOf(array $message): string
     {
         $parts = is_array($message['parts'] ?? null) ? $message['parts'] : [];

@@ -6,6 +6,7 @@ namespace Webconsulting\AgentNexus\A2ui\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Frontend plugin controller for the A2UI Smart Project Inquiry.
@@ -19,7 +20,7 @@ final class InquiryPluginController extends ActionController
     public function showAction(): ResponseInterface
     {
         $contentObject = $this->request->getAttribute('currentContentObject');
-        $data = $contentObject?->data ?? [];
+        $data = $contentObject instanceof ContentObjectRenderer ? $contentObject->data : [];
         $pageId = (int)($this->request->getAttribute('frontend.page.information')?->getId() ?? ($data['pid'] ?? 0));
 
         $this->view->assignMultiple([

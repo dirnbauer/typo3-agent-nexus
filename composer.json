@@ -1,55 +1,97 @@
 {
-  "name": "webconsulting/agent-nexus",
-  "type": "typo3-cms-extension",
-  "description": "Agent Nexus - A unified TYPO3 v14 lab for A2UI, AG-UI, A2A, UCP and AP2 agent protocol demos.",
-  "keywords": [
-    "TYPO3",
-    "agent",
-    "A2UI",
-    "AG-UI",
-    "A2A",
-    "UCP",
-    "AP2",
-    "generative-ui",
-    "agentic-commerce"
-  ],
-  "homepage": "https://webconsulting.at",
-  "license": "GPL-2.0-or-later",
-  "authors": [
-    {
-      "name": "webconsulting GmbH",
-      "email": "office@webconsulting.at",
-      "homepage": "https://webconsulting.at"
+    "name": "webconsulting/agent-nexus",
+    "type": "typo3-cms-extension",
+    "description": "Agent Nexus - A unified TYPO3 v14 lab for A2UI, AG-UI, A2A, UCP and AP2 agent protocol demos.",
+    "keywords": [
+        "TYPO3",
+        "agent",
+        "A2UI",
+        "AG-UI",
+        "A2A",
+        "UCP",
+        "AP2",
+        "generative-ui",
+        "agentic-commerce"
+    ],
+    "homepage": "https://webconsulting.at",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "webconsulting GmbH",
+            "email": "office@webconsulting.at",
+            "homepage": "https://webconsulting.at",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/dirnbauer/typo3-agent-nexus/issues",
+        "source": "https://github.com/dirnbauer/typo3-agent-nexus"
+    },
+    "require": {
+        "php": "^8.4",
+        "typo3/cms-backend": "^14.3.7",
+        "typo3/cms-core": "^14.3.7",
+        "typo3/cms-extbase": "^14.3.7",
+        "typo3/cms-fluid": "^14.3.7",
+        "typo3/cms-frontend": "^14.3.7"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.90",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "saschaegerer/phpstan-typo3": "^3.1",
+        "typo3/coding-standards": "^0.8",
+        "typo3/testing-framework": "^9.5"
+    },
+    "suggest": {
+        "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
+        "netresearch/nr-llm": "Enables real LLM-backed behavior across the frontend plugins (A2UI generation, AG-UI streamed answers, A2A routing, UCP rationale) where configured; otherwise Agent Nexus uses deterministic demos.",
+        "webconsulting/desiderio": "Enables the AgentNexusDesiderio site set, which renders the frontend plugins with the Desiderio design-system components."
+    },
+    "autoload": {
+        "psr-4": {
+            "Webconsulting\\AgentNexus\\": "Classes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webconsulting\\AgentNexus\\Tests\\": "Tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true,
+            "typo3/class-alias-loader": true,
+            "typo3/cms-composer-installers": true
+        },
+        "bin-dir": ".Build/bin",
+        "sort-packages": true,
+        "vendor-dir": ".Build/vendor"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "agent_nexus",
+            "web-dir": ".Build/Web",
+            "version": "3.0.0",
+            "Package": {
+                "providesPackages": {}
+            }
+        }
+    },
+    "scripts": {
+        "ci": [
+            "@ci:cgl",
+            "@ci:phpstan",
+            "@ci:tests:unit",
+            "@ci:tests:functional"
+        ],
+        "ci:cgl": "php-cs-fixer fix --config .php-cs-fixer.dist.php --diff --dry-run --using-cache no",
+        "ci:php:lint": "find Classes Configuration Tests ext_localconf.php -name '*.php' -print0 | xargs -0 -n1 -P4 php -l >/dev/null",
+        "ci:phpstan": "phpstan analyse --configuration phpstan.neon --no-progress",
+        "ci:tests:functional": "phpunit -c Build/phpunit/FunctionalTests.xml",
+        "ci:tests:unit": "phpunit -c Build/phpunit/UnitTests.xml",
+        "fix:cgl": "php-cs-fixer fix --config .php-cs-fixer.dist.php"
     }
-  ],
-  "support": {
-    "issues": "https://github.com/dirnbauer/typo3-agent-nexus/issues",
-    "source": "https://github.com/dirnbauer/typo3-agent-nexus"
-  },
-  "require": {
-    "php": "^8.3",
-    "typo3/cms-backend": "^14.3",
-    "typo3/cms-core": "^14.3",
-    "typo3/cms-extbase": "^14.3",
-    "typo3/cms-fluid": "^14.3",
-    "typo3/cms-frontend": "^14.3"
-  },
-  "suggest": {
-    "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
-    "netresearch/nr-llm": "Enables real LLM-backed behavior across the frontend plugins (A2UI generation, AG-UI streamed answers, A2A routing, UCP rationale) where configured; otherwise Agent Nexus uses deterministic demos."
-  },
-  "autoload": {
-    "psr-4": {
-      "Webconsulting\\AgentNexus\\": "Classes/"
-    }
-  },
-  "extra": {
-    "typo3/cms": {
-      "extension-key": "agent_nexus",
-      "version": "2.0.2",
-      "Package": {
-        "providesPackages": {}
-      }
-    }
-  }
 }

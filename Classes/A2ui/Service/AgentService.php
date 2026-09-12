@@ -114,7 +114,8 @@ final class AgentService implements SingletonInterface
      * month for the last N months, plus the instance-wide nr-llm total for
      * context. Costs are US dollars.
      *
-     * @return array{today: float, months: array<int, array{label: string, cost: float, requests: int}>, instanceToday: ?float, instanceRange: ?float}
+     * @return array{today: ?string, months: array<int, array{label: string, cost: ?string, requests: int}>, instanceToday: ?string, instanceRange: ?string}
+     *     Costs are pre-formatted for display ($0.0042 / $1.20); null when unknown.
      */
     public function getCostSummary(int $months = 3): array
     {
@@ -367,7 +368,7 @@ PROMPT;
             str_contains($needle, 'job') || str_contains($needle, 'apply') || str_contains($needle, 'career') || str_contains($needle, 'bewerb')
                 => $this->applicationForm(),
             default
-                => $this->contactForm($intent),
+            => $this->contactForm($intent),
         };
     }
 

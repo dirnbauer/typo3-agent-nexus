@@ -13,7 +13,11 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 final class EventEncoder implements SingletonInterface
 {
-    /** One SSE frame: `data: {json}\n\n`. */
+    /**
+     * One SSE frame: `data: {json}\n\n`.
+     *
+     * @param array<string, mixed> $event
+     */
     public function sse(array $event): string
     {
         return 'data: ' . json_encode($event, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n\n";

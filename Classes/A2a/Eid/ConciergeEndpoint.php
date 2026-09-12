@@ -106,6 +106,9 @@ final class ConciergeEndpoint
         $encoder->stream($frames, $params['_llm'] ? 25 : 55);
     }
 
+    /**
+     * @param array<string, mixed> $message
+     */
     private function textOf(array $message): string
     {
         $text = '';

@@ -16,7 +16,11 @@ use TYPO3\CMS\Core\SingletonInterface;
  */
 final class SseEncoder implements SingletonInterface
 {
-    /** One SSE frame: `data: {json}\n\n`. */
+    /**
+     * One SSE frame: `data: {json}\n\n`.
+     *
+     * @param array<string, mixed> $frame
+     */
     public function sse(array $frame): string
     {
         return 'data: ' . json_encode($frame, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n\n";

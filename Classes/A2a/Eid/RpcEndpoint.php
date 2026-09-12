@@ -50,6 +50,9 @@ final class RpcEndpoint
         };
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     private function stream(TaskRunner $runner, array $params, int|string $rpcId): ResponseInterface
     {
         $encoder = GeneralUtility::makeInstance(SseEncoder::class);
@@ -87,6 +90,9 @@ final class RpcEndpoint
         $encoder->stream($frames, 55);
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     private function send(TaskRunner $runner, array $params, int|string $rpcId): ResponseInterface
     {
         // Collect the streamed frames into a single Task response.

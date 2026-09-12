@@ -75,7 +75,7 @@ final class AssistantEndpoint
             GeneralUtility::makeInstance(LeadStore::class)->store(
                 (int)($input['page'] ?? 0),
                 (string)($input['url'] ?? ''),
-                (string)($input['intent'] ?? $preset),
+                (string)($input['intent'] ?: $preset),
                 $lead,
             );
         }

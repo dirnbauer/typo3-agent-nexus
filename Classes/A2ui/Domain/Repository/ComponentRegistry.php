@@ -34,6 +34,9 @@ class ComponentRegistry implements SingletonInterface
         $this->registerBasicCatalog();
     }
 
+    /**
+     * @param array<int, string> $allowedProps
+     */
     public function register(string $component, string $templatePath, string $category, array $allowedProps = [], bool $container = false): self
     {
         $this->catalog[$component] = [

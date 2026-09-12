@@ -1,0 +1,21 @@
+parameters:
+    level: 8
+    scanFiles:
+        # netresearch/nr-llm is a soft dependency; see the stub file's header.
+        - Build/phpstan/stubs/nr-llm.php
+    phpVersion: 80400
+    paths:
+        - Classes
+        - Configuration
+        - Tests
+        - ext_localconf.php
+    excludePaths:
+        analyseAndScan:
+            - .Build
+            - Resources
+            - var
+    tmpDir: var/phpstan
+    treatPhpDocTypesAsCertain: false
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    reportUnmatchedIgnoredErrors: true

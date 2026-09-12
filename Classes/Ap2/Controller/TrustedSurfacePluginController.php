@@ -6,6 +6,7 @@ namespace Webconsulting\AgentNexus\Ap2\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Frontend plugin controller for the AP2 Trusted Surface.
@@ -19,7 +20,7 @@ final class TrustedSurfacePluginController extends ActionController
     public function showAction(): ResponseInterface
     {
         $contentObject = $this->request->getAttribute('currentContentObject');
-        $data = $contentObject?->data ?? [];
+        $data = $contentObject instanceof ContentObjectRenderer ? $contentObject->data : [];
         $pageId = (int)($this->request->getAttribute('frontend.page.information')?->getId() ?? ($data['pid'] ?? 0));
 
         $this->view->assignMultiple([
