@@ -1,0 +1,14 @@
+.. This file is included by every document of this manual. Put global
+   replacements and role definitions here, nothing else.
+
+.. |extension-key| replace:: ``agent_nexus``
+.. |composer-name| replace:: ``webconsulting/agent-nexus``
+
+.. role:: php(code)
+   :language: php
+
+.. role:: typoscript(code)
+   :language: typoscript
+
+.. role:: yaml(code)
+   :language: yaml

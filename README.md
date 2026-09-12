@@ -1,70 +1,115 @@
 # Agent Nexus
 
-A unified TYPO3 v14 lab for the agent-protocol family: **A2UI** (agent ↔ UI), **AG-UI** (agent ↔ user), **A2A** (agent ↔ agent), **UCP** (agent ↔ merchant) and **AP2** (payment authorization). One backend hub explains the protocols with an animated protocol map, Mermaid sequence diagrams, a comparison table and a decision helper; five playground modules show every wire frame live; five frontend plugins turn the same endpoints into useful, visitor-facing widgets — backed by a **real LLM** through [netresearch/nr-llm](https://github.com/netresearch/t3x-nr-llm) when available, with deterministic fallbacks that always work without an API key.
+Five agent protocols, running against your own TYPO3 — not slides about them.
 
-## What's inside
+[![CI](https://github.com/dirnbauer/typo3-agent-nexus/actions/workflows/ci.yml/badge.svg)](https://github.com/dirnbauer/typo3-agent-nexus/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-blue.svg)](LICENSE)
 
-| Piece | What it does |
-|---|---|
-| **Overview module** | A field guide: hero with animated protocol map, theory cards, protocol comparison, "which protocol do I need?" decision helper, per-protocol tabs (sequence diagram, flow animation, key facts, spec snippet) and a glossary. |
-| **A2UI Playground** | Describe an interface in plain language → the agent answers with an A2UI v1.0 surface (declarative JSON, never code), rendered with native trusted components. Cost/usage dashboard included. |
-| **AG-UI Playground** | Watch an agent stream typed events (text deltas, tool calls, state patches) over SSE, with the human approval gate before any write. |
-| **A2A Console** | Act as a client agent: fetch the Agent Card, delegate a task over JSON-RPC `message/stream`, follow the task lifecycle to the artifact. |
-| **UCP Console** | A shopping agent discovers the merchant manifest, builds a cart and pauses at the human authorization gate. No payment is ever taken. |
-| **AP2 Mandate Studio** | Mint a signed Intent Mandate (spending cap) and Cart Mandate, verify the chain, tamper-test it. Sandbox-signed. |
-| **5 frontend plugins** | `agentnexus_inquiry`, `agentnexus_assistant`, `agentnexus_concierge`, `agentnexus_checkout`, `agentnexus_trustedsurface` — cacheable Fluid shells + ES-module widgets talking to public eID endpoints. |
+## What it is
 
-## Real model vs. deterministic script
+| Protocol | The edge | What it answers |
+| --- | --- | --- |
+| **A2UI** | agent ↔ interface | How does an agent put a form on a page without shipping code? |
+| **AG-UI** | agent ↔ user | How does a person watch an agent work, and approve before it writes? |
+| **A2A** | agent ↔ agent | How does another agent discover this one and delegate a task? |
+| **UCP** | agent ↔ merchant | How does a shopping agent read a catalogue and assemble a cart? |
+| **AP2** | agent ↔ payment | How do you prove a specific human authorized a specific purchase? |
 
-Every plugin works with **no API key** (scripted demo). With nr-llm configured, the useful parts become real — and the safety-critical parts never do:
+Each protocol gets a backend playground that shows the raw wire frames, and a
+frontend plugin an editor can place on a page. A sixth element, **Protocol
+info**, explains one protocol next to its demo — diagram, endpoints, and the
+four steps a request walks through.
 
-| Plugin | Model-backed (when enabled) | Always deterministic |
-|---|---|---|
-| A2UI Inquiry | The generated surface for the visitor's intent | Component catalog hardening, submit/store |
-| AG-UI Assistant | The streamed answer to the visitor's actual question (token by token, real `streamChat`) | The approval gate, apply phase, lead capture |
-| A2A Concierge | Skill routing (+ visible rationale) and the artifact text | Task lifecycle, agent card, resume mechanics |
-| UCP Checkout | The recommendation rationale (grounded in the fixed cart) | Cart contents, prices, totals, authorization gate |
-| AP2 Trusted Surface | Optional plain-language receipt explanation (off by default) | Mandates, signatures, chain verification |
+Everything runs deterministically by default. A language model is optional, per
+protocol, and budgeted. Every write sits behind a human gate, and everything
+money-shaped is simulated.
 
-Runs are labelled with their provenance ("Live model · …" vs "Scripted demo") so nobody mistakes one for the other.
+## Requirements
 
-## Requirements & installation
+* TYPO3 v14.3.7+
+* PHP 8.4+
+* `typo3/cms-fluid-styled-content` (the frontend elements render through
+  `lib.contentElement`)
 
-- TYPO3 `^14.3`, PHP `^8.3`
-- Optional for real model output: `netresearch/nr-llm` (+ `netresearch/nr-vault` for the key). **The provider secret must be flagged frontend-accessible in nr-vault**, otherwise frontend eID calls cannot read the key and the plugins stay in scripted mode.
+## Install
 
 ```bash
 composer require webconsulting/agent-nexus
-vendor/bin/typo3 extension:setup --extension=agent_nexus
+vendor/bin/typo3 extension:setup
+vendor/bin/typo3 cache:flush
 ```
 
-The backend hub appears as **Agent Nexus** in the module menu (`/typo3/module/agent-nexus/overview`). Add the five content elements anywhere; each has FlexForm settings (scenario, presets, intro texts, accent, LLM behavior).
+Open **Agent Nexus › Overview**. The hub says what is ready: endpoints
+registered, storage folder present, model reachable, and what each protocol has
+done in the last 24 hours.
 
-## Cost & abuse controls (frontend)
+Optional, for real model answers:
 
-Real frontend LLM calls are guarded in depth:
+```bash
+composer require netresearch/nr-llm
+```
 
-- **Global switch + per-protocol toggles** — extension settings `llmFrontendEnabled`, `a2uiLlmEnabled`, `aguiLlmEnabled`, `a2aLlmEnabled`, `ucpLlmEnabled`, `ap2LlmEnabled` (AP2 off by default).
-- **Daily budget** — `llmDailyBudget` (USD): once the day's combined Agent Nexus spend reaches it, plugins fall back to their scripts. Spend is ledgered per protocol in `tx_agentnexus_llm_usage`; streamed calls bypass nr-llm's own usage middleware, so this ledger is authoritative.
-- **Token ceiling** — `llmMaxOutputTokens`; per-element FlexForm limits may lower but never exceed it.
-- **Rate limits** — per-IP fixed windows on every eID, with a tighter separate bucket for model-backed runs.
-- **Input caps** — visitor text is truncated (600 chars) before it reaches a prompt.
-- **Server-side settings** — LLM-relevant FlexForm settings (toggles, system prompt, token limits) are loaded server-side from the content element (`ce` uid). Nothing prompt-shaping is accepted from the wire.
+## Configure
 
-## Frontend endpoints (eID)
+*Admin Tools › Settings › Extension Configuration › agent_nexus*
 
-`a2ui_generate`, `a2ui_submit`, `agui_assistant` (SSE), `a2a_card`, `a2a_rpc`, `a2a_concierge` (SSE), `ucp_manifest`, `ucp_checkout` (SSE), `ap2_authorize`.
+| Setting | Default | What it does |
+| --- | --- | --- |
+| `llmFrontendEnabled` | `1` | Master switch for every frontend model call |
+| `llmDailyBudget` | `2.00` | Calls stop once today's spend reaches this (USD); `0` = no cap |
+| `llmMaxOutputTokens` | `700` | Hard ceiling per call |
+| `<protocol>LlmEnabled` | varies | One toggle per protocol |
+| `aguiReallyApply` | `0` | Keep off: approved writes are simulated |
+| `ucpReallyApply` | `0` | Keep off: every checkout is simulated |
 
-## Development
+Streamed calls bypass nr-llm's own budget middleware, so `llmDailyBudget` is the
+only brake on that path.
 
-- **Design system**: `Resources/Public/Css/nexus-tokens.css` defines the `--anx-*` vocabulary once, mapped to TYPO3 backend tokens (`.anx--backend`) and shadcn host tokens (`.anx--frontend`). `nexus-ui.css` holds the shared primitives; no hardcoded colors elsewhere.
-- **Motion**: GSAP 3.15 is vendored (`Resources/Public/JavaScript/Vendor/gsap.min.js`) — same-origin, CSP-safe, offline-safe. Helpers in `nexus-motion.js` respect `prefers-reduced-motion` and force-finish entrance animations in throttled background tabs.
-- **Diagrams**: `npm run diagrams` renders `Build/Diagrams/*.mmd` to theme-aware inline-SVG Fluid partials (colors become CSS variables, message steps get `data-mm-step` hooks). The generated partials are committed — consumers never need node or Chromium.
+## Use
 
-## Safety notes
+Build the whole demo site with one command:
 
-Commerce is **always simulated**: `ucpReallyApply`/`aguiReallyApply` default to off, AP2 tokens are sandbox-signed, and no integration ever charges anything. The A2UI renderer only instantiates components from its own catalog — model output is data, never executable code.
+```bash
+vendor/bin/typo3 agentnexus:seed-site --base=https://example.org/
+```
+
+It creates a siteroot with `/a2ui`, `/ag-ui`, `/a2a`, `/ucp`, `/ap2`,
+`/playground` and `/docs` — each protocol page carrying an intro, its demo and a
+protocol info element — plus a `data` sysfolder as the storage pid, and writes
+the site configuration. Everything goes through DataHandler, and it is
+idempotent: a second run updates the same records even after an editor renamed
+them. Add `--dry-run` to see what it would do.
+
+To put the plugins on a site you already have, add one set:
+
+```yaml
+# config/sites/<identifier>/config.yaml
+dependencies:
+  - webconsulting/agent-nexus
+```
+
+Using [Desiderio](https://github.com/dirnbauer/desiderio) (^4.1)? Use
+`webconsulting/agent-nexus-desiderio` instead — same markup, framed by the site's
+own component collection.
+
+## Develop
+
+```bash
+composer install
+composer ci          # cgl, PHPStan level 8, unit, functional
+npm ci && npm run diagrams   # re-render the sequence diagrams
+```
+
+PHPStan runs at level 8 with no baseline. Functional tests run on SQLite by
+default and cover all nine endpoints in deterministic mode, the seed command,
+the upgrade wizard and the hub.
+
+## Docs
+
+Full documentation is in [`Documentation/`](Documentation/Index.rst):
+installation, site setup, configuration, one page per protocol, the security
+boundaries, and the developer notes.
 
 ## License
 
-GPL-2.0-or-later
+GPL-2.0-or-later. See [LICENSE](LICENSE).

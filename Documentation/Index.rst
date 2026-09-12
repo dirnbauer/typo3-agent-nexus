@@ -1,132 +1,110 @@
+:navigation-title: Agent Nexus
+
+..  include:: /Includes.rst.txt
 ..  _start:
 
-============
+===========
 Agent Nexus
-============
+===========
 
 :Extension key:
     agent_nexus
 
-:Package:
+:Package name:
     webconsulting/agent-nexus
 
 :Version:
-    2.0.2
+    3.0.0
 
-Agent Nexus is a unified TYPO3 v14 lab for the agent-protocol family — A2UI
-(agent ↔ UI), AG-UI (agent ↔ user), A2A (agent ↔ agent), UCP (agent ↔ merchant)
-and AP2 (payment authorization). It explains the protocols, demonstrates every
-wire frame in backend playgrounds, and ships five visitor-facing plugins that
-use a real LLM through ``netresearch/nr-llm`` when available — with
-deterministic fallbacks that always work without an API key.
+:Language:
+    en
 
-Features
-========
+:Author:
+    webconsulting GmbH
 
-Backend modules
----------------
+:License:
+    This document is published under the
+    `Creative Commons BY 4.0 <https://creativecommons.org/licenses/by/4.0/>`__
+    license.
 
-The ``Agent Nexus`` backend hub (``/typo3/module/agent-nexus/overview``)
-contains:
+Five agent protocols, running against your own TYPO3 — not slides about them.
 
-*   **Overview** — a field guide: animated protocol map, theory cards, a
-    protocol comparison table, a "which protocol do I need?" decision helper,
-    per-protocol tabs with pre-rendered Mermaid sequence diagrams, animated
-    flow beams, key facts and spec snippets, plus a glossary.
-*   **A2UI Playground** — natural-language intent → A2UI v1.0 surface
-    (declarative JSON, never code) rendered with trusted native components;
-    includes a cost/usage dashboard.
-*   **AG-UI Playground** — typed agent events (text deltas, tool calls, state
-    patches) streamed over SSE with a human approval gate before any write.
-*   **A2A Console** — fetch the Agent Card, delegate a task over JSON-RPC
-    ``message/stream``, follow the lifecycle to the artifact.
-*   **UCP Console** — a shopping agent discovers the merchant manifest, builds
-    a cart, and pauses at the human authorization gate.
-*   **AP2 Mandate Studio** — mint a signed Intent Mandate and Cart Mandate,
-    verify the chain, tamper-test it.
+A2UI lets an agent describe an interface. AG-UI streams an agent run as typed
+events. A2A lets one agent delegate work to another. UCP lets a shopping agent
+check out with a merchant. AP2 proves a human authorized the purchase. Agent
+Nexus implements all five against this installation's own content, catalogue and
+endpoints, with a backend playground per protocol and a frontend plugin an
+editor can place on a page.
 
-Frontend plugins
-----------------
+Every demo runs deterministically by default. A language model is optional,
+per protocol, and budgeted.
 
-Editors can place these content elements (CTypes in parentheses):
+----
 
-*   A2UI: Smart Project Inquiry (``agentnexus_inquiry``)
-*   AG-UI: AI Site Assistant (``agentnexus_assistant``)
-*   A2A: Expert Router (``agentnexus_concierge``)
-*   UCP: Package & Quote Builder (``agentnexus_checkout``)
-*   AP2: Signed Quote Authorization (``agentnexus_trustedsurface``)
+..  card-grid::
+    :columns: 1
+    :columns-md: 2
+    :gap: 4
+    :class: pb-4
+    :card-height: 100
 
-Each plugin is a cacheable Fluid shell plus an ES-module widget talking to
-public eID endpoints: ``a2ui_generate``, ``a2ui_submit``, ``agui_assistant``,
-``a2a_card``, ``a2a_rpc``, ``a2a_concierge``, ``ucp_manifest``,
-``ucp_checkout``, ``ap2_authorize``.
+    ..  card:: Introduction
 
-Real model vs. deterministic script
-===================================
+        What the extension is, who it is for, and what it deliberately is not.
 
-With ``netresearch/nr-llm`` installed and a provider configured, the useful
-parts of each plugin are model-backed; the safety-critical parts never are:
+        ..  card-footer:: :ref:`Read the introduction <introduction>`
+            :button-style: btn btn-secondary stretched-link
 
-*   **AG-UI Assistant** streams a real answer to the visitor's question token
-    by token; the approval gate, apply phase and lead capture stay scripted.
-*   **A2A Concierge** routes free-text requests to a catalog skill with a
-    visible rationale and writes the artifact for the actual request; the task
-    lifecycle stays scripted.
-*   **UCP Checkout** writes only the recommendation rationale; cart contents,
-    prices and totals are always deterministic.
-*   **AP2 Trusted Surface** stays fully deterministic; an optional
-    plain-language receipt explanation is off by default.
+    ..  card:: Installation
 
-Every run is labelled with its provenance ("Live model · …" or
-"Scripted demo").
+        Install it, and see the backend modules.
 
-The nr-vault secret used by the provider must be flagged *frontend accessible*,
-otherwise frontend eID requests cannot read the key and the plugins stay in
-scripted mode.
+        ..  card-footer:: :ref:`Install Agent Nexus <installation>`
+            :button-style: btn btn-secondary stretched-link
 
-Cost and abuse controls
-=======================
+    ..  card:: Site setup
 
-*   Extension settings: ``llmFrontendEnabled`` (global switch),
-    ``llmDailyBudget`` (USD, deterministic fallback once reached),
-    ``llmMaxOutputTokens`` (hard ceiling), and per-protocol toggles
-    (``a2uiLlmEnabled``, ``aguiLlmEnabled``, ``a2aLlmEnabled``,
-    ``ucpLlmEnabled``, ``ap2LlmEnabled``).
-*   Spend is ledgered per protocol in ``tx_agentnexus_llm_usage``. Streamed
-    calls bypass nr-llm's usage middleware, so this ledger is authoritative.
-*   Per-IP rate limits protect every eID, with a tighter bucket for
-    model-backed runs; visitor input is truncated before it reaches a prompt.
-*   LLM-relevant FlexForm settings (toggles, system prompt, token limits) are
-    loaded server-side from the content element — never accepted from the
-    request body.
+        Build the demo site with one command, or add the plugins to your own.
 
-Installation
-============
+        ..  card-footer:: :ref:`Set up a site <site-setup>`
+            :button-style: btn btn-secondary stretched-link
 
-..  code-block:: bash
+    ..  card:: Configuration
 
-    composer require webconsulting/agent-nexus
-    vendor/bin/typo3 extension:setup --extension=agent_nexus
+        Extension settings, site settings and the per-element FlexForms.
 
-Development notes
-=================
+        ..  card-footer:: :ref:`Configure it <configuration>`
+            :button-style: btn btn-secondary stretched-link
 
-*   Design tokens live in ``Resources/Public/Css/nexus-tokens.css`` (one
-    ``--anx-*`` vocabulary mapped to TYPO3 backend tokens and shadcn host
-    tokens); shared primitives in ``nexus-ui.css``.
-*   GSAP 3.15 is vendored under ``Resources/Public/JavaScript/Vendor/`` —
-    same-origin, CSP-safe, offline-safe; all helpers respect
-    ``prefers-reduced-motion``.
-*   ``npm run diagrams`` re-renders ``Build/Diagrams/*.mmd`` into theme-aware
-    inline-SVG Fluid partials. The generated partials are committed, so
-    consumers never need node or Chromium.
+    ..  card:: The protocols
 
-Safety
-======
+        One page per protocol: what it is, what it exposes here, how a request
+        flows through it.
 
-UCP and AP2 are demos. They do not initiate real payments: AP2 mandates are
-sandbox-signed and UCP orders are simulated unless a project deliberately wires
-a real payment integration behind the documented extension settings
-(``ucpReallyApply`` and ``aguiReallyApply`` default to off). The A2UI renderer
-instantiates only components from its own catalog — model output is data,
-never executable code.
+        ..  card-footer:: :ref:`Read about the protocols <protocols>`
+            :button-style: btn btn-secondary stretched-link
+
+    ..  card:: Security
+
+        What the public endpoints expose, what is simulated, and what must never
+        be treated as real.
+
+        ..  card-footer:: :ref:`Understand the boundaries <security>`
+            :button-style: btn btn-secondary stretched-link
+
+..  toctree::
+    :hidden:
+    :titlesonly:
+
+    Introduction
+    Installation
+    SiteSetup
+    Configuration
+    Protocols/Index
+    Security
+    Developer/Index
+
+..  toctree::
+    :hidden:
+
+    Sitemap

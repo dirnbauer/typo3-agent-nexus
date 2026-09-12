@@ -6,26 +6,179 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  quality:
-    name: PHP ${{ matrix.php }}
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.3', '8.4']
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup PHP ${{ matrix.php }}
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-lock
+
+      - name: Audit dependencies
+        run: composer update --no-install --no-interaction && composer audit --no-dev
+
+      - name: Lint PHP
+        run: |
+          find Classes Configuration Tests ext_localconf.php -name '*.php' -print0 \
+            | xargs -0 -n1 -P4 php -l > /dev/null
+
+      - name: Lint YAML and XLIFF
+        run: |
+          python3 - <<'PY'
+          import glob, sys, xml.etree.ElementTree as ET
+          import importlib.util
+          if importlib.util.find_spec('yaml'):
+              import yaml
+              for f in glob.glob('Configuration/**/*.yaml', recursive=True):
+                  yaml.safe_load(open(f))
+                  print('ok', f)
+          for pattern in ('Resources/Private/Language/*.xlf', 'Configuration/FlexForms/*.xml',
+                          'Resources/Public/Icons/*.svg', 'Resources/Public/Diagrams/*.svg'):
+              for f in glob.glob(pattern):
+                  ET.parse(f)
+                  print('ok', f)
+          PY
+
+  cgl:
+    name: Coding standards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+
+      - run: composer ci:cgl
+
+  phpstan:
+    name: PHPStan level 8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          tools: composer:v2
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+
+      - run: composer ci:phpstan
+
+  unit:
+    name: Unit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: '8.4'
+            experimental: false
+          # 8.5 is not a supported target yet; run it so the surprises arrive
+          # here rather than on somebody's server.
+          - php: '8.5'
+            experimental: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
           tools: composer:v2
           coverage: none
 
-      - name: Validate composer.json
-        run: composer validate --no-check-publish --no-check-lock
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+          composer-options: ${{ matrix.php == '8.5' && '--ignore-platform-req=php+' || '' }}
 
-      - name: Lint PHP
-        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 -P4 php -l
+      - run: composer ci:tests:unit
+
+  functional:
+    name: Functional (MariaDB 10.11)
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mysqli, pdo_mysql
+          tools: composer:v2
+          coverage: none
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+
+      - name: Run functional tests
+        env:
+          typo3DatabaseDriver: mysqli
+          typo3DatabaseHost: 127.0.0.1
+          typo3DatabasePort: 3306
+          typo3DatabaseName: func_test
+          typo3DatabaseUsername: root
+          typo3DatabasePassword: root
+        run: composer ci:tests:functional
+
+  diagrams:
+    name: Diagrams are current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Re-render the sequence diagrams
+        run: npm run diagrams
+
+      - name: Fail if the committed SVGs are out of date
+        run: |
+          if ! git diff --quiet -- Resources/Public/Diagrams; then
+            echo "::error::Resources/Public/Diagrams is out of date. Run 'npm run diagrams' and commit the result."
+            git --no-pager diff --stat -- Resources/Public/Diagrams
+            exit 1
+          fi

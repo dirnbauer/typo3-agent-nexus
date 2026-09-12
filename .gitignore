@@ -1,7 +1,22 @@
+# Build output — this extension builds standalone into .Build for CI and tests.
 /.Build/
 /var/
 /vendor/
-composer.lock
-.DS_Store
 /node_modules/
+
+# Resolved dependencies. Agent Nexus is a library: the lock file belongs to the
+# project that installs it, not here. package-lock.json is the exception — the
+# committed sequence diagrams have to be reproducible, so the renderer's
+# dependencies are pinned.
+composer.lock
+
+# Tool caches
 /.php-cs-fixer.cache
+/.phpunit.cache/
+/.phpstan.cache/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
