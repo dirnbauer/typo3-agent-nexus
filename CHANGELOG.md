@@ -72,9 +72,11 @@ about what it is doing.
     body is a self-emitting stream, so production still flushes frame by frame
     while the request ends normally — which also means the loggers now run in a
     `finally` block in request scope rather than in a shutdown handler.
-*   **One icon family.** All sixteen icons are redrawn on the same 16 grid with
-    1.5px strokes in `currentColor`; a module icon shows the protocol edge, a
-    plugin icon shows the widget.
+*   **One icon family.** All sixteen icons are redrawn in `currentColor` with a
+    single accent, each on the grid its neighbours use: module icons as filled
+    64-grid art so they sit correctly beside Core's own in the module tree,
+    plugin and status icons as 16-grid line art for the wizard and the list
+    module. `Extension.svg` is the same drawing as the module icon.
 *   **One widget shell.** The A2UI inquiry widget joined the shared,
     token-driven shell the other four already used, so the five plugins finally
     look like one extension. Every control gained a visible focus ring, and the
