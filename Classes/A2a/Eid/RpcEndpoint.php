@@ -66,28 +66,28 @@ final class RpcEndpoint
         $taskId = '';
         $contextId = '';
 
-        $frames = (function () use ($runner, $params, $rpcId, &$count, &$artifacts, &$finalState, &$taskId, &$contextId): \Generator {
-            foreach ($runner->run($params, 'rpc', $rpcId) as $frame) {
-                $count++;
-                $result = is_array($frame['result'] ?? null) ? $frame['result'] : [];
-                $kind = $result['kind'] ?? '';
-                if ($kind === 'task') {
-                    $taskId = (string)($result['id'] ?? '');
-                    $contextId = (string)($result['contextId'] ?? '');
-                } elseif ($kind === 'artifact-update' && ($result['lastChunk'] ?? false) === true) {
-                    $artifacts++;
-                } elseif ($kind === 'status-update') {
-                    $finalState = (string)($result['status']['state'] ?? $finalState);
+        $frames = (function () use ($runner, $params, $rpcId, &$count, &$artifacts, &$finalState, &$taskId, &$contextId, $logger, $skill): \Generator {
+            try {
+                foreach ($runner->run($params, 'rpc', $rpcId) as $frame) {
+                    $count++;
+                    $result = is_array($frame['result'] ?? null) ? $frame['result'] : [];
+                    $kind = $result['kind'] ?? '';
+                    if ($kind === 'task') {
+                        $taskId = (string)($result['id'] ?? '');
+                        $contextId = (string)($result['contextId'] ?? '');
+                    } elseif ($kind === 'artifact-update' && ($result['lastChunk'] ?? false) === true) {
+                        $artifacts++;
+                    } elseif ($kind === 'status-update') {
+                        $finalState = (string)($result['status']['state'] ?? $finalState);
+                    }
+                    yield $frame;
                 }
-                yield $frame;
+            } finally {
+                $logger->log(TaskLogger::SOURCE_RPC, $taskId, $contextId, $skill, $finalState, $count, $artifacts, 0);
             }
         })();
 
-        register_shutdown_function(static function () use ($logger, &$taskId, &$contextId, $skill, &$finalState, &$count, &$artifacts): void {
-            $logger->log(TaskLogger::SOURCE_RPC, $taskId, $contextId, $skill, $finalState, $count, $artifacts, 0);
-        });
-
-        $encoder->stream($frames, 55);
+        return $encoder->stream($frames, 55);
     }
 
     /**

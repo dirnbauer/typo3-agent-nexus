@@ -71,39 +71,38 @@ final class ConciergeEndpoint
         $contextId = '';
         $answer = '';
 
-        $frames = (function () use ($runner, $params, $rpcId, &$count, &$artifacts, &$finalState, &$taskId, &$contextId, &$answer): \Generator {
-            foreach ($runner->run($params, 'frontend', $rpcId) as $frame) {
-                $count++;
-                $result = is_array($frame['result'] ?? null) ? $frame['result'] : [];
-                $kind = $result['kind'] ?? '';
-                if ($kind === 'task') {
-                    $taskId = (string)($result['id'] ?? '');
-                    $contextId = (string)($result['contextId'] ?? '');
-                } elseif ($kind === 'artifact-update') {
-                    if (($result['lastChunk'] ?? false) === true) {
-                        $artifacts++;
-                    }
-                    foreach (($result['artifact']['parts'] ?? []) as $part) {
-                        if (($part['kind'] ?? '') === 'text') {
-                            $answer .= (string)($part['text'] ?? '');
+        $frames = (function () use ($runner, $params, $rpcId, &$count, &$artifacts, &$finalState, &$taskId, &$contextId, &$answer, $logger, $store, $skill, $prompt, $page, $url): \Generator {
+            try {
+                foreach ($runner->run($params, 'frontend', $rpcId) as $frame) {
+                    $count++;
+                    $result = is_array($frame['result'] ?? null) ? $frame['result'] : [];
+                    $kind = $result['kind'] ?? '';
+                    if ($kind === 'task') {
+                        $taskId = (string)($result['id'] ?? '');
+                        $contextId = (string)($result['contextId'] ?? '');
+                    } elseif ($kind === 'artifact-update') {
+                        if (($result['lastChunk'] ?? false) === true) {
+                            $artifacts++;
                         }
+                        foreach (($result['artifact']['parts'] ?? []) as $part) {
+                            if (($part['kind'] ?? '') === 'text') {
+                                $answer .= (string)($part['text'] ?? '');
+                            }
+                        }
+                    } elseif ($kind === 'status-update') {
+                        $finalState = (string)($result['status']['state'] ?? $finalState);
                     }
-                } elseif ($kind === 'status-update') {
-                    $finalState = (string)($result['status']['state'] ?? $finalState);
+                    yield $frame;
                 }
-                yield $frame;
+            } finally {
+                $logger->log(TaskLogger::SOURCE_FRONTEND, $taskId, $contextId, $skill, $finalState, $count, $artifacts, 0);
+                if ($finalState === 'completed' && $answer !== '') {
+                    $store->store($page, $url, $skill, $prompt, $answer, ['taskId' => $taskId]);
+                }
             }
         })();
 
-        // Persist after the stream exhausts (best-effort; stream() exits).
-        register_shutdown_function(static function () use ($logger, $store, &$taskId, &$contextId, $skill, &$finalState, &$count, &$artifacts, &$answer, $prompt, $page, $url): void {
-            $logger->log(TaskLogger::SOURCE_FRONTEND, $taskId, $contextId, $skill, $finalState, $count, $artifacts, 0);
-            if ($finalState === 'completed' && $answer !== '') {
-                $store->store($page, $url, $skill, $prompt, $answer, ['taskId' => $taskId]);
-            }
-        });
-
-        $encoder->stream($frames, $params['_llm'] ? 25 : 55);
+        return $encoder->stream($frames, $params['_llm'] ? 25 : 55);
     }
 
     /**

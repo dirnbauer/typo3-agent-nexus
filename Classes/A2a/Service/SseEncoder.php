@@ -4,59 +4,41 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\A2a\Service;
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\SingletonInterface;
+use Webconsulting\AgentNexus\Shared\Http\EventStream;
 
 /**
- * Streams A2A messages to the client as Server-Sent Events.
+ * Frames A2A wire frames as Server-Sent Events.
  *
- * A2A's `message/stream` method returns an SSE stream where each event is a
- * JSON-RPC response carrying a Task / status-update / artifact-update. This
- * encoder owns the raw streaming loop (buffering off, flush per frame) shared by
- * the backend AJAX route, the public JSON-RPC eID and the frontend Concierge.
+ * A2A\'s `message/stream` method answers with an SSE stream whose records are
+ * JSON-RPC responses carrying a Task, a status-update or an artifact-update.
+ * This encoder frames them for the backend AJAX route, the public JSON-RPC eID
+ * and the frontend Concierge; the streaming itself belongs to the response body
+ * ({@see EventStream}).
  */
 final class SseEncoder implements SingletonInterface
 {
     /**
-     * One SSE frame: `data: {json}\n\n`.
+     * One SSE record: `data: {json}\n\n`.
      *
      * @param array<string, mixed> $frame
      */
     public function sse(array $frame): string
     {
-        return 'data: ' . json_encode($frame, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n\n";
+        return EventStream::frame($frame);
     }
 
     /**
+     * Hand a task's frames back as an SSE response. Emission — flush per record, with
+     * pacing so the stream is visible — is the response body's own job; see
+     * {@see EventStream}.
+     *
      * @param iterable<array<string, mixed>> $frames
-     * @param int $delayMs per-frame delay so streaming is visible
+     * @param int $delayMs per-record delay so streaming is visible
      */
-    public function stream(iterable $frames, int $delayMs = 70): never
+    public function stream(iterable $frames, int $delayMs = 70): ResponseInterface
     {
-        while (ob_get_level() > 0) {
-            @ob_end_clean();
-        }
-        if (!headers_sent()) {
-            header('Content-Type: text/event-stream; charset=utf-8');
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Connection: keep-alive');
-            header('X-Accel-Buffering: no'); // nginx: do not buffer the stream
-        }
-        ignore_user_abort(false);
-        echo ": a2a stream open\n\n";
-        @ob_flush();
-        flush();
-
-        foreach ($frames as $frame) {
-            echo $this->sse($frame);
-            @ob_flush();
-            flush();
-            if (connection_aborted()) {
-                break;
-            }
-            if ($delayMs > 0) {
-                usleep($delayMs * 1000);
-            }
-        }
-        exit;
+        return EventStream::response($frames, 'a2a stream open', $delayMs);
     }
 }

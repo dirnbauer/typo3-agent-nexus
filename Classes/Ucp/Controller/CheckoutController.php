@@ -37,34 +37,33 @@ final class CheckoutController
         $total = 0;
         $finalState = 'review';
 
-        $events = (function () use ($input, &$count, &$orderId, &$itemCount, &$total, &$finalState): \Generator {
-            foreach ($this->runner->run($input, 'backend') as $event) {
-                $count++;
-                $type = $event['type'] ?? '';
-                if ($type === 'checkout.started') {
-                    $orderId = (string)($event['orderId'] ?? '');
-                } elseif ($type === 'cart.updated') {
-                    $itemCount = count($event['items'] ?? []);
-                    $total = (int)($event['totalCents'] ?? 0);
-                } elseif ($type === 'authorization.required') {
-                    $finalState = 'authorization_required';
-                } elseif ($type === 'order.confirmed') {
-                    $finalState = 'confirmed';
-                    $order = is_array($event['order'] ?? null) ? $event['order'] : [];
-                    $total = (int)($order['totalCents'] ?? $total);
-                    $itemCount = $itemCount ?: count($order['items'] ?? []);
-                } elseif ($type === 'order.declined') {
-                    $finalState = 'declined';
+        $events = (function () use ($input, &$count, &$orderId, &$itemCount, &$total, &$finalState, $intent, $beUser): \Generator {
+            try {
+                foreach ($this->runner->run($input, 'backend') as $event) {
+                    $count++;
+                    $type = $event['type'] ?? '';
+                    if ($type === 'checkout.started') {
+                        $orderId = (string)($event['orderId'] ?? '');
+                    } elseif ($type === 'cart.updated') {
+                        $itemCount = count($event['items'] ?? []);
+                        $total = (int)($event['totalCents'] ?? 0);
+                    } elseif ($type === 'authorization.required') {
+                        $finalState = 'authorization_required';
+                    } elseif ($type === 'order.confirmed') {
+                        $finalState = 'confirmed';
+                        $order = is_array($event['order'] ?? null) ? $event['order'] : [];
+                        $total = (int)($order['totalCents'] ?? $total);
+                        $itemCount = $itemCount ?: count($order['items'] ?? []);
+                    } elseif ($type === 'order.declined') {
+                        $finalState = 'declined';
+                    }
+                    yield $event;
                 }
-                yield $event;
+            } finally {
+                $this->orderLogger->log(OrderLogger::SOURCE_BACKEND, $orderId, $intent, $finalState, $itemCount, $total, $count, $beUser);
             }
         })();
 
-        // Log when the stream exhausts.
-        register_shutdown_function(function () use (&$orderId, $intent, &$finalState, &$itemCount, &$total, &$count, $beUser): void {
-            $this->orderLogger->log(OrderLogger::SOURCE_BACKEND, $orderId, $intent, $finalState, $itemCount, $total, $count, $beUser);
-        });
-
-        $this->encoder->stream($events, 70);
+        return $this->encoder->stream($events, 70);
     }
 }

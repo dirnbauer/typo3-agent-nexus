@@ -56,7 +56,6 @@ final class RunController
             }
         })();
 
-        // Streams + exits (SSE cannot use the normal PSR-7 response emission).
-        $this->encoder->stream($events, 70);
+        return $this->encoder->stream($events, 70);
     }
 }

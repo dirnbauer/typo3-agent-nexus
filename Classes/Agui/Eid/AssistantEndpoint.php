@@ -82,29 +82,28 @@ final class AssistantEndpoint
 
         $count = 0;
         $outcome = ($approval !== null && ($approval['decision'] ?? '') !== 'approved') ? 'rejected' : 'finished';
-        $events = (function () use ($runner, $input, &$count): \Generator {
-            foreach ($runner->run($input, 'frontend') as $event) {
-                $count++;
-                yield $event;
+        $events = (function () use ($runner, $input, &$count, $runLogger, $threadId, $preset, $approval, $outcome): \Generator {
+            try {
+                foreach ($runner->run($input, 'frontend') as $event) {
+                    $count++;
+                    yield $event;
+                }
+            } finally {
+                $runLogger->log(
+                    RunLogger::SOURCE_FRONTEND,
+                    $threadId,
+                    is_string($input['runId'] ?? null) ? $input['runId'] : '',
+                    $preset,
+                    $count,
+                    $approval !== null,
+                    $outcome,
+                    0,
+                );
             }
         })();
 
-        // Log after the stream exhausts (best-effort; stream() exits the request).
-        register_shutdown_function(static function () use ($runLogger, $threadId, $input, $preset, &$count, $approval, $outcome): void {
-            $runLogger->log(
-                RunLogger::SOURCE_FRONTEND,
-                $threadId,
-                is_string($input['runId'] ?? null) ? $input['runId'] : '',
-                $preset,
-                $count,
-                $approval !== null,
-                $outcome,
-                0,
-            );
-        });
-
         // Real model chunks pace themselves; only scripted runs get the
         // artificial token cadence.
-        $encoder->stream($events, $input['_llm'] ? 0 : 65);
+        return $encoder->stream($events, $input['_llm'] ? 0 : 65);
     }
 }

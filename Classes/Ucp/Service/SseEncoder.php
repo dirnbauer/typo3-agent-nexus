@@ -4,59 +4,37 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ucp\Service;
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\SingletonInterface;
+use Webconsulting\AgentNexus\Shared\Http\EventStream;
 
 /**
- * Streams A2A messages to the client as Server-Sent Events.
- *
- * UCP agent-checkout streams commerce events as SSE.
- * JSON-RPC response carrying a Task / status-update / artifact-update. This
- * encoder owns the raw streaming loop (buffering off, flush per frame) shared by
- * the backend AJAX route, the public JSON-RPC eID and the frontend Concierge.
+ * Frames UCP commerce events as Server-Sent Events for the backend console and
+ * the frontend checkout alike. The streaming itself belongs to the response body
+ * ({@see EventStream}).
  */
 final class SseEncoder implements SingletonInterface
 {
     /**
-     * One SSE frame: `data: {json}\n\n`.
+     * One SSE record: `data: {json}\n\n`.
      *
-     * @param array<string, mixed> $frame
+     * @param array<string, mixed> $event
      */
-    public function sse(array $frame): string
+    public function sse(array $event): string
     {
-        return 'data: ' . json_encode($frame, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n\n";
+        return EventStream::frame($event);
     }
 
     /**
-     * @param iterable<array<string, mixed>> $frames
-     * @param int $delayMs per-frame delay so streaming is visible
+     * Hand a checkout's events back as an SSE response. Emission — flush per record, with
+     * pacing so the stream is visible — is the response body's own job; see
+     * {@see EventStream}.
+     *
+     * @param iterable<array<string, mixed>> $events
+     * @param int $delayMs per-record delay so streaming is visible
      */
-    public function stream(iterable $frames, int $delayMs = 70): never
+    public function stream(iterable $events, int $delayMs = 80): ResponseInterface
     {
-        while (ob_get_level() > 0) {
-            @ob_end_clean();
-        }
-        if (!headers_sent()) {
-            header('Content-Type: text/event-stream; charset=utf-8');
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Connection: keep-alive');
-            header('X-Accel-Buffering: no'); // nginx: do not buffer the stream
-        }
-        ignore_user_abort(false);
-        echo ": ucp stream open\n\n";
-        @ob_flush();
-        flush();
-
-        foreach ($frames as $frame) {
-            echo $this->sse($frame);
-            @ob_flush();
-            flush();
-            if (connection_aborted()) {
-                break;
-            }
-            if ($delayMs > 0) {
-                usleep($delayMs * 1000);
-            }
-        }
-        exit;
+        return EventStream::response($events, 'ucp stream open', $delayMs);
     }
 }

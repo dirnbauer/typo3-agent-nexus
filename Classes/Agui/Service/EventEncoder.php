@@ -4,60 +4,37 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Agui\Service;
 
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\SingletonInterface;
+use Webconsulting\AgentNexus\Shared\Http\EventStream;
 
 /**
- * Frames an AG-UI event as a single Server-Sent-Events `data:` record, and owns
- * the raw streaming loop (headers off, flush per event) shared by the backend
- * route and the frontend eID endpoint.
+ * Frames AG-UI events as Server-Sent Events for the backend route and the
+ * frontend eID endpoint alike. The streaming itself belongs to the response
+ * body ({@see EventStream}), so both callers simply return what this hands back.
  */
 final class EventEncoder implements SingletonInterface
 {
     /**
-     * One SSE frame: `data: {json}\n\n`.
+     * One SSE record: `data: {json}\n\n`.
      *
      * @param array<string, mixed> $event
      */
     public function sse(array $event): string
     {
-        return 'data: ' . json_encode($event, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n\n";
+        return EventStream::frame($event);
     }
 
     /**
-     * Stream a sequence of events to the client as SSE, flushing each frame so the
-     * UI sees them arrive one by one. Terminates the request when done — SSE
-     * cannot share the normal PSR-7 response emission.
+     * Hand a run's events back as an SSE response. Emission — flush per record, with
+     * pacing so the stream is visible — is the response body's own job; see
+     * {@see EventStream}.
      *
      * @param iterable<array<string, mixed>> $events
-     * @param int $delayMs per-event delay so streaming is visible
+     * @param int $delayMs per-record delay so streaming is visible
      */
-    public function stream(iterable $events, int $delayMs = 80): never
+    public function stream(iterable $events, int $delayMs = 80): ResponseInterface
     {
-        while (ob_get_level() > 0) {
-            @ob_end_clean();
-        }
-        if (!headers_sent()) {
-            header('Content-Type: text/event-stream; charset=utf-8');
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Connection: keep-alive');
-            header('X-Accel-Buffering: no'); // nginx: do not buffer the stream
-        }
-        ignore_user_abort(false);
-        echo ": agui stream open\n\n";
-        @ob_flush();
-        flush();
-
-        foreach ($events as $event) {
-            echo $this->sse($event);
-            @ob_flush();
-            flush();
-            if (connection_aborted()) {
-                break;
-            }
-            if ($delayMs > 0) {
-                usleep($delayMs * 1000);
-            }
-        }
-        exit;
+        return EventStream::response($events, 'agui stream open', $delayMs);
     }
 }

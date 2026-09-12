@@ -71,41 +71,41 @@ final class CheckoutEndpoint
         $finalState = 'review';
         $cart = [];
 
-        $events = (function () use ($runner, $input, &$count, &$orderId, &$total, &$itemCount, &$finalState, &$cart): \Generator {
-            foreach ($runner->run($input, 'frontend') as $event) {
-                $count++;
-                $type = $event['type'] ?? '';
-                if ($type === 'checkout.started') {
-                    $orderId = (string)($event['orderId'] ?? '');
-                } elseif ($type === 'cart.updated') {
-                    $cart = $event['items'] ?? [];
-                    $itemCount = count($cart);
-                    $total = (int)($event['totalCents'] ?? 0);
-                } elseif ($type === 'authorization.required') {
-                    $finalState = 'authorization_required';
-                } elseif ($type === 'order.confirmed') {
-                    $finalState = 'confirmed';
-                    $order = is_array($event['order'] ?? null) ? $event['order'] : [];
-                    $total = (int)($order['totalCents'] ?? $total);
-                    if ($cart === [] && isset($order['items']) && is_array($order['items'])) {
-                        $cart = $order['items'];
+        $events = (function () use ($runner, $input, &$count, &$orderId, &$total, &$itemCount, &$finalState, &$cart, $logger, $store, $intent, $contact, $page, $url): \Generator {
+            try {
+                foreach ($runner->run($input, 'frontend') as $event) {
+                    $count++;
+                    $type = $event['type'] ?? '';
+                    if ($type === 'checkout.started') {
+                        $orderId = (string)($event['orderId'] ?? '');
+                    } elseif ($type === 'cart.updated') {
+                        $cart = $event['items'] ?? [];
                         $itemCount = count($cart);
+                        $total = (int)($event['totalCents'] ?? 0);
+                    } elseif ($type === 'authorization.required') {
+                        $finalState = 'authorization_required';
+                    } elseif ($type === 'order.confirmed') {
+                        $finalState = 'confirmed';
+                        $order = is_array($event['order'] ?? null) ? $event['order'] : [];
+                        $total = (int)($order['totalCents'] ?? $total);
+                        if ($cart === [] && isset($order['items']) && is_array($order['items'])) {
+                            $cart = $order['items'];
+                            $itemCount = count($cart);
+                        }
+                    } elseif ($type === 'order.declined') {
+                        $finalState = 'declined';
                     }
-                } elseif ($type === 'order.declined') {
-                    $finalState = 'declined';
+                    yield $event;
                 }
-                yield $event;
+            } finally {
+                $logger->log(OrderLogger::SOURCE_FRONTEND, $orderId, $intent, $finalState, $itemCount, $total, $count, 0);
+                if ($finalState === 'confirmed') {
+                    $store->store($page, $url, $orderId, $intent, $total, $cart, $contact);
+                }
             }
         })();
 
-        register_shutdown_function(static function () use ($logger, $store, &$orderId, $intent, &$finalState, &$itemCount, &$total, &$count, &$cart, $contact, $page, $url): void {
-            $logger->log(OrderLogger::SOURCE_FRONTEND, $orderId, $intent, $finalState, $itemCount, $total, $count, 0);
-            if ($finalState === 'confirmed') {
-                $store->store($page, $url, $orderId, $intent, $total, $cart, $contact);
-            }
-        });
-
-        $encoder->stream($events, 60);
+        return $encoder->stream($events, 60);
     }
 
 }

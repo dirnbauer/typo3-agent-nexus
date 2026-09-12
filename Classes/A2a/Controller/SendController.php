@@ -65,6 +65,6 @@ final class SendController
             }
         })();
 
-        $this->encoder->stream($frames, 60);
+        return $this->encoder->stream($frames, 60);
     }
 }
