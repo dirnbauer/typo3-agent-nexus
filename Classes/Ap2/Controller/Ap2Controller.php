@@ -33,7 +33,6 @@ final class Ap2Controller extends ActionController
     private const CSS = [
         'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
         'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
         'EXT:agent_nexus/Resources/Public/Css/modules/ap2.css',
     ];
     private const JS_STUDIO = '@webconsulting/agent-nexus/ap2-studio.js';

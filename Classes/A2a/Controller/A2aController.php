@@ -31,7 +31,6 @@ final class A2aController extends ActionController
     private const CSS_FILES = [
         'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
         'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
         'EXT:agent_nexus/Resources/Public/Css/modules/a2a.css',
     ];
     private const JS_CONSOLE = '@webconsulting/agent-nexus/a2a-console.js';

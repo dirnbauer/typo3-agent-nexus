@@ -33,7 +33,6 @@ final class A2UIController extends ActionController
     private const CSS_FILES = [
         'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
         'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
         'EXT:agent_nexus/Resources/Public/Css/modules/a2ui.css',
     ];
 

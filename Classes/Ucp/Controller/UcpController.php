@@ -34,7 +34,6 @@ final class UcpController extends ActionController
     private const CSS_FILES = [
         'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
         'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
         'EXT:agent_nexus/Resources/Public/Css/modules/ucp.css',
     ];
     private const JS_CONSOLE = '@webconsulting/agent-nexus/ucp-console.js';
