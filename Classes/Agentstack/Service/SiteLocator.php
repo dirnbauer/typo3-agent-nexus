@@ -33,18 +33,24 @@ final class SiteLocator implements SingletonInterface
         private readonly SiteFinder $siteFinder,
     ) {}
 
-    /** The seeded site root, or null when no demo site exists. */
+    /**
+     * The site the demo lives in, or null when nothing has been seeded.
+     *
+     * Usually that is the site root the seed command created. When it seeded
+     * below an existing page instead (`--root`), there is no root of our own —
+     * so any seeded page will do, since they all belong to the same site.
+     */
     public function site(): ?Site
     {
-        $rootUid = $this->pageUid('root');
-        if ($rootUid === null) {
-            return null;
+        foreach ($this->seeded() as $pageUid) {
+            try {
+                return $this->siteFinder->getSiteByPageId($pageUid);
+            } catch (SiteNotFoundException) {
+                continue;
+            }
         }
-        try {
-            return $this->siteFinder->getSiteByPageId($rootUid);
-        } catch (SiteNotFoundException) {
-            return null;
-        }
+
+        return null;
     }
 
     /** Absolute URL of a seeded page, or null when it or its site is missing. */
@@ -139,6 +145,10 @@ final class SiteLocator implements SingletonInterface
         $map = [];
         foreach ($rows as $row) {
             $map[(string)$row['tx_agentnexus_seed_key']] = (int)$row['uid'];
+        }
+        // The site root first: it is the common case and resolves in one hop.
+        if (isset($map['root'])) {
+            $map = ['root' => $map['root']] + $map;
         }
 
         return $this->seededPages = $map;
