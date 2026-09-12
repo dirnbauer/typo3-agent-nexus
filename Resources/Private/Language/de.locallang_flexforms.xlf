@@ -69,5 +69,22 @@
         <unit id="trusted.showMandates.description"><segment state="final"><source>Reveals the issued Intent + Cart Mandate tokens (JWS) under the result. Great for explaining the protocol.</source><target>Zeigt die ausgestellten Intent- und Cart-Mandate-Tokens (JWS) unter dem Ergebnis. Ideal zur Erklärung des Protokolls.</target></segment></unit>
         <unit id="trusted.useLlm.label"><segment state="final"><source>Plain-language chain explanation (model)</source><target>Verständliche Ketten-Erklärung (Modell)</target></segment></unit>
         <unit id="trusted.useLlm.description"><segment state="final"><source>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</source><target>Fügt dem Beleg eine kurze modellgeschriebene Erklärung der verifizierten Mandatskette hinzu. Mandate und Verifizierung sind stets deterministisch. Erfordert zusätzlich den AP2-LLM-Schalter in den Erweiterungseinstellungen (standardmäßig aus).</target></segment></unit>
+
+        <!-- Agent Nexus: Protocol info -->
+        <unit id="protocolInfo.sheet"><segment state="final"><source>Protocol info</source><target>Protokoll-Info</target></segment></unit>
+        <unit id="protocolInfo.protocol.label"><segment state="final"><source>Protocol</source><target>Protokoll</target></segment></unit>
+        <unit id="protocolInfo.protocol.description"><segment state="final"><source>Which protocol this element explains. The diagram, endpoints and steps all follow from this choice.</source><target>Welches Protokoll dieses Element erkl&#228;rt. Diagramm, Endpunkte und Schritte ergeben sich aus dieser Auswahl.</target></segment></unit>
+        <unit id="protocolInfo.protocol.a2ui"><segment state="final"><source>A2UI &#8212; agent to UI</source><target>A2UI &#8212; Agent zu Oberfl&#228;che</target></segment></unit>
+        <unit id="protocolInfo.protocol.agui"><segment state="final"><source>AG-UI &#8212; agent to user</source><target>AG-UI &#8212; Agent zu Nutzer</target></segment></unit>
+        <unit id="protocolInfo.protocol.a2a"><segment state="final"><source>A2A &#8212; agent to agent</source><target>A2A &#8212; Agent zu Agent</target></segment></unit>
+        <unit id="protocolInfo.protocol.ucp"><segment state="final"><source>UCP &#8212; agent to merchant</source><target>UCP &#8212; Agent zu H&#228;ndler</target></segment></unit>
+        <unit id="protocolInfo.protocol.ap2"><segment state="final"><source>AP2 &#8212; agent to payment</source><target>AP2 &#8212; Agent zu Zahlung</target></segment></unit>
+        <unit id="protocolInfo.sections.label"><segment state="final"><source>Sections to show</source><target>Anzuzeigende Abschnitte</target></segment></unit>
+        <unit id="protocolInfo.sections.description"><segment state="final"><source>Leave all three on for a standalone explainer; switch some off when the element sits directly next to a live demo. Selecting none shows all three.</source><target>Alle drei aktiviert lassen f&#252;r eine eigenst&#228;ndige Erkl&#228;rung; einzelne abschalten, wenn das Element direkt neben einer Live-Demo steht. Ohne Auswahl werden alle drei angezeigt.</target></segment></unit>
+        <unit id="protocolInfo.sections.diagram"><segment state="final"><source>Sequence diagram</source><target>Sequenzdiagramm</target></segment></unit>
+        <unit id="protocolInfo.sections.endpoints"><segment state="final"><source>Endpoints on this site</source><target>Endpunkte dieser Website</target></segment></unit>
+        <unit id="protocolInfo.sections.howItWorks"><segment state="final"><source>How it works</source><target>So funktioniert es</target></segment></unit>
+        <unit id="protocolInfo.showFacts.label"><segment state="final"><source>Show the live facts row</source><target>Zeile mit Live-Kennzahlen anzeigen</target></segment></unit>
+        <unit id="protocolInfo.showFacts.description"><segment state="final"><source>Numbers read from the services that implement the protocol &#8212; advertised skills, event types, catalog size &#8212; so they stay true as the demo changes.</source><target>Zahlen direkt aus den Diensten, die das Protokoll umsetzen &#8212; angebotene Skills, Ereignistypen, Katalogumfang &#8212;, damit sie bei &#196;nderungen der Demo korrekt bleiben.</target></segment></unit>
     </file>
 </xliff>

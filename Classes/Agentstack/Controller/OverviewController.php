@@ -129,7 +129,8 @@ final class OverviewController extends ActionController
     /**
      * The study-guide content for each protocol. `flow.steps[].side` is 'l'
      * (left→right) or 'r' (right→left) and drives the diagram direction.
-     * `diagram` names the generated Mermaid sequence-diagram partial.
+     * `diagram` names the generated Mermaid sequence-diagram asset in
+     * Resources/Public/Diagrams.
      *
      * @return array<int, array<string, mixed>>
      */
@@ -138,7 +139,7 @@ final class OverviewController extends ActionController
         return [
             [
                 'key' => 'a2ui', 'name' => 'A2UI', 'accent' => 'a2ui', 'edge' => 'agent ↔ UI surface',
-                'diagram' => 'A2ui',
+                'diagram' => 'a2ui',
                 'tagline' => 'The agent describes the UI as data; a trusted client renders it natively.',
                 'short' => 'A2UI is the safe way to let an agent design an interface without shipping executable frontend code.',
                 'image' => '/fileadmin/desiderio-styleguide/frontend-dashboards-forest.png',
@@ -174,7 +175,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'agui', 'name' => 'AG-UI', 'accent' => 'agui', 'edge' => 'agent ↔ user',
-                'diagram' => 'Agui',
+                'diagram' => 'agui',
                 'tagline' => 'The agent streams typed events to your UI in real time.',
                 'short' => 'AG-UI is for live, interruptible agent runs where people need to see progress and approve writes.',
                 'image' => '/fileadmin/desiderio-styleguide/backend-visual-editor.png',
@@ -209,7 +210,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'a2a', 'name' => 'A2A', 'accent' => 'a2a', 'edge' => 'agent ↔ agent',
-                'diagram' => 'A2a',
+                'diagram' => 'a2a',
                 'tagline' => 'Independent agents discover each other and delegate tasks.',
                 'short' => 'A2A is the delegation layer: one agent discovers another agent and follows a task lifecycle.',
                 'image' => '/fileadmin/desiderio-styleguide/customer-data-team.jpg',
@@ -244,7 +245,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'ucp', 'name' => 'UCP', 'accent' => 'ucp', 'edge' => 'agent ↔ merchant',
-                'diagram' => 'Ucp',
+                'diagram' => 'ucp',
                 'tagline' => 'A shopping agent negotiates a cart and checkout with a merchant.',
                 'short' => 'UCP is the commerce handshake between a buying agent and a merchant manifest.',
                 'image' => '/fileadmin/desiderio-element-library/frontend-pricing-midnight-dark.png',
@@ -278,7 +279,7 @@ final class OverviewController extends ActionController
             ],
             [
                 'key' => 'ap2', 'name' => 'AP2', 'accent' => 'ap2', 'edge' => 'authorization',
-                'diagram' => 'Ap2',
+                'diagram' => 'ap2',
                 'tagline' => 'Cryptographically-signed mandates make an agent\'s authority verifiable.',
                 'short' => 'AP2 proves that an agent has authority for a specific purchase, within a human-approved scope.',
                 'image' => '/fileadmin/desiderio-styleguide/compliance-soc2-dashboard.jpg',

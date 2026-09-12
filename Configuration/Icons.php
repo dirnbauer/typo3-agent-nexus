@@ -49,6 +49,10 @@ return [
         'provider' => SvgIconProvider::class,
         'source' => 'EXT:agent_nexus/Resources/Public/Icons/module-ap2.svg',
     ],
+    'agentnexus-plugin-protocolinfo' => [
+        'provider' => SvgIconProvider::class,
+        'source' => 'EXT:agent_nexus/Resources/Public/Icons/plugin-protocolinfo.svg',
+    ],
     'ap2-plugin-trusted' => [
         'provider' => SvgIconProvider::class,
         'source' => 'EXT:agent_nexus/Resources/Public/Icons/plugin-trusted.svg',

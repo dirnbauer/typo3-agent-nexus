@@ -1,0 +1,29 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:d="http://typo3.org/ns/Webconsulting/Desiderio/Components/ComponentCollection"
+      data-namespace-typo3-fluid="true">
+
+<f:comment>
+    Desiderio variant of the Protocol info element. Same content as the plain
+    template, framed by the site's design-system components.
+</f:comment>
+
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
+
+<d:layout.section class="anx-host anx-host--{protocol.key}">
+    <d:layout.container>
+        <d:molecule.card class="anx-host__card">
+            <d:molecule.cardHeader>
+                <d:layout.stack direction="horizontal" gap="sm" align="center">
+                    <d:atom.badge variant="secondary">{protocol.label}</d:atom.badge>
+                    <d:atom.typography tag="span" variant="muted">{protocol.name} &#183; {protocol.edge}</d:atom.typography>
+                </d:layout.stack>
+            </d:molecule.cardHeader>
+            <d:molecule.cardContent>
+                <f:render partial="Plugin/ProtocolInfo" arguments="{_all}" />
+            </d:molecule.cardContent>
+        </d:molecule.card>
+    </d:layout.container>
+</d:layout.section>
+
+</html>

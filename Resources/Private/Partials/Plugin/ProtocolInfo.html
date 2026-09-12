@@ -1,0 +1,86 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<section class="anx anx--frontend anx-accent--{protocol.key} anx-info" data-accent="{protocol.key}">
+
+    <header class="anx-info__head">
+        <p class="anx-info__eyebrow">
+            <span class="anx-info__badge">{protocol.label}</span>
+            <span class="anx-info__edge">{protocol.edge}</span>
+        </p>
+        <f:if condition="{data.header}">
+            <h2 class="anx-info__title">{data.header}</h2>
+        </f:if>
+        <p class="anx-info__tagline">{protocol.tagline}</p>
+    </header>
+
+    <f:if condition="{settings.show_facts}">
+        <dl class="anx-info__facts">
+            <f:for each="{protocol.facts}" as="fact">
+                <div class="anx-info__fact">
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                </div>
+            </f:for>
+        </dl>
+    </f:if>
+
+    <f:if condition="{sections.diagram}">
+        <figure class="anx-info__diagram">
+            <img class="anx-mm"
+                 src="{f:uri.resource(path: 'Diagrams/{protocol.key}.svg', extensionName: 'agent_nexus')}"
+                 alt="{protocol.diagramAlt}"
+                 loading="lazy" />
+            <figcaption>{protocol.name} — one request, end to end.</figcaption>
+        </figure>
+    </f:if>
+
+    <f:if condition="{sections.howItWorks}">
+        <div class="anx-info__block">
+            <h3 class="anx-info__h3">How it works</h3>
+            <ol class="anx-info__steps">
+                <f:for each="{protocol.howItWorks}" as="step">
+                    <li class="anx-info__step">
+                        <strong>{step.title}</strong>
+                        <span>{step.text}</span>
+                    </li>
+                </f:for>
+            </ol>
+        </div>
+    </f:if>
+
+    <f:if condition="{sections.endpoints}">
+        <div class="anx-info__block">
+            <h3 class="anx-info__h3">Endpoints on this site</h3>
+            <div class="anx-info__table-wrap">
+                <table class="anx-info__table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Method</th>
+                            <th scope="col">Path</th>
+                            <th scope="col">What it does</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <f:for each="{protocol.endpoints}" as="endpoint">
+                            <tr>
+                                <td><span class="anx-info__method">{endpoint.method}</span></td>
+                                <td><code>{endpoint.path}</code></td>
+                                <td>{endpoint.description}</td>
+                            </tr>
+                        </f:for>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </f:if>
+
+    <footer class="anx-info__foot">
+        <a class="anx-info__spec" href="{protocol.spec}" rel="noopener noreferrer" target="_blank">
+            {protocol.label} specification
+            <span aria-hidden="true">&#8599;</span>
+        </a>
+    </footer>
+</section>
+
+</html>

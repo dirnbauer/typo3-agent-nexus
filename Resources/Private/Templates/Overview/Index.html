@@ -169,7 +169,10 @@
                     <span class="anx-mm-card__hint">{p.name} on this site, end to end</span>
                 </div>
                 <div class="anx-mm-card__body">
-                    <f:render partial="Overview/Diagram/{p.diagram}" />
+                    <img class="anx-mm"
+                         src="{f:uri.resource(path: 'Diagrams/{p.diagram}.svg', extensionName: 'agent_nexus')}"
+                         alt="{p.label} sequence diagram: {p.name} on this site, end to end"
+                         loading="lazy" />
                 </div>
             </div>
 

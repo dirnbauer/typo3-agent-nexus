@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sheet</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.protocol>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.description</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <default>a2ui</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.a2ui</label>
+                                    <value>a2ui</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.agui</label>
+                                    <value>agui</value>
+                                </numIndex>
+                                <numIndex index="2">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.a2a</label>
+                                    <value>a2a</value>
+                                </numIndex>
+                                <numIndex index="3">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.ucp</label>
+                                    <value>ucp</value>
+                                </numIndex>
+                                <numIndex index="4">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.protocol.ap2</label>
+                                    <value>ap2</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.protocol>
+                    <settings.sections>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sections.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sections.description</description>
+                        <config>
+                            <type>select</type>
+                            <renderType>selectCheckBox</renderType>
+                            <default>diagram,endpoints,how-it-works</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sections.diagram</label>
+                                    <value>diagram</value>
+                                </numIndex>
+                                <numIndex index="1">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sections.endpoints</label>
+                                    <value>endpoints</value>
+                                </numIndex>
+                                <numIndex index="2">
+                                    <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.sections.howItWorks</label>
+                                    <value>how-it-works</value>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.sections>
+                    <settings.show_facts>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.showFacts.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:protocolInfo.showFacts.description</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.show_facts>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>

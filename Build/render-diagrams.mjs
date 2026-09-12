@@ -1,11 +1,19 @@
 /**
- * Render Build/Diagrams/*.mmd to theme-aware inline-SVG Fluid partials.
+ * Render Build/Diagrams/*.mmd to standalone, theme-aware SVG assets.
  *
- * Dev-only (`npm run diagrams`); the generated partials are committed, so
- * neither editors nor CI ever need node/Chromium. Mermaid renders with
- * placeholder hex colors that are swapped for --anx-* custom properties,
- * which cascade into the inlined SVG at runtime (dark mode included).
- * Message lines/texts get data-mm-step indices so GSAP can cascade them.
+ * Dev-only (`npm run diagrams`); the generated SVGs are committed under
+ * Resources/Public/Diagrams, so neither editors nor CI ever need node or
+ * Chromium — and the frontend can reference them as plain images.
+ *
+ * Because an <img>-loaded SVG is its own document, page-level custom properties
+ * do not reach it. Each file therefore carries its own palette: mermaid renders
+ * with a placeholder hex palette, those hexes are swapped for var(--anx-*), and
+ * a small stylesheet defining those variables (light plus a prefers-color-scheme
+ * dark block, and the protocol's accent) is injected into the SVG itself.
+ *
+ * The output must be reproducible: CI re-runs this and fails if the committed
+ * files differ, so keep every transform deterministic and pin mermaid via the
+ * committed package-lock.json.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -15,7 +23,7 @@ import { basename, join } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SRC = join(ROOT, 'Build/Diagrams');
-const OUT = join(ROOT, 'Resources/Private/Partials/Overview/Diagram');
+const OUT = join(ROOT, 'Resources/Public/Diagrams');
 
 const LABELS = {
   a2ui: 'A2UI sequence: visitor intent to generated form to stored inquiry',
@@ -23,6 +31,15 @@ const LABELS = {
   a2a: 'A2A sequence: agent discovery, task delegation and artifact delivery',
   ucp: 'UCP sequence: manifest discovery, cart proposal and authorized order',
   ap2: 'AP2 sequence: chained signed mandates and verification',
+};
+
+/** Protocol accents — must stay in step with --anx-accent-* in nexus-tokens.css. */
+const ACCENTS = {
+  a2ui: { light: '#7c3aed', dark: '#a78bfa' },
+  agui: { light: '#2563eb', dark: '#60a5fa' },
+  a2a: { light: '#059669', dark: '#34d399' },
+  ucp: { light: '#d97706', dark: '#fbbf24' },
+  ap2: { light: '#e11d48', dark: '#fb7185' },
 };
 
 // Placeholder palette rendered by mermaid, swapped for tokens afterwards.
@@ -63,43 +80,63 @@ const SWAPS = [
   [/#202020/gi, 'var(--anx-border)'],
   [/#303030/gi, 'var(--anx-fg)'],
   [/#404040/gi, 'var(--anx-border)'],
-  [/#505050/gi, 'var(--accent)'],
+  [/#505050/gi, 'var(--anx-accent)'],
   [/#606060/gi, 'var(--anx-fg)'],
-  [/#707070/gi, 'color-mix(in srgb, var(--accent) 10%, var(--anx-card))'],
-  [/#808080/gi, 'color-mix(in srgb, var(--accent) 45%, var(--anx-border))'],
+  [/#707070/gi, 'var(--anx-note-bg)'],
+  [/#808080/gi, 'var(--anx-note-border)'],
   [/#909090/gi, 'var(--anx-fg)'],
   [/#a0a0a0/gi, 'var(--anx-card)'],
   // mermaid defaults that ignore themeVariables
   [/#eaeaea/gi, 'var(--anx-surface-1)'],
-  [/#EDF2AE/gi, 'color-mix(in srgb, var(--accent) 10%, var(--anx-card))'],
+  [/#EDF2AE/gi, 'var(--anx-note-bg)'],
   [/stroke="#666"/gi, 'stroke="var(--anx-border)"'],
   [/stroke="#999"/gi, 'stroke="var(--anx-border)"'],
   [/fill:#333/gi, 'fill:var(--anx-fg)'],
-  [/#0b0b0b/gi, 'var(--accent)'],
-  [/stroke="#000000"/gi, 'stroke="var(--accent)"'],
+  [/#0b0b0b/gi, 'var(--anx-accent)'],
+  [/stroke="#000000"/gi, 'stroke="var(--anx-accent)"'],
   [/font-family:\s*"?trebuchet ms"?[^;"']*/gi, 'font-family:inherit'],
   [/font-family:\s*inherit,\s*sans-serif/gi, 'font-family:inherit'],
 ];
+
+function palette(key) {
+  const accent = ACCENTS[key] ?? ACCENTS.a2ui;
+  return `<style>
+svg{
+  --anx-fg:#1b1f26;
+  --anx-card:#ffffff;
+  --anx-surface-1:#f4f6f9;
+  --anx-border:#d5dae1;
+  --anx-accent:${accent.light};
+  --anx-note-bg:color-mix(in srgb, var(--anx-accent) 10%, var(--anx-card));
+  --anx-note-border:color-mix(in srgb, var(--anx-accent) 45%, var(--anx-border));
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  svg{
+    --anx-fg:#e7eaef;
+    --anx-card:#171a1f;
+    --anx-surface-1:#20242b;
+    --anx-border:#343a44;
+    --anx-accent:${accent.dark};
+  }
+}
+</style>`;
+}
 
 function postProcess(svg, key) {
   let out = svg;
   for (const [pattern, replacement] of SWAPS) out = out.replace(pattern, replacement);
 
-  // Responsive, labelled root; touch ONLY the opening <svg> tag. Sizing is
-  // handled by the .anx-mm CSS class against the preserved viewBox.
+  // Responsive, labelled root; touch ONLY the opening <svg> tag. Consumers size
+  // the image with CSS against the preserved viewBox.
   out = out.replace(/<svg[^>]*>/, (tag) => tag
     .replace(/\s(width|height)="[^"]*"/g, '')
     .replace(/\sstyle="[^"]*"/, '')
-    .replace(/<svg /, `<svg class="anx-mm" data-mm="${key}" aria-label="${LABELS[key] ?? key}" `));
+    .replace(/<svg /, '<svg class="anx-mm" data-mm="' + key + '" '));
 
-  // Sequence-step tags for the GSAP cascade: message lines and their labels
-  // get a shared, document-ordered index. Original classes stay untouched so
-  // the embedded stylesheet keeps matching.
-  let line = 0;
-  out = out.replace(/class="(messageLine\d)"/g, (m, cls) => `class="${cls}" data-mm-step="${line++}"`);
-  let text = 0;
-  out = out.replace(/class="messageText"/g, () => `class="messageText" data-mm-step="${text++}"`);
-  out = out.replace(/<g class="actor /g, '<g data-mm-actor class="actor ');
+  // Standalone SVGs are read by assistive tech as images, so the label has to
+  // live inside the document rather than on a host element.
+  out = out.replace(/(<svg[^>]*>)/, `$1<title>${LABELS[key] ?? key}</title>${palette(key)}`);
 
   return out;
 }
@@ -113,24 +150,18 @@ for (const file of sources) {
   const key = basename(file, '.mmd');
   const svgPath = join(work, `${key}.svg`);
   execFileSync('npx', [
-    '-y', '@mermaid-js/mermaid-cli',
+    '--no-install', 'mmdc',
     '-i', join(SRC, file),
     '-o', svgPath,
     '-c', join(work, 'config.json'),
     '-b', 'transparent',
-    // unique id per diagram: five of these are inlined on the same page and
-    // the embedded stylesheet scopes all rules to this id
+    // unique id per diagram: the embedded stylesheet scopes all rules to it
     '--svgId', `anx-mm-${key}`,
     '--quiet',
   ], { stdio: 'inherit' });
 
-  const svg = readFileSync(svgPath, 'utf8');
-  const partial = key.charAt(0).toUpperCase() + key.slice(1);
-  writeFileSync(
-    join(OUT, `${partial}.html`),
-    `<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">\n${postProcess(svg, key)}\n</html>\n`,
-  );
-  console.log(`rendered ${file} -> Partials/Overview/Diagram/${partial}.html`);
+  writeFileSync(join(OUT, `${key}.svg`), `${postProcess(readFileSync(svgPath, 'utf8'), key)}\n`);
+  console.log(`rendered ${file} -> Resources/Public/Diagrams/${key}.svg`);
 }
 
 rmSync(work, { recursive: true, force: true });

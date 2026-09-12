@@ -69,5 +69,22 @@
         <unit id="trusted.showMandates.description"><segment><source>Reveals the issued Intent + Cart Mandate tokens (JWS) under the result. Great for explaining the protocol.</source></segment></unit>
         <unit id="trusted.useLlm.label"><segment><source>Plain-language chain explanation (model)</source></segment></unit>
         <unit id="trusted.useLlm.description"><segment><source>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</source></segment></unit>
+
+        <!-- Agent Nexus: Protocol info -->
+        <unit id="protocolInfo.sheet"><segment><source>Protocol info</source></segment></unit>
+        <unit id="protocolInfo.protocol.label"><segment><source>Protocol</source></segment></unit>
+        <unit id="protocolInfo.protocol.description"><segment><source>Which protocol this element explains. The diagram, endpoints and steps all follow from this choice.</source></segment></unit>
+        <unit id="protocolInfo.protocol.a2ui"><segment><source>A2UI &#8212; agent to UI</source></segment></unit>
+        <unit id="protocolInfo.protocol.agui"><segment><source>AG-UI &#8212; agent to user</source></segment></unit>
+        <unit id="protocolInfo.protocol.a2a"><segment><source>A2A &#8212; agent to agent</source></segment></unit>
+        <unit id="protocolInfo.protocol.ucp"><segment><source>UCP &#8212; agent to merchant</source></segment></unit>
+        <unit id="protocolInfo.protocol.ap2"><segment><source>AP2 &#8212; agent to payment</source></segment></unit>
+        <unit id="protocolInfo.sections.label"><segment><source>Sections to show</source></segment></unit>
+        <unit id="protocolInfo.sections.description"><segment><source>Leave all three on for a standalone explainer; switch some off when the element sits directly next to a live demo. Selecting none shows all three.</source></segment></unit>
+        <unit id="protocolInfo.sections.diagram"><segment><source>Sequence diagram</source></segment></unit>
+        <unit id="protocolInfo.sections.endpoints"><segment><source>Endpoints on this site</source></segment></unit>
+        <unit id="protocolInfo.sections.howItWorks"><segment><source>How it works</source></segment></unit>
+        <unit id="protocolInfo.showFacts.label"><segment><source>Show the live facts row</source></segment></unit>
+        <unit id="protocolInfo.showFacts.description"><segment><source>Numbers read from the services that implement the protocol &#8212; advertised skills, event types, catalog size &#8212; so they stay true as the demo changes.</source></segment></unit>
     </file>
 </xliff>

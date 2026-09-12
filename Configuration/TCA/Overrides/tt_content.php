@@ -48,6 +48,14 @@ $plugins = [
         'description' => 'A visitor approves a quote up to a spending cap and receives a verifiable simulated authorization receipt.',
         'flexForm' => 'TrustedSurface.xml',
     ],
+    [
+        'plugin' => 'ProtocolInfo',
+        'legacyExtension' => null,
+        'title' => 'Agent Nexus: Protocol info',
+        'icon' => 'agentnexus-plugin-protocolinfo',
+        'description' => 'Explains one protocol next to its demo: the sequence diagram, the endpoints this site exposes and how a request flows through it.',
+        'flexForm' => 'ProtocolInfo.xml',
+    ],
 ];
 
 $configurePluginType = static function (string $cType, array $plugin): void {
@@ -77,6 +85,10 @@ foreach ($plugins as $plugin) {
 
     $configurePluginType($cType, $plugin);
 
-    $legacyCType = strtolower($plugin['legacyExtension'] . '_' . $plugin['plugin']);
-    $configurePluginType($legacyCType, $plugin);
+    // Plugins that existed in one of the five per-protocol packages Agent Nexus
+    // replaced keep their old CType registered so existing records still open.
+    if ($plugin['legacyExtension'] !== null) {
+        $legacyCType = strtolower($plugin['legacyExtension'] . '_' . $plugin['plugin']);
+        $configurePluginType($legacyCType, $plugin);
+    }
 }
