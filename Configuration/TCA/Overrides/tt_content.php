@@ -86,10 +86,21 @@ foreach ($plugins as $plugin) {
     $configurePluginType($cType, $plugin);
 
     // Plugins that existed in one of the five per-protocol packages Agent Nexus
-    // replaced keep their old CType registered so existing records still open.
+    // replaced keep their old CType editable so existing records still open —
+    // but deliberately do NOT get a "new content element" wizard entry, because
+    // nobody should create one any more. The suffixed label tells an editor who
+    // opens such a record what to do about it; the "Agent Nexus: migrate legacy
+    // content element types" upgrade wizard rewrites them in bulk.
     if ($plugin['legacyExtension'] !== null) {
         $legacyCType = strtolower($plugin['legacyExtension'] . '_' . $plugin['plugin']);
         $configurePluginType($legacyCType, $plugin);
+
+        $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'][] = [
+            'label' => $plugin['title'] . ' (deprecated, migrate to ' . $cType . ')',
+            'value' => $legacyCType,
+            'icon' => $plugin['icon'],
+            'group' => 'plugins',
+        ];
     }
 }
 
