@@ -19,3 +19,11 @@ parameters:
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
     checkUninitializedProperties: true
     reportUnmatchedIgnoredErrors: true
+    ignoreErrors:
+        # Agent Nexus marks its services final, which is right for production
+        # code and something PHPUnit cannot double. Build/phpunit/UnitTestsBootstrap.php
+        # loads dg/bypass-finals so createMock() works at runtime; PHPStan cannot
+        # see that, and reports the doubled type as unresolvable.
+        -
+            identifier: method.unresolvableReturnType
+            path: Tests/Unit/*

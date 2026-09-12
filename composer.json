@@ -36,6 +36,7 @@
         "typo3/cms-frontend": "^14.3.7"
     },
     "require-dev": {
+        "dg/bypass-finals": "^1.9",
         "friendsofphp/php-cs-fixer": "^3.90",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.2",
