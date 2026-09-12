@@ -111,7 +111,7 @@ final class A2aController extends ActionController
         if ($active !== 'console') {
             $buttonBar->addButton(
                 $buttonBar->makeLinkButton()
-                    ->setIcon($this->iconFactory->getIcon('a2a-module', IconSize::SMALL))
+                    ->setIcon($this->iconFactory->getIcon('agentnexus-module-a2a', IconSize::SMALL))
                     ->setTitle('Console')->setShowLabelText(true)
                     ->setHref($this->uriBuilder->reset()->uriFor('console', [], 'A2a')),
                 ButtonBar::BUTTON_POSITION_LEFT,

@@ -104,7 +104,7 @@ final class Ap2Controller extends ActionController
         if ($active !== 'studio') {
             $buttonBar->addButton(
                 $buttonBar->makeLinkButton()
-                    ->setIcon($this->iconFactory->getIcon('ap2-module', IconSize::SMALL))
+                    ->setIcon($this->iconFactory->getIcon('agentnexus-module-ap2', IconSize::SMALL))
                     ->setTitle('Studio')->setShowLabelText(true)
                     ->setHref($this->uriBuilder->reset()->uriFor('studio', [], 'Ap2')),
                 ButtonBar::BUTTON_POSITION_LEFT,

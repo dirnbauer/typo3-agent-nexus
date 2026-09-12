@@ -256,7 +256,7 @@ final class A2UIController extends ActionController
             $playgroundUrl = $this->uriBuilder->reset()->uriFor('dashboard', [], 'A2UI');
             $buttonBar->addButton(
                 $buttonBar->makeLinkButton()
-                    ->setIcon($this->iconFactory->getIcon('a2ui-module', IconSize::SMALL))
+                    ->setIcon($this->iconFactory->getIcon('agentnexus-module-a2ui', IconSize::SMALL))
                     ->setTitle('Playground')
                     ->setShowLabelText(true)
                     ->setHref($playgroundUrl),

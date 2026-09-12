@@ -104,7 +104,7 @@ final class AguiController extends ActionController
         if ($active !== 'console') {
             $buttonBar->addButton(
                 $buttonBar->makeLinkButton()
-                    ->setIcon($this->iconFactory->getIcon('agui-module', IconSize::SMALL))
+                    ->setIcon($this->iconFactory->getIcon('agentnexus-module-agui', IconSize::SMALL))
                     ->setTitle('Run Console')->setShowLabelText(true)
                     ->setHref($this->uriBuilder->reset()->uriFor('console', [], 'Agui')),
                 ButtonBar::BUTTON_POSITION_LEFT,

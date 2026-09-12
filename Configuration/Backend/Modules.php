@@ -23,7 +23,7 @@ return [
         'path' => '/module/agent-nexus/overview',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_overview.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'agentnexus-overview',
+        'iconIdentifier' => 'agentnexus-module',
         'controllerActions' => [
             OverviewController::class => [
                 'index',
@@ -38,7 +38,7 @@ return [
         'path' => '/module/agent-nexus/a2ui',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_a2ui.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'a2ui-module',
+        'iconIdentifier' => 'agentnexus-module-a2ui',
         'controllerActions' => [
             A2UIController::class => [
                 'dashboard',
@@ -56,7 +56,7 @@ return [
         'path' => '/module/agent-nexus/agui',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_agui.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'agui-module',
+        'iconIdentifier' => 'agentnexus-module-agui',
         'controllerActions' => [
             AguiController::class => [
                 'console',
@@ -72,7 +72,7 @@ return [
         'path' => '/module/agent-nexus/a2a',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_a2a.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'a2a-module',
+        'iconIdentifier' => 'agentnexus-module-a2a',
         'controllerActions' => [
             A2aController::class => [
                 'console',
@@ -88,7 +88,7 @@ return [
         'path' => '/module/agent-nexus/ucp',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_ucp.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'ucp-module',
+        'iconIdentifier' => 'agentnexus-module-ucp',
         'controllerActions' => [
             UcpController::class => [
                 'console',
@@ -104,7 +104,7 @@ return [
         'path' => '/module/agent-nexus/ap2',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_ap2.xlf',
         'extensionName' => 'AgentNexus',
-        'iconIdentifier' => 'ap2-module',
+        'iconIdentifier' => 'agentnexus-module-ap2',
         'controllerActions' => [
             Ap2Controller::class => [
                 'studio',

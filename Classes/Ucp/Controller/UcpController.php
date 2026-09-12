@@ -121,7 +121,7 @@ final class UcpController extends ActionController
         if ($active !== 'console') {
             $buttonBar->addButton(
                 $buttonBar->makeLinkButton()
-                    ->setIcon($this->iconFactory->getIcon('ucp-module', IconSize::SMALL))
+                    ->setIcon($this->iconFactory->getIcon('agentnexus-module-ucp', IconSize::SMALL))
                     ->setTitle('Console')->setShowLabelText(true)
                     ->setHref($this->uriBuilder->reset()->uriFor('console', [], 'Ucp')),
                 ButtonBar::BUTTON_POSITION_LEFT,
