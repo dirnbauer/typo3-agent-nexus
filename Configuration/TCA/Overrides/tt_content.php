@@ -92,3 +92,13 @@ foreach ($plugins as $plugin) {
         $configurePluginType($legacyCType, $plugin);
     }
 }
+
+/**
+ * The seed key that makes `agentnexus:seed-site` idempotent — see
+ * Configuration/TCA/Overrides/pages.php for why it has to be declared in TCA.
+ */
+$GLOBALS['TCA']['tt_content']['columns']['tx_agentnexus_seed_key'] = [
+    'config' => [
+        'type' => 'passthrough',
+    ],
+];

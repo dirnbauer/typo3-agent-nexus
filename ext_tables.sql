@@ -198,3 +198,23 @@ CREATE TABLE tx_agentnexus_ap2_authorization (
 
     PRIMARY KEY (uid)
 );
+
+#
+# Seed keys — how `agentnexus:seed-site` stays idempotent.
+#
+# The command addresses every record it owns by a stable logical key (e.g.
+# "root", "page:a2ui", "ce:a2ui:demo") instead of by uid, title or slug, so a
+# second run updates exactly the same rows even after an editor renamed or moved
+# them. Records without a key were never seeded and are never touched.
+#
+CREATE TABLE pages (
+    tx_agentnexus_seed_key varchar(64) DEFAULT '' NOT NULL,
+
+    KEY tx_agentnexus_seed_key (tx_agentnexus_seed_key)
+);
+
+CREATE TABLE tt_content (
+    tx_agentnexus_seed_key varchar(64) DEFAULT '' NOT NULL,
+
+    KEY tx_agentnexus_seed_key (tx_agentnexus_seed_key)
+);
