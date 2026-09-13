@@ -387,6 +387,21 @@ final class SeedSiteCommand extends Command
     }
 
     /**
+     * The configuration of an already-configured site, or null when the
+     * identifier is free.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function existingSiteConfiguration(string $identifier): ?array
+    {
+        try {
+            return $this->siteFinder->getSiteByIdentifier($identifier)->getConfiguration();
+        } catch (SiteNotFoundException) {
+            return null;
+        }
+    }
+
+    /**
      * The site the demo lives in. When --root points into an existing site we
      * only add our set and the storage pid to it; otherwise a complete site
      * configuration is written.
@@ -416,6 +431,25 @@ final class SeedSiteCommand extends Command
             $dependencies = array_values(array_unique([...(array)($configuration['dependencies'] ?? []), self::SET_IDENTIFIER]));
             $configuration['dependencies'] = $dependencies;
             $io->writeln(sprintf('  updating existing site "%s" (set + storage pid only)', $identifier));
+        } elseif (($existing = $this->existingSiteConfiguration($identifier)) !== null) {
+            // A site with this identifier is already configured — usually from
+            // the repository, carrying base variants, extra sets and settings
+            // that seeding knows nothing about. Writing a fresh configuration
+            // over it silently drops all of that: it once replaced the two
+            // Desiderio sets that supply "page = PAGE" with the bare plugin
+            // set, and every page of the site answered "No page configured for
+            // type=0" until the file was restored by hand. Only the parts
+            // seeding owns are updated.
+            $configuration = $existing;
+            $configuration['rootPageId'] = $rootUid;
+            $configuration['dependencies'] = array_values(array_unique([
+                ...(array)($existing['dependencies'] ?? []),
+                self::SET_IDENTIFIER,
+            ]));
+            $io->writeln(sprintf('  updating existing site "%s" -> page %d (base and sets kept)', $identifier, $rootUid));
+            if ($bases !== [] && ($existing['base'] ?? null) !== $bases[0]) {
+                $io->writeln(sprintf('    note: --base is ignored, the site keeps its configured base "%s"', (string)($existing['base'] ?? '')));
+            }
         } else {
             $configuration = [
                 'rootPageId' => $rootUid,
