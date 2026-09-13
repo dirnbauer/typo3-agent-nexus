@@ -168,17 +168,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
 
-      - run: npm ci
-
-      - name: Re-render the sequence diagrams
-        run: npm run diagrams
-
-      - name: Fail if the committed SVGs are out of date
-        run: |
-          if ! git diff --quiet -- Resources/Public/Diagrams; then
-            echo "::error::Resources/Public/Diagrams is out of date. Run 'npm run diagrams' and commit the result."
-            git --no-pager diff --stat -- Resources/Public/Diagrams
-            exit 1
-          fi
+      # Hash check, not a re-render: mermaid sizes a sequence diagram from
+      # measured text, so fonts and the Chromium build decide the geometry and
+      # a runner cannot reproduce the author's viewBox. Build/diagrams.lock.json
+      # records the hash of every source, of the renderer and of every SVG, so
+      # this still catches an edited .mmd that was never re-rendered and a
+      # hand-edited SVG — without installing node modules or a browser.
+      - name: Check the diagrams against their sources
+        run: npm run diagrams:check

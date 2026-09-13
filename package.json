@@ -4,7 +4,8 @@
   "description": "Dev-only tooling: renders the Mermaid diagram partials for the Agent Nexus overview module.",
   "type": "module",
   "scripts": {
-    "diagrams": "node Build/render-diagrams.mjs"
+    "diagrams": "node Build/render-diagrams.mjs",
+    "diagrams:check": "node Build/check-diagrams.mjs"
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^11.12.0"

@@ -67,5 +67,15 @@ The sequence diagrams are build artifacts, not content:
 
 That renders :file:`Build/Diagrams/*.mmd` into
 :file:`Resources/Public/Diagrams/*.svg`, each carrying its own light and dark
-palette so it works as a plain ``<img>``. The SVGs are committed and CI fails if
-they are out of date, so neither editors nor CI ever need node or Chromium.
+palette so it works as a plain ``<img>``. The SVGs are committed, so neither
+editors nor the site ever need node or Chromium.
+
+Rendering also writes :file:`Build/diagrams.lock.json`, holding the hash of
+every source, of the renderer and of every generated SVG. ``npm run
+diagrams:check`` verifies those hashes and is what CI runs, because a re-render
+cannot be compared across machines: mermaid sizes a sequence diagram from
+measured text, so the available fonts and the Chromium build decide the
+geometry. The hash check still catches the two mistakes that matter, a source
+edited without re-rendering and a hand-edited SVG, and needs no browser.
+
+Commit the lock file together with the SVGs.

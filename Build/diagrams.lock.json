@@ -1,0 +1,26 @@
+{
+  "note": "Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.",
+  "generator": "6700d531063f3a03bb05c49aca65eb57626142761094c123618f402436d9e64a",
+  "diagrams": {
+    "a2a": {
+      "source": "db97fe17118d9d124210a56a9c1dd0712f15aea69b7ee749c6e0829e082356be",
+      "svg": "e92a92a95e62da702b702e9405f846aaece2a748caa256bc0b0c1219a7d2c8c9"
+    },
+    "a2ui": {
+      "source": "ef141aa40e61b626d3d027b4ce7a26aae35a9b8dd261349e5239381afb9efbb9",
+      "svg": "e38d4d97beced9010953e395602e53de607037c0a8b90ff449d3f20e687932e0"
+    },
+    "agui": {
+      "source": "b00058f4aa64339d1d4c8212eadc77ded3c08d74e0e255a0c29b0fa2c47fb910",
+      "svg": "5f880e68696a4fb93abc39e8d75658c9b5f882741cbe1920d7faddc761adfdd5"
+    },
+    "ap2": {
+      "source": "b1de07c46578bbcc7c7ea66e71e6b6a0cfc3494ead07987c48438123edb603f1",
+      "svg": "83b6d81f04b2fa27615363bd6e6706719d0666249d495d9a0784ad42a883aec7"
+    },
+    "ucp": {
+      "source": "56ed2d379beda805dbe3455fcbadf78c89612cbf9c9fe77f803adcc860da462f",
+      "svg": "42cef2ba563879037607df3212e69f71f23b4c391fb80c4c80cb8a603b4e770c"
+    }
+  }
+}

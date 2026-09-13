@@ -97,7 +97,8 @@ own component collection.
 ```bash
 composer install
 composer ci          # cgl, PHPStan level 8, unit, functional
-npm ci && npm run diagrams   # re-render the sequence diagrams
+npm ci && npm run diagrams   # re-render the sequence diagrams + lock file
+npm run diagrams:check       # what CI checks; needs no node modules
 ```
 
 PHPStan runs at level 8 with no baseline. Functional tests run on SQLite by

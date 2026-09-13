@@ -11,12 +11,18 @@
  * a small stylesheet defining those variables (light plus a prefers-color-scheme
  * dark block, and the protocol's accent) is injected into the SVG itself.
  *
- * The output must be reproducible: CI re-runs this and fails if the committed
- * files differ, so keep every transform deterministic and pin mermaid via the
- * committed package-lock.json.
+ * Mermaid sizes a sequence diagram from measured text, so the geometry depends
+ * on the fonts and Chromium build of whoever renders it: the same sources give
+ * a different viewBox on macOS than on a Linux runner. Re-rendering in CI and
+ * diffing the result therefore cannot work. Instead this writes Build/diagrams.lock.json,
+ * recording the hash of every source, of this renderer and of
+ * each generated file; `npm run diagrams:check` (Build/check-diagrams.mjs)
+ * verifies those hashes without node modules or a browser. Keep the transforms
+ * deterministic anyway, so re-rendering on one machine stays a no-op.
  */
 
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
@@ -176,3 +182,23 @@ for (const file of sources) {
 }
 
 rmSync(work, { recursive: true, force: true });
+
+const sha = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
+writeFileSync(
+  join(ROOT, 'Build/diagrams.lock.json'),
+  `${JSON.stringify(
+    {
+      note: 'Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.',
+      generator: sha(join(ROOT, 'Build/render-diagrams.mjs')),
+      diagrams: Object.fromEntries(
+        sources.map((file) => {
+          const key = basename(file, '.mmd');
+          return [key, { source: sha(join(SRC, file)), svg: sha(join(OUT, `${key}.svg`)) }];
+        }),
+      ),
+    },
+    null,
+    2,
+  )}\n`,
+);
+console.log('wrote Build/diagrams.lock.json');
