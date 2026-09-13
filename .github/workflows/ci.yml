@@ -30,7 +30,7 @@ jobs:
         run: composer validate --strict --no-check-lock
 
       - name: Audit dependencies
-        run: composer update --no-install --no-interaction && composer audit --no-dev
+        run: composer update --no-install --no-interaction && composer audit --no-dev --locked
 
       - name: Lint PHP
         run: |

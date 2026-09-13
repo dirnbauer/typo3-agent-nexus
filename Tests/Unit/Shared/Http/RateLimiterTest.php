@@ -66,13 +66,14 @@ final class RateLimiterTest extends UnitTestCase
     /** An in-memory stand-in for a TYPO3 cache frontend. */
     private function countingCache(): FrontendInterface
     {
+        /** @var \ArrayObject<string, mixed> $store */
         $store = new \ArrayObject();
         $cache = $this->createMock(FrontendInterface::class);
         $cache->method('get')->willReturnCallback(
             static fn(string $entryIdentifier): mixed => $store[$entryIdentifier] ?? false,
         );
         $cache->method('set')->willReturnCallback(
-            static function (string $entryIdentifier, $data) use ($store): void {
+            static function (string $entryIdentifier, mixed $data) use ($store): void {
                 $store[$entryIdentifier] = $data;
             },
         );

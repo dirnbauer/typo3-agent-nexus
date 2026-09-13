@@ -145,6 +145,16 @@ mkdirSync(OUT, { recursive: true });
 const work = mkdtempSync(join(tmpdir(), 'anx-mmd-'));
 writeFileSync(join(work, 'config.json'), JSON.stringify(THEME));
 
+// mermaid-cli renders through headless Chromium. Ubuntu 24.04 (and the GitHub
+// runners built on it) restrict unprivileged user namespaces with AppArmor, so
+// Chromium's own sandbox cannot start and the process aborts with "No usable
+// sandbox". The inputs here are the .mmd files in this repository, so dropping
+// the sandbox costs nothing: nothing untrusted is ever loaded into the browser.
+writeFileSync(
+  join(work, 'puppeteer.json'),
+  JSON.stringify({ args: ['--no-sandbox', '--disable-dev-shm-usage'] }),
+);
+
 const sources = readdirSync(SRC).filter((file) => file.endsWith('.mmd')).sort();
 for (const file of sources) {
   const key = basename(file, '.mmd');
@@ -154,6 +164,7 @@ for (const file of sources) {
     '-i', join(SRC, file),
     '-o', svgPath,
     '-c', join(work, 'config.json'),
+    '-p', join(work, 'puppeteer.json'),
     '-b', 'transparent',
     // unique id per diagram: the embedded stylesheet scopes all rules to it
     '--svgId', `anx-mm-${key}`,
