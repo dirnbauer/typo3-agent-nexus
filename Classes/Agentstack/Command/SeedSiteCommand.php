@@ -302,28 +302,37 @@ final class SeedSiteCommand extends Command
             $this->upsertText($rootUid, 'home:intro', 'Five agent protocols, running on this TYPO3', '<p>Agent Nexus is a working lab, not a slide deck: every page below runs a real implementation of one protocol against this installation&rsquo;s own content, catalogue and endpoints. Nothing is charged, nothing is sent — the demos are deliberately sandboxed.</p>', $dryRun);
         }
 
+        $previousPageUid = $storageUid;
         foreach (self::PAGES as $page) {
             $pageUid = $this->upsertRecord('pages', 'page:' . $page['key'], $this->findSeeded('pages', 'page:' . $page['key']), $rootUid, [
                 'title' => $page['title'],
                 'slug' => '/' . $page['slug'],
                 'doktype' => 1,
                 'hidden' => $hidden ? 1 : 0,
-            ], $dryRun);
+            ], $dryRun, $previousPageUid);
+            if ($pageUid > 0) {
+                $previousPageUid = $pageUid;
+            }
             $io->writeln($this->line($page['title'], $pageUid, '/' . $page['slug']));
 
             if ($pageUid === 0) {
                 continue;
             }
 
-            $this->upsertText($pageUid, 'ce:' . $page['key'] . ':intro', $page['header'], $page['intro'], $dryRun);
+            // Chained the same way as the pages: intro, then demo, then the
+            // protocol explanation, in that reading order.
+            $previousCeUid = $this->upsertText($pageUid, 'ce:' . $page['key'] . ':intro', $page['header'], $page['intro'], $dryRun);
 
             if ($page['ctype'] !== null) {
                 $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':demo', $this->findSeeded('tt_content', 'ce:' . $page['key'] . ':demo'), $pageUid, [
                     'CType' => $page['ctype'],
                     'header' => 'Try it',
                     'colPos' => 0,
-                ], $dryRun);
+                ], $dryRun, $previousCeUid);
                 $io->writeln($this->line('    demo (' . $page['ctype'] . ')', $uid, ''));
+                if ($uid > 0) {
+                    $previousCeUid = $uid;
+                }
             }
 
             if ($page['protocol'] !== null) {
@@ -343,7 +352,7 @@ final class SeedSiteCommand extends Command
                             ],
                         ],
                     ],
-                ], $dryRun);
+                ], $dryRun, $previousCeUid);
                 $io->writeln($this->line('    protocol info (' . $page['protocol'] . ')', $uid, ''));
             }
         }
@@ -351,14 +360,14 @@ final class SeedSiteCommand extends Command
         return $rootUid;
     }
 
-    private function upsertText(int $pid, string $key, string $header, string $bodytext, bool $dryRun): int
+    private function upsertText(int $pid, string $key, string $header, string $bodytext, bool $dryRun, int $afterUid = 0): int
     {
         return $this->upsertRecord('tt_content', $key, $this->findSeeded('tt_content', $key), $pid, [
             'CType' => 'textmedia',
             'header' => $header,
             'bodytext' => $bodytext,
             'colPos' => 0,
-        ], $dryRun);
+        ], $dryRun, $afterUid);
     }
 
     /**
@@ -366,7 +375,7 @@ final class SeedSiteCommand extends Command
      *
      * @param array<string, mixed> $fields
      */
-    private function upsertRecord(string $table, string $key, int $existingUid, int $pid, array $fields, bool $dryRun): int
+    private function upsertRecord(string $table, string $key, int $existingUid, int $pid, array $fields, bool $dryRun, int $afterUid = 0): int
     {
         $fields['tx_agentnexus_seed_key'] = $key;
 
@@ -380,7 +389,11 @@ final class SeedSiteCommand extends Command
         }
 
         $placeholder = 'NEW' . substr(md5($table . $key . microtime(false)), 0, 12);
-        $fields['pid'] = $pid;
+        // A plain pid puts the new record at the TOP of its page, so creating
+        // siblings in order produced them in reverse: the menu read Docs,
+        // Playground, AP2 … instead of A2UI first. The negative uid of the
+        // sibling it should follow is DataHandler's "insert after this one".
+        $fields['pid'] = $afterUid > 0 ? -$afterUid : $pid;
         $dataHandler = $this->data([$table => [$placeholder => $fields]]);
 
         return (int)($dataHandler->substNEWwithIDs[$placeholder] ?? 0);
