@@ -36,9 +36,11 @@ Each one covers a different edge of an agentic system:
         -   How do you prove a specific human authorized a specific purchase?
 
 Each protocol gets a backend playground that shows the raw wire frames, and a
-frontend plugin an editor can place on a page. A sixth element, **Protocol
-info**, explains one protocol next to its demo: the sequence diagram, the
-endpoints this installation exposes, and the four steps a request walks through.
+frontend plugin an editor can place on a page. Two further elements frame them:
+**Protocol hub** is the landing element — one card per protocol with its live
+health, the endpoints this installation exposes and a link to the running demo —
+and **Protocol info** explains one protocol next to its demo, with the sequence
+diagram, the endpoints and the four steps a request walks through.
 
 Who it is for
 =============

@@ -16,8 +16,10 @@ Five agent protocols, running against your own TYPO3 — not slides about them.
 | **AP2** | agent ↔ payment | How do you prove a specific human authorized a specific purchase? |
 
 Each protocol gets a backend playground that shows the raw wire frames, and a
-frontend plugin an editor can place on a page. A sixth element, **Protocol
-info**, explains one protocol next to its demo — diagram, endpoints, and the
+frontend plugin an editor can place on a page. Two more elements frame them:
+**Protocol hub** puts one card per protocol on a landing page — live health,
+what it exposes here, a link to the running demo — and **Protocol info**
+explains one protocol next to its demo, with the diagram, the endpoints and the
 four steps a request walks through.
 
 Everything runs deterministically by default. A language model is optional, per
@@ -73,12 +75,13 @@ Build the whole demo site with one command:
 vendor/bin/typo3 agentnexus:seed-site --base=https://example.org/
 ```
 
-It creates a siteroot with `/a2ui`, `/ag-ui`, `/a2a`, `/ucp`, `/ap2`,
-`/playground` and `/docs` — each protocol page carrying an intro, its demo and a
-protocol info element — plus a `data` sysfolder as the storage pid, and writes
-the site configuration. Everything goes through DataHandler, and it is
-idempotent: a second run updates the same records even after an editor renamed
-them. Add `--dry-run` to see what it would do.
+It creates a siteroot with a hub on the home page, `/a2ui`, `/ag-ui`, `/a2a`,
+`/ucp` and `/ap2` each carrying an intro, its demo and a protocol info element,
+all five demos on `/playground`, `/docs`, and a `data` sysfolder as the storage
+pid — then writes the site configuration. Everything goes through DataHandler,
+and it is idempotent in the strong sense: a second run restores a renamed page's
+slug and a dragged element's position, and changes nothing when there is nothing
+to change. `--dry-run` shows what it would do.
 
 To put the plugins on a site you already have, add one set:
 
@@ -88,9 +91,9 @@ dependencies:
   - webconsulting/agent-nexus
 ```
 
-Using [Desiderio](https://github.com/dirnbauer/desiderio) (^4.1)? Use
-`webconsulting/agent-nexus-desiderio` instead — same markup, framed by the site's
-own component collection.
+The widgets take their neutrals from the host theme's shadcn variables, so a
+Desiderio site needs nothing extra. `webconsulting/agent-nexus-desiderio` still
+resolves but is deprecated and does nothing; drop it.
 
 ## Develop
 
@@ -103,7 +106,8 @@ npm run diagrams:check       # what CI checks; needs no node modules
 
 PHPStan runs at level 8 with no baseline. Functional tests run on SQLite by
 default and cover all nine endpoints in deterministic mode, the seed command,
-the upgrade wizard and the hub.
+the upgrade wizard and the hub. `Documentation/Developer/Rethink.rst` records
+what each demo proves, what is missing and what is carried rather than used.
 
 ## Docs
 

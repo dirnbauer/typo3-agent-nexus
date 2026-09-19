@@ -90,7 +90,7 @@ final class LlmGuardTest extends UnitTestCase
     #[Test]
     public function unreadableExtensionConfigurationDoesNotCrashTheGuard(): void
     {
-        $extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
+        $extensionConfiguration = self::createStub(ExtensionConfiguration::class);
         $extensionConfiguration->method('get')->willThrowException(new \RuntimeException('not installed', 1751400200));
 
         $guard = new LlmGuard($extensionConfiguration, $this->client(true), $this->tracker(0.0));
@@ -114,7 +114,7 @@ final class LlmGuardTest extends UnitTestCase
      */
     private function guard(array $configuration, bool $available = true, float $costToday = 0.0): LlmGuard
     {
-        $extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
+        $extensionConfiguration = self::createStub(ExtensionConfiguration::class);
         $extensionConfiguration->method('get')->willReturn($configuration);
 
         return new LlmGuard($extensionConfiguration, $this->client($available), $this->tracker($costToday));
@@ -122,14 +122,14 @@ final class LlmGuardTest extends UnitTestCase
 
     private function client(bool $available): LlmClient
     {
-        $client = $this->createMock(LlmClient::class);
+        $client = self::createStub(LlmClient::class);
         $client->method('isAvailable')->willReturn($available);
         return $client;
     }
 
     private function tracker(float $costToday): LlmUsageTracker
     {
-        $tracker = $this->createMock(LlmUsageTracker::class);
+        $tracker = self::createStub(LlmUsageTracker::class);
         $tracker->method('getCostToday')->willReturn($costToday);
         return $tracker;
     }

@@ -49,7 +49,7 @@ final class RateLimiterTest extends UnitTestCase
     #[Test]
     public function aBrokenCacheFailsOpenSoADemoPageStaysUp(): void
     {
-        $cacheManager = $this->createMock(CacheManager::class);
+        $cacheManager = self::createStub(CacheManager::class);
         $cacheManager->method('getCache')->willThrowException(new \RuntimeException('no such cache', 1751400100));
 
         $subject = new RateLimiter($cacheManager);
@@ -68,7 +68,7 @@ final class RateLimiterTest extends UnitTestCase
     {
         /** @var \ArrayObject<string, mixed> $store */
         $store = new \ArrayObject();
-        $cache = $this->createMock(FrontendInterface::class);
+        $cache = self::createStub(FrontendInterface::class);
         $cache->method('get')->willReturnCallback(
             static fn(string $entryIdentifier): mixed => $store[$entryIdentifier] ?? false,
         );
@@ -82,7 +82,7 @@ final class RateLimiterTest extends UnitTestCase
 
     private function cacheManager(FrontendInterface $cache): CacheManager
     {
-        $cacheManager = $this->createMock(CacheManager::class);
+        $cacheManager = self::createStub(CacheManager::class);
         $cacheManager->method('getCache')->willReturn($cache);
         return $cacheManager;
     }

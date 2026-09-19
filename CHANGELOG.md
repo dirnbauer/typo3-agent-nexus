@@ -4,6 +4,77 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [3.1.0] — 2026-09-19
+
+The release that makes the demo site worth landing on, and fixes three things
+that were quietly broken.
+
+### Added
+
+*   **A "Protocol hub" content element** (`agentnexus_hub`): one card per
+    protocol with its edge, what it is for, the countable fact the catalogue
+    already derives, the endpoints this installation exposes, live health and a
+    link to the running demo. Nothing on a card is written down twice — it comes
+    from `ProtocolCatalog` and `ProtocolStatusService` — so a card cannot
+    describe something this installation does not have. The seed puts one on the
+    site root, and one with health and endpoints switched off on `/docs`, which
+    turns that page into an index of the five specifications.
+*   **The playground actually carries all five demos.** Its intro promised "all
+    five demos side by side" over an empty page.
+*   **`Documentation/Developer/Rethink.rst`**: what each demo proves, what it
+    stops short of, what is missing and what is carried rather than used.
+
+### Fixed
+
+*   **The reading order was wrong on every protocol page** and re-seeding did
+    not repair it — protocol info above the demo above the intro. Records are no
+    longer positioned on create; one mechanism settles each sibling list
+    afterwards, so the order is *converged on* rather than merely produced once.
+    Siblings already in order produce no command, so a second run stays a true
+    no-op.
+*   **The whole backend section was invisible in a draft workspace.** Every
+    module was declared live-only, so a user whose backend session sat in a
+    workspace got "No module access" for the read-only hub as well. Nothing here
+    edits versioned content, so the restriction bought nothing.
+*   **The overview module crashed on every load.** Fluid resolves
+    `{protocol.healthIcon}` to a getter or a property and never to a method, so
+    the icon identifier was null and `IconViewHelper` fataled. The derived values
+    on `ProtocolStatus` are computed properties now.
+*   **Every element was framed twice.** 100–300px of empty page around each demo,
+    a max-width inside the same max-width, a card inside a card and the protocol
+    badge printed twice — see *Removed*.
+*   **Seeded demos looked broken**: DataHandler does not apply FlexForm defaults
+    (the backend form does, on an editor's first save), so every seeded widget
+    had an empty input and no intro. The seed reads them from the data structure
+    TCA already points at.
+*   **The page scrolled sideways on a phone.** A grid item's min-width defaults
+    to min-content, so the sequence diagram and the endpoint table — both of
+    which scroll inside their own box — stretched the element past the viewport
+    instead.
+*   The AP2 widget was capped at 40rem while the other four filled their column,
+    and the overview's "Playground" button had no variant class, so it rendered
+    as plain text beside a real button.
+
+### Removed
+
+*   **The Desiderio plugin templates.** They wrapped each element in a section, a
+    container, a card and a badge, inside the section, container and frame a
+    content element already has. The `webconsulting/agent-nexus-desiderio` set
+    still resolves so configured sites keep working, but it is deprecated, does
+    nothing, and goes in 4.0 — drop it from `dependencies`. The integration that
+    matters was never markup: `nexus-tokens.css` maps every `--anx-*` neutral
+    onto the shadcn variables a Desiderio site publishes.
+*   **`a2ui:seed:demo`, `agui:seed:demo`, `a2a:seed:demo`, `ucp:seed:demo` and
+    `ap2:seed:demo`.** Five commands that predated `agentnexus:seed-site`: they
+    wrote a content element straight into the database — no slug, no reference
+    index, no history — below a page uid that defaulted to `671`, a page from
+    the installation they were written on. Use `agentnexus:seed-site`.
+
+### Changed
+
+*   PHPUnit is now `^12.4 || ^13.0`; the unit suite's stubs are declared as
+    stubs, which is what PHPUnit 13 asks for.
+
 ## [3.0.0] — 2026-09-13
 
 The release that makes Agent Nexus installable anywhere, testable, and honest

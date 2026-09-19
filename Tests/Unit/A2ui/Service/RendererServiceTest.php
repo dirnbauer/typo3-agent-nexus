@@ -175,7 +175,7 @@ final class RendererServiceTest extends UnitTestCase
             }
         };
 
-        $factory = $this->createMock(ViewFactoryInterface::class);
+        $factory = self::createStub(ViewFactoryInterface::class);
         $factory->method('create')->willReturnCallback(
             static fn(ViewFactoryData $data): ViewInterface => clone $view,
         );

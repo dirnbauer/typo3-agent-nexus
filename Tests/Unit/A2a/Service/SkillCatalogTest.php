@@ -64,8 +64,8 @@ final class SkillCatalogTest extends UnitTestCase
     {
         $runner = new TaskRunner(
             $this->subject,
-            $this->createMock(LlmClient::class),
-            $this->createMock(LlmUsageTracker::class),
+            self::createStub(LlmClient::class),
+            self::createStub(LlmUsageTracker::class),
         );
 
         $frames = iterator_to_array($runner->run([
@@ -95,8 +95,8 @@ final class SkillCatalogTest extends UnitTestCase
     {
         $runner = new TaskRunner(
             $this->subject,
-            $this->createMock(LlmClient::class),
-            $this->createMock(LlmUsageTracker::class),
+            self::createStub(LlmClient::class),
+            self::createStub(LlmUsageTracker::class),
         );
 
         $frames = iterator_to_array($runner->run([

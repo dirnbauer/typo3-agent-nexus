@@ -571,7 +571,8 @@
 
 /* ==== AP2 trusted surface ================================================== */
 
-.ap2-ts__panel { max-width: 40rem; }
+/* No max-width here: the other four widgets fill their content column, and a
+   40rem cap made AP2 the one demo that stopped half way across the page. */
 .ap2-ts__shield { width: 14px; height: 14px; }
 .ap2-ts__sim { margin: .4rem 0 0; font-size: .78rem; color: var(--accent); }
 
@@ -713,6 +714,11 @@
   box-shadow: var(--anx-shadow-sm);
   padding: clamp(1rem, 3vw, 1.6rem);
   display: grid;
+  /* minmax(0, 1fr), not the implicit "auto": a grid item's min-width defaults
+     to min-content, so the diagram and the endpoint table — both of which carry
+     a min-width and scroll inside their own box — stretched this element past
+     the viewport instead, and the whole page scrolled sideways on a phone. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.25rem;
 }
 
@@ -869,6 +875,7 @@
   margin: 1.5rem 0;
   font-size: 1rem;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
 }
 
@@ -891,7 +898,10 @@
   padding: 0;
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  /* 20rem lands on three columns in a typical content width, so five cards read
+     as 3 + 2 rather than 4 + 1 stranded. min() keeps the track from exceeding a
+     narrow viewport, which minmax() alone would do. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
 }
 
 .anx-hub__card {
@@ -900,6 +910,7 @@
      across the row, however long each tagline runs. */
   grid-template-rows: auto auto auto auto auto 1fr;
   gap: 0.6rem;
+  min-width: 0;
   padding: clamp(1rem, 2.5vw, 1.3rem);
   border: 1px solid var(--anx-border);
   border-radius: calc(var(--anx-radius) + 0.25rem);

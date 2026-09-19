@@ -4,7 +4,6 @@
     xsi:noNamespaceSchemaLocation="../../.Build/vendor/phpunit/phpunit/phpunit.xsd"
     backupGlobals="true"
     bootstrap="UnitTestsBootstrap.php"
-    cacheResult="false"
     colors="true"
     failOnRisky="true"
     failOnWarning="true"

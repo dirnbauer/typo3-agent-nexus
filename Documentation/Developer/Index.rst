@@ -11,6 +11,7 @@ For developers
     :titlesonly:
 
     Testing
+    Rethink
 
 Layout
 ======

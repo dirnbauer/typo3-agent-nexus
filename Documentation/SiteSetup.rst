@@ -22,23 +22,30 @@ index behave exactly as they would in the backend:
 
 ..  code-block:: text
 
-    Agent Nexus          /              siteroot, hero intro
+    Agent Nexus          /              siteroot, intro + protocol hub
       A2UI               /a2ui          intro + Inquiry demo + protocol info
       AG-UI              /ag-ui         intro + Assistant demo + protocol info
       A2A                /a2a           intro + Concierge demo + protocol info
       UCP                /ucp           intro + Checkout demo + protocol info
       AP2                /ap2           intro + Trusted surface demo + protocol info
-      Playground         /playground    room for every demo on one page
-      Docs               /docs          where to read more
+      Playground         /playground    intro + all five demos
+      Docs               /docs          intro + a hub as the specification index
       data               (sysfolder)    storage pid for inquiries, leads, orders
 
 It also writes the site configuration, adds the ``webconsulting/agent-nexus``
 set to it, and records the storage folder as the ``agentNexus.storagePid`` site
 setting.
 
-**The command is idempotent.** Every record it creates carries a logical key in
-:sql:`tx_agentnexus_seed_key`, so a second run updates exactly the same rows —
-even after an editor renamed or moved them — and never duplicates anything.
+Each element is created with the FlexForm defaults an editor would have got:
+DataHandler does not apply them — the backend form writes them on an editor's
+first save — so a programmatically created widget would otherwise have an empty
+input and no intro.
+
+**The command converges, it does not just create.** Every record it writes
+carries a logical key in :sql:`tx_agentnexus_seed_key`, so a second run updates
+exactly the same rows — even after an editor renamed, moved or reordered them —
+and never duplicates anything. A renamed page gets its slug back and a dragged
+element its position; when nothing has drifted, the run writes nothing at all.
 Records without such a key were not seeded and are never touched.
 
 Options
@@ -113,16 +120,18 @@ storage pid, and keeps the deprecated CType aliases rendering.
 With the Desiderio design system
 --------------------------------
 
-If the site uses :composer:`webconsulting/desiderio` (^4.1), use its set
-instead — it depends on the plain one and only adds a higher-priority template
-root, so each plugin resolves a variant composed from Desiderio's component
-collection:
+Nothing extra is needed. The widgets take their neutrals from the host theme:
+:file:`nexus-tokens.css` maps every ``--anx-*`` token onto the shadcn variables
+a Desiderio site publishes (``--card``, ``--border``, ``--muted-foreground`` and
+the rest), so they follow its palette, spacing scale and dark mode on their own.
 
-..  code-block:: yaml
-    :caption: config/sites/<identifier>/config.yaml
+..  deprecated:: 3.1
+    ``webconsulting/agent-nexus-desiderio`` still resolves, so a site that lists
+    it keeps working, but it no longer does anything and is removed in 4.0.
+    Replace it with ``webconsulting/agent-nexus``.
 
-    dependencies:
-      - webconsulting/agent-nexus-desiderio
-
-Both variants render the same markup and behave identically; only the frame
-around them differs.
+    It used to add a higher-priority template root whose variants wrapped each
+    element in a section, a container, a card and a protocol badge — inside the
+    section, container and frame a content element already has. That doubled the
+    page padding around every demo, nested a max-width inside the same
+    max-width, drew a card inside a card and printed the badge twice.
