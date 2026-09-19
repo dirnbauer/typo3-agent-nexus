@@ -267,11 +267,11 @@ final class SeedSiteCommand extends Command
     {
         $io->section('Page tree');
 
-        $rootUid = $rootOption > 0 ? $rootOption : $this->findSeeded('pages', 'root');
         $rootIsOwn = $rootOption <= 0;
+        $rootUid = $rootOption;
 
         if ($rootIsOwn) {
-            $rootUid = $this->upsertRecord('pages', 'root', $rootUid, 0, [
+            $rootUid = $this->upsertRecord('pages', 'root', 0, [
                 'title' => 'Agent Nexus',
                 'slug' => '/',
                 'doktype' => 1,
@@ -290,7 +290,7 @@ final class SeedSiteCommand extends Command
             return 0;
         }
 
-        $storageUid = $this->upsertRecord('pages', 'data', $this->findSeeded('pages', 'data'), $rootUid, [
+        $storageUid = $this->upsertRecord('pages', 'data', $rootUid, [
             'title' => 'data',
             'doktype' => 254,
             'hidden' => 0,
@@ -302,41 +302,39 @@ final class SeedSiteCommand extends Command
             $this->upsertText($rootUid, 'home:intro', 'Five agent protocols, running on this TYPO3', '<p>Agent Nexus is a working lab, not a slide deck: every page below runs a real implementation of one protocol against this installation&rsquo;s own content, catalogue and endpoints. Nothing is charged, nothing is sent — the demos are deliberately sandboxed.</p>', $dryRun);
         }
 
-        $previousPageUid = $storageUid;
+        $pageOrder = [$storageUid];
         foreach (self::PAGES as $page) {
-            $pageUid = $this->upsertRecord('pages', 'page:' . $page['key'], $this->findSeeded('pages', 'page:' . $page['key']), $rootUid, [
+            $pageUid = $this->upsertRecord('pages', 'page:' . $page['key'], $rootUid, [
                 'title' => $page['title'],
                 'slug' => '/' . $page['slug'],
                 'doktype' => 1,
                 'hidden' => $hidden ? 1 : 0,
-            ], $dryRun, $previousPageUid);
-            if ($pageUid > 0) {
-                $previousPageUid = $pageUid;
-            }
+            ], $dryRun);
+            $pageOrder[] = $pageUid;
             $io->writeln($this->line($page['title'], $pageUid, '/' . $page['slug']));
 
             if ($pageUid === 0) {
                 continue;
             }
 
-            // Chained the same way as the pages: intro, then demo, then the
-            // protocol explanation, in that reading order.
-            $previousCeUid = $this->upsertText($pageUid, 'ce:' . $page['key'] . ':intro', $page['header'], $page['intro'], $dryRun);
+            // Intro, then the demo, then the protocol explanation — the order
+            // the page has to read in, whatever order the records were written.
+            $contentOrder = [
+                $this->upsertText($pageUid, 'ce:' . $page['key'] . ':intro', $page['header'], $page['intro'], $dryRun),
+            ];
 
             if ($page['ctype'] !== null) {
-                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':demo', $this->findSeeded('tt_content', 'ce:' . $page['key'] . ':demo'), $pageUid, [
+                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':demo', $pageUid, [
                     'CType' => $page['ctype'],
                     'header' => 'Try it',
                     'colPos' => 0,
-                ], $dryRun, $previousCeUid);
+                ], $dryRun);
                 $io->writeln($this->line('    demo (' . $page['ctype'] . ')', $uid, ''));
-                if ($uid > 0) {
-                    $previousCeUid = $uid;
-                }
+                $contentOrder[] = $uid;
             }
 
             if ($page['protocol'] !== null) {
-                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':info', $this->findSeeded('tt_content', 'ce:' . $page['key'] . ':info'), $pageUid, [
+                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':info', $pageUid, [
                     'CType' => 'agentnexus_protocolinfo',
                     'header' => 'How ' . $page['title'] . ' works',
                     'header_layout' => '100',
@@ -352,31 +350,39 @@ final class SeedSiteCommand extends Command
                             ],
                         ],
                     ],
-                ], $dryRun, $previousCeUid);
+                ], $dryRun);
                 $io->writeln($this->line('    protocol info (' . $page['protocol'] . ')', $uid, ''));
+                $contentOrder[] = $uid;
             }
+
+            $this->reorder('tt_content', $contentOrder);
         }
+
+        $this->reorder('pages', $pageOrder);
 
         return $rootUid;
     }
 
-    private function upsertText(int $pid, string $key, string $header, string $bodytext, bool $dryRun, int $afterUid = 0): int
+    private function upsertText(int $pid, string $key, string $header, string $bodytext, bool $dryRun): int
     {
-        return $this->upsertRecord('tt_content', $key, $this->findSeeded('tt_content', $key), $pid, [
+        return $this->upsertRecord('tt_content', $key, $pid, [
             'CType' => 'textmedia',
             'header' => $header,
             'bodytext' => $bodytext,
             'colPos' => 0,
-        ], $dryRun, $afterUid);
+        ], $dryRun);
     }
 
     /**
-     * Create or update one seeded record through DataHandler.
+     * Create or update one seeded record through DataHandler. Position is not
+     * this method's business — {@see reorder()} settles the whole sibling list
+     * once every record in it exists.
      *
      * @param array<string, mixed> $fields
      */
-    private function upsertRecord(string $table, string $key, int $existingUid, int $pid, array $fields, bool $dryRun, int $afterUid = 0): int
+    private function upsertRecord(string $table, string $key, int $pid, array $fields, bool $dryRun): int
     {
+        $existingUid = $this->findSeeded($table, $key);
         $fields['tx_agentnexus_seed_key'] = $key;
 
         if ($dryRun) {
@@ -389,14 +395,72 @@ final class SeedSiteCommand extends Command
         }
 
         $placeholder = 'NEW' . substr(md5($table . $key . microtime(false)), 0, 12);
-        // A plain pid puts the new record at the TOP of its page, so creating
-        // siblings in order produced them in reverse: the menu read Docs,
-        // Playground, AP2 … instead of A2UI first. The negative uid of the
-        // sibling it should follow is DataHandler's "insert after this one".
-        $fields['pid'] = $afterUid > 0 ? -$afterUid : $pid;
+        $fields['pid'] = $pid;
         $dataHandler = $this->data([$table => [$placeholder => $fields]]);
 
         return (int)($dataHandler->substNEWwithIDs[$placeholder] ?? 0);
+    }
+
+    /**
+     * Put a list of siblings into the intended reading order.
+     *
+     * A record created with a plain pid lands at the TOP of its page, so writing
+     * siblings in sequence produces them in reverse. Positioning them on create
+     * (DataHandler's negative "insert after this uid" target) fixed only the
+     * first run: records an earlier version had already created, or an editor
+     * had dragged, stayed where they were — a seeder that claims to be
+     * idempotent has to *converge* on the intended order, not merely produce it
+     * once. So nothing is positioned on create and the whole sibling list is
+     * settled here instead, with a single mechanism for both cases.
+     *
+     * Already in order means no command at all, which is what keeps a second run
+     * a true no-op: every move would otherwise recompute `sorting`.
+     *
+     * @param list<int> $uids in the order they should read; 0 for records a dry run did not create
+     */
+    private function reorder(string $table, array $uids): void
+    {
+        $uids = array_values(array_filter($uids));
+        if (count($uids) < 2 || $this->isOrdered($table, $uids)) {
+            return;
+        }
+
+        // One command map per move: "move after X" asks DataHandler where X sits
+        // right now, and a second move batched into the same map would still be
+        // answered from the record it read before the first one ran.
+        foreach (array_slice($uids, 1) as $index => $uid) {
+            $this->commands([$table => [$uid => ['move' => -$uids[$index]]]]);
+        }
+    }
+
+    /**
+     * @param list<int> $uids
+     */
+    private function isOrdered(string $table, array $uids): bool
+    {
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable($table);
+        $queryBuilder->getRestrictions()->removeAll();
+        /** @var array<int, int> $sorting */
+        $sorting = $queryBuilder
+            ->select('uid', 'sorting')
+            ->from($table)
+            ->where($queryBuilder->expr()->in('uid', $queryBuilder->createNamedParameter($uids, Connection::PARAM_INT_ARRAY)))
+            ->executeQuery()
+            ->fetchAllKeyValue();
+
+        $previous = null;
+        foreach ($uids as $uid) {
+            if (!isset($sorting[$uid])) {
+                return false;
+            }
+            $current = (int)$sorting[$uid];
+            if ($previous !== null && $current <= $previous) {
+                return false;
+            }
+            $previous = $current;
+        }
+
+        return true;
     }
 
     /**

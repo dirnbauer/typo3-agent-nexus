@@ -113,6 +113,51 @@ final class SeedSiteCommandTest extends AbstractAgentNexusTestCase
     }
 
     #[Test]
+    public function theMenuAndEveryPageReadInTheSeededOrder(): void
+    {
+        $this->seed();
+
+        self::assertSame(
+            ['data', 'page:a2ui', 'page:agui', 'page:a2a', 'page:ucp', 'page:ap2', 'page:playground', 'page:docs'],
+            $this->orderedKeys('pages', $this->pages()['root']['uid']),
+        );
+
+        foreach (['a2ui', 'agui', 'a2a', 'ucp', 'ap2'] as $protocol) {
+            self::assertSame(
+                ['ce:' . $protocol . ':intro', 'ce:' . $protocol . ':demo', 'ce:' . $protocol . ':info'],
+                $this->orderedKeys('tt_content', $this->pages()['page:' . $protocol]['uid']),
+                $protocol . ' does not read intro, demo, explainer',
+            );
+        }
+    }
+
+    #[Test]
+    public function aScrambledOrderIsRestoredByTheNextRun(): void
+    {
+        $this->seed();
+        $pageUid = $this->pages()['page:a2ui']['uid'];
+
+        // What an editor dragging elements around — or a seed run from before
+        // the order was settled — leaves behind.
+        $connection = $this->getConnectionPool()->getConnectionForTable('tt_content');
+        foreach (array_reverse($this->orderedKeys('tt_content', $pageUid)) as $index => $key) {
+            $connection->update('tt_content', ['sorting' => ($index + 1) * 256], ['tx_agentnexus_seed_key' => $key]);
+        }
+        self::assertSame(
+            ['ce:a2ui:info', 'ce:a2ui:demo', 'ce:a2ui:intro'],
+            $this->orderedKeys('tt_content', $pageUid),
+            'precondition: the page now reads backwards',
+        );
+
+        $this->seed();
+
+        self::assertSame(
+            ['ce:a2ui:intro', 'ce:a2ui:demo', 'ce:a2ui:info'],
+            $this->orderedKeys('tt_content', $pageUid),
+        );
+    }
+
+    #[Test]
     public function itFindsItsRecordsAgainEvenAfterAnEditorRenamedThem(): void
     {
         $this->seed();
@@ -202,7 +247,7 @@ final class SeedSiteCommandTest extends AbstractAgentNexusTestCase
         $queryBuilder = $this->getConnectionPool()->getQueryBuilderForTable('pages');
         $queryBuilder->getRestrictions()->removeAll();
         $rows = $queryBuilder
-            ->select('uid', 'pid', 'slug', 'doktype', 'is_siteroot', 'title', 'tx_agentnexus_seed_key')
+            ->select('uid', 'pid', 'slug', 'doktype', 'is_siteroot', 'title', 'sorting', 'tx_agentnexus_seed_key')
             ->from('pages')
             ->where(
                 $queryBuilder->expr()->neq('tx_agentnexus_seed_key', $queryBuilder->createNamedParameter('')),
@@ -275,7 +320,7 @@ final class SeedSiteCommandTest extends AbstractAgentNexusTestCase
         $queryBuilder = $this->getConnectionPool()->getQueryBuilderForTable('tt_content');
         $queryBuilder->getRestrictions()->removeAll();
         foreach ($queryBuilder
-            ->select('uid', 'pid', 'CType', 'header', 'tx_agentnexus_seed_key')
+            ->select('uid', 'pid', 'CType', 'header', 'sorting', 'tx_agentnexus_seed_key')
             ->from('tt_content')
             ->where($queryBuilder->expr()->eq('deleted', 0))
             ->orderBy('uid')
@@ -285,6 +330,30 @@ final class SeedSiteCommandTest extends AbstractAgentNexusTestCase
         }
 
         return ['pages' => $this->pages(), 'content' => $content];
+    }
+
+    /**
+     * The seed keys of one parent's seeded children, in the order the frontend
+     * would render them.
+     *
+     * @return list<string>
+     */
+    private function orderedKeys(string $table, int $pid): array
+    {
+        $queryBuilder = $this->getConnectionPool()->getQueryBuilderForTable($table);
+        $queryBuilder->getRestrictions()->removeAll();
+
+        return array_map(strval(...), $queryBuilder
+            ->select('tx_agentnexus_seed_key')
+            ->from($table)
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, Connection::PARAM_INT)),
+                $queryBuilder->expr()->neq('tx_agentnexus_seed_key', $queryBuilder->createNamedParameter('')),
+                $queryBuilder->expr()->eq('deleted', 0),
+            )
+            ->orderBy('sorting')
+            ->executeQuery()
+            ->fetchFirstColumn());
     }
 
     private function deletedFlag(string $table, int $uid): int
