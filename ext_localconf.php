@@ -13,6 +13,7 @@ use Webconsulting\AgentNexus\A2a\Eid\ConciergeEndpoint;
 use Webconsulting\AgentNexus\A2a\Eid\RpcEndpoint;
 use Webconsulting\AgentNexus\A2ui\Controller\InquiryPluginController;
 use Webconsulting\AgentNexus\A2ui\Eid\InquiryEndpoint;
+use Webconsulting\AgentNexus\Agentstack\Controller\HubPluginController;
 use Webconsulting\AgentNexus\Agentstack\Controller\ProtocolInfoPluginController;
 use Webconsulting\AgentNexus\Agui\Controller\AssistantPluginController;
 use Webconsulting\AgentNexus\Agui\Eid\AssistantEndpoint;
@@ -39,6 +40,7 @@ $plugins = [
     'Checkout' => CheckoutPluginController::class,
     'TrustedSurface' => TrustedSurfacePluginController::class,
     'ProtocolInfo' => ProtocolInfoPluginController::class,
+    'Hub' => HubPluginController::class,
 ];
 
 foreach ($plugins as $pluginName => $controller) {

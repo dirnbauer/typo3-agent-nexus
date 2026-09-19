@@ -113,6 +113,67 @@ final class SeedSiteCommandTest extends AbstractAgentNexusTestCase
     }
 
     #[Test]
+    public function theHomePageCarriesTheHubBelowItsIntro(): void
+    {
+        $this->seed();
+
+        self::assertSame(
+            ['home:intro', 'home:hub'],
+            $this->orderedKeys('tt_content', $this->pages()['root']['uid']),
+        );
+        self::assertSame('agentnexus_hub', $this->seededContent('home:hub')['CType']);
+    }
+
+    #[Test]
+    public function thePlaygroundReallyCarriesAllFiveDemos(): void
+    {
+        $this->seed();
+
+        $types = array_column($this->contentOf('page:playground'), 'CType');
+
+        self::assertSame(
+            ['agentnexus_inquiry', 'agentnexus_assistant', 'agentnexus_concierge', 'agentnexus_checkout', 'agentnexus_trustedsurface'],
+            array_values(array_filter($types, static fn(string $type): bool => $type !== 'textmedia')),
+        );
+    }
+
+    #[Test]
+    public function aSeededDemoGetsTheFlexFormDefaultsAnEditorWouldGet(): void
+    {
+        $this->seed();
+
+        $flexForm = (string)$this->seededContent('ce:a2ui:demo')['pi_flexform'];
+
+        self::assertStringContainsString('settings.placeholder', $flexForm);
+        self::assertStringContainsString('I need a quote for a 10-page website', $flexForm, 'the data structure default, not an empty input');
+    }
+
+    #[Test]
+    public function anExplicitSettingBeatsTheFlexFormDefault(): void
+    {
+        $this->seed();
+
+        // show_health defaults to 1; the Docs hub deliberately turns it off.
+        $flexForm = (string)$this->seededContent('ce:docs:specs')['pi_flexform'];
+
+        self::assertMatchesRegularExpression(
+            '#settings\.show_health.*?<value index="vDEF">0</value>#s',
+            $flexForm,
+        );
+    }
+
+    #[Test]
+    public function theDocsPageIndexesTheSpecifications(): void
+    {
+        $this->seed();
+
+        $hub = $this->seededContent('ce:docs:specs');
+
+        self::assertSame('agentnexus_hub', $hub['CType']);
+        self::assertStringContainsString('<value index="vDEF">0</value>', (string)$hub['pi_flexform'], 'health and endpoints are off here');
+    }
+
+    #[Test]
     public function theMenuAndEveryPageReadInTheSeededOrder(): void
     {
         $this->seed();

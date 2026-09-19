@@ -1,0 +1,86 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:comment>
+    The protocol hub: one card per protocol, each one a door into the running
+    demo. Everything on a card is derived — the description and the headline
+    figure come from the catalogue, the health chip from the status service, the
+    link from the routed page — so a card can never describe something this
+    installation does not actually have.
+</f:comment>
+
+<section class="anx anx--frontend anx-hub">
+
+    <header class="anx-hub__head">
+        <f:if condition="{data.header}">
+            <h2 class="anx-hub__title">{data.header}</h2>
+        </f:if>
+        <f:if condition="{settings.intro}">
+            <p class="anx-hub__intro">{settings.intro}</p>
+        </f:if>
+    </header>
+
+    <ul class="anx-hub__grid">
+        <f:for each="{cards}" as="card">
+            <li class="anx-hub__card anx-accent--{card.key}" data-accent="{card.key}">
+
+                <p class="anx-hub__eyebrow">
+                    <span class="anx-hub__badge">{card.label}</span>
+                    <span class="anx-hub__edge">{card.edge}</span>
+                </p>
+
+                <h3 class="anx-hub__name">{card.name}</h3>
+                <p class="anx-hub__tagline">{card.tagline}</p>
+
+                <f:if condition="{card.headline}">
+                    <p class="anx-hub__fact">
+                        <span class="anx-hub__fact-value">{card.headline.value}</span>
+                        <span class="anx-hub__fact-label">{card.headline.label}</span>
+                    </p>
+                </f:if>
+
+                <f:if condition="{settings.show_endpoints}">
+                    <ul class="anx-hub__endpoints">
+                        <f:for each="{card.endpoints}" as="endpoint">
+                            <li>
+                                <span class="anx-hub__method">{endpoint.method}</span>
+                                <code>{endpoint.id}</code>
+                            </li>
+                        </f:for>
+                    </ul>
+                </f:if>
+
+                <footer class="anx-hub__foot">
+                    <f:if condition="{settings.show_health}">
+                        <p class="anx-hub__health anx-hub__health--{card.status.health}">
+                            <span class="anx-hub__dot" aria-hidden="true"></span>
+                            <span>{card.status.healthLabel} &#183; {card.status.modeLabel}</span>
+                        </p>
+                    </f:if>
+
+                    <f:if condition="{card.status.frontendUrl}">
+                        <f:then>
+                            <a class="anx-hub__go" href="{card.status.frontendUrl}">
+                                Open the {card.label} demo
+                                <span aria-hidden="true">&#8594;</span>
+                            </a>
+                        </f:then>
+                        <f:else>
+                            <p class="anx-hub__go anx-hub__go--missing">
+                                No demo page yet &#8212; run <code>agentnexus:seed-site</code>
+                            </p>
+                        </f:else>
+                    </f:if>
+
+                    <a class="anx-hub__spec" href="{card.spec}" rel="noopener noreferrer" target="_blank">
+                        {card.label} specification
+                        <span aria-hidden="true">&#8599;</span>
+                    </a>
+                </footer>
+            </li>
+        </f:for>
+    </ul>
+
+</section>
+
+</html>

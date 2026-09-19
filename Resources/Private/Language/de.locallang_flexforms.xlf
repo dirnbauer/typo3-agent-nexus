@@ -86,5 +86,14 @@
         <unit id="protocolInfo.sections.howItWorks"><segment state="final"><source>How it works</source><target>So funktioniert es</target></segment></unit>
         <unit id="protocolInfo.showFacts.label"><segment state="final"><source>Show the live facts row</source><target>Zeile mit Live-Kennzahlen anzeigen</target></segment></unit>
         <unit id="protocolInfo.showFacts.description"><segment state="final"><source>Numbers read from the services that implement the protocol &#8212; advertised skills, event types, catalog size &#8212; so they stay true as the demo changes.</source><target>Zahlen direkt aus den Diensten, die das Protokoll umsetzen &#8212; angebotene Skills, Ereignistypen, Katalogumfang &#8212;, damit sie bei &#196;nderungen der Demo korrekt bleiben.</target></segment></unit>
+
+        <!-- Agent Nexus: Protokoll-Hub -->
+        <unit id="hub.sheet"><segment><source>Protocol hub</source><target>Protokoll-Hub</target></segment></unit>
+        <unit id="hub.intro.label"><segment><source>Intro text</source><target>Einleitungstext</target></segment></unit>
+        <unit id="hub.intro.description"><segment><source>One or two sentences above the cards.</source><target>Ein bis zwei S&#228;tze &#252;ber den Karten. Leer lassen, wenn die &#220;berschrift des Elements gen&#252;gt.</target></segment></unit>
+        <unit id="hub.showHealth.label"><segment><source>Show the health chip</source><target>Status-Chip anzeigen</target></segment></unit>
+        <unit id="hub.showHealth.description"><segment><source>Whether each card reports the live state of its protocol.</source><target>Ob jede Karte den aktuellen Zustand ihres Protokolls meldet &#8212; registrierte Endpunkte, vorhandener Ablageordner, Modell an oder aus.</target></segment></unit>
+        <unit id="hub.showEndpoints.label"><segment><source>Show the endpoints</source><target>Endpunkte anzeigen</target></segment></unit>
+        <unit id="hub.showEndpoints.description"><segment><source>Lists the eID endpoints each protocol exposes on this installation.</source><target>Listet die eID-Endpunkte auf, die jedes Protokoll in dieser Installation bereitstellt.</target></segment></unit>
     </file>
 </xliff>

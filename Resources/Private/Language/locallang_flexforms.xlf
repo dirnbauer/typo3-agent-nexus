@@ -86,5 +86,14 @@
         <unit id="protocolInfo.sections.howItWorks"><segment><source>How it works</source></segment></unit>
         <unit id="protocolInfo.showFacts.label"><segment><source>Show the live facts row</source></segment></unit>
         <unit id="protocolInfo.showFacts.description"><segment><source>Numbers read from the services that implement the protocol &#8212; advertised skills, event types, catalog size &#8212; so they stay true as the demo changes.</source></segment></unit>
+
+        <!-- Agent Nexus: Protocol hub -->
+        <unit id="hub.sheet"><segment><source>Protocol hub</source></segment></unit>
+        <unit id="hub.intro.label"><segment><source>Intro text</source></segment></unit>
+        <unit id="hub.intro.description"><segment><source>One or two sentences above the cards. Leave empty to let the element&#8217;s header stand alone.</source></segment></unit>
+        <unit id="hub.showHealth.label"><segment><source>Show the health chip</source></segment></unit>
+        <unit id="hub.showHealth.description"><segment><source>Whether each card reports the live state of its protocol &#8212; endpoints registered, storage folder present, model on or off.</source></segment></unit>
+        <unit id="hub.showEndpoints.label"><segment><source>Show the endpoints</source></segment></unit>
+        <unit id="hub.showEndpoints.description"><segment><source>Lists the eID endpoints each protocol exposes on this installation.</source></segment></unit>
     </file>
 </xliff>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<T3DataStructure>
+    <sheets>
+        <sDEF>
+            <ROOT>
+                <sheetTitle>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.sheet</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.intro>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.intro.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.intro.description</description>
+                        <config>
+                            <type>text</type>
+                            <rows>2</rows>
+                        </config>
+                    </settings.intro>
+                    <settings.show_health>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.showHealth.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.showHealth.description</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.show_health>
+                    <settings.show_endpoints>
+                        <label>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.showEndpoints.label</label>
+                        <description>LLL:EXT:agent_nexus/Resources/Private/Language/locallang_flexforms.xlf:hub.showEndpoints.description</description>
+                        <config>
+                            <type>check</type>
+                            <renderType>checkboxToggle</renderType>
+                            <default>1</default>
+                            <items>
+                                <numIndex index="0">
+                                    <label></label>
+                                </numIndex>
+                            </items>
+                        </config>
+                    </settings.show_endpoints>
+                </el>
+            </ROOT>
+        </sDEF>
+    </sheets>
+</T3DataStructure>

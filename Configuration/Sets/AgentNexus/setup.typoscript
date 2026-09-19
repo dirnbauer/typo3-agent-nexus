@@ -27,6 +27,25 @@ plugin.tx_agentnexus {
     }
 }
 
+# Each element references lib.contentElement rather than copying it, and each
+# one does so directly. An intermediate "lib.agentNexusPlugin =< lib.contentElement"
+# would read better and does not work: TypoScript resolves "=<" at render time,
+# and a reference pointing at another reference resolves to nothing — every
+# plugin rendered an empty content frame. A copy ("<") would resolve, but it
+# would be taken here, before the Desiderio set (which depends on this one) has
+# finished configuring lib.contentElement, so the plugins would silently stop
+# following the site's own content frame.
+
+tt_content.agentnexus_hub =< lib.contentElement
+tt_content.agentnexus_hub {
+    templateName = AgentNexusPlugin
+    20 = EXTBASEPLUGIN
+    20 {
+        extensionName = AgentNexus
+        pluginName = Hub
+    }
+}
+
 tt_content.agentnexus_inquiry =< lib.contentElement
 tt_content.agentnexus_inquiry {
     templateName = AgentNexusPlugin

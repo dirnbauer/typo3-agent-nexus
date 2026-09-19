@@ -18,6 +18,21 @@ final readonly class ProtocolStatus
     public const HEALTH_DANGER = 'danger';
 
     /**
+     * The four derived values are properties, not methods, because Fluid cannot
+     * call a method: `{status.healthLabel}` resolves `getHealthLabel()`,
+     * `isHealthLabel()`, `hasHealthLabel()` or a public property of that name,
+     * and nothing else. A `healthLabel()` method therefore rendered as an empty
+     * string — silently, in both the backend hub's health chips and the
+     * frontend hub's cards. Computing them once in the constructor keeps the
+     * single source of truth and makes them readable from a template.
+     */
+    public string $health;
+    public string $healthIcon;
+    public string $healthLabel;
+    public string $modeLabel;
+    public bool $hasActivity;
+
+    /**
      * @param string $key                 Protocol key (a2ui, agui, a2a, ucp, ap2)
      * @param string $label               Short name shown on the card (A2UI)
      * @param string $name                Spelled-out name (Agent-to-UI)
@@ -50,45 +65,22 @@ final readonly class ProtocolStatus
         public string $moduleIdentifier,
         public string $playgroundUri,
         public ?string $frontendUrl,
-    ) {}
-
-    /**
-     * A missing endpoint is the only thing that actually breaks the protocol;
-     * everything else is a degraded but working demo.
-     */
-    public function health(): string
-    {
-        if (!$this->endpointsRegistered) {
-            return self::HEALTH_DANGER;
-        }
-        if (!$this->storageReady) {
-            return self::HEALTH_WARN;
-        }
-        return self::HEALTH_OK;
-    }
-
-    public function healthIcon(): string
-    {
-        return 'agentnexus-status-' . $this->health();
-    }
-
-    public function healthLabel(): string
-    {
-        return match ($this->health()) {
+    ) {
+        // A missing endpoint is the only thing that actually breaks the
+        // protocol; everything else is a degraded but working demo.
+        $this->health = match (true) {
+            !$endpointsRegistered => self::HEALTH_DANGER,
+            !$storageReady => self::HEALTH_WARN,
+            default => self::HEALTH_OK,
+        };
+        $this->healthIcon = 'agentnexus-status-' . $this->health;
+        $this->healthLabel = match ($this->health) {
             self::HEALTH_DANGER => 'Endpoints missing',
             self::HEALTH_WARN => 'No storage folder',
             default => 'Ready',
         };
-    }
-
-    /** The demos run without a model; say which mode a visitor would get. */
-    public function modeLabel(): string
-    {
-        return $this->llmEnabled ? 'Model-backed' : 'Deterministic demo';
-    }
-
-    public function hasActivity(): bool
-    {
-        return $this->lastRun !== null;
+        // The demos run without a model; say which mode a visitor would get.
+        $this->modeLabel = $llmEnabled ? 'Model-backed' : 'Deterministic demo';
+        $this->hasActivity = $lastRun !== null;
     }
 }

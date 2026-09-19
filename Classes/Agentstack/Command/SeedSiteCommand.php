@@ -60,74 +60,84 @@ final class SeedSiteCommand extends Command
     private const SET_IDENTIFIER = 'webconsulting/agent-nexus';
 
     /**
-     * The page tree below the root. `ctype` is the demo plugin for that
-     * protocol; `protocol` also adds an agentnexus_protocolinfo element.
+     * The five protocol pages, each with its demo plugin and its explainer.
      *
-     * @var list<array{key: string, title: string, slug: string, protocol: ?string, ctype: ?string, header: string, intro: string}>
+     * @var array<string, array{title: string, slug: string, ctype: string, header: string, intro: string}>
      */
-    private const PAGES = [
-        [
-            'key' => 'a2ui',
+    private const PROTOCOL_PAGES = [
+        'a2ui' => [
             'title' => 'A2UI',
             'slug' => 'a2ui',
-            'protocol' => 'a2ui',
             'ctype' => 'agentnexus_inquiry',
             'header' => 'The agent designs the form',
             'intro' => '<p>Describe what you need in one line. The agent answers with a surface — a flat list of components — and the site renders only components it already knows. Unknown components and unknown properties are dropped before anything reaches the page.</p>',
         ],
-        [
-            'key' => 'agui',
+        'agui' => [
             'title' => 'AG-UI',
             'slug' => 'ag-ui',
-            'protocol' => 'agui',
             'ctype' => 'agentnexus_assistant',
             'header' => 'Watch the run, then approve it',
             'intro' => '<p>An agent run is a stream of typed events, so the interface can show reasoning and tool calls as they happen. Before the assistant writes anything it stops at a confirmation and waits for a human decision.</p>',
         ],
-        [
-            'key' => 'a2a',
+        'a2a' => [
             'title' => 'A2A',
             'slug' => 'a2a',
-            'protocol' => 'a2a',
             'ctype' => 'agentnexus_concierge',
             'header' => 'Delegate a task to the site agent',
             'intro' => '<p>This site publishes an Agent Card, so another agent can discover it, delegate a task over JSON-RPC and collect the result as a named artifact. The concierge below does exactly that from the browser.</p>',
         ],
-        [
-            'key' => 'ucp',
+        'ucp' => [
             'title' => 'UCP',
             'slug' => 'ucp',
-            'protocol' => 'ucp',
             'ctype' => 'agentnexus_checkout',
             'header' => 'Let a shopping agent build the cart',
             'intro' => '<p>The agent reads the merchant manifest, assembles a cart from the real catalogue and then stops. Prices are always deterministic and no order is ever placed — every checkout here is simulated.</p>',
         ],
-        [
-            'key' => 'ap2',
+        'ap2' => [
             'title' => 'AP2',
             'slug' => 'ap2',
-            'protocol' => 'ap2',
             'ctype' => 'agentnexus_trustedsurface',
             'header' => 'Prove the purchase was authorized',
             'intro' => '<p>Two signed mandates — one for the intent, one for the exact cart — are verified as a chain: both signatures, the reference between them, the merchant and the spending cap. Mandates here are signed with a sandbox key.</p>',
         ],
-        [
-            'key' => 'playground',
+    ];
+
+    /**
+     * The two pages that are not about a single protocol.
+     *
+     * The playground really does carry all five demos — it used to promise
+     * "all five demos side by side" and ship an empty page — and Docs carries a
+     * hub with the endpoints hidden, which makes it an index of the five
+     * specifications rather than another paragraph about them.
+     *
+     * @var array<string, array{title: string, slug: string, header: string, intro: string, elements: list<array{suffix: string, ctype: string, header: string, settings: array<string, string>}>}>
+     */
+    private const EXTRA_PAGES = [
+        'playground' => [
             'title' => 'Playground',
             'slug' => 'playground',
-            'protocol' => null,
-            'ctype' => null,
             'header' => 'Everything on one page',
-            'intro' => '<p>All five demos side by side, so you can compare how the protocols behave without leaving the page. Add the plugins you want to try here — this page is yours to rearrange.</p>',
+            'intro' => '<p>All five demos side by side, so you can compare how the protocols behave without leaving the page. Nothing here is shared between them: each one talks to its own endpoint.</p>',
+            'elements' => [
+                ['suffix' => 'demo:a2ui', 'ctype' => 'agentnexus_inquiry', 'header' => 'A2UI — the agent designs the form', 'settings' => []],
+                ['suffix' => 'demo:agui', 'ctype' => 'agentnexus_assistant', 'header' => 'AG-UI — watch the run, then approve it', 'settings' => []],
+                ['suffix' => 'demo:a2a', 'ctype' => 'agentnexus_concierge', 'header' => 'A2A — delegate a task', 'settings' => []],
+                ['suffix' => 'demo:ucp', 'ctype' => 'agentnexus_checkout', 'header' => 'UCP — let an agent build the cart', 'settings' => []],
+                ['suffix' => 'demo:ap2', 'ctype' => 'agentnexus_trustedsurface', 'header' => 'AP2 — prove it was authorized', 'settings' => []],
+            ],
         ],
-        [
-            'key' => 'docs',
+        'docs' => [
             'title' => 'Docs',
             'slug' => 'docs',
-            'protocol' => null,
-            'ctype' => null,
             'header' => 'Where to read more',
-            'intro' => '<p>Every protocol links to its own specification from the info element on its page. The extension documentation covers installation, the site sets, the endpoints and how to run the demos safely.</p>',
+            'intro' => '<p>Each protocol is defined by someone else; this site only implements it. The cards below link to the specification that defines each one and to the demo that runs it here. Installation, the site sets and the endpoints are covered by the extension documentation.</p>',
+            'elements' => [
+                ['suffix' => 'specs', 'ctype' => 'agentnexus_hub', 'header' => 'The five specifications', 'settings' => [
+                    'settings.intro' => 'Every protocol below is an open specification. Agent Nexus implements the part of each one that a TYPO3 site can honestly demonstrate.',
+                    'settings.show_health' => '0',
+                    'settings.show_endpoints' => '0',
+                ]],
+            ],
         ],
     ];
 
@@ -299,12 +309,22 @@ final class SeedSiteCommand extends Command
         $io->writeln($this->line('storage folder', $storageUid, 'sysfolder'));
 
         if ($rootIsOwn) {
-            $this->upsertText($rootUid, 'home:intro', 'Five agent protocols, running on this TYPO3', '<p>Agent Nexus is a working lab, not a slide deck: every page below runs a real implementation of one protocol against this installation&rsquo;s own content, catalogue and endpoints. Nothing is charged, nothing is sent — the demos are deliberately sandboxed.</p>', $dryRun);
+            // The site root used to be a headline and a paragraph over an empty
+            // screen. The hub turns it into the index the five pages hang off.
+            $this->reorder('tt_content', [
+                $this->upsertText($rootUid, 'home:intro', 'Five agent protocols, running on this TYPO3', '<p>Agent Nexus is a working lab, not a slide deck: every page below runs a real implementation of one protocol against this installation&rsquo;s own content, catalogue and endpoints. Nothing is charged, nothing is sent — the demos are deliberately sandboxed.</p>', $dryRun),
+                $this->upsertElement($io, $rootUid, 'home:hub', [
+                    'suffix' => 'hub',
+                    'ctype' => 'agentnexus_hub',
+                    'header' => 'Pick a protocol',
+                    'settings' => ['settings.show_health' => '1', 'settings.show_endpoints' => '1'],
+                ], $dryRun),
+            ]);
         }
 
         $pageOrder = [$storageUid];
-        foreach (self::PAGES as $page) {
-            $pageUid = $this->upsertRecord('pages', 'page:' . $page['key'], $rootUid, [
+        foreach ($this->pages() as $key => $page) {
+            $pageUid = $this->upsertRecord('pages', 'page:' . $key, $rootUid, [
                 'title' => $page['title'],
                 'slug' => '/' . $page['slug'],
                 'doktype' => 1,
@@ -317,42 +337,13 @@ final class SeedSiteCommand extends Command
                 continue;
             }
 
-            // Intro, then the demo, then the protocol explanation — the order
-            // the page has to read in, whatever order the records were written.
+            // The intro first, then whatever the page carries — the order the
+            // page has to read in, whatever order the records were written.
             $contentOrder = [
-                $this->upsertText($pageUid, 'ce:' . $page['key'] . ':intro', $page['header'], $page['intro'], $dryRun),
+                $this->upsertText($pageUid, 'ce:' . $key . ':intro', $page['header'], $page['intro'], $dryRun),
             ];
-
-            if ($page['ctype'] !== null) {
-                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':demo', $pageUid, [
-                    'CType' => $page['ctype'],
-                    'header' => 'Try it',
-                    'colPos' => 0,
-                ], $dryRun);
-                $io->writeln($this->line('    demo (' . $page['ctype'] . ')', $uid, ''));
-                $contentOrder[] = $uid;
-            }
-
-            if ($page['protocol'] !== null) {
-                $uid = $this->upsertRecord('tt_content', 'ce:' . $page['key'] . ':info', $pageUid, [
-                    'CType' => 'agentnexus_protocolinfo',
-                    'header' => 'How ' . $page['title'] . ' works',
-                    'header_layout' => '100',
-                    'colPos' => 0,
-                    'pi_flexform' => [
-                        'data' => [
-                            'sDEF' => [
-                                'lDEF' => [
-                                    'settings.protocol' => ['vDEF' => $page['protocol']],
-                                    'settings.sections' => ['vDEF' => 'diagram,endpoints,how-it-works'],
-                                    'settings.show_facts' => ['vDEF' => '1'],
-                                ],
-                            ],
-                        ],
-                    ],
-                ], $dryRun);
-                $io->writeln($this->line('    protocol info (' . $page['protocol'] . ')', $uid, ''));
-                $contentOrder[] = $uid;
+            foreach ($page['elements'] as $element) {
+                $contentOrder[] = $this->upsertElement($io, $pageUid, 'ce:' . $key . ':' . $element['suffix'], $element, $dryRun);
             }
 
             $this->reorder('tt_content', $contentOrder);
@@ -361,6 +352,112 @@ final class SeedSiteCommand extends Command
         $this->reorder('pages', $pageOrder);
 
         return $rootUid;
+    }
+
+    /**
+     * The page tree below the root, protocol pages first.
+     *
+     * A protocol page is the general case with its two elements filled in — the
+     * demo plugin and its explainer — so both kinds of page can be seeded by one
+     * loop instead of two branches inside it.
+     *
+     * @return array<string, array{title: string, slug: string, header: string, intro: string, elements: list<array{suffix: string, ctype: string, header: string, settings: array<string, string>}>}>
+     */
+    private function pages(): array
+    {
+        $pages = [];
+        foreach (self::PROTOCOL_PAGES as $protocol => $page) {
+            $pages[$protocol] = [
+                'title' => $page['title'],
+                'slug' => $page['slug'],
+                'header' => $page['header'],
+                'intro' => $page['intro'],
+                'elements' => [
+                    ['suffix' => 'demo', 'ctype' => $page['ctype'], 'header' => 'Try it', 'settings' => []],
+                    ['suffix' => 'info', 'ctype' => 'agentnexus_protocolinfo', 'header' => 'How ' . $page['title'] . ' works', 'settings' => [
+                        'settings.protocol' => $protocol,
+                        'settings.sections' => 'diagram,endpoints,how-it-works',
+                        'settings.show_facts' => '1',
+                    ]],
+                ],
+            ];
+        }
+
+        return $pages + self::EXTRA_PAGES;
+    }
+
+    /**
+     * One Agent Nexus plugin on a page, with its FlexForm settings.
+     *
+     * @param array{suffix: string, ctype: string, header: string, settings: array<string, string>} $element
+     */
+    private function upsertElement(SymfonyStyle $io, int $pid, string $key, array $element, bool $dryRun): int
+    {
+        $fields = [
+            'CType' => $element['ctype'],
+            'header' => $element['header'],
+            // Every Agent Nexus partial renders {data.header} itself, so leaving
+            // the content-element header visible printed it twice.
+            'header_layout' => '100',
+            'colPos' => 0,
+        ];
+
+        // What the element says here wins; everything else is what an editor
+        // would have got from the data structure.
+        $settings = $element['settings'] + $this->flexFormDefaults($element['ctype']);
+        if ($settings !== []) {
+            $fields['pi_flexform'] = ['data' => ['sDEF' => ['lDEF' => array_map(
+                static fn(string $value): array => ['vDEF' => $value],
+                $settings,
+            )]]];
+        }
+
+        $uid = $this->upsertRecord('tt_content', $key, $pid, $fields, $dryRun);
+        $io->writeln($this->line('    ' . $element['ctype'], $uid, ''));
+
+        return $uid;
+    }
+
+    /**
+     * The FlexForm defaults an editor would get for this content type.
+     *
+     * DataHandler does not apply them: the backend form writes a FlexForm's
+     * defaults the first time an editor saves the record, so one written
+     * programmatically keeps an empty FlexForm. Every seeded demo therefore
+     * rendered with a blank input, no placeholder and no explanation — the
+     * widget looked broken on a freshly seeded site. Reading the defaults back
+     * out of the data structure TCA already points at keeps that copy in one
+     * place instead of restating it here.
+     *
+     * @return array<string, string>
+     */
+    private function flexFormDefaults(string $cType): array
+    {
+        $dataStructure = $GLOBALS['TCA']['tt_content']['types'][$cType]['columnsOverrides']['pi_flexform']['config']['ds'] ?? null;
+        if (!is_string($dataStructure) || !str_starts_with($dataStructure, 'FILE:')) {
+            return [];
+        }
+
+        $file = GeneralUtility::getFileAbsFileName(substr($dataStructure, 5));
+        if ($file === '' || !is_file($file)) {
+            return [];
+        }
+
+        $parsed = GeneralUtility::xml2array((string)file_get_contents($file));
+        $elements = is_array($parsed) ? ($parsed['sheets']['sDEF']['ROOT']['el'] ?? null) : null;
+        if (!is_array($elements)) {
+            return [];
+        }
+
+        $defaults = [];
+        foreach ($elements as $name => $element) {
+            $default = is_array($element) ? ($element['config']['default'] ?? null) : null;
+            if (is_string($name) && (is_string($default) || is_int($default))) {
+                $defaults[$name] = (string)$default;
+            }
+        }
+
+        return $defaults;
     }
 
     private function upsertText(int $pid, string $key, string $header, string $bodytext, bool $dryRun): int

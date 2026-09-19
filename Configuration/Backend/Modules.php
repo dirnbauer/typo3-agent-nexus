@@ -9,6 +9,17 @@ use Webconsulting\AgentNexus\Agui\Controller\AguiController;
 use Webconsulting\AgentNexus\Ap2\Controller\Ap2Controller;
 use Webconsulting\AgentNexus\Ucp\Controller\UcpController;
 
+/**
+ * The Agent Nexus backend: one hub plus one console per protocol.
+ *
+ * Deliberately no `workspaces` restriction. These modules used to be declared
+ * live-only, which made the whole section — the read-only hub included —
+ * silently disappear for anyone whose backend user happened to sit in a draft
+ * workspace, with "No module access" as the only explanation. Nothing here edits
+ * versioned content: the hub reads status, and every console writes to Agent
+ * Nexus' own log tables, none of which is versioned (see ext_tables.sql). So the
+ * restriction bought nothing and cost a whole section.
+ */
 return [
     'agentstack' => [
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_mod.xlf',
@@ -19,7 +30,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['top'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/overview',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_overview.xlf',
         'extensionName' => 'AgentNexus',
@@ -34,7 +44,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['after' => 'agentstack_overview'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/a2ui',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_a2ui.xlf',
         'extensionName' => 'AgentNexus',
@@ -52,7 +61,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['after' => 'agentstack_a2ui'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/agui',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_agui.xlf',
         'extensionName' => 'AgentNexus',
@@ -68,7 +76,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['after' => 'agentstack_agui'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/a2a',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_a2a.xlf',
         'extensionName' => 'AgentNexus',
@@ -84,7 +91,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['after' => 'agentstack_a2a'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/ucp',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_ucp.xlf',
         'extensionName' => 'AgentNexus',
@@ -100,7 +106,6 @@ return [
         'parent' => 'agentstack',
         'position' => ['after' => 'agentstack_ucp'],
         'access' => 'user',
-        'workspaces' => 'live',
         'path' => '/module/agent-nexus/ap2',
         'labels' => 'LLL:EXT:agent_nexus/Resources/Private/Language/locallang_ap2.xlf',
         'extensionName' => 'AgentNexus',

@@ -1,14 +1,19 @@
 # Agent Nexus — Desiderio rendering.
 #
-# Everything the plain set configures still applies (it is a dependency); this
-# set only puts a higher-priority plugin template root in front of it, so each
-# plugin resolves the Desiderio variant of its Show template. Those templates
-# compose the same markup through Desiderio's component collection, so the demo
-# inherits the site's tokens, spacing and dark mode instead of only carrying
-# Agent Nexus' own frontend CSS.
+# DEPRECATED since 3.1, removed in 4.0. Depend on "webconsulting/agent-nexus"
+# instead; this set only still exists so configured sites keep resolving.
 #
-# Add this set on its own — webconsulting/agent-nexus comes with it as a
-# dependency. Requires webconsulting/desiderio ^4.1 (a composer "suggest" of
-# agent_nexus), whose component collection lives in Resources/Private/Components.
-
-plugin.tx_agentnexus.view.templateRootPaths.100 = EXT:agent_nexus/Resources/Private/Desiderio/Templates/
+# It used to point a higher-priority template root at a Desiderio variant of
+# every plugin template. Those variants wrapped each element in
+# d:layout.section + d:layout.container + d:molecule.card + a protocol badge —
+# but a content element is *already* rendered inside a Desiderio section and
+# container, and every plugin partial already draws its own panel and badge. The
+# result was a section inside a section (py-24 on top of py-12, so 100–300px of
+# empty page around every demo), a max-width inside the same max-width, a card
+# inside a card, and the protocol badge printed twice.
+#
+# Nothing was lost by deleting them: the integration that matters is not markup
+# but tokens. Resources/Public/Css/nexus-tokens.css maps every --anx-* neutral
+# onto the shadcn variables Desiderio publishes (--card, --border,
+# --muted-foreground …), so the widgets already follow a Desiderio site's theme,
+# spacing scale and dark mode without a component wrapper.

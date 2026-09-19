@@ -56,6 +56,14 @@ $plugins = [
         'description' => 'Explains one protocol next to its demo: the sequence diagram, the endpoints this site exposes and how a request flows through it.',
         'flexForm' => 'ProtocolInfo.xml',
     ],
+    [
+        'plugin' => 'Hub',
+        'legacyExtension' => null,
+        'title' => 'Agent Nexus: Protocol hub',
+        'icon' => 'agentnexus-plugin-hub',
+        'description' => 'The landing element: one card per protocol with its live health, what it exposes here and a link to the running demo.',
+        'flexForm' => 'Hub.xml',
+    ],
 ];
 
 $configurePluginType = static function (string $cType, array $plugin): void {

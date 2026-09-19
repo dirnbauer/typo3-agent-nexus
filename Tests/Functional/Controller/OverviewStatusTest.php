@@ -62,9 +62,9 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
         $status = $this->byKey()['a2a'];
 
         self::assertFalse($status->endpointsRegistered);
-        self::assertSame(ProtocolStatus::HEALTH_DANGER, $status->health());
-        self::assertSame('agentnexus-status-danger', $status->healthIcon());
-        self::assertSame('Endpoints missing', $status->healthLabel());
+        self::assertSame(ProtocolStatus::HEALTH_DANGER, $status->health);
+        self::assertSame('agentnexus-status-danger', $status->healthIcon);
+        self::assertSame('Endpoints missing', $status->healthLabel);
     }
 
     #[Test]
@@ -73,8 +73,8 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
         $status = $this->byKey()['ucp'];
 
         self::assertFalse($status->storageReady);
-        self::assertSame(ProtocolStatus::HEALTH_WARN, $status->health());
-        self::assertSame('agentnexus-status-warn', $status->healthIcon());
+        self::assertSame(ProtocolStatus::HEALTH_WARN, $status->health);
+        self::assertSame('agentnexus-status-warn', $status->healthIcon);
     }
 
     #[Test]
@@ -84,8 +84,8 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
 
         foreach ($this->byKey() as $key => $status) {
             self::assertTrue($status->storageReady, $key . ' has no storage folder');
-            self::assertSame(ProtocolStatus::HEALTH_OK, $status->health());
-            self::assertSame('Ready', $status->healthLabel());
+            self::assertSame(ProtocolStatus::HEALTH_OK, $status->health);
+            self::assertSame('Ready', $status->healthLabel);
             self::assertNotNull($status->frontendUrl, $key . ' has no demo page to link to');
             self::assertStringContainsString($key === 'agui' ? 'ag-ui' : $key, (string)$status->frontendUrl);
         }
@@ -96,7 +96,7 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
     {
         foreach ($this->byKey() as $key => $status) {
             self::assertFalse($status->llmEnabled);
-            self::assertSame('Deterministic demo', $status->modeLabel());
+            self::assertSame('Deterministic demo', $status->modeLabel);
             self::assertSame('nr-llm not installed', $status->llmReason, $key);
         }
     }
@@ -114,7 +114,7 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
 
         self::assertSame(2, $statuses['agui']->runsLast24h, 'Only the last 24 hours count.');
         self::assertSame($now - 60, $statuses['agui']->lastRun);
-        self::assertTrue($statuses['agui']->hasActivity());
+        self::assertTrue($statuses['agui']->hasActivity);
         self::assertSame(1, $statuses['a2a']->runsLast24h);
         self::assertSame(0, $statuses['ucp']->runsLast24h, 'One protocol\'s activity is not another\'s.');
     }

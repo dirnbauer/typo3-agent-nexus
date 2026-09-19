@@ -1,0 +1,20 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:d="http://typo3.org/ns/Webconsulting/Desiderio/Components/ComponentCollection"
+      data-namespace-typo3-fluid="true">
+
+<f:comment>
+    Desiderio variant of the protocol hub. The cards are the same markup; only
+    the section frame comes from the site's component collection, so the hub
+    sits in a Desiderio page like any other section.
+</f:comment>
+
+<f:asset.css identifier="anx-tokens" href="{f:uri.resource(path: 'Css/nexus-tokens.css', extensionName: 'agent_nexus')}" />
+<f:asset.css identifier="anx-frontend" href="{f:uri.resource(path: 'Css/nexus-frontend.css', extensionName: 'agent_nexus')}" />
+
+<d:layout.section class="anx-host anx-host--hub">
+    <d:layout.container>
+        <f:render partial="Plugin/Hub" arguments="{_all}" />
+    </d:layout.container>
+</d:layout.section>
+
+</html>

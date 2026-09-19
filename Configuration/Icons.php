@@ -41,6 +41,7 @@ $icons = [
     'agentnexus-plugin-checkout' => 'agentnexus-plugin-checkout.svg',
     'agentnexus-plugin-trustedsurface' => 'agentnexus-plugin-trustedsurface.svg',
     'agentnexus-plugin-protocolinfo' => 'agentnexus-plugin-protocolinfo.svg',
+    'agentnexus-plugin-hub' => 'agentnexus-plugin-hub.svg',
 
     // ---- hub health chips -------------------------------------------------
     'agentnexus-status-ok' => 'agentnexus-status-ok.svg',
