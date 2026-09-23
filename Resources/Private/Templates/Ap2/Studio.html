@@ -5,145 +5,255 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
+<div class="anx anx--backend anx-accent--ap2 anx-ap2"
+     data-ap2-studio
+     data-authorize-url="{authorizeUrl}"
+     data-inspector-url="{inspectorUri}">
 
-<div class="anx anx--backend anx-accent--ap2 anx-module" data-ap2-studio>
+    <h1><f:translate domain="agent_nexus.ap2" key="studio.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.ap2" key="studio.lede" /></p>
 
-    <header class="anx-page-head">
-        <div class="anx-page-head__titles">
-            <span class="anx-page-head__kicker">AP2 <em>· Agent Payments Protocol — the authorization edge</em></span>
-            <h1 class="anx-title">AP2 Mandate Studio</h1>
-            <p class="anx-lede">
-                Build a signed <strong>Intent Mandate</strong>, mint a <strong>Cart Mandate</strong> for a specific order,
-                then <strong>verify the authorization chain</strong> before a payment is authorized.
-            </p>
-        </div>
-        <div class="anx-page-head__meta">
-            <div class="anx-actions">
-                <f:if condition="{llm}">
-                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
-                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
-                </f:if>
-                <span class="anx-badge anx-badge--warn">Sandbox-signed · no real payment</span>
-            </div>
-            <div class="anx-actions">
-                <a class="anx-btn anx-btn--ghost anx-btn--sm" href="{f:uri.action(action: 'catalog')}">
-                    <core:icon identifier="actions-list" size="small" /> Mandate Inspector
+    <f:be.infobox title="{f:translate(domain: 'agent_nexus.ap2', key: 'studio.sandbox.title')}" state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')}">
+        <p><f:translate domain="agent_nexus.ap2" key="studio.sandbox" /></p>
+        <p class="anx-ap2__links">
+            <a class="btn btn-default btn-sm" href="{jwksUrl}" target="_blank" rel="noopener">
+                <core:icon identifier="actions-key" size="small" />
+                <f:translate domain="agent_nexus.ap2" key="studio.jwks" />
+            </a>
+            <f:if condition="{frontendUrl}">
+                <a class="btn btn-default btn-sm" href="{frontendUrl}" target="_blank" rel="noopener">
+                    <core:icon identifier="actions-window-open" size="small" />
+                    <f:translate domain="agent_nexus.ap2" key="studio.demo" />
                 </a>
-                <a class="anx-btn anx-btn--ghost anx-btn--sm" href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ap2" target="_blank" rel="noopener">
-                    <core:icon identifier="actions-window-open" size="small" /> Frontend demo
-                </a>
-            </div>
-        </div>
-    </header>
+            </f:if>
+        </p>
+    </f:be.infobox>
 
-    <!-- The 2026 agent-nexus family -->
-    <div class="ap2-stack">
-        <span class="ap2-stack__label">The agent stack</span>
-        <f:for each="{stack}" as="s">
-            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' ap2-chip--self')}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
-        </f:for>
-    </div>
-
-    <!-- Today's mandate log (sandbox bookkeeping) -->
-    <div class="anx-stats">
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.minted}">{today.minted}</span>
-            <span class="anx-stat__label">Mandates minted</span>
-            <span class="anx-stat__hint">today · sandbox log</span>
+    <div class="anx-stats" role="group" aria-label="{f:translate(domain: 'agent_nexus.ap2', key: 'stats.label')}">
+        <div class="anx-stat">
+            <span class="anx-stat__value">{stats.issued}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ap2" key="stats.issued" /></span>
         </div>
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.verified}">{today.verified}</span>
-            <span class="anx-stat__label">Chains verified</span>
-            <span class="anx-stat__hint">intent + cart checked</span>
+        <div class="anx-stat">
+            <span class="anx-stat__value">{stats.verified}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ap2" key="stats.verified" /></span>
         </div>
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.authorized}">{today.authorized}</span>
-            <span class="anx-stat__label">Payments authorized</span>
-            <span class="anx-stat__hint">simulated · every check passed</span>
+        <div class="anx-stat">
+            <span class="anx-stat__value">{stats.rejected}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ap2" key="stats.rejected" /></span>
         </div>
     </div>
 
-    <div class="ap2-steps">
-        <!-- Step 1: Intent Mandate -->
-        <section class="anx-card anx-card--flush anx-reveal ap2-step" data-ap2-step="intent">
-            <div class="anx-card__head">
-                <span class="ap2-step__t"><span class="ap2-step__n">1</span> Intent Mandate</span>
-                <span class="ap2-step__hint">authorize the agent</span>
+    <div class="anx-ap2__pair">
+        <section class="card" aria-labelledby="anx-ap2-mint">
+            <div class="card-header">
+                <h2 class="card-title h4" id="anx-ap2-mint"><f:translate domain="agent_nexus.ap2" key="mint.heading" /></h2>
             </div>
-            <div class="anx-card__body">
-                <div class="anx-field">
-                    <label class="anx-field__label" for="ap2-cap">Spending cap (€)</label>
-                    <input type="number" id="ap2-cap" class="anx-input" data-ap2-cap value="500" min="1" />
-                </div>
-                <div class="anx-field">
-                    <label class="anx-field__label" for="ap2-merchant">Authorized merchant</label>
-                    <input type="text" id="ap2-merchant" class="anx-input" data-ap2-merchant value="desiderio-store" />
-                </div>
-                <label class="ap2-checkline" for="ap2-human">
-                    <input type="checkbox" data-ap2-human checked id="ap2-human" />
-                    Human present at issuance
-                </label>
-                <button type="button" class="anx-btn anx-btn--primary ap2-w100" data-ap2-mint-intent>Mint Intent Mandate</button>
-                <div class="ap2-token ap2-hidden" data-ap2-intent-out aria-live="polite"></div>
+            <div class="card-body">
+                <form data-ap2-mint novalidate>
+                    <div class="form-group">
+                        <label class="form-label" for="anx-ap2-type"><f:translate domain="agent_nexus.ap2" key="mint.type" /></label>
+                        <select class="form-select" id="anx-ap2-type" name="type" data-ap2-type>
+                            <f:for each="{types}" as="type">
+                                <option value="{type.key}"><f:translate domain="agent_nexus.ap2" key="type.{type.key}" /> ({type.vct})</option>
+                            </f:for>
+                        </select>
+                    </div>
+
+                    <fieldset class="form-group" data-ap2-field="signer" hidden>
+                        <legend class="form-label"><f:translate domain="agent_nexus.ap2" key="mint.signer" /></legend>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="signer" id="anx-ap2-signer-ts" value="trusted-surface" checked="checked" />
+                            <label class="form-check-label" for="anx-ap2-signer-ts"><f:translate domain="agent_nexus.ap2" key="mint.signer.trustedSurface" /></label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="signer" id="anx-ap2-signer-agent" value="shopping-agent" />
+                            <label class="form-check-label" for="anx-ap2-signer-agent"><f:translate domain="agent_nexus.ap2" key="mint.signer.agent" /></label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="form-group" data-ap2-field="items" aria-describedby="anx-ap2-items-hint">
+                        <legend class="form-label"><f:translate domain="agent_nexus.ap2" key="mint.items" /></legend>
+                        <f:for each="{items}" as="item" iteration="loop">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="items" id="anx-ap2-item-{loop.index}" value="{item.id}" {f:if(condition: loop.isFirst, then: 'checked="checked"')} />
+                                <label class="form-check-label" for="anx-ap2-item-{loop.index}">{item.title} <span class="text-variant">{item.priceText}</span></label>
+                            </div>
+                        </f:for>
+                        <p class="form-text" id="anx-ap2-items-hint"><f:translate domain="agent_nexus.ap2" key="mint.items.hint" /></p>
+                    </fieldset>
+
+                    <div class="form-group" data-ap2-field="cap" hidden>
+                        <label class="form-label" for="anx-ap2-cap"><f:translate domain="agent_nexus.ap2" key="mint.cap" /></label>
+                        <input class="form-control" type="text" inputmode="decimal" id="anx-ap2-cap" name="cap" value="{defaultCap}" />
+                    </div>
+
+                    <div class="form-group" data-ap2-field="merchant">
+                        <label class="form-label" for="anx-ap2-merchant"><f:translate domain="agent_nexus.ap2" key="mint.merchant" /></label>
+                        <select class="form-select" id="anx-ap2-merchant" name="merchant" aria-describedby="anx-ap2-merchant-hint">
+                            <f:for each="{merchants}" as="merchant">
+                                <option value="{merchant.id}">{merchant.name} ({merchant.id})</option>
+                            </f:for>
+                        </select>
+                        <p class="form-text" id="anx-ap2-merchant-hint"><f:translate domain="agent_nexus.ap2" key="mint.merchant.hint" /></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="anx-ap2-expires"><f:translate domain="agent_nexus.ap2" key="mint.expires" /></label>
+                        <input class="form-control anx-ap2__narrow" type="number" min="1" max="1440" step="1" id="anx-ap2-expires" name="expires" value="60" />
+                    </div>
+
+                    <div class="form-group" data-ap2-field="linked" hidden>
+                        <label class="form-label" for="anx-ap2-linked"><f:translate domain="agent_nexus.ap2" key="mint.linked" /></label>
+                        <textarea class="form-control anx-ap2__token-input" id="anx-ap2-linked" name="linked" rows="3" spellcheck="false" aria-describedby="anx-ap2-linked-hint"></textarea>
+                        <p class="form-text" id="anx-ap2-linked-hint"><f:translate domain="agent_nexus.ap2" key="mint.linked.hint" /></p>
+                    </div>
+
+                    <div class="form-group" data-ap2-field="transaction" hidden>
+                        <label class="form-label" for="anx-ap2-transaction"><f:translate domain="agent_nexus.ap2" key="mint.transaction" /></label>
+                        <input class="form-control anx-ap2__token-input" type="text" id="anx-ap2-transaction" name="transaction" spellcheck="false" aria-describedby="anx-ap2-transaction-hint" />
+                        <p class="form-text" id="anx-ap2-transaction-hint"><f:translate domain="agent_nexus.ap2" key="mint.transaction.hint" /></p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <core:icon identifier="actions-document-add" size="small" />
+                        <f:translate domain="agent_nexus.ap2" key="mint.submit" />
+                    </button>
+                </form>
             </div>
         </section>
 
-        <!-- Step 2: Cart Mandate -->
-        <section class="anx-card anx-card--flush anx-reveal ap2-step is-locked" data-ap2-step="cart">
-            <div class="anx-card__head">
-                <span class="ap2-step__t"><span class="ap2-step__n">2</span> Cart Mandate</span>
-                <span class="ap2-step__hint">lock the exact order</span>
+        <section class="card" aria-labelledby="anx-ap2-output">
+            <div class="card-header">
+                <h2 class="card-title h4" id="anx-ap2-output"><f:translate domain="agent_nexus.ap2" key="output.heading" /></h2>
             </div>
-            <div class="anx-card__body">
-                <div class="ap2-cart" data-ap2-cart>
-                    <div class="ap2-cart__row"><span>Agency Bundle</span><span>€149.00</span></div>
-                    <div class="ap2-cart__row"><span>Onboarding Add-on</span><span>€299.00</span></div>
-                    <div class="ap2-cart__total"><span>Total</span><span>€448.00</span></div>
-                </div>
-                <button type="button" class="anx-btn anx-btn--primary ap2-w100" data-ap2-mint-cart disabled>Mint Cart Mandate</button>
-                <div class="ap2-token ap2-hidden" data-ap2-cart-out aria-live="polite"></div>
-            </div>
-        </section>
-
-        <!-- Step 3: Verify chain -->
-        <section class="anx-card anx-card--flush anx-reveal ap2-step is-locked" data-ap2-step="verify">
-            <div class="anx-card__head">
-                <span class="ap2-step__t"><span class="ap2-step__n">3</span> Verify chain</span>
-                <span class="ap2-step__hint">authorize the payment</span>
-            </div>
-            <div class="anx-card__body">
-                <button type="button" class="anx-btn anx-btn--primary ap2-w100" data-ap2-verify disabled>Verify authorization chain</button>
-                <div class="ap2-checks" data-ap2-checks aria-live="polite"><span class="ap2-muted">Mint both mandates, then verify.</span></div>
-                <div class="ap2-verdict ap2-hidden" data-ap2-verdict aria-live="polite"></div>
-                <hr class="ap2-rule" />
-                <div class="anx-field">
-                    <label class="anx-field__label" for="ap2-tamper">Tamper test — edit the Cart Mandate and re-verify</label>
-                    <textarea class="anx-textarea ap2-tamper__ta" id="ap2-tamper" data-ap2-tamper rows="2" placeholder="Mint the Cart Mandate first…"></textarea>
-                </div>
-                <button type="button" class="anx-btn anx-btn--outline anx-btn--sm ap2-w100" data-ap2-retamper disabled>Re-verify edited token</button>
+            <div class="card-body" aria-live="polite" data-ap2-output>
+                <p class="text-variant"><f:translate domain="agent_nexus.ap2" key="output.empty" /></p>
             </div>
         </section>
     </div>
 
-    <!-- About -->
-    <section class="anx-card anx-card--flush anx-reveal">
-        <div class="anx-card__head"><h2 class="ap2-card-h">What is AP2?</h2></div>
-        <div class="anx-card__body">
-            <p class="ap2-p">
-                <strong>AP2 (Agent Payments Protocol)</strong> answers the hardest question in agentic commerce:
-                <em>how does a merchant know an agent is really allowed to pay?</em> The answer is a chain of
-                <strong>signed mandates</strong> — verifiable credentials that carry the human's authorization to the agent,
-                the merchant and the payment network.
-            </p>
-            <p class="ap2-p ap2-muted">
-                An <strong>Intent Mandate</strong> sets the limits while the human is present; a <strong>Cart Mandate</strong>
-                locks a specific, fully-priced order; verification proves the cart is within the intent and untampered.
-                Here the tokens are <strong>sandbox-signed</strong> with a demo key — genuine JWS mechanics, no real identity or money.
-            </p>
+    <section class="card" aria-labelledby="anx-ap2-verify">
+        <div class="card-header">
+            <h2 class="card-title h4" id="anx-ap2-verify"><f:translate domain="agent_nexus.ap2" key="verify.heading" /></h2>
+        </div>
+        <div class="card-body">
+            <form data-ap2-verify novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="anx-ap2-verify-input"><f:translate domain="agent_nexus.ap2" key="verify.input" /></label>
+                    <textarea class="form-control anx-ap2__token-input" id="anx-ap2-verify-input" name="token" rows="5" spellcheck="false" aria-describedby="anx-ap2-verify-hint"></textarea>
+                    <p class="form-text" id="anx-ap2-verify-hint"><f:translate domain="agent_nexus.ap2" key="verify.input.hint" /> <f:translate domain="agent_nexus.ap2" key="verify.dryRun" /></p>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <core:icon identifier="actions-check" size="small" />
+                    <f:translate domain="agent_nexus.ap2" key="verify.submit" />
+                </button>
+            </form>
+            <div class="anx-ap2__results" aria-live="polite" data-ap2-verify-results></div>
         </div>
     </section>
-</div>
 
+    <section class="card" aria-labelledby="anx-ap2-flow">
+        <div class="card-header">
+            <h2 class="card-title h4" id="anx-ap2-flow"><f:translate domain="agent_nexus.ap2" key="flow.heading" /></h2>
+        </div>
+        <div class="card-body">
+            <p><f:translate domain="agent_nexus.ap2" key="flow.lede" /></p>
+            <form class="anx-ap2__flow-form" data-ap2-flow novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="anx-ap2-flow-cap"><f:translate domain="agent_nexus.ap2" key="mint.cap" /></label>
+                    <input class="form-control anx-ap2__narrow" type="text" inputmode="decimal" id="anx-ap2-flow-cap" name="cap" value="{defaultCap}" />
+                </div>
+                <fieldset class="form-group">
+                    <legend class="form-label"><f:translate domain="agent_nexus.ap2" key="flow.scenario" /></legend>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="intent" id="anx-ap2-flow-within" value="within" checked="checked" />
+                        <label class="form-check-label" for="anx-ap2-flow-within"><f:translate domain="agent_nexus.ap2" key="flow.within" /></label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="intent" id="anx-ap2-flow-over" value="over" />
+                        <label class="form-check-label" for="anx-ap2-flow-over"><f:translate domain="agent_nexus.ap2" key="flow.over" /></label>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary">
+                        <core:icon identifier="actions-play" size="small" />
+                        <f:translate domain="agent_nexus.ap2" key="flow.submit" />
+                    </button>
+                </div>
+            </form>
+            <div class="anx-ap2__results" aria-live="polite" data-ap2-flow-results></div>
+        </div>
+    </section>
+
+    <div class="anx-ap2__pair">
+        <section aria-labelledby="anx-ap2-keys">
+            <h2 id="anx-ap2-keys"><f:translate domain="agent_nexus.ap2" key="keys.heading" /></h2>
+            <p class="text-variant"><f:translate domain="agent_nexus.ap2" key="keys.lede" /></p>
+            <div class="table-fit">
+                <table class="table table-striped table-hover">
+                    <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="keys.caption" /></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><f:translate domain="agent_nexus.ap2" key="keys.role" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.ap2" key="keys.kid" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <f:for each="{keys}" as="key">
+                            <tr>
+                                <td><f:translate domain="agent_nexus.ap2" key="role.{key.role}" /></td>
+                                <td><code>{key.kid}</code></td>
+                            </tr>
+                        </f:for>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="anx-ap2-recent">
+            <h2 id="anx-ap2-recent"><f:translate domain="agent_nexus.ap2" key="recent.heading" /></h2>
+            <f:if condition="{recent}">
+                <f:then>
+                    <div class="table-fit">
+                        <table class="table table-striped table-hover">
+                            <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="recent.caption" /></caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="recent.label" /></th>
+                                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="recent.role" /></th>
+                                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="recent.state" /></th>
+                                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="recent.updated" /></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <f:for each="{recent}" as="row">
+                                    <tr>
+                                        <td><a href="{row.detailUri}">{row.label}</a></td>
+                                        <td>{row.role}</td>
+                                        <td><span class="badge badge-{row.stateBadge}"><f:translate domain="agent_nexus.ap2" key="state.{row.state}" /></span></td>
+                                        <td><time datetime="{f:format.date(date: '@{row.updated}', format: 'c')}"><f:format.date format="Y-m-d H:i">@{row.updated}</f:format.date></time></td>
+                                    </tr>
+                                </f:for>
+                            </tbody>
+                        </table>
+                    </div>
+                    <a class="btn btn-default btn-sm" href="{inspectorUri}">
+                        <core:icon identifier="agentnexus-module-inspector" size="small" />
+                        <f:translate domain="agent_nexus.ap2" key="recent.all" />
+                    </a>
+                </f:then>
+                <f:else>
+                    <div class="anx-empty">
+                        <core:icon identifier="agentnexus-module-ap2" size="large" />
+                        <p class="anx-empty__title"><f:translate domain="agent_nexus.ap2" key="recent.empty" /></p>
+                        <p><f:translate domain="agent_nexus.ap2" key="recent.empty.action" /></p>
+                    </div>
+                </f:else>
+            </f:if>
+        </section>
+    </div>
+</div>
 </f:section>
 
 </html>

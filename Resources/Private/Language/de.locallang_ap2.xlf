@@ -1,8 +1,1799 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>AP2 Mandate Studio</source><target>AP2 Mandate Studio</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>AP2 Mandate Studio</source><target>AP2 Mandate Studio</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>Mint and verify signed sandbox mandates for simulated agent payment authorization.</source><target>Signierte Sandbox-Mandate für simulierte Agent-Zahlungsautorisierung ausstellen und verifizieren.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="ap2">
+    <unit id="studio.heading">
+      <segment state="final">
+        <source>Mandate studio</source>
+        <target>Mandatsstudio</target>
+      </segment>
+    </unit>
+    <unit id="studio.lede">
+      <segment state="final">
+        <source>Sign AP2 v0.2 mandates with the sandbox keys, verify what an agent presents, and run the whole flow.</source>
+        <target>Signieren Sie AP2-v0.2-Mandate mit den Sandbox-Schlüsseln, prüfen Sie, was ein Agent vorlegt, und spielen Sie den ganzen Ablauf durch.</target>
+      </segment>
+    </unit>
+    <unit id="studio.sandbox.title">
+      <segment state="final">
+        <source>Sandbox only</source>
+        <target>Nur Sandbox</target>
+      </segment>
+    </unit>
+    <unit id="studio.sandbox">
+      <segment state="final">
+        <source>Every role runs on this server with a demo key stored in the database. Nothing is ever charged. Never use these mandates or keys for real payments.</source>
+        <target>Jede Rolle läuft auf diesem Server mit einem Demo-Schlüssel aus der Datenbank. Es wird nie etwas abgebucht. Verwenden Sie diese Mandate und Schlüssel nie für echte Zahlungen.</target>
+      </segment>
+    </unit>
+    <unit id="studio.jwks">
+      <segment state="final">
+        <source>Open the key set</source>
+        <target>Schlüsselsatz öffnen</target>
+      </segment>
+    </unit>
+    <unit id="studio.demo">
+      <segment state="final">
+        <source>Open the demo</source>
+        <target>Demo öffnen</target>
+      </segment>
+    </unit>
+    <unit id="stats.label">
+      <segment state="final">
+        <source>Mandates on record</source>
+        <target>Gespeicherte Mandate</target>
+      </segment>
+    </unit>
+    <unit id="stats.issued">
+      <segment state="final">
+        <source>Signed, not checked yet</source>
+        <target>Signiert, noch nicht geprüft</target>
+      </segment>
+    </unit>
+    <unit id="stats.verified">
+      <segment state="final">
+        <source>Accepted by a verifier</source>
+        <target>Von einer Prüfstelle akzeptiert</target>
+      </segment>
+    </unit>
+    <unit id="stats.rejected">
+      <segment state="final">
+        <source>Refused by a verifier</source>
+        <target>Von einer Prüfstelle abgelehnt</target>
+      </segment>
+    </unit>
+    <unit id="type.open_checkout">
+      <segment state="final">
+        <source>Open checkout mandate</source>
+        <target>Offenes Checkout-Mandat</target>
+      </segment>
+    </unit>
+    <unit id="type.checkout">
+      <segment state="final">
+        <source>Checkout mandate</source>
+        <target>Checkout-Mandat</target>
+      </segment>
+    </unit>
+    <unit id="type.open_payment">
+      <segment state="final">
+        <source>Open payment mandate</source>
+        <target>Offenes Zahlungsmandat</target>
+      </segment>
+    </unit>
+    <unit id="type.payment">
+      <segment state="final">
+        <source>Payment mandate</source>
+        <target>Zahlungsmandat</target>
+      </segment>
+    </unit>
+    <unit id="type.checkout_jwt">
+      <segment state="final">
+        <source>Signed checkout</source>
+        <target>Signierter Checkout</target>
+      </segment>
+    </unit>
+    <unit id="type.checkout_receipt">
+      <segment state="final">
+        <source>Checkout receipt</source>
+        <target>Checkout-Beleg</target>
+      </segment>
+    </unit>
+    <unit id="type.payment_receipt">
+      <segment state="final">
+        <source>Payment receipt</source>
+        <target>Zahlungsbeleg</target>
+      </segment>
+    </unit>
+    <unit id="type.jwt">
+      <segment state="final">
+        <source>Signed token</source>
+        <target>Signiertes Token</target>
+      </segment>
+    </unit>
+    <unit id="type.unknown">
+      <segment state="final">
+        <source>Unreadable token</source>
+        <target>Unlesbares Token</target>
+      </segment>
+    </unit>
+    <unit id="mint.heading">
+      <segment state="final">
+        <source>Sign a mandate</source>
+        <target>Mandat signieren</target>
+      </segment>
+    </unit>
+    <unit id="mint.type">
+      <segment state="final">
+        <source>Mandate type</source>
+        <target>Mandatstyp</target>
+      </segment>
+    </unit>
+    <unit id="mint.signer">
+      <segment state="final">
+        <source>Signed by</source>
+        <target>Signiert von</target>
+      </segment>
+    </unit>
+    <unit id="mint.signer.trustedSurface">
+      <segment state="final">
+        <source>Trusted Surface: the person approves this exact purchase (human present)</source>
+        <target>Trusted Surface: Die Person genehmigt genau diesen Kauf (Mensch anwesend)</target>
+      </segment>
+    </unit>
+    <unit id="mint.signer.agent">
+      <segment state="final">
+        <source>Shopping agent: closes an open mandate with its own key (autonomous)</source>
+        <target>Einkaufsagent: schließt ein offenes Mandat mit seinem eigenen Schlüssel (autonom)</target>
+      </segment>
+    </unit>
+    <unit id="mint.items">
+      <segment state="final">
+        <source>Items</source>
+        <target>Artikel</target>
+      </segment>
+    </unit>
+    <unit id="mint.items.hint">
+      <segment state="final">
+        <source>Open checkout mandate: what the agent may buy. Checkout and payment mandate: what the merchant puts in the checkout.</source>
+        <target>Offenes Checkout-Mandat: was der Agent kaufen darf. Checkout- und Zahlungsmandat: was der Händler in den Checkout legt.</target>
+      </segment>
+    </unit>
+    <unit id="mint.cap">
+      <segment state="final">
+        <source>Spending cap in euros</source>
+        <target>Ausgabenlimit in Euro</target>
+      </segment>
+    </unit>
+    <unit id="mint.merchant">
+      <segment state="final">
+        <source>Merchant</source>
+        <target>Händler</target>
+      </segment>
+    </unit>
+    <unit id="mint.merchant.hint">
+      <segment state="final">
+        <source>Pick the other shop to see the merchant check fail.</source>
+        <target>Wählen Sie den anderen Shop, um die Händlerprüfung scheitern zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="mint.expires">
+      <segment state="final">
+        <source>Valid for (minutes)</source>
+        <target>Gültig für (Minuten)</target>
+      </segment>
+    </unit>
+    <unit id="mint.linked">
+      <segment state="final">
+        <source>Open mandate to build on</source>
+        <target>Offenes Mandat als Grundlage</target>
+      </segment>
+    </unit>
+    <unit id="mint.linked.hint">
+      <segment state="final">
+        <source>For an open payment mandate: the open checkout mandate it belongs to. For a mandate the agent closes: the open mandate it closes. The last one you signed is filled in.</source>
+        <target>Für ein offenes Zahlungsmandat: das offene Checkout-Mandat, zu dem es gehört. Für ein Mandat, das der Agent schließt: das offene Mandat, das er schließt. Das zuletzt signierte wird eingetragen.</target>
+      </segment>
+    </unit>
+    <unit id="mint.transaction">
+      <segment state="final">
+        <source>Checkout hash (optional)</source>
+        <target>Checkout-Hash (optional)</target>
+      </segment>
+    </unit>
+    <unit id="mint.transaction.hint">
+      <segment state="final">
+        <source>Leave it empty to let the merchant sign a new checkout for the items.</source>
+        <target>Leer lassen, damit der Händler einen neuen Checkout für die Artikel signiert.</target>
+      </segment>
+    </unit>
+    <unit id="mint.submit">
+      <segment state="final">
+        <source>Sign the mandate</source>
+        <target>Mandat signieren</target>
+      </segment>
+    </unit>
+    <unit id="mint.signed">
+      <segment state="final">
+        <source>Signed: %s</source>
+        <target>Signiert: %s</target>
+      </segment>
+    </unit>
+    <unit id="mint.failed">
+      <segment state="final">
+        <source>The mandate was not signed</source>
+        <target>Das Mandat wurde nicht signiert</target>
+      </segment>
+    </unit>
+    <unit id="output.heading">
+      <segment state="final">
+        <source>Signed token</source>
+        <target>Signiertes Token</target>
+      </segment>
+    </unit>
+    <unit id="output.empty">
+      <segment state="final">
+        <source>Sign a mandate to see its token, its header, its claims and each disclosure.</source>
+        <target>Signieren Sie ein Mandat, um Token, Header, Claims und jede Offenlegung zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="output.token">
+      <segment state="final">
+        <source>Compact token</source>
+        <target>Kompaktes Token</target>
+      </segment>
+    </unit>
+    <unit id="output.header">
+      <segment state="final">
+        <source>Header</source>
+        <target>Header</target>
+      </segment>
+    </unit>
+    <unit id="output.claims">
+      <segment state="final">
+        <source>Claims, disclosures applied</source>
+        <target>Claims mit angewandten Offenlegungen</target>
+      </segment>
+    </unit>
+    <unit id="output.signedPayload">
+      <segment state="final">
+        <source>Signed payload, with digests</source>
+        <target>Signierte Nutzdaten mit Digests</target>
+      </segment>
+    </unit>
+    <unit id="output.disclosures">
+      <segment state="final">
+        <source>Disclosures</source>
+        <target>Offenlegungen</target>
+      </segment>
+    </unit>
+    <unit id="output.noDisclosures">
+      <segment state="final">
+        <source>This token has no disclosures.</source>
+        <target>Dieses Token hat keine Offenlegungen.</target>
+      </segment>
+    </unit>
+    <unit id="output.claim">
+      <segment state="final">
+        <source>Claim</source>
+        <target>Claim</target>
+      </segment>
+    </unit>
+    <unit id="output.value">
+      <segment state="final">
+        <source>Value</source>
+        <target>Wert</target>
+      </segment>
+    </unit>
+    <unit id="output.digest">
+      <segment state="final">
+        <source>Digest</source>
+        <target>Digest</target>
+      </segment>
+    </unit>
+    <unit id="output.element">
+      <segment state="final">
+        <source>(array element)</source>
+        <target>(Array-Element)</target>
+      </segment>
+    </unit>
+    <unit id="output.hops">
+      <segment state="final">
+        <source>Tokens in the chain</source>
+        <target>Token in der Kette</target>
+      </segment>
+    </unit>
+    <unit id="output.hop">
+      <segment state="final">
+        <source>Token %s: %s, key %s</source>
+        <target>Token %s: %s, Schlüssel %s</target>
+      </segment>
+    </unit>
+    <unit id="output.copy">
+      <segment state="final">
+        <source>Copy the token</source>
+        <target>Token kopieren</target>
+      </segment>
+    </unit>
+    <unit id="output.copied">
+      <segment state="final">
+        <source>The token is on the clipboard.</source>
+        <target>Das Token ist in der Zwischenablage.</target>
+      </segment>
+    </unit>
+    <unit id="output.copyFailed">
+      <segment state="final">
+        <source>The browser did not allow copying.</source>
+        <target>Der Browser hat das Kopieren nicht erlaubt.</target>
+      </segment>
+    </unit>
+    <unit id="output.verify">
+      <segment state="final">
+        <source>Verify this token</source>
+        <target>Dieses Token prüfen</target>
+      </segment>
+    </unit>
+    <unit id="output.inspect">
+      <segment state="final">
+        <source>Open in the inspector</source>
+        <target>Im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="output.related">
+      <segment state="final">
+        <source>Also signed</source>
+        <target>Ebenfalls signiert</target>
+      </segment>
+    </unit>
+    <unit id="verify.heading">
+      <segment state="final">
+        <source>Verify a mandate</source>
+        <target>Mandat prüfen</target>
+      </segment>
+    </unit>
+    <unit id="verify.input">
+      <segment state="final">
+        <source>Mandate, chain or receipt</source>
+        <target>Mandat, Kette oder Beleg</target>
+      </segment>
+    </unit>
+    <unit id="verify.input.hint">
+      <segment state="final">
+        <source>Paste up to four tokens, separated by spaces or line breaks. Add the checkout chain to a payment chain to check the payment reference.</source>
+        <target>Fügen Sie bis zu vier Token ein, getrennt durch Leerzeichen oder Zeilenumbrüche. Fügen Sie einer Zahlungskette die Checkout-Kette hinzu, um die Zahlungsreferenz zu prüfen.</target>
+      </segment>
+    </unit>
+    <unit id="verify.dryRun">
+      <segment state="final">
+        <source>This is a dry run: nothing is marked as used.</source>
+        <target>Das ist ein Probelauf: Nichts wird als verwendet markiert.</target>
+      </segment>
+    </unit>
+    <unit id="verify.submit">
+      <segment state="final">
+        <source>Verify</source>
+        <target>Prüfen</target>
+      </segment>
+    </unit>
+    <unit id="verify.valid">
+      <segment state="final">
+        <source>Valid</source>
+        <target>Gültig</target>
+      </segment>
+    </unit>
+    <unit id="verify.invalid">
+      <segment state="final">
+        <source>Refused: %s</source>
+        <target>Abgelehnt: %s</target>
+      </segment>
+    </unit>
+    <unit id="verify.check">
+      <segment state="final">
+        <source>Check</source>
+        <target>Prüfung</target>
+      </segment>
+    </unit>
+    <unit id="verify.result">
+      <segment state="final">
+        <source>Result</source>
+        <target>Ergebnis</target>
+      </segment>
+    </unit>
+    <unit id="verify.detail">
+      <segment state="final">
+        <source>Detail</source>
+        <target>Detail</target>
+      </segment>
+    </unit>
+    <unit id="verify.pass">
+      <segment state="final">
+        <source>Passed</source>
+        <target>Bestanden</target>
+      </segment>
+    </unit>
+    <unit id="verify.fail">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Nicht bestanden</target>
+      </segment>
+    </unit>
+    <unit id="verify.caption">
+      <segment state="final">
+        <source>Checks of %s</source>
+        <target>Prüfungen von %s</target>
+      </segment>
+    </unit>
+    <unit id="verify.decoded">
+      <segment state="final">
+        <source>What the token says</source>
+        <target>Was das Token enthält</target>
+      </segment>
+    </unit>
+    <unit id="flow.heading">
+      <segment state="final">
+        <source>Run the autonomous flow</source>
+        <target>Autonomen Ablauf ausführen</target>
+      </segment>
+    </unit>
+    <unit id="flow.lede">
+      <segment state="final">
+        <source>The same run the Trusted Surface content element starts: open mandates, the merchant&apos;s checkout, the agent&apos;s closed mandates, every check and both receipts.</source>
+        <target>Derselbe Ablauf, den das Inhaltselement Trusted Surface startet: offene Mandate, der Checkout des Händlers, die geschlossenen Mandate des Agenten, jede Prüfung und beide Belege.</target>
+      </segment>
+    </unit>
+    <unit id="flow.scenario">
+      <segment state="final">
+        <source>Purchase</source>
+        <target>Kauf</target>
+      </segment>
+    </unit>
+    <unit id="flow.within">
+      <segment state="final">
+        <source>Within the cap</source>
+        <target>Innerhalb des Limits</target>
+      </segment>
+    </unit>
+    <unit id="flow.over">
+      <segment state="final">
+        <source>Over the cap</source>
+        <target>Über dem Limit</target>
+      </segment>
+    </unit>
+    <unit id="flow.submit">
+      <segment state="final">
+        <source>Run the flow</source>
+        <target>Ablauf starten</target>
+      </segment>
+    </unit>
+    <unit id="flow.running">
+      <segment state="final">
+        <source>Signing and checking…</source>
+        <target>Wird signiert und geprüft …</target>
+      </segment>
+    </unit>
+    <unit id="flow.authorised">
+      <segment state="final">
+        <source>Payment authorised. Nothing was charged.</source>
+        <target>Zahlung autorisiert. Es wurde nichts abgebucht.</target>
+      </segment>
+    </unit>
+    <unit id="flow.refused">
+      <segment state="final">
+        <source>Payment refused: %s</source>
+        <target>Zahlung abgelehnt: %s</target>
+      </segment>
+    </unit>
+    <unit id="flow.cart">
+      <segment state="final">
+        <source>Cart: %s. Cap: %s.</source>
+        <target>Warenkorb: %s. Limit: %s.</target>
+      </segment>
+    </unit>
+    <unit id="flow.fallback">
+      <segment state="final">
+        <source>The agent cannot finish this purchase alone. It would ask the person to approve the exact order on the Trusted Surface (human present).</source>
+        <target>Der Agent kann diesen Kauf nicht allein abschließen. Er würde die Person bitten, genau diese Bestellung auf der Trusted Surface zu genehmigen (Mensch anwesend).</target>
+      </segment>
+    </unit>
+    <unit id="flow.failed">
+      <segment state="final">
+        <source>The flow could not run: %s</source>
+        <target>Der Ablauf konnte nicht laufen: %s</target>
+      </segment>
+    </unit>
+    <unit id="flow.chain">
+      <segment state="final">
+        <source>Show this chain in the inspector</source>
+        <target>Diese Kette im Inspektor zeigen</target>
+      </segment>
+    </unit>
+    <unit id="receipts.heading">
+      <segment state="final">
+        <source>Receipts</source>
+        <target>Belege</target>
+      </segment>
+    </unit>
+    <unit id="step.approve">
+      <segment state="final">
+        <source>The Trusted Surface signs the open mandates</source>
+        <target>Die Trusted Surface signiert die offenen Mandate</target>
+      </segment>
+    </unit>
+    <unit id="step.checkout">
+      <segment state="final">
+        <source>The merchant signs the checkout</source>
+        <target>Der Händler signiert den Checkout</target>
+      </segment>
+    </unit>
+    <unit id="step.close">
+      <segment state="final">
+        <source>The agent closes both mandates with its own key</source>
+        <target>Der Agent schließt beide Mandate mit seinem eigenen Schlüssel</target>
+      </segment>
+    </unit>
+    <unit id="step.credentialProvider">
+      <segment state="final">
+        <source>The credential provider checks the payment mandate</source>
+        <target>Der Zahlungsmittelanbieter prüft das Zahlungsmandat</target>
+      </segment>
+    </unit>
+    <unit id="step.merchant">
+      <segment state="final">
+        <source>The merchant checks the checkout mandate</source>
+        <target>Der Händler prüft das Checkout-Mandat</target>
+      </segment>
+    </unit>
+    <unit id="step.paymentProcessor">
+      <segment state="final">
+        <source>The payment processor settles the payment (simulated)</source>
+        <target>Der Zahlungsabwickler wickelt die Zahlung ab (simuliert)</target>
+      </segment>
+    </unit>
+    <unit id="status.done">
+      <segment state="final">
+        <source>Done</source>
+        <target>Erledigt</target>
+      </segment>
+    </unit>
+    <unit id="status.passed">
+      <segment state="final">
+        <source>Passed</source>
+        <target>Bestanden</target>
+      </segment>
+    </unit>
+    <unit id="status.failed">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Nicht bestanden</target>
+      </segment>
+    </unit>
+    <unit id="status.skipped">
+      <segment state="final">
+        <source>Skipped</source>
+        <target>Übersprungen</target>
+      </segment>
+    </unit>
+    <unit id="keys.heading">
+      <segment state="final">
+        <source>Sandbox keys</source>
+        <target>Sandbox-Schlüssel</target>
+      </segment>
+    </unit>
+    <unit id="keys.lede">
+      <segment state="final">
+        <source>One P-256 key per role, created on first use. Only the public halves are published.</source>
+        <target>Ein P-256-Schlüssel pro Rolle, beim ersten Gebrauch erzeugt. Veröffentlicht werden nur die öffentlichen Teile.</target>
+      </segment>
+    </unit>
+    <unit id="keys.caption">
+      <segment state="final">
+        <source>Keys of the sandbox roles</source>
+        <target>Schlüssel der Sandbox-Rollen</target>
+      </segment>
+    </unit>
+    <unit id="keys.role">
+      <segment state="final">
+        <source>Role</source>
+        <target>Rolle</target>
+      </segment>
+    </unit>
+    <unit id="keys.kid">
+      <segment state="final">
+        <source>Key id</source>
+        <target>Schlüssel-ID</target>
+      </segment>
+    </unit>
+    <unit id="role.trusted-surface">
+      <segment state="final">
+        <source>Trusted Surface</source>
+        <target>Trusted Surface</target>
+      </segment>
+    </unit>
+    <unit id="role.shopping-agent">
+      <segment state="final">
+        <source>Shopping agent</source>
+        <target>Einkaufsagent</target>
+      </segment>
+    </unit>
+    <unit id="role.merchant">
+      <segment state="final">
+        <source>Merchant</source>
+        <target>Händler</target>
+      </segment>
+    </unit>
+    <unit id="role.credential-provider">
+      <segment state="final">
+        <source>Credential provider</source>
+        <target>Zahlungsmittelanbieter</target>
+      </segment>
+    </unit>
+    <unit id="role.payment-processor">
+      <segment state="final">
+        <source>Payment processor</source>
+        <target>Zahlungsabwickler</target>
+      </segment>
+    </unit>
+    <unit id="recent.heading">
+      <segment state="final">
+        <source>Latest mandates</source>
+        <target>Neueste Mandate</target>
+      </segment>
+    </unit>
+    <unit id="recent.caption">
+      <segment state="final">
+        <source>The latest mandates, checkouts and receipts</source>
+        <target>Die neuesten Mandate, Checkouts und Belege</target>
+      </segment>
+    </unit>
+    <unit id="recent.label">
+      <segment state="final">
+        <source>Mandate</source>
+        <target>Mandat</target>
+      </segment>
+    </unit>
+    <unit id="recent.role">
+      <segment state="final">
+        <source>Signed by</source>
+        <target>Signiert von</target>
+      </segment>
+    </unit>
+    <unit id="recent.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="recent.updated">
+      <segment state="final">
+        <source>Updated</source>
+        <target>Aktualisiert</target>
+      </segment>
+    </unit>
+    <unit id="recent.all">
+      <segment state="final">
+        <source>Show all in the inspector</source>
+        <target>Alle im Inspektor zeigen</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty">
+      <segment state="final">
+        <source>No mandates yet.</source>
+        <target>Noch keine Mandate.</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.action">
+      <segment state="final">
+        <source>Sign one above or run the flow.</source>
+        <target>Signieren Sie oben eines oder starten Sie den Ablauf.</target>
+      </segment>
+    </unit>
+    <unit id="state.issued">
+      <segment state="final">
+        <source>Signed</source>
+        <target>Signiert</target>
+      </segment>
+    </unit>
+    <unit id="state.verified">
+      <segment state="final">
+        <source>Accepted</source>
+        <target>Akzeptiert</target>
+      </segment>
+    </unit>
+    <unit id="state.rejected">
+      <segment state="final">
+        <source>Refused</source>
+        <target>Abgelehnt</target>
+      </segment>
+    </unit>
+    <unit id="error.type">
+      <segment state="final">
+        <source>Choose a mandate type.</source>
+        <target>Wählen Sie einen Mandatstyp.</target>
+      </segment>
+    </unit>
+    <unit id="error.merchant">
+      <segment state="final">
+        <source>Choose a merchant.</source>
+        <target>Wählen Sie einen Händler.</target>
+      </segment>
+    </unit>
+    <unit id="error.expires">
+      <segment state="final">
+        <source>The lifetime must be between 1 and 1440 minutes.</source>
+        <target>Die Gültigkeit muss zwischen 1 und 1440 Minuten liegen.</target>
+      </segment>
+    </unit>
+    <unit id="error.items">
+      <segment state="final">
+        <source>Pick at least one item.</source>
+        <target>Wählen Sie mindestens einen Artikel.</target>
+      </segment>
+    </unit>
+    <unit id="error.cap">
+      <segment state="final">
+        <source>Enter the spending cap in euros, for example 500 or 499.90.</source>
+        <target>Geben Sie das Ausgabenlimit in Euro ein, zum Beispiel 500 oder 499,90.</target>
+      </segment>
+    </unit>
+    <unit id="error.linkedCheckout">
+      <segment state="final">
+        <source>Paste the open checkout mandate this payment belongs to. Sign one first.</source>
+        <target>Fügen Sie das offene Checkout-Mandat ein, zu dem diese Zahlung gehört. Signieren Sie zuerst eines.</target>
+      </segment>
+    </unit>
+    <unit id="error.linkedOpen">
+      <segment state="final">
+        <source>Paste the open mandate the agent closes.</source>
+        <target>Fügen Sie das offene Mandat ein, das der Agent schließt.</target>
+      </segment>
+    </unit>
+    <unit id="error.linkedInvalid">
+      <segment state="final">
+        <source>The pasted open mandate cannot be used here.</source>
+        <target>Das eingefügte offene Mandat kann hier nicht verwendet werden.</target>
+      </segment>
+    </unit>
+    <unit id="error.transaction">
+      <segment state="final">
+        <source>No checkout with this hash was issued. Leave the field empty to create one.</source>
+        <target>Es wurde kein Checkout mit diesem Hash ausgestellt. Lassen Sie das Feld leer, um einen zu erzeugen.</target>
+      </segment>
+    </unit>
+    <unit id="error.empty">
+      <segment state="final">
+        <source>Paste a mandate, a chain or a receipt.</source>
+        <target>Fügen Sie ein Mandat, eine Kette oder einen Beleg ein.</target>
+      </segment>
+    </unit>
+    <unit id="error.tooMany">
+      <segment state="final">
+        <source>Paste at most four tokens at once.</source>
+        <target>Fügen Sie höchstens vier Token auf einmal ein.</target>
+      </segment>
+    </unit>
+    <unit id="error.network">
+      <segment state="final">
+        <source>The request failed. Try again.</source>
+        <target>Die Anfrage ist fehlgeschlagen. Versuchen Sie es erneut.</target>
+      </segment>
+    </unit>
+    <unit id="check.format">
+      <segment state="final">
+        <source>Well-formed mandate</source>
+        <target>Gültiges Format</target>
+      </segment>
+    </unit>
+    <unit id="check.root_signature">
+      <segment state="final">
+        <source>Signed by the Trusted Surface</source>
+        <target>Von der Trusted Surface signiert</target>
+      </segment>
+    </unit>
+    <unit id="check.agent_signature">
+      <segment state="final">
+        <source>Closed with the agent&apos;s key</source>
+        <target>Mit dem Schlüssel des Agenten geschlossen</target>
+      </segment>
+    </unit>
+    <unit id="check.binding">
+      <segment state="final">
+        <source>Bound to the approved mandate</source>
+        <target>An das genehmigte Mandat gebunden</target>
+      </segment>
+    </unit>
+    <unit id="check.audience">
+      <segment state="final">
+        <source>Meant for this verifier</source>
+        <target>Für diese Prüfstelle bestimmt</target>
+      </segment>
+    </unit>
+    <unit id="check.single_mandate">
+      <segment state="final">
+        <source>One mandate per token</source>
+        <target>Ein Mandat pro Token</target>
+      </segment>
+    </unit>
+    <unit id="check.lifetime">
+      <segment state="final">
+        <source>Not expired</source>
+        <target>Nicht abgelaufen</target>
+      </segment>
+    </unit>
+    <unit id="check.mandate_type">
+      <segment state="final">
+        <source>Expected mandate type</source>
+        <target>Erwarteter Mandatstyp</target>
+      </segment>
+    </unit>
+    <unit id="check.content">
+      <segment state="final">
+        <source>Complete mandate content</source>
+        <target>Vollständiger Mandatsinhalt</target>
+      </segment>
+    </unit>
+    <unit id="check.preset_values">
+      <segment state="final">
+        <source>Approved values unchanged</source>
+        <target>Genehmigte Werte unverändert</target>
+      </segment>
+    </unit>
+    <unit id="check.merchant_checkout">
+      <segment state="final">
+        <source>The merchant&apos;s own checkout</source>
+        <target>Der eigene Checkout des Händlers</target>
+      </segment>
+    </unit>
+    <unit id="check.checkout_hash">
+      <segment state="final">
+        <source>Checkout hash matches</source>
+        <target>Checkout-Hash stimmt</target>
+      </segment>
+    </unit>
+    <unit id="check.transaction">
+      <segment state="final">
+        <source>Paid for this checkout</source>
+        <target>Für diesen Checkout bezahlt</target>
+      </segment>
+    </unit>
+    <unit id="check.allowed_merchant">
+      <segment state="final">
+        <source>Same approved merchant</source>
+        <target>Derselbe genehmigte Händler</target>
+      </segment>
+    </unit>
+    <unit id="check.line_items">
+      <segment state="final">
+        <source>Only approved items</source>
+        <target>Nur genehmigte Artikel</target>
+      </segment>
+    </unit>
+    <unit id="check.payment_reference">
+      <segment state="final">
+        <source>Linked to the approved checkout</source>
+        <target>Mit dem genehmigten Checkout verknüpft</target>
+      </segment>
+    </unit>
+    <unit id="check.spending_cap">
+      <segment state="final">
+        <source>Within the spending cap</source>
+        <target>Innerhalb des Ausgabenlimits</target>
+      </segment>
+    </unit>
+    <unit id="check.allowed_payee">
+      <segment state="final">
+        <source>Paid to an approved merchant</source>
+        <target>An einen genehmigten Händler bezahlt</target>
+      </segment>
+    </unit>
+    <unit id="check.payment_method">
+      <segment state="final">
+        <source>Approved payment method</source>
+        <target>Genehmigte Zahlungsart</target>
+      </segment>
+    </unit>
+    <unit id="check.payment_provider">
+      <segment state="final">
+        <source>Approved payment provider</source>
+        <target>Genehmigter Zahlungsdienst</target>
+      </segment>
+    </unit>
+    <unit id="check.budget">
+      <segment state="final">
+        <source>Within the budget</source>
+        <target>Innerhalb des Budgets</target>
+      </segment>
+    </unit>
+    <unit id="check.recurrence">
+      <segment state="final">
+        <source>Repeat use allowed</source>
+        <target>Wiederholte Nutzung erlaubt</target>
+      </segment>
+    </unit>
+    <unit id="check.execution_date">
+      <segment state="final">
+        <source>Within the payment dates</source>
+        <target>Innerhalb der Zahlungstermine</target>
+      </segment>
+    </unit>
+    <unit id="check.unknown_constraint">
+      <segment state="final">
+        <source>Every constraint understood</source>
+        <target>Jede Bedingung verstanden</target>
+      </segment>
+    </unit>
+    <unit id="check.single_use">
+      <segment state="final">
+        <source>Not used before</source>
+        <target>Noch nicht verwendet</target>
+      </segment>
+    </unit>
+    <unit id="check.signature">
+      <segment state="final">
+        <source>Valid signature</source>
+        <target>Gültige Signatur</target>
+      </segment>
+    </unit>
+    <unit id="check.receipt_reference">
+      <segment state="final">
+        <source>Refers to a known mandate</source>
+        <target>Verweist auf ein bekanntes Mandat</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.format">
+      <segment state="final">
+        <source>The token is an SD-JWT, or a chain of them, with valid disclosures and the right type in each place.</source>
+        <target>Das Token ist ein SD-JWT oder eine Kette davon, mit gültigen Offenlegungen und dem richtigen Typ an jeder Stelle.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.root_signature">
+      <segment state="final">
+        <source>The first token verifies with the Trusted Surface key named by its kid.</source>
+        <target>Das erste Token lässt sich mit dem Schlüssel der Trusted Surface prüfen, den seine kid nennt.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.agent_signature">
+      <segment state="final">
+        <source>Each later token verifies with the key the token before it names in cnf.</source>
+        <target>Jedes spätere Token lässt sich mit dem Schlüssel prüfen, den das Token davor in cnf nennt.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.binding">
+      <segment state="final">
+        <source>The closed mandate carries the hash of the open mandate as presented (sd_hash or issuer_jwt_hash).</source>
+        <target>Das geschlossene Mandat trägt den Hash des offenen Mandats, wie es vorgelegt wurde (sd_hash oder issuer_jwt_hash).</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.audience">
+      <segment state="final">
+        <source>The closing token names this verifier (aud) and a nonce it issued.</source>
+        <target>Das abschließende Token nennt diese Prüfstelle (aud) und eine Nonce, die sie ausgegeben hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.single_mandate">
+      <segment state="final">
+        <source>Each token discloses exactly one mandate in delegate_payload.</source>
+        <target>Jedes Token legt genau ein Mandat in delegate_payload offen.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.lifetime">
+      <segment state="final">
+        <source>exp has not passed and iat is not in the future, with five minutes of clock skew.</source>
+        <target>exp ist nicht abgelaufen und iat liegt nicht in der Zukunft, mit fünf Minuten Toleranz.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.mandate_type">
+      <segment state="final">
+        <source>The vct values are exactly the open and closed types this verifier handles.</source>
+        <target>Die vct-Werte sind genau die offenen und geschlossenen Typen, die diese Prüfstelle bearbeitet.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.content">
+      <segment state="final">
+        <source>Every claim the schema requires is present and has the right type.</source>
+        <target>Jeder Claim, den das Schema verlangt, ist vorhanden und hat den richtigen Typ.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.preset_values">
+      <segment state="final">
+        <source>Values the open mandate fixed in advance are the same in the closed mandate.</source>
+        <target>Werte, die das offene Mandat vorab festgelegt hat, sind im geschlossenen Mandat gleich.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.merchant_checkout">
+      <segment state="final">
+        <source>The checkout JWT is signed with the merchant key and is the checkout of this session.</source>
+        <target>Das Checkout-JWT ist mit dem Händlerschlüssel signiert und ist der Checkout dieser Sitzung.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.checkout_hash">
+      <segment state="final">
+        <source>checkout_hash is the SHA-256 hash of the disclosed checkout JWT.</source>
+        <target>checkout_hash ist der SHA-256-Hash des offengelegten Checkout-JWT.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.transaction">
+      <segment state="final">
+        <source>transaction_id is the hash of the checkout being paid for.</source>
+        <target>transaction_id ist der Hash des Checkouts, der bezahlt wird.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.allowed_merchant">
+      <segment state="final">
+        <source>The checkout comes from a merchant the person approved.</source>
+        <target>Der Checkout stammt von einem Händler, den die Person genehmigt hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.line_items">
+      <segment state="final">
+        <source>The checkout holds exactly the items the person approved, in the right quantities.</source>
+        <target>Der Checkout enthält genau die genehmigten Artikel in den richtigen Mengen.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_reference">
+      <segment state="final">
+        <source>The payment belongs to the open checkout mandate the agent presented.</source>
+        <target>Die Zahlung gehört zum offenen Checkout-Mandat, das der Agent vorgelegt hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.spending_cap">
+      <segment state="final">
+        <source>The amount lies within the range the person approved, in the same currency.</source>
+        <target>Der Betrag liegt im genehmigten Rahmen, in derselben Währung.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.allowed_payee">
+      <segment state="final">
+        <source>The money goes to a merchant the person approved.</source>
+        <target>Das Geld geht an einen Händler, den die Person genehmigt hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_method">
+      <segment state="final">
+        <source>The payment uses a payment method the person approved.</source>
+        <target>Die Zahlung nutzt eine Zahlungsart, die die Person genehmigt hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_provider">
+      <segment state="final">
+        <source>The payment initiation service provider is one the person approved.</source>
+        <target>Der Zahlungsauslösedienst ist einer, den die Person genehmigt hat.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.budget">
+      <segment state="final">
+        <source>Earlier payments under this mandate plus this one stay within the budget.</source>
+        <target>Frühere Zahlungen unter diesem Mandat und diese bleiben im Budget.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.recurrence">
+      <segment state="final">
+        <source>Repeat payments stay within their number and frequency.</source>
+        <target>Wiederholte Zahlungen bleiben innerhalb ihrer Anzahl und Häufigkeit.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.execution_date">
+      <segment state="final">
+        <source>A scheduled payment falls within the approved dates.</source>
+        <target>Eine geplante Zahlung liegt innerhalb der genehmigten Termine.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.unknown_constraint">
+      <segment state="final">
+        <source>A constraint this verifier does not know fails, as AP2 requires.</source>
+        <target>Eine Bedingung, die diese Prüfstelle nicht kennt, scheitert, wie AP2 es verlangt.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.single_use">
+      <segment state="final">
+        <source>The closed mandate was not accepted before, and its open mandate did not authorise a purchase yet.</source>
+        <target>Das geschlossene Mandat wurde noch nicht akzeptiert, und sein offenes Mandat hat noch keinen Kauf autorisiert.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.signature">
+      <segment state="final">
+        <source>A receipt or checkout verifies with the key of the role that issues it.</source>
+        <target>Ein Beleg oder Checkout lässt sich mit dem Schlüssel der ausstellenden Rolle prüfen.</target>
+      </segment>
+    </unit>
+    <unit id="checkdesc.receipt_reference">
+      <segment state="final">
+        <source>The receipt refers to a closed mandate on record.</source>
+        <target>Der Beleg verweist auf ein gespeichertes geschlossenes Mandat.</target>
+      </segment>
+    </unit>
+    <unit id="reference.heading">
+      <segment state="final">
+        <source>Mandate reference</source>
+        <target>Mandatsreferenz</target>
+      </segment>
+    </unit>
+    <unit id="reference.lede">
+      <segment state="final">
+        <source>AP2 v0.2.0 of 28 April 2026: the mandate types, what they contain, the constraints, the roles, the checks and the error codes. This page is built from the same catalogue the verifiers use.</source>
+        <target>AP2 v0.2.0 vom 28. April 2026: die Mandatstypen, ihr Inhalt, die Bedingungen, die Rollen, die Prüfungen und die Fehlercodes. Diese Seite entsteht aus demselben Katalog, den die Prüfstellen verwenden.</target>
+      </segment>
+    </unit>
+    <unit id="reference.toc">
+      <segment state="final">
+        <source>On this page</source>
+        <target>Auf dieser Seite</target>
+      </segment>
+    </unit>
+    <unit id="reference.types.heading">
+      <segment state="final">
+        <source>Mandate types</source>
+        <target>Mandatstypen</target>
+      </segment>
+    </unit>
+    <unit id="reference.types.lede">
+      <segment state="final">
+        <source>An open mandate holds the limits a person approved and the agent&apos;s key. A closed mandate names one checkout or one payment. Verifiers only ever act on closed mandates.</source>
+        <target>Ein offenes Mandat enthält die genehmigten Grenzen und den Schlüssel des Agenten. Ein geschlossenes Mandat nennt einen Checkout oder eine Zahlung. Prüfstellen handeln nur auf geschlossene Mandate.</target>
+      </segment>
+    </unit>
+    <unit id="reference.schema">
+      <segment state="final">
+        <source>Schema:</source>
+        <target>Schema:</target>
+      </segment>
+    </unit>
+    <unit id="reference.allowedConstraints">
+      <segment state="final">
+        <source>Constraints it may carry:</source>
+        <target>Mögliche Bedingungen:</target>
+      </segment>
+    </unit>
+    <unit id="reference.constraints.heading">
+      <segment state="final">
+        <source>Constraints of open mandates</source>
+        <target>Bedingungen offener Mandate</target>
+      </segment>
+    </unit>
+    <unit id="reference.constraints.lede">
+      <segment state="final">
+        <source>Each constraint is checked against the closed mandate. A constraint a verifier does not know fails.</source>
+        <target>Jede Bedingung wird gegen das geschlossene Mandat geprüft. Eine unbekannte Bedingung scheitert.</target>
+      </segment>
+    </unit>
+    <unit id="reference.requiredMark">
+      <segment state="final">
+        <source>* required</source>
+        <target>* Pflichtfeld</target>
+      </segment>
+    </unit>
+    <unit id="reference.sharedTypes">
+      <segment state="final">
+        <source>Shared types</source>
+        <target>Gemeinsame Typen</target>
+      </segment>
+    </unit>
+    <unit id="reference.roles.heading">
+      <segment state="final">
+        <source>Roles</source>
+        <target>Rollen</target>
+      </segment>
+    </unit>
+    <unit id="reference.roles.lede">
+      <segment state="final">
+        <source>AP2 names five roles. In this sandbox all of them run on this server, each with its own key.</source>
+        <target>AP2 nennt fünf Rollen. In dieser Sandbox laufen alle auf diesem Server, jede mit eigenem Schlüssel.</target>
+      </segment>
+    </unit>
+    <unit id="reference.checks.heading">
+      <segment state="final">
+        <source>What a verifier checks</source>
+        <target>Was eine Prüfstelle prüft</target>
+      </segment>
+    </unit>
+    <unit id="reference.checks.lede">
+      <segment state="final">
+        <source>Every check runs in deterministic code. The error code is what a failed check puts into the receipt.</source>
+        <target>Jede Prüfung läuft in deterministischem Code. Der Fehlercode kommt in den Beleg, wenn die Prüfung scheitert.</target>
+      </segment>
+    </unit>
+    <unit id="reference.errors.heading">
+      <segment state="final">
+        <source>Error codes</source>
+        <target>Fehlercodes</target>
+      </segment>
+    </unit>
+    <unit id="reference.errors.ap2">
+      <segment state="final">
+        <source>In AP2 receipts</source>
+        <target>In AP2-Belegen</target>
+      </segment>
+    </unit>
+    <unit id="reference.errors.ucp">
+      <segment state="final">
+        <source>In UCP checkouts (dev.ucp.common.payment.ap2_mandate)</source>
+        <target>In UCP-Checkouts (dev.ucp.common.payment.ap2_mandate)</target>
+      </segment>
+    </unit>
+    <unit id="reference.receipts.heading">
+      <segment state="final">
+        <source>Receipts</source>
+        <target>Belege</target>
+      </segment>
+    </unit>
+    <unit id="reference.wire.heading">
+      <segment state="final">
+        <source>How a chain is written</source>
+        <target>Wie eine Kette geschrieben wird</target>
+      </segment>
+    </unit>
+    <unit id="reference.wire.lede">
+      <segment state="final">
+        <source>An autonomous mandate is the open SD-JWT and the agent&apos;s closing token, joined by two tildes:</source>
+        <target>Ein autonomes Mandat besteht aus dem offenen SD-JWT und dem abschließenden Token des Agenten, verbunden durch zwei Tilden:</target>
+      </segment>
+    </unit>
+    <unit id="reference.wire.root">
+      <segment state="final">
+        <source>The open SD-JWT (typ dc+sd-jwt) is signed by the Trusted Surface. Its delegate_payload holds the mandate as one selectively disclosable element.</source>
+        <target>Das offene SD-JWT (typ dc+sd-jwt) signiert die Trusted Surface. Sein delegate_payload enthält das Mandat als ein selektiv offenlegbares Element.</target>
+      </segment>
+    </unit>
+    <unit id="reference.wire.closing">
+      <segment state="final">
+        <source>The closing token (typ kb+sd-jwt) is signed with the key in cnf. It carries iat, aud, nonce and sd_hash, and discloses the closed mandate.</source>
+        <target>Das abschließende Token (typ kb+sd-jwt) wird mit dem Schlüssel aus cnf signiert. Es trägt iat, aud, nonce und sd_hash und legt das geschlossene Mandat offen.</target>
+      </segment>
+    </unit>
+    <unit id="reference.wire.hashes">
+      <segment state="final">
+        <source>Every hash is the base64url SHA-256 of the exact characters sent. A receipt refers to the SHA-256 hash of the closing token.</source>
+        <target>Jeder Hash ist das base64url-codierte SHA-256 der exakt gesendeten Zeichen. Ein Beleg verweist auf den SHA-256-Hash des abschließenden Tokens.</target>
+      </segment>
+    </unit>
+    <unit id="reference.fieldsOf">
+      <segment state="final">
+        <source>Fields of %s</source>
+        <target>Felder von %s</target>
+      </segment>
+    </unit>
+    <unit id="col.vct">
+      <segment state="final">
+        <source>Type (vct)</source>
+        <target>Typ (vct)</target>
+      </segment>
+    </unit>
+    <unit id="col.form">
+      <segment state="final">
+        <source>Form</source>
+        <target>Form</target>
+      </segment>
+    </unit>
+    <unit id="col.signedBy">
+      <segment state="final">
+        <source>Signed by</source>
+        <target>Signiert von</target>
+      </segment>
+    </unit>
+    <unit id="col.checkedBy">
+      <segment state="final">
+        <source>Checked by</source>
+        <target>Geprüft von</target>
+      </segment>
+    </unit>
+    <unit id="col.purpose">
+      <segment state="final">
+        <source>Purpose</source>
+        <target>Zweck</target>
+      </segment>
+    </unit>
+    <unit id="col.constraint">
+      <segment state="final">
+        <source>Constraint</source>
+        <target>Bedingung</target>
+      </segment>
+    </unit>
+    <unit id="col.appliesTo">
+      <segment state="final">
+        <source>In</source>
+        <target>In</target>
+      </segment>
+    </unit>
+    <unit id="col.fields">
+      <segment state="final">
+        <source>Fields</source>
+        <target>Felder</target>
+      </segment>
+    </unit>
+    <unit id="col.evaluation">
+      <segment state="final">
+        <source>How it is checked</source>
+        <target>Wie sie geprüft wird</target>
+      </segment>
+    </unit>
+    <unit id="col.check">
+      <segment state="final">
+        <source>Check</source>
+        <target>Prüfung</target>
+      </segment>
+    </unit>
+    <unit id="col.does">
+      <segment state="final">
+        <source>What it does</source>
+        <target>Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="col.proves">
+      <segment state="final">
+        <source>What it proves</source>
+        <target>Was sie belegt</target>
+      </segment>
+    </unit>
+    <unit id="col.failure">
+      <segment state="final">
+        <source>Error when it fails</source>
+        <target>Fehler, wenn sie scheitert</target>
+      </segment>
+    </unit>
+    <unit id="col.field">
+      <segment state="final">
+        <source>Field</source>
+        <target>Feld</target>
+      </segment>
+    </unit>
+    <unit id="col.type">
+      <segment state="final">
+        <source>Type</source>
+        <target>Typ</target>
+      </segment>
+    </unit>
+    <unit id="col.required">
+      <segment state="final">
+        <source>Required</source>
+        <target>Pflicht</target>
+      </segment>
+    </unit>
+    <unit id="col.disclosable">
+      <segment state="final">
+        <source>Selectively disclosable</source>
+        <target>Selektiv offenlegbar</target>
+      </segment>
+    </unit>
+    <unit id="col.description">
+      <segment state="final">
+        <source>Description</source>
+        <target>Beschreibung</target>
+      </segment>
+    </unit>
+    <unit id="form.open">
+      <segment state="final">
+        <source>Open</source>
+        <target>Offen</target>
+      </segment>
+    </unit>
+    <unit id="form.closed">
+      <segment state="final">
+        <source>Closed</source>
+        <target>Geschlossen</target>
+      </segment>
+    </unit>
+    <unit id="yes">
+      <segment state="final">
+        <source>Yes</source>
+        <target>Ja</target>
+      </segment>
+    </unit>
+    <unit id="no">
+      <segment state="final">
+        <source>No</source>
+        <target>Nein</target>
+      </segment>
+    </unit>
+    <unit id="when.Success">
+      <segment state="final">
+        <source>on success</source>
+        <target>bei Erfolg</target>
+      </segment>
+    </unit>
+    <unit id="when.Error">
+      <segment state="final">
+        <source>on error</source>
+        <target>bei Fehler</target>
+      </segment>
+    </unit>
+    <unit id="disclosable.claim">
+      <segment state="final">
+        <source>The claim</source>
+        <target>Der Claim</target>
+      </segment>
+    </unit>
+    <unit id="disclosable.elements">
+      <segment state="final">
+        <source>Each element</source>
+        <target>Jedes Element</target>
+      </segment>
+    </unit>
+    <unit id="errorkind.terminal">
+      <segment state="final">
+        <source>Terminal</source>
+        <target>Endgültig</target>
+      </segment>
+    </unit>
+    <unit id="errorkind.fallback">
+      <segment state="final">
+        <source>Fall back to the person</source>
+        <target>Zurück an die Person</target>
+      </segment>
+    </unit>
+    <unit id="signedBy.open_checkout">
+      <segment state="final">
+        <source>Trusted Surface</source>
+        <target>Trusted Surface</target>
+      </segment>
+    </unit>
+    <unit id="signedBy.open_payment">
+      <segment state="final">
+        <source>Trusted Surface</source>
+        <target>Trusted Surface</target>
+      </segment>
+    </unit>
+    <unit id="signedBy.checkout">
+      <segment state="final">
+        <source>Trusted Surface (person present) or the shopping agent (autonomous)</source>
+        <target>Trusted Surface (Person anwesend) oder der Einkaufsagent (autonom)</target>
+      </segment>
+    </unit>
+    <unit id="signedBy.payment">
+      <segment state="final">
+        <source>Trusted Surface (person present) or the shopping agent (autonomous)</source>
+        <target>Trusted Surface (Person anwesend) oder der Einkaufsagent (autonom)</target>
+      </segment>
+    </unit>
+    <unit id="checkedBy.open_checkout">
+      <segment state="final">
+        <source>Merchant, with the closed mandate</source>
+        <target>Händler, mit dem geschlossenen Mandat</target>
+      </segment>
+    </unit>
+    <unit id="checkedBy.checkout">
+      <segment state="final">
+        <source>Merchant</source>
+        <target>Händler</target>
+      </segment>
+    </unit>
+    <unit id="checkedBy.open_payment">
+      <segment state="final">
+        <source>Credential provider and payment processor, with the closed mandate</source>
+        <target>Zahlungsmittelanbieter und Zahlungsabwickler, mit dem geschlossenen Mandat</target>
+      </segment>
+    </unit>
+    <unit id="checkedBy.payment">
+      <segment state="final">
+        <source>Credential provider and payment processor</source>
+        <target>Zahlungsmittelanbieter und Zahlungsabwickler</target>
+      </segment>
+    </unit>
+    <unit id="purpose.open_checkout">
+      <segment state="final">
+        <source>What the agent may buy, and where.</source>
+        <target>Was der Agent kaufen darf und wo.</target>
+      </segment>
+    </unit>
+    <unit id="purpose.checkout">
+      <segment state="final">
+        <source>Approves one checkout the merchant signed, by its hash.</source>
+        <target>Genehmigt einen vom Händler signierten Checkout über seinen Hash.</target>
+      </segment>
+    </unit>
+    <unit id="purpose.open_payment">
+      <segment state="final">
+        <source>How much the agent may pay, to whom and with what.</source>
+        <target>Wie viel der Agent zahlen darf, an wen und womit.</target>
+      </segment>
+    </unit>
+    <unit id="purpose.payment">
+      <segment state="final">
+        <source>Approves one payment for one checkout.</source>
+        <target>Genehmigt eine Zahlung für einen Checkout.</target>
+      </segment>
+    </unit>
+    <unit id="roledesc.trusted-surface">
+      <segment state="final">
+        <source>Shows the mandate to the person and signs it once they approve. Must not be an AI agent.</source>
+        <target>Zeigt der Person das Mandat und signiert es, sobald sie zustimmt. Darf kein KI-Agent sein.</target>
+      </segment>
+    </unit>
+    <unit id="roledesc.shopping-agent">
+      <segment state="final">
+        <source>Shops for the person and closes open mandates with its own key. Every other role treats it as untrusted.</source>
+        <target>Kauft für die Person ein und schließt offene Mandate mit seinem eigenen Schlüssel. Alle anderen Rollen misstrauen ihm.</target>
+      </segment>
+    </unit>
+    <unit id="roledesc.merchant">
+      <segment state="final">
+        <source>Signs the checkout, checks the checkout mandate and returns the checkout receipt.</source>
+        <target>Signiert den Checkout, prüft das Checkout-Mandat und gibt den Checkout-Beleg zurück.</target>
+      </segment>
+    </unit>
+    <unit id="roledesc.credential-provider">
+      <segment state="final">
+        <source>Holds the payment method, checks the payment mandate and releases a payment credential.</source>
+        <target>Verwaltet die Zahlungsart, prüft das Zahlungsmandat und gibt ein Zahlungsmittel frei.</target>
+      </segment>
+    </unit>
+    <unit id="roledesc.payment-processor">
+      <segment state="final">
+        <source>Checks that the credential belongs to this checkout, settles and returns the payment receipt.</source>
+        <target>Prüft, ob das Zahlungsmittel zu diesem Checkout gehört, wickelt ab und gibt den Zahlungsbeleg zurück.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.checkout-allowed-merchants">
+      <segment state="final">
+        <source>The checkout&apos;s merchant must be among the disclosed merchants, matched by id, or by name and website.</source>
+        <target>Der Händler des Checkouts muss unter den offengelegten Händlern sein, abgeglichen über die ID oder über Name und Website.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.checkout-line-items">
+      <segment state="final">
+        <source>Every requirement is filled with the stated quantity of acceptable items, and nothing else is bought (a maximum-flow match).</source>
+        <target>Jede Anforderung wird mit der angegebenen Menge passender Artikel erfüllt, und sonst wird nichts gekauft (Abgleich per maximalem Fluss).</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-amount-range">
+      <segment state="final">
+        <source>The amount in minor units lies between min and max, in the same currency.</source>
+        <target>Der Betrag in Cent liegt zwischen min und max, in derselben Währung.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-payees">
+      <segment state="final">
+        <source>The payee is among the disclosed merchants.</source>
+        <target>Der Zahlungsempfänger ist unter den offengelegten Händlern.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-payment-instruments">
+      <segment state="final">
+        <source>The payment instrument&apos;s id is among the disclosed ones.</source>
+        <target>Die ID des Zahlungsmittels ist unter den offengelegten.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-pisps">
+      <segment state="final">
+        <source>The payment initiation service provider matches one in the list by all three names.</source>
+        <target>Der Zahlungsauslösedienst stimmt in allen drei Namen mit einem der Liste überein.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-budget">
+      <segment state="final">
+        <source>All payments under the mandate, this one included, stay within max (read as whole units, as the AP2 SDK does).</source>
+        <target>Alle Zahlungen unter dem Mandat, diese eingeschlossen, bleiben unter max (in ganzen Einheiten, wie im AP2-SDK).</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-agent-recurrence">
+      <segment state="final">
+        <source>Repeat use within max_occurrences and at most once per period; needs an amount range and a budget.</source>
+        <target>Wiederholte Nutzung bis max_occurrences und höchstens einmal pro Zeitraum; braucht einen Betragsrahmen und ein Budget.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-execution-date">
+      <segment state="final">
+        <source>A scheduled execution date lies between not_before and not_after.</source>
+        <target>Ein geplantes Ausführungsdatum liegt zwischen not_before und not_after.</target>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-reference">
+      <segment state="final">
+        <source>The digest of the open checkout mandate presented with the purchase equals conditional_transaction_id.</source>
+        <target>Der Digest des mit dem Kauf vorgelegten offenen Checkout-Mandats ist gleich conditional_transaction_id.</target>
+      </segment>
+    </unit>
+    <unit id="code.invalid_credential">
+      <segment state="final">
+        <source>The mandate failed verification. Terminal.</source>
+        <target>Das Mandat hat die Prüfung nicht bestanden. Endgültig.</target>
+      </segment>
+    </unit>
+    <unit id="code.invalid_mandate">
+      <segment state="final">
+        <source>The mandate is valid but does not approve this action. Terminal.</source>
+        <target>Das Mandat ist gültig, genehmigt diese Aktion aber nicht. Endgültig.</target>
+      </segment>
+    </unit>
+    <unit id="code.unresolved_constraint">
+      <segment state="final">
+        <source>A constraint is unknown or not met. The agent falls back to asking the person to approve the exact purchase.</source>
+        <target>Eine Bedingung ist unbekannt oder nicht erfüllt. Der Agent bittet dann die Person, genau diesen Kauf zu genehmigen.</target>
+      </segment>
+    </unit>
+    <unit id="code.mandates_not_supported">
+      <segment state="final">
+        <source>The verifier does not accept mandates for this action.</source>
+        <target>Die Prüfstelle akzeptiert für diese Aktion keine Mandate.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_required">
+      <segment state="final">
+        <source>AP2 was agreed, but the complete request has no checkout mandate.</source>
+        <target>AP2 wurde vereinbart, aber der Abschluss enthält kein Checkout-Mandat.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.agent_missing_key">
+      <segment state="final">
+        <source>The platform has no valid key to check the mandate with.</source>
+        <target>Die Plattform hat keinen gültigen Schlüssel für die Prüfung des Mandats.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_invalid_signature">
+      <segment state="final">
+        <source>The mandate signature cannot be verified.</source>
+        <target>Die Signatur des Mandats lässt sich nicht prüfen.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_expired">
+      <segment state="final">
+        <source>The mandate has expired.</source>
+        <target>Das Mandat ist abgelaufen.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_scope_mismatch">
+      <segment state="final">
+        <source>The mandate is bound to a different checkout.</source>
+        <target>Das Mandat gehört zu einem anderen Checkout.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.merchant_authorization_invalid">
+      <segment state="final">
+        <source>The business signature on the checkout cannot be verified.</source>
+        <target>Die Signatur des Händlers auf dem Checkout lässt sich nicht prüfen.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.merchant_authorization_missing">
+      <segment state="final">
+        <source>The checkout has no ap2.merchant_authorization.</source>
+        <target>Der Checkout hat keine ap2.merchant_authorization.</target>
+      </segment>
+    </unit>
+    <unit id="receipt.checkout_receipt">
+      <segment state="final">
+        <source>The merchant&apos;s answer to a checkout mandate, signed with the merchant key.</source>
+        <target>Die Antwort des Händlers auf ein Checkout-Mandat, mit dem Händlerschlüssel signiert.</target>
+      </segment>
+    </unit>
+    <unit id="receipt.payment_receipt">
+      <segment state="final">
+        <source>The answer to a payment mandate: signed by the payment processor, or by the credential provider when it refuses.</source>
+        <target>Die Antwort auf ein Zahlungsmandat: vom Zahlungsabwickler signiert, oder vom Zahlungsmittelanbieter, wenn er ablehnt.</target>
+      </segment>
+    </unit>
+    <unit id="field.vct">
+      <segment state="final">
+        <source>The mandate type, matched exactly, version suffix included.</source>
+        <target>Der Mandatstyp, exakt abgeglichen, samt Versionssuffix.</target>
+      </segment>
+    </unit>
+    <unit id="field.constraints">
+      <segment state="final">
+        <source>The limits the closed mandate must meet.</source>
+        <target>Die Grenzen, die das geschlossene Mandat einhalten muss.</target>
+      </segment>
+    </unit>
+    <unit id="field.cnf">
+      <segment state="final">
+        <source>The agent&apos;s public key (RFC 7800); only that key can close the mandate.</source>
+        <target>Der öffentliche Schlüssel des Agenten (RFC 7800); nur er kann das Mandat schließen.</target>
+      </segment>
+    </unit>
+    <unit id="field.iat">
+      <segment state="final">
+        <source>When it was issued, as a Unix timestamp.</source>
+        <target>Wann es ausgestellt wurde, als Unix-Zeitstempel.</target>
+      </segment>
+    </unit>
+    <unit id="field.exp">
+      <segment state="final">
+        <source>When it expires, as a Unix timestamp.</source>
+        <target>Wann es abläuft, als Unix-Zeitstempel.</target>
+      </segment>
+    </unit>
+    <unit id="field.checkout_jwt">
+      <segment state="final">
+        <source>The checkout the merchant signed, as a compact JWS.</source>
+        <target>Der vom Händler signierte Checkout als kompaktes JWS.</target>
+      </segment>
+    </unit>
+    <unit id="field.checkout_hash">
+      <segment state="final">
+        <source>base64url SHA-256 of checkout_jwt; it ties the checkout and payment mandates together.</source>
+        <target>base64url-SHA-256 von checkout_jwt; es verbindet Checkout- und Zahlungsmandat.</target>
+      </segment>
+    </unit>
+    <unit id="field.transaction_id">
+      <segment state="final">
+        <source>The checkout_hash of the checkout being paid for.</source>
+        <target>Der checkout_hash des Checkouts, der bezahlt wird.</target>
+      </segment>
+    </unit>
+    <unit id="field.payee">
+      <segment state="final">
+        <source>The merchant that receives the money.</source>
+        <target>Der Händler, der das Geld erhält.</target>
+      </segment>
+    </unit>
+    <unit id="field.payment_amount">
+      <segment state="final">
+        <source>Amount in minor units, with its currency.</source>
+        <target>Betrag in Cent, mit Währung.</target>
+      </segment>
+    </unit>
+    <unit id="field.payment_instrument">
+      <segment state="final">
+        <source>The payment method used.</source>
+        <target>Die verwendete Zahlungsart.</target>
+      </segment>
+    </unit>
+    <unit id="field.pisp">
+      <segment state="final">
+        <source>The payment initiation service provider, if one takes part.</source>
+        <target>Der Zahlungsauslösedienst, falls einer beteiligt ist.</target>
+      </segment>
+    </unit>
+    <unit id="field.execution_date">
+      <segment state="final">
+        <source>When the payment runs; absent means now.</source>
+        <target>Wann die Zahlung ausgeführt wird; fehlt es, dann sofort.</target>
+      </segment>
+    </unit>
+    <unit id="field.risk_data">
+      <segment state="final">
+        <source>Risk signals the Trusted Surface collected.</source>
+        <target>Risikosignale, die die Trusted Surface gesammelt hat.</target>
+      </segment>
+    </unit>
+    <unit id="field.status">
+      <segment state="final">
+        <source>Success or Error.</source>
+        <target>Success oder Error.</target>
+      </segment>
+    </unit>
+    <unit id="field.iss">
+      <segment state="final">
+        <source>Who issued the receipt.</source>
+        <target>Wer den Beleg ausgestellt hat.</target>
+      </segment>
+    </unit>
+    <unit id="field.reference">
+      <segment state="final">
+        <source>The SHA-256 hash of the closed mandate the receipt answers.</source>
+        <target>Der SHA-256-Hash des geschlossenen Mandats, auf das der Beleg antwortet.</target>
+      </segment>
+    </unit>
+    <unit id="field.order_id">
+      <segment state="final">
+        <source>The merchant&apos;s order.</source>
+        <target>Die Bestellung beim Händler.</target>
+      </segment>
+    </unit>
+    <unit id="field.error">
+      <segment state="final">
+        <source>The error code.</source>
+        <target>Der Fehlercode.</target>
+      </segment>
+    </unit>
+    <unit id="field.error_description">
+      <segment state="final">
+        <source>What went wrong, for people.</source>
+        <target>Was schiefging, für Menschen.</target>
+      </segment>
+    </unit>
+    <unit id="field.payment_id">
+      <segment state="final">
+        <source>The payment&apos;s id.</source>
+        <target>Die ID der Zahlung.</target>
+      </segment>
+    </unit>
+    <unit id="field.psp_confirmation_id">
+      <segment state="final">
+        <source>The payment service provider&apos;s confirmation.</source>
+        <target>Die Bestätigung des Zahlungsdienstleisters.</target>
+      </segment>
+    </unit>
+    <unit id="field.network_confirmation_id">
+      <segment state="final">
+        <source>The card network&apos;s confirmation.</source>
+        <target>Die Bestätigung des Kartennetzes.</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>

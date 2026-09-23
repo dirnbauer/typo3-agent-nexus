@@ -1,0 +1,243 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-accent--ap2 anx-ap2">
+
+    <h1><f:translate domain="agent_nexus.ap2" key="reference.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.ap2" key="reference.lede" /></p>
+
+    <nav class="anx-ap2__toc" aria-label="{f:translate(domain: 'agent_nexus.ap2', key: 'reference.toc')}">
+        <ul>
+            <li><a href="#anx-ap2-types"><f:translate domain="agent_nexus.ap2" key="reference.types.heading" /></a></li>
+            <li><a href="#anx-ap2-constraints"><f:translate domain="agent_nexus.ap2" key="reference.constraints.heading" /></a></li>
+            <li><a href="#anx-ap2-roles"><f:translate domain="agent_nexus.ap2" key="reference.roles.heading" /></a></li>
+            <li><a href="#anx-ap2-checks"><f:translate domain="agent_nexus.ap2" key="reference.checks.heading" /></a></li>
+            <li><a href="#anx-ap2-errors"><f:translate domain="agent_nexus.ap2" key="reference.errors.heading" /></a></li>
+            <li><a href="#anx-ap2-receipts"><f:translate domain="agent_nexus.ap2" key="reference.receipts.heading" /></a></li>
+            <li><a href="#anx-ap2-wire"><f:translate domain="agent_nexus.ap2" key="reference.wire.heading" /></a></li>
+        </ul>
+    </nav>
+
+    <section aria-labelledby="anx-ap2-types">
+        <h2 id="anx-ap2-types"><f:translate domain="agent_nexus.ap2" key="reference.types.heading" /></h2>
+        <p><f:translate domain="agent_nexus.ap2" key="reference.types.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="reference.types.heading" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.vct" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.form" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.signedBy" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.checkedBy" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.purpose" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{mandates}" as="mandate">
+                        <tr>
+                            <th scope="row"><code>{mandate.vct}</code></th>
+                            <td><f:translate domain="agent_nexus.ap2" key="{f:if(condition: mandate.open, then: 'form.open', else: 'form.closed')}" /></td>
+                            <td><f:translate domain="agent_nexus.ap2" key="signedBy.{mandate.key}" /></td>
+                            <td><f:translate domain="agent_nexus.ap2" key="checkedBy.{mandate.key}" /> <span class="text-variant">(aud <code>{mandate.audience}</code>)</span></td>
+                            <td><f:translate domain="agent_nexus.ap2" key="purpose.{mandate.key}" /></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+
+        <f:for each="{mandates}" as="mandate">
+            <h3 id="anx-ap2-fields-{mandate.key}"><f:translate domain="agent_nexus.ap2" key="type.{mandate.key}" /> <code>{mandate.vct}</code></h3>
+            <p class="text-variant"><f:translate domain="agent_nexus.ap2" key="reference.schema" /> <code>{mandate.schemaId}</code></p>
+            <f:render section="Fields" arguments="{fields: mandate.fields, caption: mandate.vct}" />
+            <f:if condition="{mandate.constraints}">
+                <p><f:translate domain="agent_nexus.ap2" key="reference.allowedConstraints" />
+                    <f:for each="{mandate.constraints}" as="constraint" iteration="loop"><code>{constraint}</code>{f:if(condition: loop.isLast, else: ', ')}</f:for>
+                </p>
+            </f:if>
+        </f:for>
+    </section>
+
+    <section aria-labelledby="anx-ap2-constraints">
+        <h2 id="anx-ap2-constraints"><f:translate domain="agent_nexus.ap2" key="reference.constraints.heading" /></h2>
+        <p><f:translate domain="agent_nexus.ap2" key="reference.constraints.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="reference.constraints.heading" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.constraint" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.appliesTo" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.fields" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.evaluation" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.check" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{constraints}" as="constraint">
+                        <tr>
+                            <th scope="row"><code>{constraint.type}</code></th>
+                            <td><code>{constraint.mandate}</code></td>
+                            <td>
+                                <f:for each="{constraint.fields}" as="field" iteration="loop"><code>{field.name}</code><f:if condition="{field.required}">*</f:if><f:if condition="{field.disclosable}"> (<f:translate domain="agent_nexus.ap2" key="disclosable.{field.disclosable}" />)</f:if>{f:if(condition: loop.isLast, else: ', ')}</f:for>
+                            </td>
+                            <td><f:translate domain="agent_nexus.ap2" key="constraint.{constraint.key}" /></td>
+                            <td><f:translate domain="agent_nexus.ap2" key="check.{constraint.check}" /></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+        <p class="text-variant"><f:translate domain="agent_nexus.ap2" key="reference.requiredMark" /></p>
+
+        <h3><f:translate domain="agent_nexus.ap2" key="reference.sharedTypes" /></h3>
+        <dl class="anx-dl">
+            <f:for each="{sharedTypes}" as="fields" key="name">
+                <div>
+                    <dt><code>{name}</code></dt>
+                    <dd><f:for each="{fields}" as="field" iteration="loop"><code>{field.name}</code><f:if condition="{field.required}">*</f:if> <span class="text-variant">{field.type}</span>{f:if(condition: loop.isLast, else: ', ')}</f:for></dd>
+                </div>
+            </f:for>
+        </dl>
+    </section>
+
+    <section aria-labelledby="anx-ap2-roles">
+        <h2 id="anx-ap2-roles"><f:translate domain="agent_nexus.ap2" key="reference.roles.heading" /></h2>
+        <p><f:translate domain="agent_nexus.ap2" key="reference.roles.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="reference.roles.heading" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="keys.role" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.does" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="keys.kid" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{roles}" as="role">
+                        <tr>
+                            <th scope="row"><f:translate domain="agent_nexus.ap2" key="role.{role.role}" /></th>
+                            <td><f:translate domain="agent_nexus.ap2" key="roledesc.{role.role}" /></td>
+                            <td><code>{role.kid}</code></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-ap2-checks">
+        <h2 id="anx-ap2-checks"><f:translate domain="agent_nexus.ap2" key="reference.checks.heading" /></h2>
+        <p><f:translate domain="agent_nexus.ap2" key="reference.checks.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="reference.checks.heading" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.check" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.proves" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.failure" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{checks}" as="check">
+                        <tr id="check-row-{check.id}">
+                            <th scope="row"><f:translate domain="agent_nexus.ap2" key="check.{check.id}" /></th>
+                            <td><f:translate domain="agent_nexus.ap2" key="checkdesc.{check.id}" /></td>
+                            <td><code>{check.failure}</code></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-ap2-errors">
+        <h2 id="anx-ap2-errors"><f:translate domain="agent_nexus.ap2" key="reference.errors.heading" /></h2>
+        <h3><f:translate domain="agent_nexus.ap2" key="reference.errors.ap2" /></h3>
+        <dl class="anx-dl">
+            <f:for each="{errors}" as="error">
+                <div>
+                    <dt><code>{error.code}</code> <span class="badge badge-{f:if(condition: error.terminal, then: 'danger', else: 'warning')}"><f:translate domain="agent_nexus.ap2" key="{f:if(condition: error.terminal, then: 'errorkind.terminal', else: 'errorkind.fallback')}" /></span></dt>
+                    <dd><f:translate domain="agent_nexus.ap2" key="code.{error.code}" /></dd>
+                </div>
+            </f:for>
+        </dl>
+        <h3><f:translate domain="agent_nexus.ap2" key="reference.errors.ucp" /></h3>
+        <dl class="anx-dl">
+            <f:for each="{ucpErrors}" as="code">
+                <div>
+                    <dt><code>{code}</code></dt>
+                    <dd><f:translate domain="agent_nexus.ap2" key="ucp.{code}" /></dd>
+                </div>
+            </f:for>
+        </dl>
+    </section>
+
+    <section aria-labelledby="anx-ap2-receipts">
+        <h2 id="anx-ap2-receipts"><f:translate domain="agent_nexus.ap2" key="reference.receipts.heading" /></h2>
+        <f:for each="{receipts}" as="fields" key="receipt">
+            <h3><f:translate domain="agent_nexus.ap2" key="type.{receipt}" /></h3>
+            <p><f:translate domain="agent_nexus.ap2" key="receipt.{receipt}" /></p>
+            <f:render section="Fields" arguments="{fields: fields, caption: receipt}" />
+        </f:for>
+    </section>
+
+    <section aria-labelledby="anx-ap2-wire">
+        <h2 id="anx-ap2-wire"><f:translate domain="agent_nexus.ap2" key="reference.wire.heading" /></h2>
+        <p><f:translate domain="agent_nexus.ap2" key="reference.wire.lede" /></p>
+        <pre class="anx-code" tabindex="0"><code>&lt;open SD-JWT&gt;~&lt;disclosure&gt;~…~&lt;disclosure&gt;~~&lt;closing KB-SD-JWT&gt;~&lt;disclosure&gt;~…~</code></pre>
+        <ul>
+            <li><f:translate domain="agent_nexus.ap2" key="reference.wire.root" /></li>
+            <li><f:translate domain="agent_nexus.ap2" key="reference.wire.closing" /></li>
+            <li><f:translate domain="agent_nexus.ap2" key="reference.wire.hashes" /></li>
+        </ul>
+    </section>
+</div>
+</f:section>
+
+<f:section name="Fields">
+    <div class="table-fit">
+        <table class="table table-striped table-hover">
+            <caption class="visually-hidden"><f:translate domain="agent_nexus.ap2" key="reference.fieldsOf" arguments="{0: caption}" /></caption>
+            <thead>
+                <tr>
+                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.field" /></th>
+                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.type" /></th>
+                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.required" /></th>
+                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.disclosable" /></th>
+                    <th scope="col"><f:translate domain="agent_nexus.ap2" key="col.description" /></th>
+                </tr>
+            </thead>
+            <tbody>
+                <f:for each="{fields}" as="field">
+                    <tr>
+                        <th scope="row"><code>{field.name}</code></th>
+                        <td><code>{field.type}</code></td>
+                        <td>
+                            <f:if condition="{field.required}">
+                                <f:then><f:translate domain="agent_nexus.ap2" key="yes" /><f:if condition="{field.when}"> (<f:translate domain="agent_nexus.ap2" key="when.{field.when}" />)</f:if></f:then>
+                                <f:else><f:translate domain="agent_nexus.ap2" key="no" /></f:else>
+                            </f:if>
+                        </td>
+                        <td>
+                            <f:if condition="{field.disclosable}">
+                                <f:then><f:translate domain="agent_nexus.ap2" key="disclosable.{field.disclosable}" /></f:then>
+                                <f:else><f:translate domain="agent_nexus.ap2" key="no" /></f:else>
+                            </f:if>
+                        </td>
+                        <td><f:translate domain="agent_nexus.ap2" key="field.{field.name}" /></td>
+                    </tr>
+                </f:for>
+            </tbody>
+        </table>
+    </div>
+</f:section>
+
+</html>

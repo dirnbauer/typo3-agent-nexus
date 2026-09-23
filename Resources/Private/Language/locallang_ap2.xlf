@@ -1,8 +1,1500 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment><source>AP2 Mandate Studio</source></segment></unit>
-        <unit id="mlang_tabs_tab"><segment><source>AP2 Mandate Studio</source></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment><source>Mint and verify signed sandbox mandates for simulated agent payment authorization.</source></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="ap2">
+    <unit id="studio.heading">
+      <segment>
+        <source>Mandate studio</source>
+      </segment>
+    </unit>
+    <unit id="studio.lede">
+      <segment>
+        <source>Sign AP2 v0.2 mandates with the sandbox keys, verify what an agent presents, and run the whole flow.</source>
+      </segment>
+    </unit>
+    <unit id="studio.sandbox.title">
+      <segment>
+        <source>Sandbox only</source>
+      </segment>
+    </unit>
+    <unit id="studio.sandbox">
+      <segment>
+        <source>Every role runs on this server with a demo key stored in the database. Nothing is ever charged. Never use these mandates or keys for real payments.</source>
+      </segment>
+    </unit>
+    <unit id="studio.jwks">
+      <segment>
+        <source>Open the key set</source>
+      </segment>
+    </unit>
+    <unit id="studio.demo">
+      <segment>
+        <source>Open the demo</source>
+      </segment>
+    </unit>
+    <unit id="stats.label">
+      <segment>
+        <source>Mandates on record</source>
+      </segment>
+    </unit>
+    <unit id="stats.issued">
+      <segment>
+        <source>Signed, not checked yet</source>
+      </segment>
+    </unit>
+    <unit id="stats.verified">
+      <segment>
+        <source>Accepted by a verifier</source>
+      </segment>
+    </unit>
+    <unit id="stats.rejected">
+      <segment>
+        <source>Refused by a verifier</source>
+      </segment>
+    </unit>
+    <unit id="type.open_checkout">
+      <segment>
+        <source>Open checkout mandate</source>
+      </segment>
+    </unit>
+    <unit id="type.checkout">
+      <segment>
+        <source>Checkout mandate</source>
+      </segment>
+    </unit>
+    <unit id="type.open_payment">
+      <segment>
+        <source>Open payment mandate</source>
+      </segment>
+    </unit>
+    <unit id="type.payment">
+      <segment>
+        <source>Payment mandate</source>
+      </segment>
+    </unit>
+    <unit id="type.checkout_jwt">
+      <segment>
+        <source>Signed checkout</source>
+      </segment>
+    </unit>
+    <unit id="type.checkout_receipt">
+      <segment>
+        <source>Checkout receipt</source>
+      </segment>
+    </unit>
+    <unit id="type.payment_receipt">
+      <segment>
+        <source>Payment receipt</source>
+      </segment>
+    </unit>
+    <unit id="type.jwt">
+      <segment>
+        <source>Signed token</source>
+      </segment>
+    </unit>
+    <unit id="type.unknown">
+      <segment>
+        <source>Unreadable token</source>
+      </segment>
+    </unit>
+    <unit id="mint.heading">
+      <segment>
+        <source>Sign a mandate</source>
+      </segment>
+    </unit>
+    <unit id="mint.type">
+      <segment>
+        <source>Mandate type</source>
+      </segment>
+    </unit>
+    <unit id="mint.signer">
+      <segment>
+        <source>Signed by</source>
+      </segment>
+    </unit>
+    <unit id="mint.signer.trustedSurface">
+      <segment>
+        <source>Trusted Surface: the person approves this exact purchase (human present)</source>
+      </segment>
+    </unit>
+    <unit id="mint.signer.agent">
+      <segment>
+        <source>Shopping agent: closes an open mandate with its own key (autonomous)</source>
+      </segment>
+    </unit>
+    <unit id="mint.items">
+      <segment>
+        <source>Items</source>
+      </segment>
+    </unit>
+    <unit id="mint.items.hint">
+      <segment>
+        <source>Open checkout mandate: what the agent may buy. Checkout and payment mandate: what the merchant puts in the checkout.</source>
+      </segment>
+    </unit>
+    <unit id="mint.cap">
+      <segment>
+        <source>Spending cap in euros</source>
+      </segment>
+    </unit>
+    <unit id="mint.merchant">
+      <segment>
+        <source>Merchant</source>
+      </segment>
+    </unit>
+    <unit id="mint.merchant.hint">
+      <segment>
+        <source>Pick the other shop to see the merchant check fail.</source>
+      </segment>
+    </unit>
+    <unit id="mint.expires">
+      <segment>
+        <source>Valid for (minutes)</source>
+      </segment>
+    </unit>
+    <unit id="mint.linked">
+      <segment>
+        <source>Open mandate to build on</source>
+      </segment>
+    </unit>
+    <unit id="mint.linked.hint">
+      <segment>
+        <source>For an open payment mandate: the open checkout mandate it belongs to. For a mandate the agent closes: the open mandate it closes. The last one you signed is filled in.</source>
+      </segment>
+    </unit>
+    <unit id="mint.transaction">
+      <segment>
+        <source>Checkout hash (optional)</source>
+      </segment>
+    </unit>
+    <unit id="mint.transaction.hint">
+      <segment>
+        <source>Leave it empty to let the merchant sign a new checkout for the items.</source>
+      </segment>
+    </unit>
+    <unit id="mint.submit">
+      <segment>
+        <source>Sign the mandate</source>
+      </segment>
+    </unit>
+    <unit id="mint.signed">
+      <segment>
+        <source>Signed: %s</source>
+      </segment>
+    </unit>
+    <unit id="mint.failed">
+      <segment>
+        <source>The mandate was not signed</source>
+      </segment>
+    </unit>
+    <unit id="output.heading">
+      <segment>
+        <source>Signed token</source>
+      </segment>
+    </unit>
+    <unit id="output.empty">
+      <segment>
+        <source>Sign a mandate to see its token, its header, its claims and each disclosure.</source>
+      </segment>
+    </unit>
+    <unit id="output.token">
+      <segment>
+        <source>Compact token</source>
+      </segment>
+    </unit>
+    <unit id="output.header">
+      <segment>
+        <source>Header</source>
+      </segment>
+    </unit>
+    <unit id="output.claims">
+      <segment>
+        <source>Claims, disclosures applied</source>
+      </segment>
+    </unit>
+    <unit id="output.signedPayload">
+      <segment>
+        <source>Signed payload, with digests</source>
+      </segment>
+    </unit>
+    <unit id="output.disclosures">
+      <segment>
+        <source>Disclosures</source>
+      </segment>
+    </unit>
+    <unit id="output.noDisclosures">
+      <segment>
+        <source>This token has no disclosures.</source>
+      </segment>
+    </unit>
+    <unit id="output.claim">
+      <segment>
+        <source>Claim</source>
+      </segment>
+    </unit>
+    <unit id="output.value">
+      <segment>
+        <source>Value</source>
+      </segment>
+    </unit>
+    <unit id="output.digest">
+      <segment>
+        <source>Digest</source>
+      </segment>
+    </unit>
+    <unit id="output.element">
+      <segment>
+        <source>(array element)</source>
+      </segment>
+    </unit>
+    <unit id="output.hops">
+      <segment>
+        <source>Tokens in the chain</source>
+      </segment>
+    </unit>
+    <unit id="output.hop">
+      <segment>
+        <source>Token %s: %s, key %s</source>
+      </segment>
+    </unit>
+    <unit id="output.copy">
+      <segment>
+        <source>Copy the token</source>
+      </segment>
+    </unit>
+    <unit id="output.copied">
+      <segment>
+        <source>The token is on the clipboard.</source>
+      </segment>
+    </unit>
+    <unit id="output.copyFailed">
+      <segment>
+        <source>The browser did not allow copying.</source>
+      </segment>
+    </unit>
+    <unit id="output.verify">
+      <segment>
+        <source>Verify this token</source>
+      </segment>
+    </unit>
+    <unit id="output.inspect">
+      <segment>
+        <source>Open in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="output.related">
+      <segment>
+        <source>Also signed</source>
+      </segment>
+    </unit>
+    <unit id="verify.heading">
+      <segment>
+        <source>Verify a mandate</source>
+      </segment>
+    </unit>
+    <unit id="verify.input">
+      <segment>
+        <source>Mandate, chain or receipt</source>
+      </segment>
+    </unit>
+    <unit id="verify.input.hint">
+      <segment>
+        <source>Paste up to four tokens, separated by spaces or line breaks. Add the checkout chain to a payment chain to check the payment reference.</source>
+      </segment>
+    </unit>
+    <unit id="verify.dryRun">
+      <segment>
+        <source>This is a dry run: nothing is marked as used.</source>
+      </segment>
+    </unit>
+    <unit id="verify.submit">
+      <segment>
+        <source>Verify</source>
+      </segment>
+    </unit>
+    <unit id="verify.valid">
+      <segment>
+        <source>Valid</source>
+      </segment>
+    </unit>
+    <unit id="verify.invalid">
+      <segment>
+        <source>Refused: %s</source>
+      </segment>
+    </unit>
+    <unit id="verify.check">
+      <segment>
+        <source>Check</source>
+      </segment>
+    </unit>
+    <unit id="verify.result">
+      <segment>
+        <source>Result</source>
+      </segment>
+    </unit>
+    <unit id="verify.detail">
+      <segment>
+        <source>Detail</source>
+      </segment>
+    </unit>
+    <unit id="verify.pass">
+      <segment>
+        <source>Passed</source>
+      </segment>
+    </unit>
+    <unit id="verify.fail">
+      <segment>
+        <source>Failed</source>
+      </segment>
+    </unit>
+    <unit id="verify.caption">
+      <segment>
+        <source>Checks of %s</source>
+      </segment>
+    </unit>
+    <unit id="verify.decoded">
+      <segment>
+        <source>What the token says</source>
+      </segment>
+    </unit>
+    <unit id="flow.heading">
+      <segment>
+        <source>Run the autonomous flow</source>
+      </segment>
+    </unit>
+    <unit id="flow.lede">
+      <segment>
+        <source>The same run the Trusted Surface content element starts: open mandates, the merchant&apos;s checkout, the agent&apos;s closed mandates, every check and both receipts.</source>
+      </segment>
+    </unit>
+    <unit id="flow.scenario">
+      <segment>
+        <source>Purchase</source>
+      </segment>
+    </unit>
+    <unit id="flow.within">
+      <segment>
+        <source>Within the cap</source>
+      </segment>
+    </unit>
+    <unit id="flow.over">
+      <segment>
+        <source>Over the cap</source>
+      </segment>
+    </unit>
+    <unit id="flow.submit">
+      <segment>
+        <source>Run the flow</source>
+      </segment>
+    </unit>
+    <unit id="flow.running">
+      <segment>
+        <source>Signing and checking…</source>
+      </segment>
+    </unit>
+    <unit id="flow.authorised">
+      <segment>
+        <source>Payment authorised. Nothing was charged.</source>
+      </segment>
+    </unit>
+    <unit id="flow.refused">
+      <segment>
+        <source>Payment refused: %s</source>
+      </segment>
+    </unit>
+    <unit id="flow.cart">
+      <segment>
+        <source>Cart: %s. Cap: %s.</source>
+      </segment>
+    </unit>
+    <unit id="flow.fallback">
+      <segment>
+        <source>The agent cannot finish this purchase alone. It would ask the person to approve the exact order on the Trusted Surface (human present).</source>
+      </segment>
+    </unit>
+    <unit id="flow.failed">
+      <segment>
+        <source>The flow could not run: %s</source>
+      </segment>
+    </unit>
+    <unit id="flow.chain">
+      <segment>
+        <source>Show this chain in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="receipts.heading">
+      <segment>
+        <source>Receipts</source>
+      </segment>
+    </unit>
+    <unit id="step.approve">
+      <segment>
+        <source>The Trusted Surface signs the open mandates</source>
+      </segment>
+    </unit>
+    <unit id="step.checkout">
+      <segment>
+        <source>The merchant signs the checkout</source>
+      </segment>
+    </unit>
+    <unit id="step.close">
+      <segment>
+        <source>The agent closes both mandates with its own key</source>
+      </segment>
+    </unit>
+    <unit id="step.credentialProvider">
+      <segment>
+        <source>The credential provider checks the payment mandate</source>
+      </segment>
+    </unit>
+    <unit id="step.merchant">
+      <segment>
+        <source>The merchant checks the checkout mandate</source>
+      </segment>
+    </unit>
+    <unit id="step.paymentProcessor">
+      <segment>
+        <source>The payment processor settles the payment (simulated)</source>
+      </segment>
+    </unit>
+    <unit id="status.done">
+      <segment>
+        <source>Done</source>
+      </segment>
+    </unit>
+    <unit id="status.passed">
+      <segment>
+        <source>Passed</source>
+      </segment>
+    </unit>
+    <unit id="status.failed">
+      <segment>
+        <source>Failed</source>
+      </segment>
+    </unit>
+    <unit id="status.skipped">
+      <segment>
+        <source>Skipped</source>
+      </segment>
+    </unit>
+    <unit id="keys.heading">
+      <segment>
+        <source>Sandbox keys</source>
+      </segment>
+    </unit>
+    <unit id="keys.lede">
+      <segment>
+        <source>One P-256 key per role, created on first use. Only the public halves are published.</source>
+      </segment>
+    </unit>
+    <unit id="keys.caption">
+      <segment>
+        <source>Keys of the sandbox roles</source>
+      </segment>
+    </unit>
+    <unit id="keys.role">
+      <segment>
+        <source>Role</source>
+      </segment>
+    </unit>
+    <unit id="keys.kid">
+      <segment>
+        <source>Key id</source>
+      </segment>
+    </unit>
+    <unit id="role.trusted-surface">
+      <segment>
+        <source>Trusted Surface</source>
+      </segment>
+    </unit>
+    <unit id="role.shopping-agent">
+      <segment>
+        <source>Shopping agent</source>
+      </segment>
+    </unit>
+    <unit id="role.merchant">
+      <segment>
+        <source>Merchant</source>
+      </segment>
+    </unit>
+    <unit id="role.credential-provider">
+      <segment>
+        <source>Credential provider</source>
+      </segment>
+    </unit>
+    <unit id="role.payment-processor">
+      <segment>
+        <source>Payment processor</source>
+      </segment>
+    </unit>
+    <unit id="recent.heading">
+      <segment>
+        <source>Latest mandates</source>
+      </segment>
+    </unit>
+    <unit id="recent.caption">
+      <segment>
+        <source>The latest mandates, checkouts and receipts</source>
+      </segment>
+    </unit>
+    <unit id="recent.label">
+      <segment>
+        <source>Mandate</source>
+      </segment>
+    </unit>
+    <unit id="recent.role">
+      <segment>
+        <source>Signed by</source>
+      </segment>
+    </unit>
+    <unit id="recent.state">
+      <segment>
+        <source>State</source>
+      </segment>
+    </unit>
+    <unit id="recent.updated">
+      <segment>
+        <source>Updated</source>
+      </segment>
+    </unit>
+    <unit id="recent.all">
+      <segment>
+        <source>Show all in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="recent.empty">
+      <segment>
+        <source>No mandates yet.</source>
+      </segment>
+    </unit>
+    <unit id="recent.empty.action">
+      <segment>
+        <source>Sign one above or run the flow.</source>
+      </segment>
+    </unit>
+    <unit id="state.issued">
+      <segment>
+        <source>Signed</source>
+      </segment>
+    </unit>
+    <unit id="state.verified">
+      <segment>
+        <source>Accepted</source>
+      </segment>
+    </unit>
+    <unit id="state.rejected">
+      <segment>
+        <source>Refused</source>
+      </segment>
+    </unit>
+    <unit id="error.type">
+      <segment>
+        <source>Choose a mandate type.</source>
+      </segment>
+    </unit>
+    <unit id="error.merchant">
+      <segment>
+        <source>Choose a merchant.</source>
+      </segment>
+    </unit>
+    <unit id="error.expires">
+      <segment>
+        <source>The lifetime must be between 1 and 1440 minutes.</source>
+      </segment>
+    </unit>
+    <unit id="error.items">
+      <segment>
+        <source>Pick at least one item.</source>
+      </segment>
+    </unit>
+    <unit id="error.cap">
+      <segment>
+        <source>Enter the spending cap in euros, for example 500 or 499.90.</source>
+      </segment>
+    </unit>
+    <unit id="error.linkedCheckout">
+      <segment>
+        <source>Paste the open checkout mandate this payment belongs to. Sign one first.</source>
+      </segment>
+    </unit>
+    <unit id="error.linkedOpen">
+      <segment>
+        <source>Paste the open mandate the agent closes.</source>
+      </segment>
+    </unit>
+    <unit id="error.linkedInvalid">
+      <segment>
+        <source>The pasted open mandate cannot be used here.</source>
+      </segment>
+    </unit>
+    <unit id="error.transaction">
+      <segment>
+        <source>No checkout with this hash was issued. Leave the field empty to create one.</source>
+      </segment>
+    </unit>
+    <unit id="error.empty">
+      <segment>
+        <source>Paste a mandate, a chain or a receipt.</source>
+      </segment>
+    </unit>
+    <unit id="error.tooMany">
+      <segment>
+        <source>Paste at most four tokens at once.</source>
+      </segment>
+    </unit>
+    <unit id="error.network">
+      <segment>
+        <source>The request failed. Try again.</source>
+      </segment>
+    </unit>
+    <unit id="check.format">
+      <segment>
+        <source>Well-formed mandate</source>
+      </segment>
+    </unit>
+    <unit id="check.root_signature">
+      <segment>
+        <source>Signed by the Trusted Surface</source>
+      </segment>
+    </unit>
+    <unit id="check.agent_signature">
+      <segment>
+        <source>Closed with the agent&apos;s key</source>
+      </segment>
+    </unit>
+    <unit id="check.binding">
+      <segment>
+        <source>Bound to the approved mandate</source>
+      </segment>
+    </unit>
+    <unit id="check.audience">
+      <segment>
+        <source>Meant for this verifier</source>
+      </segment>
+    </unit>
+    <unit id="check.single_mandate">
+      <segment>
+        <source>One mandate per token</source>
+      </segment>
+    </unit>
+    <unit id="check.lifetime">
+      <segment>
+        <source>Not expired</source>
+      </segment>
+    </unit>
+    <unit id="check.mandate_type">
+      <segment>
+        <source>Expected mandate type</source>
+      </segment>
+    </unit>
+    <unit id="check.content">
+      <segment>
+        <source>Complete mandate content</source>
+      </segment>
+    </unit>
+    <unit id="check.preset_values">
+      <segment>
+        <source>Approved values unchanged</source>
+      </segment>
+    </unit>
+    <unit id="check.merchant_checkout">
+      <segment>
+        <source>The merchant&apos;s own checkout</source>
+      </segment>
+    </unit>
+    <unit id="check.checkout_hash">
+      <segment>
+        <source>Checkout hash matches</source>
+      </segment>
+    </unit>
+    <unit id="check.transaction">
+      <segment>
+        <source>Paid for this checkout</source>
+      </segment>
+    </unit>
+    <unit id="check.allowed_merchant">
+      <segment>
+        <source>Same approved merchant</source>
+      </segment>
+    </unit>
+    <unit id="check.line_items">
+      <segment>
+        <source>Only approved items</source>
+      </segment>
+    </unit>
+    <unit id="check.payment_reference">
+      <segment>
+        <source>Linked to the approved checkout</source>
+      </segment>
+    </unit>
+    <unit id="check.spending_cap">
+      <segment>
+        <source>Within the spending cap</source>
+      </segment>
+    </unit>
+    <unit id="check.allowed_payee">
+      <segment>
+        <source>Paid to an approved merchant</source>
+      </segment>
+    </unit>
+    <unit id="check.payment_method">
+      <segment>
+        <source>Approved payment method</source>
+      </segment>
+    </unit>
+    <unit id="check.payment_provider">
+      <segment>
+        <source>Approved payment provider</source>
+      </segment>
+    </unit>
+    <unit id="check.budget">
+      <segment>
+        <source>Within the budget</source>
+      </segment>
+    </unit>
+    <unit id="check.recurrence">
+      <segment>
+        <source>Repeat use allowed</source>
+      </segment>
+    </unit>
+    <unit id="check.execution_date">
+      <segment>
+        <source>Within the payment dates</source>
+      </segment>
+    </unit>
+    <unit id="check.unknown_constraint">
+      <segment>
+        <source>Every constraint understood</source>
+      </segment>
+    </unit>
+    <unit id="check.single_use">
+      <segment>
+        <source>Not used before</source>
+      </segment>
+    </unit>
+    <unit id="check.signature">
+      <segment>
+        <source>Valid signature</source>
+      </segment>
+    </unit>
+    <unit id="check.receipt_reference">
+      <segment>
+        <source>Refers to a known mandate</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.format">
+      <segment>
+        <source>The token is an SD-JWT, or a chain of them, with valid disclosures and the right type in each place.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.root_signature">
+      <segment>
+        <source>The first token verifies with the Trusted Surface key named by its kid.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.agent_signature">
+      <segment>
+        <source>Each later token verifies with the key the token before it names in cnf.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.binding">
+      <segment>
+        <source>The closed mandate carries the hash of the open mandate as presented (sd_hash or issuer_jwt_hash).</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.audience">
+      <segment>
+        <source>The closing token names this verifier (aud) and a nonce it issued.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.single_mandate">
+      <segment>
+        <source>Each token discloses exactly one mandate in delegate_payload.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.lifetime">
+      <segment>
+        <source>exp has not passed and iat is not in the future, with five minutes of clock skew.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.mandate_type">
+      <segment>
+        <source>The vct values are exactly the open and closed types this verifier handles.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.content">
+      <segment>
+        <source>Every claim the schema requires is present and has the right type.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.preset_values">
+      <segment>
+        <source>Values the open mandate fixed in advance are the same in the closed mandate.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.merchant_checkout">
+      <segment>
+        <source>The checkout JWT is signed with the merchant key and is the checkout of this session.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.checkout_hash">
+      <segment>
+        <source>checkout_hash is the SHA-256 hash of the disclosed checkout JWT.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.transaction">
+      <segment>
+        <source>transaction_id is the hash of the checkout being paid for.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.allowed_merchant">
+      <segment>
+        <source>The checkout comes from a merchant the person approved.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.line_items">
+      <segment>
+        <source>The checkout holds exactly the items the person approved, in the right quantities.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_reference">
+      <segment>
+        <source>The payment belongs to the open checkout mandate the agent presented.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.spending_cap">
+      <segment>
+        <source>The amount lies within the range the person approved, in the same currency.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.allowed_payee">
+      <segment>
+        <source>The money goes to a merchant the person approved.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_method">
+      <segment>
+        <source>The payment uses a payment method the person approved.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.payment_provider">
+      <segment>
+        <source>The payment initiation service provider is one the person approved.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.budget">
+      <segment>
+        <source>Earlier payments under this mandate plus this one stay within the budget.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.recurrence">
+      <segment>
+        <source>Repeat payments stay within their number and frequency.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.execution_date">
+      <segment>
+        <source>A scheduled payment falls within the approved dates.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.unknown_constraint">
+      <segment>
+        <source>A constraint this verifier does not know fails, as AP2 requires.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.single_use">
+      <segment>
+        <source>The closed mandate was not accepted before, and its open mandate did not authorise a purchase yet.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.signature">
+      <segment>
+        <source>A receipt or checkout verifies with the key of the role that issues it.</source>
+      </segment>
+    </unit>
+    <unit id="checkdesc.receipt_reference">
+      <segment>
+        <source>The receipt refers to a closed mandate on record.</source>
+      </segment>
+    </unit>
+    <unit id="reference.heading">
+      <segment>
+        <source>Mandate reference</source>
+      </segment>
+    </unit>
+    <unit id="reference.lede">
+      <segment>
+        <source>AP2 v0.2.0 of 28 April 2026: the mandate types, what they contain, the constraints, the roles, the checks and the error codes. This page is built from the same catalogue the verifiers use.</source>
+      </segment>
+    </unit>
+    <unit id="reference.toc">
+      <segment>
+        <source>On this page</source>
+      </segment>
+    </unit>
+    <unit id="reference.types.heading">
+      <segment>
+        <source>Mandate types</source>
+      </segment>
+    </unit>
+    <unit id="reference.types.lede">
+      <segment>
+        <source>An open mandate holds the limits a person approved and the agent&apos;s key. A closed mandate names one checkout or one payment. Verifiers only ever act on closed mandates.</source>
+      </segment>
+    </unit>
+    <unit id="reference.schema">
+      <segment>
+        <source>Schema:</source>
+      </segment>
+    </unit>
+    <unit id="reference.allowedConstraints">
+      <segment>
+        <source>Constraints it may carry:</source>
+      </segment>
+    </unit>
+    <unit id="reference.constraints.heading">
+      <segment>
+        <source>Constraints of open mandates</source>
+      </segment>
+    </unit>
+    <unit id="reference.constraints.lede">
+      <segment>
+        <source>Each constraint is checked against the closed mandate. A constraint a verifier does not know fails.</source>
+      </segment>
+    </unit>
+    <unit id="reference.requiredMark">
+      <segment>
+        <source>* required</source>
+      </segment>
+    </unit>
+    <unit id="reference.sharedTypes">
+      <segment>
+        <source>Shared types</source>
+      </segment>
+    </unit>
+    <unit id="reference.roles.heading">
+      <segment>
+        <source>Roles</source>
+      </segment>
+    </unit>
+    <unit id="reference.roles.lede">
+      <segment>
+        <source>AP2 names five roles. In this sandbox all of them run on this server, each with its own key.</source>
+      </segment>
+    </unit>
+    <unit id="reference.checks.heading">
+      <segment>
+        <source>What a verifier checks</source>
+      </segment>
+    </unit>
+    <unit id="reference.checks.lede">
+      <segment>
+        <source>Every check runs in deterministic code. The error code is what a failed check puts into the receipt.</source>
+      </segment>
+    </unit>
+    <unit id="reference.errors.heading">
+      <segment>
+        <source>Error codes</source>
+      </segment>
+    </unit>
+    <unit id="reference.errors.ap2">
+      <segment>
+        <source>In AP2 receipts</source>
+      </segment>
+    </unit>
+    <unit id="reference.errors.ucp">
+      <segment>
+        <source>In UCP checkouts (dev.ucp.common.payment.ap2_mandate)</source>
+      </segment>
+    </unit>
+    <unit id="reference.receipts.heading">
+      <segment>
+        <source>Receipts</source>
+      </segment>
+    </unit>
+    <unit id="reference.wire.heading">
+      <segment>
+        <source>How a chain is written</source>
+      </segment>
+    </unit>
+    <unit id="reference.wire.lede">
+      <segment>
+        <source>An autonomous mandate is the open SD-JWT and the agent&apos;s closing token, joined by two tildes:</source>
+      </segment>
+    </unit>
+    <unit id="reference.wire.root">
+      <segment>
+        <source>The open SD-JWT (typ dc+sd-jwt) is signed by the Trusted Surface. Its delegate_payload holds the mandate as one selectively disclosable element.</source>
+      </segment>
+    </unit>
+    <unit id="reference.wire.closing">
+      <segment>
+        <source>The closing token (typ kb+sd-jwt) is signed with the key in cnf. It carries iat, aud, nonce and sd_hash, and discloses the closed mandate.</source>
+      </segment>
+    </unit>
+    <unit id="reference.wire.hashes">
+      <segment>
+        <source>Every hash is the base64url SHA-256 of the exact characters sent. A receipt refers to the SHA-256 hash of the closing token.</source>
+      </segment>
+    </unit>
+    <unit id="reference.fieldsOf">
+      <segment>
+        <source>Fields of %s</source>
+      </segment>
+    </unit>
+    <unit id="col.vct">
+      <segment>
+        <source>Type (vct)</source>
+      </segment>
+    </unit>
+    <unit id="col.form">
+      <segment>
+        <source>Form</source>
+      </segment>
+    </unit>
+    <unit id="col.signedBy">
+      <segment>
+        <source>Signed by</source>
+      </segment>
+    </unit>
+    <unit id="col.checkedBy">
+      <segment>
+        <source>Checked by</source>
+      </segment>
+    </unit>
+    <unit id="col.purpose">
+      <segment>
+        <source>Purpose</source>
+      </segment>
+    </unit>
+    <unit id="col.constraint">
+      <segment>
+        <source>Constraint</source>
+      </segment>
+    </unit>
+    <unit id="col.appliesTo">
+      <segment>
+        <source>In</source>
+      </segment>
+    </unit>
+    <unit id="col.fields">
+      <segment>
+        <source>Fields</source>
+      </segment>
+    </unit>
+    <unit id="col.evaluation">
+      <segment>
+        <source>How it is checked</source>
+      </segment>
+    </unit>
+    <unit id="col.check">
+      <segment>
+        <source>Check</source>
+      </segment>
+    </unit>
+    <unit id="col.does">
+      <segment>
+        <source>What it does</source>
+      </segment>
+    </unit>
+    <unit id="col.proves">
+      <segment>
+        <source>What it proves</source>
+      </segment>
+    </unit>
+    <unit id="col.failure">
+      <segment>
+        <source>Error when it fails</source>
+      </segment>
+    </unit>
+    <unit id="col.field">
+      <segment>
+        <source>Field</source>
+      </segment>
+    </unit>
+    <unit id="col.type">
+      <segment>
+        <source>Type</source>
+      </segment>
+    </unit>
+    <unit id="col.required">
+      <segment>
+        <source>Required</source>
+      </segment>
+    </unit>
+    <unit id="col.disclosable">
+      <segment>
+        <source>Selectively disclosable</source>
+      </segment>
+    </unit>
+    <unit id="col.description">
+      <segment>
+        <source>Description</source>
+      </segment>
+    </unit>
+    <unit id="form.open">
+      <segment>
+        <source>Open</source>
+      </segment>
+    </unit>
+    <unit id="form.closed">
+      <segment>
+        <source>Closed</source>
+      </segment>
+    </unit>
+    <unit id="yes">
+      <segment>
+        <source>Yes</source>
+      </segment>
+    </unit>
+    <unit id="no">
+      <segment>
+        <source>No</source>
+      </segment>
+    </unit>
+    <unit id="when.Success">
+      <segment>
+        <source>on success</source>
+      </segment>
+    </unit>
+    <unit id="when.Error">
+      <segment>
+        <source>on error</source>
+      </segment>
+    </unit>
+    <unit id="disclosable.claim">
+      <segment>
+        <source>The claim</source>
+      </segment>
+    </unit>
+    <unit id="disclosable.elements">
+      <segment>
+        <source>Each element</source>
+      </segment>
+    </unit>
+    <unit id="errorkind.terminal">
+      <segment>
+        <source>Terminal</source>
+      </segment>
+    </unit>
+    <unit id="errorkind.fallback">
+      <segment>
+        <source>Fall back to the person</source>
+      </segment>
+    </unit>
+    <unit id="signedBy.open_checkout">
+      <segment>
+        <source>Trusted Surface</source>
+      </segment>
+    </unit>
+    <unit id="signedBy.open_payment">
+      <segment>
+        <source>Trusted Surface</source>
+      </segment>
+    </unit>
+    <unit id="signedBy.checkout">
+      <segment>
+        <source>Trusted Surface (person present) or the shopping agent (autonomous)</source>
+      </segment>
+    </unit>
+    <unit id="signedBy.payment">
+      <segment>
+        <source>Trusted Surface (person present) or the shopping agent (autonomous)</source>
+      </segment>
+    </unit>
+    <unit id="checkedBy.open_checkout">
+      <segment>
+        <source>Merchant, with the closed mandate</source>
+      </segment>
+    </unit>
+    <unit id="checkedBy.checkout">
+      <segment>
+        <source>Merchant</source>
+      </segment>
+    </unit>
+    <unit id="checkedBy.open_payment">
+      <segment>
+        <source>Credential provider and payment processor, with the closed mandate</source>
+      </segment>
+    </unit>
+    <unit id="checkedBy.payment">
+      <segment>
+        <source>Credential provider and payment processor</source>
+      </segment>
+    </unit>
+    <unit id="purpose.open_checkout">
+      <segment>
+        <source>What the agent may buy, and where.</source>
+      </segment>
+    </unit>
+    <unit id="purpose.checkout">
+      <segment>
+        <source>Approves one checkout the merchant signed, by its hash.</source>
+      </segment>
+    </unit>
+    <unit id="purpose.open_payment">
+      <segment>
+        <source>How much the agent may pay, to whom and with what.</source>
+      </segment>
+    </unit>
+    <unit id="purpose.payment">
+      <segment>
+        <source>Approves one payment for one checkout.</source>
+      </segment>
+    </unit>
+    <unit id="roledesc.trusted-surface">
+      <segment>
+        <source>Shows the mandate to the person and signs it once they approve. Must not be an AI agent.</source>
+      </segment>
+    </unit>
+    <unit id="roledesc.shopping-agent">
+      <segment>
+        <source>Shops for the person and closes open mandates with its own key. Every other role treats it as untrusted.</source>
+      </segment>
+    </unit>
+    <unit id="roledesc.merchant">
+      <segment>
+        <source>Signs the checkout, checks the checkout mandate and returns the checkout receipt.</source>
+      </segment>
+    </unit>
+    <unit id="roledesc.credential-provider">
+      <segment>
+        <source>Holds the payment method, checks the payment mandate and releases a payment credential.</source>
+      </segment>
+    </unit>
+    <unit id="roledesc.payment-processor">
+      <segment>
+        <source>Checks that the credential belongs to this checkout, settles and returns the payment receipt.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.checkout-allowed-merchants">
+      <segment>
+        <source>The checkout&apos;s merchant must be among the disclosed merchants, matched by id, or by name and website.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.checkout-line-items">
+      <segment>
+        <source>Every requirement is filled with the stated quantity of acceptable items, and nothing else is bought (a maximum-flow match).</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-amount-range">
+      <segment>
+        <source>The amount in minor units lies between min and max, in the same currency.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-payees">
+      <segment>
+        <source>The payee is among the disclosed merchants.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-payment-instruments">
+      <segment>
+        <source>The payment instrument&apos;s id is among the disclosed ones.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-allowed-pisps">
+      <segment>
+        <source>The payment initiation service provider matches one in the list by all three names.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-budget">
+      <segment>
+        <source>All payments under the mandate, this one included, stay within max (read as whole units, as the AP2 SDK does).</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-agent-recurrence">
+      <segment>
+        <source>Repeat use within max_occurrences and at most once per period; needs an amount range and a budget.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-execution-date">
+      <segment>
+        <source>A scheduled execution date lies between not_before and not_after.</source>
+      </segment>
+    </unit>
+    <unit id="constraint.payment-reference">
+      <segment>
+        <source>The digest of the open checkout mandate presented with the purchase equals conditional_transaction_id.</source>
+      </segment>
+    </unit>
+    <unit id="code.invalid_credential">
+      <segment>
+        <source>The mandate failed verification. Terminal.</source>
+      </segment>
+    </unit>
+    <unit id="code.invalid_mandate">
+      <segment>
+        <source>The mandate is valid but does not approve this action. Terminal.</source>
+      </segment>
+    </unit>
+    <unit id="code.unresolved_constraint">
+      <segment>
+        <source>A constraint is unknown or not met. The agent falls back to asking the person to approve the exact purchase.</source>
+      </segment>
+    </unit>
+    <unit id="code.mandates_not_supported">
+      <segment>
+        <source>The verifier does not accept mandates for this action.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_required">
+      <segment>
+        <source>AP2 was agreed, but the complete request has no checkout mandate.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.agent_missing_key">
+      <segment>
+        <source>The platform has no valid key to check the mandate with.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_invalid_signature">
+      <segment>
+        <source>The mandate signature cannot be verified.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_expired">
+      <segment>
+        <source>The mandate has expired.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.mandate_scope_mismatch">
+      <segment>
+        <source>The mandate is bound to a different checkout.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.merchant_authorization_invalid">
+      <segment>
+        <source>The business signature on the checkout cannot be verified.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.merchant_authorization_missing">
+      <segment>
+        <source>The checkout has no ap2.merchant_authorization.</source>
+      </segment>
+    </unit>
+    <unit id="receipt.checkout_receipt">
+      <segment>
+        <source>The merchant&apos;s answer to a checkout mandate, signed with the merchant key.</source>
+      </segment>
+    </unit>
+    <unit id="receipt.payment_receipt">
+      <segment>
+        <source>The answer to a payment mandate: signed by the payment processor, or by the credential provider when it refuses.</source>
+      </segment>
+    </unit>
+    <unit id="field.vct">
+      <segment>
+        <source>The mandate type, matched exactly, version suffix included.</source>
+      </segment>
+    </unit>
+    <unit id="field.constraints">
+      <segment>
+        <source>The limits the closed mandate must meet.</source>
+      </segment>
+    </unit>
+    <unit id="field.cnf">
+      <segment>
+        <source>The agent&apos;s public key (RFC 7800); only that key can close the mandate.</source>
+      </segment>
+    </unit>
+    <unit id="field.iat">
+      <segment>
+        <source>When it was issued, as a Unix timestamp.</source>
+      </segment>
+    </unit>
+    <unit id="field.exp">
+      <segment>
+        <source>When it expires, as a Unix timestamp.</source>
+      </segment>
+    </unit>
+    <unit id="field.checkout_jwt">
+      <segment>
+        <source>The checkout the merchant signed, as a compact JWS.</source>
+      </segment>
+    </unit>
+    <unit id="field.checkout_hash">
+      <segment>
+        <source>base64url SHA-256 of checkout_jwt; it ties the checkout and payment mandates together.</source>
+      </segment>
+    </unit>
+    <unit id="field.transaction_id">
+      <segment>
+        <source>The checkout_hash of the checkout being paid for.</source>
+      </segment>
+    </unit>
+    <unit id="field.payee">
+      <segment>
+        <source>The merchant that receives the money.</source>
+      </segment>
+    </unit>
+    <unit id="field.payment_amount">
+      <segment>
+        <source>Amount in minor units, with its currency.</source>
+      </segment>
+    </unit>
+    <unit id="field.payment_instrument">
+      <segment>
+        <source>The payment method used.</source>
+      </segment>
+    </unit>
+    <unit id="field.pisp">
+      <segment>
+        <source>The payment initiation service provider, if one takes part.</source>
+      </segment>
+    </unit>
+    <unit id="field.execution_date">
+      <segment>
+        <source>When the payment runs; absent means now.</source>
+      </segment>
+    </unit>
+    <unit id="field.risk_data">
+      <segment>
+        <source>Risk signals the Trusted Surface collected.</source>
+      </segment>
+    </unit>
+    <unit id="field.status">
+      <segment>
+        <source>Success or Error.</source>
+      </segment>
+    </unit>
+    <unit id="field.iss">
+      <segment>
+        <source>Who issued the receipt.</source>
+      </segment>
+    </unit>
+    <unit id="field.reference">
+      <segment>
+        <source>The SHA-256 hash of the closed mandate the receipt answers.</source>
+      </segment>
+    </unit>
+    <unit id="field.order_id">
+      <segment>
+        <source>The merchant&apos;s order.</source>
+      </segment>
+    </unit>
+    <unit id="field.error">
+      <segment>
+        <source>The error code.</source>
+      </segment>
+    </unit>
+    <unit id="field.error_description">
+      <segment>
+        <source>What went wrong, for people.</source>
+      </segment>
+    </unit>
+    <unit id="field.payment_id">
+      <segment>
+        <source>The payment&apos;s id.</source>
+      </segment>
+    </unit>
+    <unit id="field.psp_confirmation_id">
+      <segment>
+        <source>The payment service provider&apos;s confirmation.</source>
+      </segment>
+    </unit>
+    <unit id="field.network_confirmation_id">
+      <segment>
+        <source>The card network&apos;s confirmation.</source>
+      </segment>
+    </unit>
+  </file>
 </xliff>
