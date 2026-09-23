@@ -24,10 +24,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * via {@see LlmUsageTracker} — {@see LlmGuard} is the only budget brake on
  * that path.
  */
-final class LlmClient implements SingletonInterface
+final class LlmClient implements LanguageModel, SingletonInterface
 {
     private const COMPLETION_INTERFACE = CompletionServiceInterface::class;
 
+    #[\Override]
     public function isAvailable(): bool
     {
         return interface_exists(self::COMPLETION_INTERFACE);
@@ -40,6 +41,7 @@ final class LlmClient implements SingletonInterface
      *
      * @return array{provider: string, adapter: string, endpoint: string, model: string, modelId: string, priceInput: string, priceOutput: string, hasPricing: bool}|null
      */
+    #[\Override]
     public function getConnectionInfo(): ?array
     {
         $model = $this->defaultModel();
@@ -77,6 +79,7 @@ final class LlmClient implements SingletonInterface
      * @throws \RuntimeException when nr-llm is not installed
      * @throws \JsonException when the model response is not valid JSON
      */
+    #[\Override]
     public function completeJson(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array
     {
         $options = ChatOptions::json()->withSystemPrompt($systemPrompt);
@@ -112,6 +115,7 @@ final class LlmClient implements SingletonInterface
      * @return array{text: string, promptTokens: int, completionTokens: int, cost: ?float, model: string}
      * @throws \RuntimeException when nr-llm is not installed
      */
+    #[\Override]
     public function completeText(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array
     {
         $options = ChatOptions::factual()->withSystemPrompt($systemPrompt);
@@ -148,6 +152,7 @@ final class LlmClient implements SingletonInterface
      * @return \Generator<int, string>
      * @throws \RuntimeException when nr-llm is not installed
      */
+    #[\Override]
     public function streamText(string $systemPrompt, string $userPrompt, ?int $maxTokens = null): \Generator
     {
         if (!$this->isAvailable()) {
@@ -201,6 +206,7 @@ final class LlmClient implements SingletonInterface
      * Estimate a call's cost from token counts × the default model's
      * per-1M-token pricing (used when a response carries no cost).
      */
+    #[\Override]
     public function estimateCost(int $promptTokens, int $completionTokens): ?float
     {
         $model = $this->defaultModel();
@@ -223,6 +229,7 @@ final class LlmClient implements SingletonInterface
     /**
      * Rough token estimate for streamed responses that report no usage.
      */
+    #[\Override]
     public function estimateTokens(string $text): int
     {
         return (int)ceil(mb_strlen($text) / 4);
@@ -232,6 +239,7 @@ final class LlmClient implements SingletonInterface
      * Instance-wide nr-llm spend for a date range (all consumers, not just
      * Agent Nexus). Null when unavailable.
      */
+    #[\Override]
     public function getInstanceCost(\DateTimeInterface $from, \DateTimeInterface $to): ?float
     {
         if (!$this->isAvailable()) {

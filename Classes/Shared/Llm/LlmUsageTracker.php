@@ -16,17 +16,15 @@ use TYPO3\CMS\Core\SingletonInterface;
  * usage middleware entirely, so this ledger is the *only* record of their
  * spend and the source the daily frontend budget guard counts against.
  */
-final class LlmUsageTracker implements SingletonInterface
+final class LlmUsageTracker implements UsageLedger, SingletonInterface
 {
-    public const SOURCE_BACKEND = 'backend';
-    public const SOURCE_FRONTEND = 'frontend';
-
-    private const TABLE = 'tx_agentnexus_llm_usage';
+    private const string TABLE = 'tx_agentnexus_llm_usage';
 
     public function __construct(
         private readonly ConnectionPool $connectionPool,
     ) {}
 
+    #[\Override]
     public function record(
         string $protocol,
         string $source,
@@ -55,6 +53,7 @@ final class LlmUsageTracker implements SingletonInterface
     /**
      * @return array{cost: float, requests: int, tokens: int}
      */
+    #[\Override]
     public function getTotals(int $from, int $to, ?string $protocol = null): array
     {
         $qb = $this->connectionPool->getQueryBuilderForTable(self::TABLE);
@@ -80,6 +79,7 @@ final class LlmUsageTracker implements SingletonInterface
         ];
     }
 
+    #[\Override]
     public function getCostToday(?string $protocol = null): float
     {
         return $this->getTotals((int)strtotime('today'), time(), $protocol)['cost'];
@@ -88,8 +88,9 @@ final class LlmUsageTracker implements SingletonInterface
     /**
      * Per-month cost for the last N months (current month first).
      *
-     * @return array<int, array{label: string, year: int, month: int, cost: float, requests: int}>
+     * @return list<array{label: string, year: int, month: int, cost: float, requests: int}>
      */
+    #[\Override]
     public function getMonthlyCosts(int $months = 3, ?string $protocol = null): array
     {
         $result = [];

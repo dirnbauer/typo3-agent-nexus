@@ -6,9 +6,9 @@ namespace Webconsulting\AgentNexus\Agui\Service;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use Webconsulting\AgentNexus\Agui\Event\Events;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The "agent": an AG-UI event emitter.
@@ -28,9 +28,9 @@ final class AgentRunner implements SingletonInterface
 {
     public function __construct(
         private readonly Applier $applier,
-        private readonly LlmClient $llmClient,
+        private readonly LanguageModel $llmClient,
         private readonly LlmGuard $llmGuard,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly UsageLedger $usageTracker,
     ) {}
 
     /**
@@ -270,7 +270,7 @@ final class AgentRunner implements SingletonInterface
         $completionTokens = $this->llmClient->estimateTokens($text);
         $this->usageTracker->record(
             'agui',
-            LlmUsageTracker::SOURCE_FRONTEND,
+            UsageLedger::SOURCE_FRONTEND,
             'default',
             $promptTokens,
             $completionTokens,

@@ -16,6 +16,8 @@ use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
  */
 abstract class AbstractAgentNexusTestCase extends FunctionalTestCase
 {
+    protected const SITE_IDENTIFIER = 'testing';
+    protected const BASE = 'https://agent-nexus.test/';
     /**
      * lib.contentElement comes from fluid_styled_content, which the
      * "webconsulting/agent-nexus" site set declares as its dependency — without
@@ -24,9 +26,6 @@ abstract class AbstractAgentNexusTestCase extends FunctionalTestCase
     protected array $coreExtensionsToLoad = ['fluid_styled_content'];
 
     protected array $testExtensionsToLoad = ['agent_nexus'];
-
-    protected const SITE_IDENTIFIER = 'testing';
-    protected const BASE = 'https://agent-nexus.test/';
 
     protected function writeTestSite(int $rootPageId = 1): void
     {

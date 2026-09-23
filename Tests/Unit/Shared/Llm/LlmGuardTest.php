@@ -7,9 +7,9 @@ namespace Webconsulting\AgentNexus\Tests\Unit\Shared\Llm;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The guard is the only cost brake on streamed calls, because nr-llm's own
@@ -120,16 +120,16 @@ final class LlmGuardTest extends UnitTestCase
         return new LlmGuard($extensionConfiguration, $this->client($available), $this->tracker($costToday));
     }
 
-    private function client(bool $available): LlmClient
+    private function client(bool $available): LanguageModel
     {
-        $client = self::createStub(LlmClient::class);
+        $client = self::createStub(LanguageModel::class);
         $client->method('isAvailable')->willReturn($available);
         return $client;
     }
 
-    private function tracker(float $costToday): LlmUsageTracker
+    private function tracker(float $costToday): UsageLedger
     {
-        $tracker = self::createStub(LlmUsageTracker::class);
+        $tracker = self::createStub(UsageLedger::class);
         $tracker->method('getCostToday')->willReturn($costToday);
         return $tracker;
     }

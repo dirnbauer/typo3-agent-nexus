@@ -13,9 +13,9 @@ use Webconsulting\AgentNexus\Ap2\Service\MandateLog;
 use Webconsulting\AgentNexus\Ap2\Service\MandateService;
 use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
 use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * Public (frontend) endpoint for the Trusted Surface content element.
@@ -102,7 +102,7 @@ final class AuthorizeEndpoint
         }
 
         try {
-            $client = GeneralUtility::makeInstance(LlmClient::class);
+            $client = GeneralUtility::makeInstance(LanguageModel::class);
             $completion = $client->completeText(
                 'Explain an AP2 mandate verification to a website visitor in 2 short plain-text sentences. '
                 . 'No jargon beyond "spending cap" and "signature"; use only this data: '
@@ -120,9 +120,9 @@ final class AuthorizeEndpoint
             if ($text === '') {
                 return null;
             }
-            GeneralUtility::makeInstance(LlmUsageTracker::class)->record(
+            GeneralUtility::makeInstance(UsageLedger::class)->record(
                 'ap2',
-                LlmUsageTracker::SOURCE_FRONTEND,
+                UsageLedger::SOURCE_FRONTEND,
                 'default',
                 (int)$completion['promptTokens'],
                 (int)$completion['completionTokens'],

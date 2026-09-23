@@ -13,8 +13,8 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use Webconsulting\AgentNexus\Agentstack\Service\ProtocolStatusService;
 use Webconsulting\AgentNexus\Agentstack\Service\SiteLocator;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * Agent Nexus — the hub.
@@ -50,8 +50,8 @@ final class OverviewController extends ActionController
         private readonly PageRenderer $pageRenderer,
         private readonly ProtocolStatusService $protocolStatusService,
         private readonly SiteLocator $siteLocator,
-        private readonly LlmClient $llmClient,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly LanguageModel $llmClient,
+        private readonly UsageLedger $usageTracker,
         private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly PackageManager $packageManager,
     ) {}

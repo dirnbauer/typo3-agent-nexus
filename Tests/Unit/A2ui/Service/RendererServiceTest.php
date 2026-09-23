@@ -135,7 +135,7 @@ final class RendererServiceTest extends UnitTestCase
      */
     private function recordingViewFactory(): ViewFactoryInterface
     {
-        $view = new class () implements ViewInterface {
+        $view = new class implements ViewInterface {
             /** @var array<string, mixed> */
             private array $variables = [];
 

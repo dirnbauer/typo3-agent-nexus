@@ -6,8 +6,8 @@ namespace Webconsulting\AgentNexus\Ucp\Service;
 
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 use Webconsulting\AgentNexus\Ucp\Protocol\Events;
 
 /**
@@ -29,8 +29,8 @@ final class CheckoutRunner implements SingletonInterface
     public function __construct(
         private readonly Merchant $merchant,
         private readonly ExtensionConfiguration $extensionConfiguration,
-        private readonly LlmClient $llmClient,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly LanguageModel $llmClient,
+        private readonly UsageLedger $usageTracker,
     ) {}
 
     /**
@@ -106,7 +106,7 @@ final class CheckoutRunner implements SingletonInterface
             if (trim($completion['text']) !== '') {
                 $this->usageTracker->record(
                     'ucp',
-                    LlmUsageTracker::SOURCE_FRONTEND,
+                    UsageLedger::SOURCE_FRONTEND,
                     'default',
                     (int)$completion['promptTokens'],
                     (int)$completion['completionTokens'],

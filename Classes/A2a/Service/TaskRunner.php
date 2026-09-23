@@ -6,8 +6,8 @@ namespace Webconsulting\AgentNexus\A2a\Service;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use Webconsulting\AgentNexus\A2a\Protocol\Frames;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The site's A2A agent: a task executor.
@@ -31,8 +31,8 @@ final class TaskRunner implements SingletonInterface
 {
     public function __construct(
         private readonly SkillCatalog $skillCatalog,
-        private readonly LlmClient $llmClient,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly LanguageModel $llmClient,
+        private readonly UsageLedger $usageTracker,
     ) {}
 
     /**
@@ -183,7 +183,7 @@ final class TaskRunner implements SingletonInterface
     {
         $this->usageTracker->record(
             'a2a',
-            LlmUsageTracker::SOURCE_FRONTEND,
+            UsageLedger::SOURCE_FRONTEND,
             'default',
             (int)$completion['promptTokens'],
             (int)$completion['completionTokens'],

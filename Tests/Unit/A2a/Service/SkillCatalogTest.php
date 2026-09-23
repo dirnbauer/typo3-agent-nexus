@@ -9,8 +9,8 @@ use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use Webconsulting\AgentNexus\A2a\Service\SkillCatalog;
 use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The catalogue is the single source of truth behind the Agent Card, the
@@ -64,8 +64,8 @@ final class SkillCatalogTest extends UnitTestCase
     {
         $runner = new TaskRunner(
             $this->subject,
-            self::createStub(LlmClient::class),
-            self::createStub(LlmUsageTracker::class),
+            self::createStub(LanguageModel::class),
+            self::createStub(UsageLedger::class),
         );
 
         $frames = iterator_to_array($runner->run([
@@ -95,8 +95,8 @@ final class SkillCatalogTest extends UnitTestCase
     {
         $runner = new TaskRunner(
             $this->subject,
-            self::createStub(LlmClient::class),
-            self::createStub(LlmUsageTracker::class),
+            self::createStub(LanguageModel::class),
+            self::createStub(UsageLedger::class),
         );
 
         $frames = iterator_to_array($runner->run([

@@ -75,10 +75,18 @@ services:
   Webconsulting\AgentNexus\Shared\Llm\LlmClient:
     public: true
 
+  Webconsulting\AgentNexus\Shared\Llm\LanguageModel:
+    alias: Webconsulting\AgentNexus\Shared\Llm\LlmClient
+    public: true
+
   Webconsulting\AgentNexus\Shared\Llm\LlmGuard:
     public: true
 
   Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Llm\UsageLedger:
+    alias: Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker
     public: true
 
   Webconsulting\AgentNexus\Shared\Http\RateLimiter:

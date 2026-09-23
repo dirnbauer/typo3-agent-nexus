@@ -11,14 +11,14 @@ use Webconsulting\AgentNexus\A2ui\Domain\Model\Component;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\GenerationResult;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\Surface;
 use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
-use Webconsulting\AgentNexus\Shared\Llm\LlmClient;
+use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
-use Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker;
+use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The "agent": turns a natural-language intent into an A2UI v1.0 surface.
  *
- * Primary path - a real LLM (via {@see LlmClient}) is asked to emit a surface
+ * Primary path - a real LLM (via {@see LanguageModel}) is asked to emit a surface
  * using ONLY the trusted catalog; its output is parsed and hardened against the
  * {@see ComponentRegistry} so nothing outside the catalog can be rendered.
  *
@@ -30,8 +30,8 @@ final class AgentService implements SingletonInterface
 {
     public function __construct(
         private readonly ComponentRegistry $registry,
-        private readonly LlmClient $llmClient,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly LanguageModel $llmClient,
+        private readonly UsageLedger $usageTracker,
         private readonly LlmGuard $llmGuard,
         private readonly ExtensionConfiguration $extensionConfiguration,
         private readonly LoggerInterface $logger,
@@ -50,7 +50,7 @@ final class AgentService implements SingletonInterface
         // Frontend calls additionally pass the shared guard (global switch,
         // per-protocol toggle, daily budget) — the backend playground only
         // needs the module toggle.
-        if ($llmEnabled && ($context['source'] ?? '') === LlmUsageTracker::SOURCE_FRONTEND) {
+        if ($llmEnabled && ($context['source'] ?? '') === UsageLedger::SOURCE_FRONTEND) {
             $verdict = $this->llmGuard->allows('a2ui');
             if (!$verdict['allowed']) {
                 $llmEnabled = false;
@@ -179,9 +179,9 @@ final class AgentService implements SingletonInterface
      */
     private function recordUsage(array $completion, array $context): void
     {
-        $source = ($context['source'] ?? '') === LlmUsageTracker::SOURCE_FRONTEND
-            ? LlmUsageTracker::SOURCE_FRONTEND
-            : LlmUsageTracker::SOURCE_BACKEND;
+        $source = ($context['source'] ?? '') === UsageLedger::SOURCE_FRONTEND
+            ? UsageLedger::SOURCE_FRONTEND
+            : UsageLedger::SOURCE_BACKEND;
         $this->usageTracker->record(
             'a2ui',
             $source,

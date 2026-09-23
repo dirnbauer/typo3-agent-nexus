@@ -20,8 +20,8 @@ final class LlmGuard implements SingletonInterface
 {
     public function __construct(
         private readonly ExtensionConfiguration $extensionConfiguration,
-        private readonly LlmClient $llmClient,
-        private readonly LlmUsageTracker $usageTracker,
+        private readonly LanguageModel $llmClient,
+        private readonly UsageLedger $usageTracker,
     ) {}
 
     /**
