@@ -158,7 +158,7 @@ final class ProtocolCatalogTest extends UnitTestCase
     {
         self::assertSame(
             (string)count($this->components->getCatalogManifest()),
-            $this->fact('a2ui', 'Catalog components'),
+            $this->fact('a2ui', 'Catalogue components'),
         );
     }
 

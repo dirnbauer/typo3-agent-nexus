@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>Ask our site agent to summarise a page, draft an email or plan onboarding. Watch the task move through its lifecycle and hand you back a result.</default>
+                            <default>Ask our site agent to summarise a page, draft an email or plan onboarding. You can follow each status change until the result comes back.</default>
                         </config>
                     </settings.intro>
                     <settings.placeholder>

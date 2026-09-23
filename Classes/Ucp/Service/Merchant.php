@@ -27,10 +27,10 @@ final class Merchant implements SingletonInterface
     public function catalog(): array
     {
         return [
-            ['id' => 'pro-license', 'name' => 'Desiderio Pro License', 'price' => 4900, 'unit' => '/mo', 'tags' => ['license'], 'description' => 'Priority support, guaranteed LTS updates and early access to element drops.'],
-            ['id' => 'agency-bundle', 'name' => 'Agency Bundle', 'price' => 14900, 'unit' => '/mo', 'tags' => ['license', 'teams'], 'description' => 'Unlimited projects, 4-hour priority response and a quarterly editor onboarding.'],
-            ['id' => 'onboarding-addon', 'name' => 'Onboarding Add-on', 'price' => 29900, 'unit' => 'one-time', 'tags' => ['service'], 'description' => 'A guided setup: workspace provisioning, a first shipped page and a rollout plan.'],
-            ['id' => 'support-pack', 'name' => 'Priority Support Pack', 'price' => 9900, 'unit' => '/mo', 'tags' => ['service'], 'description' => 'A direct line to the maintainers with a two-business-day response SLA.'],
+            ['id' => 'pro-license', 'name' => 'Desiderio Pro Licence', 'price' => 4900, 'unit' => '/mo', 'tags' => ['license'], 'description' => 'Email support, LTS compatibility updates and early access to new elements.'],
+            ['id' => 'agency-bundle', 'name' => 'Agency Bundle', 'price' => 14900, 'unit' => '/mo', 'tags' => ['license', 'teams'], 'description' => 'Unlimited projects, an answer within 4 business hours and a quarterly editor onboarding.'],
+            ['id' => 'onboarding-addon', 'name' => 'Onboarding Add-on', 'price' => 29900, 'unit' => 'one-time', 'tags' => ['service'], 'description' => 'A guided setup: we prepare the workspace, publish a first page with you and write a rollout plan.'],
+            ['id' => 'support-pack', 'name' => 'Priority Support Pack', 'price' => 9900, 'unit' => '/mo', 'tags' => ['service'], 'description' => 'Direct contact with the maintainers and an answer within 2 business days.'],
         ];
     }
 
@@ -60,7 +60,7 @@ final class Merchant implements SingletonInterface
             'ucpVersion' => '0.1',
             'merchant' => [
                 'name' => 'Desiderio Store',
-                'description' => 'The official store for Desiderio licenses, bundles and services.',
+                'description' => 'A demo store for Desiderio licences, bundles and services.',
                 'url' => 'https://webconsulting.at',
                 'currency' => self::CURRENCY,
             ],

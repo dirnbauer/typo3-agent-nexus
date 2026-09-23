@@ -69,36 +69,36 @@ final class SeedSiteCommand extends Command
             'title' => 'A2UI',
             'slug' => 'a2ui',
             'ctype' => 'agentnexus_inquiry',
-            'header' => 'The agent designs the form',
-            'intro' => '<p>Describe what you need in one line. The agent answers with a surface — a flat list of components — and the site renders only components it already knows. Unknown components and unknown properties are dropped before anything reaches the page.</p>',
+            'header' => 'The agent builds the form, TYPO3 renders it',
+            'intro' => '<p>A2UI lets an agent describe a form or other interface as JSON, not as HTML. Type what you need in one line, and the agent replies with a surface: a flat list of components. TYPO3 renders only the components it knows and drops everything else before it reaches the page.</p>',
         ],
         'agui' => [
             'title' => 'AG-UI',
             'slug' => 'ag-ui',
             'ctype' => 'agentnexus_assistant',
             'header' => 'Watch the run, then approve it',
-            'intro' => '<p>An agent run is a stream of typed events, so the interface can show reasoning and tool calls as they happen. Before the assistant writes anything it stops at a confirmation and waits for a human decision.</p>',
+            'intro' => '<p>AG-UI sends an agent run to the browser as a stream of typed events. The page shows the agent&rsquo;s reasoning and tool calls as they happen. Before the assistant saves anything, it stops and waits for you to approve.</p>',
         ],
         'a2a' => [
             'title' => 'A2A',
             'slug' => 'a2a',
             'ctype' => 'agentnexus_concierge',
             'header' => 'Delegate a task to the site agent',
-            'intro' => '<p>This site publishes an Agent Card, so another agent can discover it, delegate a task over JSON-RPC and collect the result as a named artifact. The concierge below does exactly that from the browser.</p>',
+            'intro' => '<p>A2A lets one agent hand a task to another. This site publishes an Agent Card, a JSON description of what its agent can do. Another agent reads it, sends a task over JSON-RPC and gets the result back as a named artifact. The concierge below does the same from your browser.</p>',
         ],
         'ucp' => [
             'title' => 'UCP',
             'slug' => 'ucp',
             'ctype' => 'agentnexus_checkout',
             'header' => 'Let a shopping agent build the cart',
-            'intro' => '<p>The agent reads the merchant manifest, assembles a cart from the real catalogue and then stops. Prices are always deterministic and no order is ever placed — every checkout here is simulated.</p>',
+            'intro' => '<p>UCP describes how a shopping agent buys from an online shop. The agent reads the shop&rsquo;s manifest, builds a cart from the real catalogue and stops for your approval. Prices come from the catalogue, never from the model, and every checkout here is simulated.</p>',
         ],
         'ap2' => [
             'title' => 'AP2',
             'slug' => 'ap2',
             'ctype' => 'agentnexus_trustedsurface',
-            'header' => 'Prove the purchase was authorized',
-            'intro' => '<p>Two signed mandates — one for the intent, one for the exact cart — are verified as a chain: both signatures, the reference between them, the merchant and the spending cap. Mandates here are signed with a sandbox key.</p>',
+            'header' => 'Prove the purchase was authorised',
+            'intro' => '<p>AP2 proves that a person approved a payment an agent makes. It uses two signed mandates: one sets your limits, the other fixes the exact cart. The site checks both signatures, the link between them, the merchant and the spending cap. Mandates here are signed with a sandbox key.</p>',
         ],
     ];
 
@@ -116,24 +116,24 @@ final class SeedSiteCommand extends Command
         'playground' => [
             'title' => 'Playground',
             'slug' => 'playground',
-            'header' => 'Everything on one page',
-            'intro' => '<p>All five demos side by side, so you can compare how the protocols behave without leaving the page. Nothing here is shared between them: each one talks to its own endpoint.</p>',
+            'header' => 'All five demos on one page',
+            'intro' => '<p>Compare how the five protocols behave without leaving the page. The demos share nothing: each one talks to its own endpoint.</p>',
             'elements' => [
-                ['suffix' => 'demo:a2ui', 'ctype' => 'agentnexus_inquiry', 'header' => 'A2UI — the agent designs the form', 'settings' => []],
+                ['suffix' => 'demo:a2ui', 'ctype' => 'agentnexus_inquiry', 'header' => 'A2UI — the agent builds the form', 'settings' => []],
                 ['suffix' => 'demo:agui', 'ctype' => 'agentnexus_assistant', 'header' => 'AG-UI — watch the run, then approve it', 'settings' => []],
                 ['suffix' => 'demo:a2a', 'ctype' => 'agentnexus_concierge', 'header' => 'A2A — delegate a task', 'settings' => []],
                 ['suffix' => 'demo:ucp', 'ctype' => 'agentnexus_checkout', 'header' => 'UCP — let an agent build the cart', 'settings' => []],
-                ['suffix' => 'demo:ap2', 'ctype' => 'agentnexus_trustedsurface', 'header' => 'AP2 — prove it was authorized', 'settings' => []],
+                ['suffix' => 'demo:ap2', 'ctype' => 'agentnexus_trustedsurface', 'header' => 'AP2 — prove it was authorised', 'settings' => []],
             ],
         ],
         'docs' => [
             'title' => 'Docs',
             'slug' => 'docs',
             'header' => 'Where to read more',
-            'intro' => '<p>Each protocol is defined by someone else; this site only implements it. The cards below link to the specification that defines each one and to the demo that runs it here. Installation, the site sets and the endpoints are covered by the extension documentation.</p>',
+            'intro' => '<p>Agent Nexus does not define these protocols. It implements them. Each card links to a protocol&rsquo;s specification and to its demo on this site. The extension documentation covers installation, the site sets and the endpoints.</p>',
             'elements' => [
                 ['suffix' => 'specs', 'ctype' => 'agentnexus_hub', 'header' => 'The five specifications', 'settings' => [
-                    'settings.intro' => 'Every protocol below is an open specification. Agent Nexus implements the part of each one that a TYPO3 site can honestly demonstrate.',
+                    'settings.intro' => 'All five are open specifications. Agent Nexus implements the parts of each that a TYPO3 site can show working.',
                     'settings.show_health' => '0',
                     'settings.show_endpoints' => '0',
                 ]],
@@ -312,7 +312,7 @@ final class SeedSiteCommand extends Command
             // The site root used to be a headline and a paragraph over an empty
             // screen. The hub turns it into the index the five pages hang off.
             $this->reorder('tt_content', [
-                $this->upsertText($rootUid, 'home:intro', 'Five agent protocols, running on this TYPO3', '<p>Agent Nexus is a working lab, not a slide deck: every page below runs a real implementation of one protocol against this installation&rsquo;s own content, catalogue and endpoints. Nothing is charged, nothing is sent — the demos are deliberately sandboxed.</p>', $dryRun),
+                $this->upsertText($rootUid, 'home:intro', 'Five agent protocols running on TYPO3', '<p>An agent protocol sets the rules for how an AI agent talks to an interface, a person, another agent or a shop. Each page below runs one protocol on this TYPO3 site, with its own content, catalogue and endpoints. Every demo runs in a sandbox: nothing is charged and nothing is sent.</p>', $dryRun),
                 $this->upsertElement($io, $rootUid, 'home:hub', [
                     'suffix' => 'hub',
                     'ctype' => 'agentnexus_hub',

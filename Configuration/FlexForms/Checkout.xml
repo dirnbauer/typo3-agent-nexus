@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>Tell our shopping agent what you need. It reads the catalog, builds a cart and — before anything is charged — pauses for your authorization. Every order here is simulated.</default>
+                            <default>Choose what our shopping agent should buy. It reads the catalogue, builds a cart and waits for your approval before anything is charged.</default>
                         </config>
                     </settings.intro>
                     <settings.accent>

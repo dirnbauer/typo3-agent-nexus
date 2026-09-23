@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>See how an agent purchase is authorized: a signed Intent Mandate sets your limits, a Cart Mandate locks the exact order, and the chain is verified before any payment. Sandbox demo — nothing is charged.</default>
+                            <default>See how you approve an agent's purchase. An Intent Mandate sets your limits, a Cart Mandate fixes the order, and both are checked before payment.</default>
                         </config>
                     </settings.intro>
                     <settings.accent>

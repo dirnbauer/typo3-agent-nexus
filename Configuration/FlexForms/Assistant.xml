@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>Tell our assistant what you are looking for. It thinks out loud, shows you options, and never captures anything without your go-ahead.</default>
+                            <default>Tell our assistant what you need. You see each step as it works, and it saves nothing until you approve.</default>
                         </config>
                     </settings.intro>
                     <settings.placeholder>
@@ -51,7 +51,7 @@
                             <rows>3</rows>
                             <default>Recommend a plan for my team
 Book an introductory call
-Which plan scales with us?</default>
+Which plan suits a growing team?</default>
                         </config>
                     </settings.presets>
                     <settings.success_message>
@@ -60,7 +60,7 @@ Which plan scales with us?</default>
                             <type>text</type>
                             <cols>48</cols>
                             <rows>2</rows>
-                            <default>Thank you — your request is on its way to our team. We will be in touch shortly.</default>
+                            <default>Thank you. Our team has your request and will contact you soon.</default>
                         </config>
                     </settings.success_message>
                     <settings.accent>

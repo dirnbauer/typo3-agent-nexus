@@ -40,23 +40,23 @@ final class ProtocolCatalog implements SingletonInterface
      */
     private const ENDPOINTS = [
         'a2ui' => [
-            ['id' => 'a2ui_generate', 'path' => '/index.php?eID=a2ui_generate', 'method' => 'POST', 'description' => 'Turns a visitor intent into an A2UI surface (a flat list of catalog components).'],
-            ['id' => 'a2ui_submit', 'path' => '/index.php?eID=a2ui_submit', 'method' => 'POST', 'description' => 'Stores the completed surface as an inquiry record.'],
+            ['id' => 'a2ui_generate', 'path' => '/index.php?eID=a2ui_generate', 'method' => 'POST', 'description' => 'Turns a visitor\'s request into an A2UI surface: a flat list of components from the catalogue.'],
+            ['id' => 'a2ui_submit', 'path' => '/index.php?eID=a2ui_submit', 'method' => 'POST', 'description' => 'Stores the completed form as an inquiry record.'],
         ],
         'agui' => [
-            ['id' => 'agui_assistant', 'path' => '/index.php?eID=agui_assistant', 'method' => 'POST', 'description' => 'Streams one agent run as AG-UI events over SSE, including the approval gate.'],
+            ['id' => 'agui_assistant', 'path' => '/index.php?eID=agui_assistant', 'method' => 'POST', 'description' => 'Streams one agent run as AG-UI events over SSE, including the approval step.'],
         ],
         'a2a' => [
-            ['id' => 'a2a_card', 'path' => '/index.php?eID=a2a_card', 'method' => 'GET', 'description' => 'The Agent Card: who this agent is, where to reach it and which skills it offers.'],
-            ['id' => 'a2a_rpc', 'path' => '/index.php?eID=a2a_rpc', 'method' => 'POST', 'description' => 'JSON-RPC 2.0 entry point for message/send and message/stream.'],
-            ['id' => 'a2a_concierge', 'path' => '/index.php?eID=a2a_concierge', 'method' => 'POST', 'description' => 'The visitor-facing concierge: delegates a task and streams its lifecycle.'],
+            ['id' => 'a2a_card', 'path' => '/index.php?eID=a2a_card', 'method' => 'GET', 'description' => 'Returns the Agent Card: who this agent is, where to reach it and which skills it offers.'],
+            ['id' => 'a2a_rpc', 'path' => '/index.php?eID=a2a_rpc', 'method' => 'POST', 'description' => 'Accepts JSON-RPC 2.0 calls for message/send and message/stream.'],
+            ['id' => 'a2a_concierge', 'path' => '/index.php?eID=a2a_concierge', 'method' => 'POST', 'description' => 'Runs the concierge on this page: it delegates a task and streams each status change.'],
         ],
         'ucp' => [
-            ['id' => 'ucp_manifest', 'path' => '/index.php?eID=ucp_manifest', 'method' => 'GET', 'description' => 'The merchant manifest a shopping agent reads before it builds a cart.'],
-            ['id' => 'ucp_checkout', 'path' => '/index.php?eID=ucp_checkout', 'method' => 'POST', 'description' => 'Streams an agent-driven checkout up to the human authorization gate.'],
+            ['id' => 'ucp_manifest', 'path' => '/index.php?eID=ucp_manifest', 'method' => 'GET', 'description' => 'Returns the merchant manifest, which a shopping agent reads before it builds a cart.'],
+            ['id' => 'ucp_checkout', 'path' => '/index.php?eID=ucp_checkout', 'method' => 'POST', 'description' => 'Streams the agent\'s checkout up to the point where a person has to approve it.'],
         ],
         'ap2' => [
-            ['id' => 'ap2_authorize', 'path' => '/index.php?eID=ap2_authorize', 'method' => 'POST', 'description' => 'Mints the Intent and Cart mandates and returns the verified chain.'],
+            ['id' => 'ap2_authorize', 'path' => '/index.php?eID=ap2_authorize', 'method' => 'POST', 'description' => 'Creates and signs the Intent and Cart mandates, then returns the verified chain.'],
         ],
     ];
 
@@ -66,35 +66,35 @@ final class ProtocolCatalog implements SingletonInterface
             'label' => 'A2UI',
             'name' => 'Agent-to-UI',
             'edge' => 'agent ↔ UI',
-            'tagline' => 'The agent describes an interface; the site renders it from a fixed, safe component catalogue.',
+            'tagline' => 'The agent describes an interface as data. The site builds it only from components it already trusts.',
             'spec' => 'https://github.com/google/A2UI',
         ],
         'agui' => [
             'label' => 'AG-UI',
             'name' => 'Agent-User Interaction',
             'edge' => 'agent ↔ user',
-            'tagline' => 'A run is a stream of typed events, so the interface can show thinking, tool calls and ask for approval.',
+            'tagline' => 'An agent run arrives as a stream of typed events. The page shows each step and asks you to approve.',
             'spec' => 'https://docs.ag-ui.com',
         ],
         'a2a' => [
             'label' => 'A2A',
             'name' => 'Agent-to-Agent',
             'edge' => 'agent ↔ agent',
-            'tagline' => 'A published Agent Card lets another agent discover this one, delegate a task and collect artifacts.',
+            'tagline' => 'An Agent Card tells other agents what this site can do. They send it a task and get a result back.',
             'spec' => 'https://a2a-protocol.org',
         ],
         'ucp' => [
             'label' => 'UCP',
             'name' => 'Universal Commerce Protocol',
             'edge' => 'agent ↔ merchant',
-            'tagline' => 'A merchant manifest plus a streamed checkout, with a human authorization gate before anything is placed.',
+            'tagline' => 'A shop publishes a manifest and an agent checks out from it. A person approves before any order is placed.',
             'spec' => 'https://www.universalcommerce.org',
         ],
         'ap2' => [
             'label' => 'AP2',
             'name' => 'Agent Payments Protocol',
             'edge' => 'agent ↔ payment',
-            'tagline' => 'Chained, signed mandates prove a specific purchase was authorized by a specific human within limits.',
+            'tagline' => 'Two linked, signed mandates prove that a person approved this exact purchase, within their limits.',
             'spec' => 'https://ap2-protocol.org',
         ],
     ];
@@ -103,33 +103,33 @@ final class ProtocolCatalog implements SingletonInterface
     private const HOW_IT_WORKS = [
         'a2ui' => [
             ['title' => 'Intent', 'text' => 'The visitor types what they need in one line. Nothing is generated yet.'],
-            ['title' => 'Generation', 'text' => 'The agent answers with a surface: a flat list of components, each referencing its children by id.'],
-            ['title' => 'Validation', 'text' => 'Every component is checked against the registry. Unknown components and unknown props are dropped, never rendered.'],
-            ['title' => 'Submission', 'text' => 'The filled surface is posted back and stored as an inquiry record.'],
+            ['title' => 'Generation', 'text' => 'The agent replies with a surface: a flat list of components. Each one points to its children by id.'],
+            ['title' => 'Validation', 'text' => 'TYPO3 checks every component against its registry. It drops unknown components and properties instead of rendering them.'],
+            ['title' => 'Submission', 'text' => 'The visitor fills in the form and sends it. TYPO3 stores it as an inquiry record.'],
         ],
         'agui' => [
-            ['title' => 'Run start', 'text' => 'The client opens an SSE stream; the server answers with RUN_STARTED and a thread id.'],
-            ['title' => 'Streamed answer', 'text' => 'Reasoning and text arrive as deltas, so the interface fills in as the agent works.'],
-            ['title' => 'Approval gate', 'text' => 'Before any write, the agent emits a confirm tool call and stops. Nothing happens without a human decision.'],
-            ['title' => 'Apply', 'text' => 'On approval the run resumes, the lead is stored and RUN_FINISHED closes the stream.'],
+            ['title' => 'Run start', 'text' => 'The browser opens an SSE stream. The server replies with RUN_STARTED and a thread id.'],
+            ['title' => 'Streamed answer', 'text' => 'Reasoning and text arrive in small pieces, so the page fills in while the agent works.'],
+            ['title' => 'Approval gate', 'text' => 'Before it saves anything, the agent sends a confirm tool call and stops. Nothing happens until a person decides.'],
+            ['title' => 'Apply', 'text' => 'After approval the run continues, TYPO3 stores the lead and RUN_FINISHED closes the stream.'],
         ],
         'a2a' => [
-            ['title' => 'Discovery', 'text' => 'The calling agent fetches the Agent Card to learn the skills, transport and auth of this agent.'],
-            ['title' => 'Delegation', 'text' => 'It sends a message over JSON-RPC; the server creates a Task with an id and a context id.'],
-            ['title' => 'Lifecycle', 'text' => 'Status updates stream the task through working and, when a skill needs more detail, input-required.'],
-            ['title' => 'Artifacts', 'text' => 'The result is returned as a named artifact, streamable in chunks, and the task reaches completed.'],
+            ['title' => 'Discovery', 'text' => 'The calling agent fetches the Agent Card. It learns this agent\'s skills, transport and authentication.'],
+            ['title' => 'Delegation', 'text' => 'It sends a message over JSON-RPC. The server creates a Task with an id and a context id.'],
+            ['title' => 'Lifecycle', 'text' => 'Status updates move the task to working. If a skill needs more detail, the task moves to input-required.'],
+            ['title' => 'Artifacts', 'text' => 'The result comes back as a named artifact, streamed in chunks. The task then reaches completed.'],
         ],
         'ucp' => [
             ['title' => 'Manifest', 'text' => 'The agent reads the merchant manifest: currency, capabilities, checkout endpoint and catalogue.'],
-            ['title' => 'Cart', 'text' => 'It assembles a cart from the real catalogue. Prices are deterministic — a model never invents one.'],
-            ['title' => 'Authorization', 'text' => 'The stream halts at authorization.required and shows the priced cart to the human.'],
+            ['title' => 'Cart', 'text' => 'It builds a cart from the real catalogue. Prices come from the catalogue; the model never invents one.'],
+            ['title' => 'Approval', 'text' => 'The stream stops at authorization.required and shows the priced cart to a person.'],
             ['title' => 'Confirmation', 'text' => 'Only an explicit approval produces order.confirmed. Every order in this demo is simulated.'],
         ],
         'ap2' => [
-            ['title' => 'Intent Mandate', 'text' => 'The human authorizes an agent to spend within a cap, at named merchants, until an expiry.'],
-            ['title' => 'Cart Mandate', 'text' => 'For one fully priced cart, a second mandate references the first and pins that exact purchase.'],
-            ['title' => 'Verification', 'text' => 'Both signatures, the reference, the merchant and the cap are checked as a chain.'],
-            ['title' => 'Receipt', 'text' => 'The verified chain is the receipt. Mandates here are signed with a sandbox key; nothing is charged.'],
+            ['title' => 'Intent Mandate', 'text' => 'A person allows an agent to spend up to a cap, at named merchants, until the mandate expires.'],
+            ['title' => 'Cart Mandate', 'text' => 'A second mandate covers one fully priced cart. It points to the first mandate and fixes that exact purchase.'],
+            ['title' => 'Verification', 'text' => 'The site checks the chain: both signatures, the link between the mandates, the merchant and the cap.'],
+            ['title' => 'Receipt', 'text' => 'The verified chain serves as the receipt. Mandates here are signed with a sandbox key, and nothing is charged.'],
         ],
     ];
 
@@ -246,7 +246,7 @@ final class ProtocolCatalog implements SingletonInterface
         $categories = array_unique(array_map(static fn(array $c): string => $c['category'], $manifest));
 
         return [
-            ['label' => 'Catalog components', 'value' => (string)count($manifest)],
+            ['label' => 'Catalogue components', 'value' => (string)count($manifest)],
             ['label' => 'Container components', 'value' => (string)count($containers)],
             ['label' => 'Categories', 'value' => implode(', ', $categories)],
         ];
@@ -277,7 +277,7 @@ final class ProtocolCatalog implements SingletonInterface
 
         return [
             ['label' => 'Advertised skills', 'value' => (string)count($skills)],
-            ['label' => 'Skills that ask before finishing', 'value' => (string)count($gated)],
+            ['label' => 'Skills that ask for input', 'value' => (string)count($gated)],
             ['label' => 'Skills', 'value' => implode(', ', array_map(static fn(array $s): string => (string)$s['name'], $skills))],
         ];
     }
@@ -324,7 +324,7 @@ final class ProtocolCatalog implements SingletonInterface
                 static fn(array $c): string => (string)$c['label'],
                 $chain['checks'],
             ))],
-            ['label' => 'Signing', 'value' => 'Sandbox key — no real payment network'],
+            ['label' => 'Signing', 'value' => 'Sandbox key, no real payment network'],
         ];
     }
 

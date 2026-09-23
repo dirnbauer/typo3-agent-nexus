@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>Tell us what you need in a sentence and we will build the right form for you.</default>
+                            <default>Tell us in one sentence what you need. We build the right form for you.</default>
                         </config>
                     </settings.intro>
                     <settings.placeholder>
@@ -30,7 +30,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>4</rows>
-                            <default>We are a corporate consulting firm offering advisory services, implementation support and managed improvement programs.</default>
+                            <default>We are a corporate consulting firm offering advisory services, implementation support and managed improvement programmes.</default>
                         </config>
                     </settings.business_context>
                     <settings.presets>
@@ -51,7 +51,7 @@ Apply for an open role</default>
                             <type>text</type>
                             <cols>48</cols>
                             <rows>2</rows>
-                            <default>Thank you — we have received your request and will get back to you shortly.</default>
+                            <default>Thank you. We have received your request and will reply soon.</default>
                         </config>
                     </settings.success_message>
                     <settings.accent>
