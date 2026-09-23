@@ -4,25 +4,26 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ucp\Service;
 
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * The site as a UCP **merchant**: it publishes a machine-readable manifest (what
- * the store is, which currency, which capabilities, where to check out) and a
- * **catalog** a shopping agent can browse. Discovery via a manifest is the entry
- * point of agentic commerce — the agent reads it before it ever builds a cart.
+ * The store behind the UCP business: what it sells and at which price.
  *
- * Everything here is a demo store. No checkout takes real payment.
+ * The catalogue is the only source of money in the UCP demo. The checkout API
+ * prices every line from here, and the shopping agent never writes a number
+ * of its own — a model may explain a choice, it never sets a price.
+ *
+ * Everything here is a sandbox store. No checkout takes real payment.
  */
 final class Merchant implements SingletonInterface
 {
-    public const CURRENCY = 'EUR';
+    public const string CURRENCY = 'EUR';
 
     /**
-     * The product catalog. Prices are in minor units (cents) to avoid float math.
+     * The product catalogue. Prices are in minor units (cents), so no float
+     * arithmetic can creep into a total.
      *
-     * @return array<int, array<string, mixed>>
+     * @return list<array{id: string, name: string, price: int, unit: string, tags: list<string>, description: string}>
      */
     public function catalog(): array
     {
@@ -35,47 +36,23 @@ final class Merchant implements SingletonInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * One product, or an empty array for an id the store does not sell.
+     *
+     * @return array{id: string, name: string, price: int, unit: string, tags: list<string>, description: string}|array{}
      */
     public function product(string $id): array
     {
-        foreach ($this->catalog() as $p) {
-            if ($p['id'] === $id) {
-                return $p;
-            }
-        }
-        return [];
+        return array_find($this->catalog(), static fn(array $product): bool => $product['id'] === $id) ?? [];
     }
 
-    /**
-     * The UCP manifest a shopping agent fetches first.
-     *
-     * @return array<string, mixed>
-     */
-    public function manifest(ServerRequestInterface $request): array
+    public function sells(string $id): bool
     {
-        $base = rtrim((string)$request->getUri()->withQuery('')->withFragment('')->withPath(''), '/');
+        return $this->product($id) !== [];
+    }
 
-        return [
-            'ucpVersion' => '0.1',
-            'merchant' => [
-                'name' => 'Desiderio Store',
-                'description' => 'A demo store for Desiderio licences, bundles and services.',
-                'url' => 'https://webconsulting.at',
-                'currency' => self::CURRENCY,
-            ],
-            'capabilities' => [
-                'agentCheckout' => true,
-                'streaming' => true,
-                'humanAuthorization' => true,
-                'paymentProtocols' => ['ap2-simulated'],
-            ],
-            'endpoints' => [
-                'checkout' => $base . '/index.php?eID=ucp_checkout',
-            ],
-            'catalog' => $this->catalog(),
-            // Demo merchant — every checkout is simulated; no real payment is taken.
-            'sandbox' => true,
-        ];
+    /** True for products billed every month rather than once. */
+    public function isMonthly(string $id): bool
+    {
+        return ($this->product($id)['unit'] ?? '') === '/mo';
     }
 }

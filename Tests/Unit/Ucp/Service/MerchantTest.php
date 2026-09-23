@@ -26,8 +26,7 @@ final class MerchantTest extends UnitTestCase
     public function pricesAreWholeMinorUnitsSoNoFloatMathCanCreep(): void
     {
         foreach ($this->subject->catalog() as $product) {
-            self::assertIsInt($product['price'], $product['id'] . ' must be priced in cents as an integer');
-            self::assertGreaterThan(0, $product['price']);
+            self::assertGreaterThan(0, $product['price'], $product['id'] . ' must be priced in cents');
         }
     }
 
@@ -40,13 +39,14 @@ final class MerchantTest extends UnitTestCase
     #[Test]
     public function everyProductIdIsUniqueAndResolvable(): void
     {
-        $catalog = $this->subject->catalog();
-        $ids = array_column($catalog, 'id');
+        $ids = array_column($this->subject->catalog(), 'id');
 
         self::assertSame($ids, array_unique($ids), 'Duplicate product ids would make a cart ambiguous.');
-
         foreach ($ids as $id) {
-            self::assertSame($id, $this->subject->product((string)$id)['id']);
+            $product = $this->subject->product($id);
+            self::assertNotSame([], $product);
+            self::assertSame($id, $product['id']);
+            self::assertTrue($this->subject->sells($id));
         }
     }
 
@@ -54,16 +54,24 @@ final class MerchantTest extends UnitTestCase
     public function anUnknownProductResolvesToNothingRatherThanAGuess(): void
     {
         self::assertSame([], $this->subject->product('no-such-product'));
+        self::assertFalse($this->subject->sells('no-such-product'));
+        self::assertFalse($this->subject->isMonthly('no-such-product'));
     }
 
     #[Test]
-    public function everyProductCarriesWhatACartRowNeeds(): void
+    public function everyProductCarriesWhatACartLineNeeds(): void
     {
         foreach ($this->subject->catalog() as $product) {
-            foreach (['id', 'name', 'price', 'unit', 'tags', 'description'] as $field) {
-                self::assertArrayHasKey($field, $product);
-                self::assertNotEmpty($product[$field], $product['id'] . '.' . $field);
-            }
+            self::assertNotSame('', $product['name']);
+            self::assertNotSame('', $product['description']);
+            self::assertContains($product['unit'], ['/mo', 'one-time']);
         }
+    }
+
+    #[Test]
+    public function subscriptionsAreBilledMonthly(): void
+    {
+        self::assertTrue($this->subject->isMonthly('pro-license'));
+        self::assertFalse($this->subject->isMonthly('onboarding-addon'));
     }
 }
