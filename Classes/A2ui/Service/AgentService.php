@@ -5,588 +5,340 @@ declare(strict_types=1);
 namespace Webconsulting\AgentNexus\A2ui\Service;
 
 use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\SingletonInterface;
+use Webconsulting\AgentNexus\A2ui\Domain\Model\A2uiVersion;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\Component;
+use Webconsulting\AgentNexus\A2ui\Domain\Model\GenerationRequest;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\GenerationResult;
+use Webconsulting\AgentNexus\A2ui\Domain\Model\PropertyDefinition;
+use Webconsulting\AgentNexus\A2ui\Domain\Model\PropertyType;
 use Webconsulting\AgentNexus\A2ui\Domain\Model\Surface;
 use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
+use Webconsulting\AgentNexus\Shared\Configuration\ExtensionSettings;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
- * The "agent": turns a natural-language intent into an A2UI v1.0 surface.
+ * The agent: turns a one-line request into an A2UI surface.
  *
- * Primary path - a real LLM (via {@see LanguageModel}) is asked to emit a surface
- * using ONLY the trusted catalog; its output is parsed and hardened against the
- * {@see ComponentRegistry} so nothing outside the catalog can be rendered.
+ * With a model configured, the model is shown the official basic catalogue of
+ * the requested version and one worked example, and answers with components
+ * and a data model — never with envelopes; the messages are built here. Its
+ * answer goes through {@see SurfaceSanitizer}, so nothing outside the
+ * catalogue reaches a renderer.
  *
- * Fallback path - a deterministic, offline generator covers a handful of common
- * backend intents so the demo always works without an API key, and so an LLM
- * hiccup never leaves the user with a blank screen.
+ * Without a model — none installed, switched off, the budget used up, or an
+ * answer that cannot be repaired — {@see SurfaceGenerator} answers instead.
+ * The result always says which of the two it was.
  */
-final class AgentService implements SingletonInterface
+final readonly class AgentService
 {
+    /** Model answers stop being useful long before this many notes. */
+    private const int MAX_NOTES = 8;
+
     public function __construct(
-        private readonly ComponentRegistry $registry,
-        private readonly LanguageModel $llmClient,
-        private readonly UsageLedger $usageTracker,
-        private readonly LlmGuard $llmGuard,
-        private readonly ExtensionConfiguration $extensionConfiguration,
-        private readonly LoggerInterface $logger,
+        private SurfaceGenerator $generator,
+        private SurfaceSanitizer $sanitizer,
+        private ComponentRegistry $registry,
+        private LanguageModel $model,
+        private UsageLedger $ledger,
+        private LlmGuard $guard,
+        private ExtensionSettings $settings,
+        private LoggerInterface $logger,
     ) {}
 
-    /**
-     * @param array<string, mixed> $context Optional context (page id, be user, language, ...)
-     */
-    public function generate(string $intent, array $context = []): GenerationResult
+    public function generate(GenerationRequest $request): GenerationResult
     {
-        $intent = trim($intent);
+        $intent = trim($request->intent);
         $notes = [];
-        $settings = $this->getSettings();
 
-        $llmEnabled = (bool)($settings['llmEnabled'] ?? true);
-        // Frontend calls additionally pass the shared guard (global switch,
-        // per-protocol toggle, daily budget) — the backend playground only
-        // needs the module toggle.
-        if ($llmEnabled && ($context['source'] ?? '') === UsageLedger::SOURCE_FRONTEND) {
-            $verdict = $this->llmGuard->allows('a2ui');
-            if (!$verdict['allowed']) {
-                $llmEnabled = false;
-                $notes[] = 'LLM skipped (' . $verdict['reason'] . '); used the built-in generator.';
+        $maxTokens = $this->modelBudget($request, $notes);
+        if ($maxTokens !== false && $intent !== '') {
+            $result = $this->fromModel($request, $intent, $maxTokens, $notes);
+            if ($result !== null) {
+                return $result;
             }
         }
-        if ($intent !== '' && $llmEnabled && $this->llmClient->isAvailable()) {
-            $model = (string)($settings['llmModel'] ?? '');
-            try {
-                $completion = $this->llmClient->completeJson(
-                    $this->buildSystemPrompt($context),
-                    $this->buildUserPrompt($intent, $context),
-                    $model !== '' ? $model : null,
-                );
-                $surface = $this->buildSurfaceFromLlm($completion['data'], $intent);
-                if ($surface !== null) {
-                    $this->recordUsage($completion, $context);
-                    return new GenerationResult($surface, GenerationResult::SOURCE_LLM, $model !== '' ? $model : 'default', $notes);
-                }
-                $notes[] = 'The model response was not a usable A2UI surface; used the built-in generator instead.';
-            } catch (\Throwable $e) {
-                $this->logger->warning('A2UI LLM generation failed, falling back.', ['exception' => $e, 'intent' => $intent]);
-                $notes[] = 'LLM generation failed (' . $e->getMessage() . '); used the built-in generator instead.';
-            }
-        } elseif ($intent !== '' && $llmEnabled && !$this->llmClient->isAvailable()) {
-            $notes[] = 'No LLM provider available (netresearch/nr-llm not installed); using the built-in generator.';
-        }
 
-        return new GenerationResult($this->buildFallback($intent, $context), GenerationResult::SOURCE_BUILTIN, null, $notes);
+        $example = $this->generator->generate($intent);
+        $clean = $this->sanitizer->sanitize($example->componentsToArray(), $example->dataModel, $request->version);
+        $surface = $example
+            ->withSurfaceId($this->surfaceId($example->surfaceId))
+            ->withContent($clean->components, $clean->dataModel);
+
+        return new GenerationResult($surface, GenerationResult::MODE_BUILTIN, null, $notes);
     }
 
-    public function isLlmAvailable(): bool
+    /** Whether the playground can use a model at all. */
+    public function isModelAvailable(): bool
     {
-        return (bool)($this->getSettings()['llmEnabled'] ?? true) && $this->llmClient->isAvailable();
+        return $this->settings->bool('a2uiLlmEnabled', true) && $this->model->isAvailable();
     }
 
     /**
-     * Deterministic, offline surface generation (no LLM) — used by the component
-     * gallery so examples are stable and fast regardless of provider state.
+     * Whether a request of this kind could reach a model — only such a request
+     * spends the tighter per-client model budget.
      */
-    public function generateOffline(string $intent): Surface
+    public function mayUseModel(bool $public): bool
     {
-        return $this->buildFallback($intent, []);
+        if (!$this->settings->bool('a2uiLlmEnabled', true)) {
+            return false;
+        }
+        return $public ? $this->guard->allows('a2ui')['allowed'] : $this->model->isAvailable();
     }
 
     /**
-     * Live provider/model/pricing info for the UI, or null when no LLM is active.
+     * Provider, model and prices for the playground, or null without a model.
      *
-     * @return array<string, mixed>|null
+     * @return array{provider: string, adapter: string, endpoint: string, model: string, modelId: string, priceInput: string, priceOutput: string, hasPricing: bool}|null
      */
-    public function getConnectionInfo(): ?array
+    public function connectionInfo(): ?array
     {
-        if (!$this->isLlmAvailable()) {
-            return null;
-        }
-        return $this->llmClient->getConnectionInfo();
+        return $this->isModelAvailable() ? $this->model->getConnectionInfo() : null;
     }
 
     /**
-     * Combined A2UI spend (backend module + frontend plugin): cost today and per
-     * month for the last N months, plus the instance-wide nr-llm total for
-     * context. Costs are US dollars.
+     * A2UI model spend: today and per month, in US dollars, formatted.
      *
-     * @return array{today: ?string, months: array<int, array{label: string, cost: ?string, requests: int}>, instanceToday: ?string, instanceRange: ?string}
-     *     Costs are pre-formatted for display ($0.0042 / $1.20); null when unknown.
+     * @return array{today: string, months: list<array{label: string, cost: string, requests: int}>}
      */
-    public function getCostSummary(int $months = 3): array
+    public function costSummary(int $months = 3): array
     {
-        $now = new \DateTimeImmutable('now');
-        $todayStart = new \DateTimeImmutable('today 00:00:00');
-        $rangeStart = (new \DateTimeImmutable('first day of this month 00:00:00'))->modify('-' . ($months - 1) . ' months');
-
-        $fmt = static function (?float $value): ?string {
-            if ($value === null) {
-                return null;
-            }
-            if ($value <= 0) {
-                return '$0.00';
-            }
-            // LLM costs are tiny; keep 4 significant decimals under a cent, 2 above.
-            return $value < 0.01
-                ? '$' . rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.')
-                : '$' . number_format($value, 2, '.', ',');
-        };
-
-        $months = array_map(
-            static fn(array $m): array => [
-                'label' => $m['label'],
-                'cost' => $fmt($m['cost']),
-                'requests' => $m['requests'],
-            ],
-            $this->usageTracker->getMonthlyCosts($months, 'a2ui'),
-        );
+        $format = static fn(float $value): string => $value <= 0
+            ? '$0.00'
+            : ($value < 0.01 ? '$' . rtrim(rtrim(number_format($value, 4, '.', ''), '0'), '.') : '$' . number_format($value, 2, '.', ','));
 
         return [
-            'today' => $fmt($this->usageTracker->getCostToday('a2ui')),
-            'months' => $months,
-            'instanceToday' => $fmt($this->llmClient->getInstanceCost($todayStart, $now)),
-            'instanceRange' => $fmt($this->llmClient->getInstanceCost($rangeStart, $now)),
+            'today' => $format($this->ledger->getCostToday('a2ui')),
+            'months' => array_map(
+                static fn(array $month): array => ['label' => $month['label'], 'cost' => $format($month['cost']), 'requests' => $month['requests']],
+                $this->ledger->getMonthlyCosts($months, 'a2ui'),
+            ),
         ];
     }
 
     /**
-     * @return array<string, mixed>
+     * The system prompt for one version: the rules, the catalogue and a worked
+     * example, all derived from the registry and the built-in generator.
      */
-    private function getSettings(): array
+    public function systemPrompt(A2uiVersion $version, string $businessContext = ''): string
     {
-        try {
-            $settings = (array)$this->extensionConfiguration->get('agent_nexus');
-            return [
-                'llmEnabled' => $settings['a2uiLlmEnabled'] ?? true,
-                'llmModel' => $settings['a2uiLlmModel'] ?? '',
-            ];
-        } catch (\Throwable) {
-            return [];
-        }
-    }
-
-    // -----------------------------------------------------------------
-    // LLM path
-    // -----------------------------------------------------------------
-
-    /**
-     * @param array<string, mixed> $completion
-     * @param array<string, mixed> $context
-     */
-    private function recordUsage(array $completion, array $context): void
-    {
-        $source = ($context['source'] ?? '') === UsageLedger::SOURCE_FRONTEND
-            ? UsageLedger::SOURCE_FRONTEND
-            : UsageLedger::SOURCE_BACKEND;
-        $this->usageTracker->record(
-            'a2ui',
-            $source,
-            $completion['model'] !== '' ? (string)$completion['model'] : 'default',
-            (int)$completion['promptTokens'],
-            (int)$completion['completionTokens'],
-            $completion['cost'] !== null ? (float)$completion['cost'] : null,
-            (int)($GLOBALS['BE_USER']->user['uid'] ?? 0),
+        $headings = $version === A2uiVersion::V1_0
+            ? 'Text has no heading variants in this version: start the text with "## " for a heading.'
+            : 'Text variant "h2" is a heading, "caption" small print, "body" normal text.';
+        $example = $this->generator->example('contact', 'A question about your services');
+        $clean = $this->sanitizer->sanitize($example->componentsToArray(), $example->dataModel, $version);
+        $exampleJson = (string)json_encode(
+            ['title' => $example->title, 'components' => array_map(static fn(Component $component): array => $component->toArray(), $clean->components), 'dataModel' => $clean->dataModel],
+            JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
         );
-    }
-
-    /**
-     * @param array<string, mixed> $context
-     */
-    private function buildSystemPrompt(array $context = []): string
-    {
-        $catalog = $this->describeCatalog();
-
-        $businessContext = trim((string)($context['businessContext'] ?? ''));
-        $businessBlock = $businessContext !== ''
-            ? "\n\nBusiness context (tailor field choices, labels and wording to this, but still only use the catalog):\n" . $businessContext
+        $business = trim($businessContext) !== ''
+            ? "\n\nAbout the business (choose fields and wording that fit it; still use only the catalogue):\n" . trim($businessContext)
             : '';
 
         return <<<PROMPT
-You are an A2UI v1.0 agent. You receive a natural-language request from a TYPO3
-backend editor and you answer ONLY with a single JSON object: an A2UI v1.0
-`createSurface` message that describes the user interface the editor needs.
+            You design forms for the A2UI protocol, version {$version->value}, using its official basic catalogue.
+            Answer with ONE JSON object and nothing else:
+            {"title": "<a short title>", "components": [ ... ], "dataModel": { ... }}
 
-A2UI v1.0 rules you MUST follow:
-- The top-level object is: {"version": "v1.0", "createSurface": { ... }}.
-- `createSurface` has: "surfaceId" (string), "catalogId" (keep it as
-  "https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json"),
-  "sendDataModel": true, "components" (a FLAT array), and "dataModel" (object).
-- "components" is a FLAT adjacency list. Each component has a unique "id", a
-  "component" name from the catalog below, its properties at the TOP level, and -
-  for containers only - a "children" array that references child ids (NEVER nest
-  component objects).
-- EXACTLY ONE component must have "id": "root". Make it a "Column" or "Card".
-- Input components bind their value to the data model with a JSON Pointer object:
-  "value": {"path": "/fieldName"}. Add a matching key to "dataModel" with a
-  sensible default (usually "").
-- The primary action button must carry an action:
-  "action": {"event": {"name": "<verb>", "context": {"<field>": {"path": "/<field>"}}, "wantResponse": true}}.
-- Add validation with "checks" on inputs - an array of
-  {"type":"required"|"email"|"length"|"numeric"|"regex","error":"..."} (length/
-  numeric accept "min"/"max"; regex accepts "pattern"). The form will not submit
-  until all checks pass.
-- For a repeating set of fields over an array, use a "List" whose children is a
-  template: "children": {"path": "/items", "componentId": "<templateId>"}. The
-  referenced component is rendered once per array item; inside it, relative paths
-  (no leading "/") resolve within the current item and {"path":"@index"} is the
-  0-based position. Only use this when the data model actually has that array.
-- A display value may be a computed function instead of a literal/binding, e.g.
-  "text": {"function":"formatCurrency","args":[{"path":"/total"},"EUR"]}. Available:
-  formatString, formatNumber, formatCurrency, formatDate, pluralize, and, or, not.
-- Prefer simple forms. Most requests need only TextField/Textarea/ChoicePicker/
-  CheckBox/DateTimeInput inside a Card; reach for List/Tabs/Modal/Slider/media only
-  when the request clearly calls for them.
-- Use ONLY the components and properties listed below. Do not invent components,
-  properties, HTML, scripts, or URLs. Output JSON only - no markdown fences, no prose.
+            Rules
+            - "components" is a flat list. Every component is an object with "id" (unique), "component" (a name from the catalogue below) and its properties at the top level. Never nest one component inside another: refer to other components by id.
+            - Exactly one component has the id "root". Make it a Card whose "child" is a Column.
+            - Row, Column and List take "children": a list of ids. Card takes one "child" id. Tabs take "tabs": [{"title", "child"}]. Modal takes a "trigger" id (a Button) and a "content" id.
+            - A Button has no text of its own: its "child" is the id of a Text component that holds the label. Every Button needs "action": {"event": {"name": "<verb>", "context": {"<key>": {"path": "/<key>"}}}}. List every input's key in the context of the main button.
+            - Add a second Button with "variant": "borderless", a Text child "Start over" and the action {"event": {"name": "discard"}}. Put both buttons in a Row.
+            - Inputs bind their value with {"path": "/<key>"}: TextField (text), CheckBox (true or false), ChoicePicker (a list of strings), Slider (a number), DateTimeInput (an ISO 8601 string). Give every bound key a starting value in "dataModel": "" for text, false for a box, [] or one option for a choice.
+            - Validation: "checks": [{"condition": {"call": "required", "args": {"value": {"path": "/email"}}}, "message": "Enter your email address."}]. Check functions: required, email, regex (args value, pattern), length (value, min or max), numeric (value, min or max).
+            - {$headings}
+            - TextField "variant": shortText (one line), longText (several lines), number, obscured (a password).
+            - Use only the components and properties listed below. No HTML, no scripts, no links or image URLs you made up. Stay under 25 components. Plain, friendly wording.
 
-Catalog (component: allowed properties):
-{$catalog}{$businessBlock}
+            Catalogue (* = required)
+            {$this->describeCatalogue($version)}
 
-Example:
-{"version":"v1.0","createSurface":{"surfaceId":"page_form","catalogId":"https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json","sendDataModel":true,"components":[{"id":"root","component":"Card","title":"New page","children":["title","submit"]},{"id":"title","component":"TextField","label":"Page title","value":{"path":"/title"},"required":true},{"id":"submit","component":"Button","text":"Create page","variant":"primary","action":{"event":{"name":"createPage","context":{"title":{"path":"/title"}},"wantResponse":true}}}],"dataModel":{"title":""}}}
-PROMPT;
+            Example answer for "A question about your services":
+            {$exampleJson}{$business}
+            PROMPT;
     }
 
     /**
-     * @param array<string, mixed> $context
-     */
-    private function buildUserPrompt(string $intent, array $context): string
-    {
-        $language = (string)($context['language'] ?? 'en');
-        return sprintf(
-            "Editor request: \"%s\"\nWrite all visible labels in this language code: %s.\nReturn the A2UI v1.0 createSurface JSON now.",
-            $intent,
-            $language !== '' ? $language : 'en',
-        );
-    }
-
-    private function describeCatalog(): string
-    {
-        $lines = [];
-        foreach ($this->registry->getCatalogManifest() as $name => $config) {
-            $suffix = $config['container'] ? ' [container, uses children]' : '';
-            $props = $config['allowedProps'] === [] ? '(any)' : implode(', ', $config['allowedProps']);
-            $lines[] = sprintf('- %s: %s%s', $name, $props, $suffix);
-        }
-        return implode("\n", $lines);
-    }
-
-    /**
-     * Parse + harden an LLM response into a renderable surface, or null if it
-     * cannot be salvaged (caller then falls back).
+     * Whether a model may answer: false when not, otherwise the token ceiling
+     * (null for none).
      *
-     * @param array<string, mixed> $raw
+     * @param list<string> $notes
      */
-    private function buildSurfaceFromLlm(array $raw, string $intent): ?Surface
+    private function modelBudget(GenerationRequest $request, array &$notes): int|false|null
     {
-        $surface = Surface::fromMessage($raw);
-
-        // Drop anything outside the trusted catalog; strip disallowed props.
-        $clean = [];
-        $validIds = [];
-        foreach ($surface->getComponents() as $component) {
-            $safe = $this->registry->sanitize($component);
-            if ($safe !== null) {
-                $clean[] = $safe;
-                $validIds[$safe->getId()] = true;
-            }
+        if ($request->offline) {
+            return false;
         }
-        if ($clean === []) {
+        if (!$this->settings->bool('a2uiLlmEnabled', true)) {
+            if (!$request->public) {
+                $notes[] = 'Model generation is switched off in the extension settings; the built-in generator answered.';
+            }
+            return false;
+        }
+        if (!$request->modelAllowed) {
+            $notes[] = 'The model budget for this client is used up for now; the built-in generator answered.';
+            return false;
+        }
+        if ($request->public) {
+            $verdict = $this->guard->allows('a2ui');
+            if (!$verdict['allowed']) {
+                $notes[] = sprintf('No model call (%s); the built-in generator answered.', $verdict['reason']);
+                return false;
+            }
+            return $this->guard->maxOutputTokens();
+        }
+        if (!$this->model->isAvailable()) {
+            $notes[] = 'No model is configured (netresearch/nr-llm); the built-in generator answered.';
+            return false;
+        }
+        return null;
+    }
+
+    /**
+     * @param list<string> $notes
+     */
+    private function fromModel(GenerationRequest $request, string $intent, ?int $maxTokens, array &$notes): ?GenerationResult
+    {
+        $configured = $this->settings->string('a2uiLlmModel', '');
+        try {
+            $completion = $this->model->completeJson(
+                $this->systemPrompt($request->version, $request->businessContext),
+                sprintf("Request: \"%s\"\nWrite every visible label in this language: %s.", $intent, $request->language !== '' ? $request->language : 'en'),
+                $configured !== '' ? $configured : null,
+                $maxTokens,
+            );
+        } catch (\JsonException) {
+            $notes[] = 'The model answer was not valid JSON (it may have been cut off); the built-in generator answered.';
+            return null;
+        } catch (\Throwable $e) {
+            $this->logger->warning('A2UI generation with a model failed; the built-in generator answered.', ['exception' => $e]);
+            $notes[] = $request->public
+                ? 'The model call failed; the built-in generator answered.'
+                : sprintf('The model call failed (%s); the built-in generator answered.', $e->getMessage());
             return null;
         }
 
-        // Re-point children at surviving ids only, so a dropped component never
-        // leaves a dangling reference.
-        $resolved = [];
-        foreach ($clean as $component) {
-            if (!$component->hasChildren()) {
-                $resolved[] = $component;
-                continue;
-            }
-            $template = $component->getChildrenTemplate();
-            if ($template !== null) {
-                // List template: keep it only if the referenced template survived.
-                $children = isset($validIds[$template['componentId']]) ? $component->getChildren() : [];
-            } else {
-                $children = array_values(array_filter(
-                    $component->getChildIds(),
-                    static fn(string $id): bool => isset($validIds[$id]),
-                ));
-            }
-            $resolved[] = new Component(
-                $component->getId(),
-                $component->getComponent(),
-                $component->getProperties(),
-                $children,
-                $component->getAction(),
-            );
-        }
-
-        $rebuilt = new Surface(
-            $surface->getSurfaceId() !== '' ? $surface->getSurfaceId() : 'surface',
-            $resolved,
-            $surface->getDataModel(),
-            true,
-            Surface::DEFAULT_CATALOG,
+        $connection = $this->model->getConnectionInfo();
+        $model = $configured !== '' ? $configured : ($connection !== null && $connection['model'] !== '' ? $connection['model'] : 'default');
+        $this->ledger->record(
+            'a2ui',
+            $request->public ? UsageLedger::SOURCE_FRONTEND : UsageLedger::SOURCE_BACKEND,
+            $model,
+            $completion['promptTokens'],
+            $completion['completionTokens'],
+            $completion['cost'],
+            $request->beUser,
         );
 
-        // A surface is only usable if it has a root the renderer can start from.
-        return $rebuilt->getRoot() !== null ? $rebuilt : null;
-    }
+        [$components, $dataModel, $title] = $this->extract($completion['data']);
+        $clean = $this->sanitizer->sanitize($components, $dataModel, $request->version);
+        if (!$clean->isRenderable()) {
+            $notes[] = 'The model answer had no usable root component; the built-in generator answered.';
+            return null;
+        }
+        foreach (array_slice($clean->notes, 0, self::MAX_NOTES) as $note) {
+            $notes[] = 'Repaired: ' . $note;
+        }
+        if (count($clean->notes) > self::MAX_NOTES) {
+            $notes[] = sprintf('… and %d more repairs.', count($clean->notes) - self::MAX_NOTES);
+        }
 
-    // -----------------------------------------------------------------
-    // Deterministic fallback (offline, no API key required)
-    // -----------------------------------------------------------------
-
-    /**
-     * @param array<string, mixed> $context
-     */
-    private function buildFallback(string $intent, array $context): Surface
-    {
-        $needle = strtolower($intent);
-        return match (true) {
-            str_contains($needle, 'page') || str_contains($needle, 'seite')
-                => $this->pageForm(),
-            str_contains($needle, 'content') || str_contains($needle, 'inhalt')
-                => $this->contentForm(),
-            str_contains($needle, 'seo')
-                => $this->seoForm(),
-            str_contains($needle, 'schedul') || str_contains($needle, 'termin') || str_contains($needle, 'publish')
-                => $this->scheduleForm(),
-            str_contains($needle, 'event') || str_contains($needle, 'registration') || str_contains($needle, 'anmeld')
-                => $this->eventRegistrationForm(),
-            str_contains($needle, 'newsletter') || str_contains($needle, 'signup') || str_contains($needle, 'subscribe')
-                => $this->newsletterForm(),
-            str_contains($needle, 'quote') || str_contains($needle, 'angebot') || str_contains($needle, 'offer') || str_contains($needle, 'estimate') || str_contains($needle, 'price')
-                => $this->quoteForm(),
-            str_contains($needle, 'call') || str_contains($needle, 'phone') || str_contains($needle, 'rückruf') || str_contains($needle, 'ruckruf')
-                => $this->callbackForm(),
-            str_contains($needle, 'job') || str_contains($needle, 'apply') || str_contains($needle, 'career') || str_contains($needle, 'bewerb')
-                => $this->applicationForm(),
-            default
-            => $this->contactForm($intent),
-        };
+        $title = $title !== '' ? $title : mb_substr($intent, 0, 80);
+        $surface = new Surface($this->surfaceId($title), $clean->components, $clean->dataModel, true, $title);
+        return new GenerationResult($surface, GenerationResult::MODE_LLM, $model, $notes);
     }
 
     /**
-     * Assemble a surface from a list of [id, component, props, action?] children
-     * wrapped in a Card root.
+     * Components, data model and title from a model answer. Besides the
+     * requested shape, whole A2UI messages are understood too, because models
+     * that know the protocol like to send them.
      *
-     * @param array<int, Component> $children
-     * @param array<string, mixed>  $dataModel
+     * @param array<string, mixed> $data
+     * @return array{0: mixed, 1: mixed, 2: string}
      */
-    private function form(string $surfaceId, string $title, array $children, array $dataModel): Surface
+    private function extract(array $data): array
     {
-        $childIds = array_map(static fn(Component $c): string => $c->getId(), $children);
-        $root = new Component('root', 'Card', ['title' => $title], $childIds);
-        return new Surface($surfaceId, array_merge([$root], $children), $dataModel);
+        $title = is_string($data['title'] ?? null) ? mb_substr(trim($data['title']), 0, 120) : '';
+        if (isset($data['components'])) {
+            return [$data['components'], $data['dataModel'] ?? [], $title];
+        }
+
+        $messages = [];
+        if (isset($data['messages']) && is_array($data['messages'])) {
+            $messages = $data['messages'];
+        } elseif (array_is_list($data)) {
+            $messages = $data;
+        } else {
+            $messages = [$data];
+        }
+        $components = [];
+        $dataModel = [];
+        foreach ($messages as $message) {
+            if (!is_array($message)) {
+                continue;
+            }
+            $body = $message['createSurface'] ?? $message['updateComponents'] ?? null;
+            if (is_array($body) && is_array($body['components'] ?? null)) {
+                $components = [...$components, ...array_values($body['components'])];
+            }
+            if (is_array($message['createSurface']['dataModel'] ?? null)) {
+                $dataModel = $message['createSurface']['dataModel'];
+            }
+            $update = $message['updateDataModel'] ?? null;
+            if (is_array($update) && in_array($update['path'] ?? '/', ['/', ''], true) && is_array($update['value'] ?? null)) {
+                $dataModel = $update['value'];
+            }
+        }
+        return [$components, $dataModel, $title];
     }
 
-    private function pageForm(): Surface
+    /**
+     * A surface id that is never reused: a readable slug and random hex.
+     */
+    private function surfaceId(string $base): string
     {
-        return $this->form('create_page', 'Create a new page', [
-            new Component('pageTitle', 'TextField', [
-                'label' => 'Page title', 'placeholder' => 'A clear, descriptive title',
-                'required' => true, 'maxlength' => 255, 'value' => ['path' => '/pageTitle'],
-            ]),
-            new Component('pageType', 'ChoicePicker', [
-                'label' => 'Page type', 'value' => ['path' => '/pageType'],
-                'options' => [
-                    ['value' => 'standard', 'label' => 'Standard'],
-                    ['value' => 'link', 'label' => 'Link to external URL'],
-                    ['value' => 'shortcut', 'label' => 'Shortcut'],
-                    ['value' => 'spacer', 'label' => 'Spacer'],
-                ],
-            ]),
-            new Component('pageSlug', 'TextField', [
-                'label' => 'URL segment (slug)', 'placeholder' => 'auto-generated', 'value' => ['path' => '/pageSlug'],
-            ]),
-            new Component('hideInMenu', 'CheckBox', [
-                'label' => 'Hide in menu', 'value' => ['path' => '/hideInMenu'],
-            ]),
-            new Component('publishDate', 'DateTimeInput', [
-                'label' => 'Publish date', 'mode' => 'date', 'value' => ['path' => '/publishDate'],
-            ]),
-            new Component('submit', 'Button', ['text' => 'Create page', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'createPage', 'context' => [
-                    'title' => ['path' => '/pageTitle'], 'type' => ['path' => '/pageType'], 'slug' => ['path' => '/pageSlug'],
-                ], 'wantResponse' => true],
-            ]),
-        ], [
-            'pageTitle' => '', 'pageType' => 'standard', 'pageSlug' => '', 'hideInMenu' => false, 'publishDate' => '',
-        ]);
+        $slug = trim((string)preg_replace('/[^a-z0-9]+/', '-', mb_strtolower($base)), '-');
+        $slug = $slug !== '' ? mb_substr($slug, 0, 40) : 'surface';
+        return rtrim($slug, '-') . '-' . bin2hex(random_bytes(4));
     }
 
-    private function contentForm(): Surface
+    private function describeCatalogue(A2uiVersion $version): string
     {
-        return $this->form('edit_content', 'Edit content element', [
-            new Component('heading', 'TextField', [
-                'label' => 'Heading', 'placeholder' => 'H1, H2 or H3', 'required' => true, 'value' => ['path' => '/heading'],
-            ]),
-            new Component('type', 'ButtonGroup', [
-                'label' => 'Content type', 'value' => ['path' => '/type'],
-                'options' => ['Text', 'Text & Media', 'Image only', 'HTML'],
-            ]),
-            new Component('body', 'Textarea', [
-                'label' => 'Body', 'rows' => 10, 'placeholder' => 'Enter your content...', 'value' => ['path' => '/body'],
-            ]),
-            new Component('save', 'Button', ['text' => 'Save', 'variant' => 'success'], [], [
-                'event' => ['name' => 'saveContent', 'context' => [
-                    'heading' => ['path' => '/heading'], 'type' => ['path' => '/type'], 'body' => ['path' => '/body'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['heading' => '', 'type' => 'Text', 'body' => '']);
+        $lines = [];
+        foreach ($this->registry->components($version) as $component) {
+            $properties = array_map(
+                fn(PropertyDefinition $property): string => $property->name . ($property->required ? '*' : '') . ' (' . $this->describeType($property) . ')',
+                array_values($component->properties),
+            );
+            $lines[] = '- ' . $component->name . ': ' . implode(', ', $properties);
+        }
+        $lines[] = 'Every component may also have "accessibility": {"label", "description"}, and a direct child of a Row or Column a "weight" (a number).';
+        return implode("\n", $lines);
     }
 
-    private function seoForm(): Surface
+    private function describeType(PropertyDefinition $property): string
     {
-        return $this->form('seo_metadata', 'SEO metadata', [
-            new Component('metaTitle', 'TextField', [
-                'label' => 'SEO title', 'placeholder' => 'Max. 60 characters', 'maxlength' => 60, 'value' => ['path' => '/metaTitle'],
-            ]),
-            new Component('metaDescription', 'Textarea', [
-                'label' => 'Meta description', 'placeholder' => '150-160 characters recommended', 'rows' => 3, 'value' => ['path' => '/metaDescription'],
-            ]),
-            new Component('focusKeyword', 'TextField', [
-                'label' => 'Focus keyword', 'placeholder' => 'Main keyword for this page', 'value' => ['path' => '/focusKeyword'],
-            ]),
-            new Component('noindex', 'CheckBox', ['label' => 'Exclude from search engines (noindex)', 'value' => ['path' => '/noindex']]),
-            new Component('update', 'Button', ['text' => 'Update SEO data', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'updateSeo', 'context' => [
-                    'title' => ['path' => '/metaTitle'], 'description' => ['path' => '/metaDescription'], 'keyword' => ['path' => '/focusKeyword'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['metaTitle' => '', 'metaDescription' => '', 'focusKeyword' => '', 'noindex' => false]);
-    }
-
-    private function scheduleForm(): Surface
-    {
-        return $this->form('schedule_publication', 'Schedule publication', [
-            new Component('startDate', 'DateTimeInput', ['label' => 'Publish at', 'mode' => 'datetime', 'value' => ['path' => '/startDate']]),
-            new Component('endDate', 'DateTimeInput', ['label' => 'Expire at (optional)', 'mode' => 'datetime', 'value' => ['path' => '/endDate']]),
-            new Component('schedule', 'Button', ['text' => 'Set schedule', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'saveSchedule', 'context' => [
-                    'start' => ['path' => '/startDate'], 'end' => ['path' => '/endDate'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['startDate' => '', 'endDate' => '']);
-    }
-
-    private function eventRegistrationForm(): Surface
-    {
-        return $this->form('event_registration', 'Event registration', [
-            new Component('fullName', 'TextField', ['label' => 'Full name', 'required' => true, 'value' => ['path' => '/fullName']]),
-            new Component('email', 'TextField', ['label' => 'Email', 'inputType' => 'email', 'required' => true, 'value' => ['path' => '/email']]),
-            new Component('ticket', 'ChoicePicker', [
-                'label' => 'Ticket', 'value' => ['path' => '/ticket'],
-                'options' => [
-                    ['value' => 'standard', 'label' => 'Standard'],
-                    ['value' => 'vip', 'label' => 'VIP'],
-                    ['value' => 'student', 'label' => 'Student'],
-                ],
-            ]),
-            new Component('attendees', 'TextField', ['label' => 'Number of attendees', 'inputType' => 'number', 'value' => ['path' => '/attendees']]),
-            new Component('newsletter', 'CheckBox', ['label' => 'Keep me posted about future events', 'value' => ['path' => '/newsletter']]),
-            new Component('register', 'Button', ['text' => 'Register', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'registerForEvent', 'context' => [
-                    'name' => ['path' => '/fullName'], 'email' => ['path' => '/email'], 'ticket' => ['path' => '/ticket'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['fullName' => '', 'email' => '', 'ticket' => 'standard', 'attendees' => '1', 'newsletter' => true]);
-    }
-
-    private function newsletterForm(): Surface
-    {
-        return $this->form('newsletter_signup', 'Newsletter signup', [
-            new Component('intro', 'Text', ['text' => 'Get product news once a month. No spam, unsubscribe any time.', 'variant' => 'muted']),
-            new Component('email', 'TextField', ['label' => 'Email address', 'inputType' => 'email', 'required' => true, 'value' => ['path' => '/email']]),
-            new Component('consent', 'CheckBox', ['label' => 'I agree to the privacy policy', 'value' => ['path' => '/consent']]),
-            new Component('subscribe', 'Button', ['text' => 'Subscribe', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'subscribeNewsletter', 'context' => ['email' => ['path' => '/email']], 'wantResponse' => true],
-            ]),
-        ], ['email' => '', 'consent' => false]);
-    }
-
-    private function quoteForm(): Surface
-    {
-        return $this->form('request_quote', 'Request a quote', [
-            new Component('name', 'TextField', ['label' => 'Your name', 'required' => true, 'value' => ['path' => '/name']]),
-            new Component('email', 'TextField', ['label' => 'Email', 'inputType' => 'email', 'required' => true, 'value' => ['path' => '/email']]),
-            new Component('projectType', 'ChoicePicker', [
-                'label' => 'What do you need?', 'value' => ['path' => '/projectType'],
-                'options' => [
-                    ['value' => 'advisory', 'label' => 'Advisory'],
-                    ['value' => 'implementation', 'label' => 'Implementation'],
-                    ['value' => 'managed', 'label' => 'Managed service'],
-                    ['value' => 'other', 'label' => 'Something else'],
-                ],
-            ]),
-            new Component('budget', 'ChoicePicker', [
-                'label' => 'Indicative budget', 'value' => ['path' => '/budget'],
-                'options' => [
-                    ['value' => 'under10k', 'label' => 'Under €10k'],
-                    ['value' => '10to50k', 'label' => '€10k–€50k'],
-                    ['value' => 'over50k', 'label' => 'Over €50k'],
-                    ['value' => 'unknown', 'label' => 'Not sure yet'],
-                ],
-            ]),
-            new Component('details', 'Textarea', ['label' => 'Project details', 'rows' => 4, 'value' => ['path' => '/details']]),
-            new Component('submit', 'Button', ['text' => 'Request quote', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'requestQuote', 'context' => [
-                    'name' => ['path' => '/name'], 'email' => ['path' => '/email'], 'projectType' => ['path' => '/projectType'],
-                    'budget' => ['path' => '/budget'], 'details' => ['path' => '/details'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['name' => '', 'email' => '', 'projectType' => 'advisory', 'budget' => 'unknown', 'details' => '']);
-    }
-
-    private function callbackForm(): Surface
-    {
-        return $this->form('request_callback', 'Request a callback', [
-            new Component('name', 'TextField', ['label' => 'Your name', 'required' => true, 'value' => ['path' => '/name']]),
-            new Component('phone', 'TextField', ['label' => 'Phone number', 'required' => true, 'value' => ['path' => '/phone']]),
-            new Component('when', 'DateTimeInput', ['label' => 'Best time to call', 'mode' => 'datetime', 'value' => ['path' => '/when']]),
-            new Component('topic', 'TextField', ['label' => 'What is it about?', 'value' => ['path' => '/topic']]),
-            new Component('submit', 'Button', ['text' => 'Request callback', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'requestCallback', 'context' => [
-                    'name' => ['path' => '/name'], 'phone' => ['path' => '/phone'], 'when' => ['path' => '/when'], 'topic' => ['path' => '/topic'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['name' => '', 'phone' => '', 'when' => '', 'topic' => '']);
-    }
-
-    private function applicationForm(): Surface
-    {
-        return $this->form('apply', 'Apply for a position', [
-            new Component('name', 'TextField', ['label' => 'Full name', 'required' => true, 'value' => ['path' => '/name']]),
-            new Component('email', 'TextField', ['label' => 'Email', 'inputType' => 'email', 'required' => true, 'value' => ['path' => '/email']]),
-            new Component('position', 'TextField', ['label' => 'Position you are applying for', 'value' => ['path' => '/position']]),
-            new Component('motivation', 'Textarea', ['label' => 'Why you?', 'rows' => 4, 'value' => ['path' => '/motivation']]),
-            new Component('submit', 'Button', ['text' => 'Send application', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'submitApplication', 'context' => [
-                    'name' => ['path' => '/name'], 'email' => ['path' => '/email'], 'position' => ['path' => '/position'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['name' => '', 'email' => '', 'position' => '', 'motivation' => '']);
-    }
-
-    private function contactForm(string $intent): Surface
-    {
-        return $this->form('contact', 'Get in touch', [
-            new Component('name', 'TextField', ['label' => 'Your name', 'required' => true, 'value' => ['path' => '/name']]),
-            new Component('email', 'TextField', ['label' => 'Email', 'inputType' => 'email', 'required' => true, 'value' => ['path' => '/email']]),
-            new Component('subject', 'TextField', ['label' => 'Subject', 'value' => ['path' => '/subject']]),
-            new Component('message', 'Textarea', ['label' => 'How can we help?', 'rows' => 5, 'required' => true, 'value' => ['path' => '/message']]),
-            new Component('consent', 'CheckBox', ['label' => 'I agree to be contacted about my request', 'value' => ['path' => '/consent']]),
-            new Component('submit', 'Button', ['text' => 'Send message', 'variant' => 'primary'], [], [
-                'event' => ['name' => 'sendMessage', 'context' => [
-                    'name' => ['path' => '/name'], 'email' => ['path' => '/email'], 'subject' => ['path' => '/subject'], 'message' => ['path' => '/message'],
-                ], 'wantResponse' => true],
-            ]),
-        ], ['name' => '', 'email' => '', 'subject' => $intent, 'message' => '', 'consent' => false]);
+        return match ($property->type) {
+            PropertyType::Enum => implode('|', $property->values),
+            PropertyType::IconName => 'an icon name such as ' . implode(', ', array_slice($property->values, 0, 12)) . ' …',
+            PropertyType::DynamicString => 'text or {"path"}',
+            PropertyType::DynamicNumber => 'number or {"path"}',
+            PropertyType::DynamicBoolean => 'true/false or {"path"}',
+            PropertyType::DynamicStringList => 'list of strings or {"path"}',
+            PropertyType::DateTime => 'ISO 8601 date or date-time',
+            PropertyType::ComponentId => 'a component id',
+            PropertyType::ChildList => 'list of ids, or {"componentId", "path"} to repeat one component for each item of a list',
+            PropertyType::Tabs => '[{"title", "child"}]',
+            PropertyType::Options => '[{"label", "value"}]',
+            PropertyType::Action => 'action',
+            PropertyType::Checks => 'checks',
+            PropertyType::Number => 'number',
+            PropertyType::Integer => 'whole number',
+            PropertyType::Boolean => 'true or false',
+            default => $property->type->value,
+        };
     }
 }

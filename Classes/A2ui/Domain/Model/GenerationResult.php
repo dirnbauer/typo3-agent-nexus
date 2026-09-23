@@ -5,63 +5,43 @@ declare(strict_types=1);
 namespace Webconsulting\AgentNexus\A2ui\Domain\Model;
 
 /**
- * The outcome of an agent generation: the A2UI surface plus its provenance, so
- * the UI can honestly show whether a real model produced the interface or the
- * built-in deterministic generator stepped in.
+ * A generated surface and where it came from, so every screen can say
+ * honestly whether a model wrote the interface or the built-in generator did.
  */
-final class GenerationResult
+final readonly class GenerationResult
 {
-    public const SOURCE_LLM = 'llm';
-    public const SOURCE_BUILTIN = 'builtin';
+    public const string MODE_LLM = 'llm';
+    public const string MODE_BUILTIN = 'builtin';
 
     /**
-     * @param array<int, string> $notes Human-readable warnings (e.g. why the LLM path was skipped)
+     * @param list<string> $notes plain-English remarks: why the model was skipped, what was repaired
      */
     public function __construct(
-        private readonly Surface $surface,
-        private readonly string $source,
-        private readonly ?string $model = null,
-        private readonly array $notes = [],
+        public Surface $surface,
+        public string $mode,
+        public ?string $model = null,
+        public array $notes = [],
     ) {}
-
-    public function getSurface(): Surface
-    {
-        return $this->surface;
-    }
-
-    public function getSource(): string
-    {
-        return $this->source;
-    }
 
     public function isLlm(): bool
     {
-        return $this->source === self::SOURCE_LLM;
+        return $this->mode === self::MODE_LLM;
     }
 
-    public function getModel(): ?string
-    {
-        return $this->model;
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function getNotes(): array
-    {
-        return $this->notes;
-    }
-
-    /**
-     * A short, human-readable provenance label for the "where did this UI come from" badge.
-     */
-    public function getProvenanceLabel(): string
+    /** "Live model · <model>" or "Scripted demo", the wording every widget uses. */
+    public function label(): string
     {
         if ($this->isLlm()) {
-            return $this->model !== null && $this->model !== ''
-                ? 'LLM · ' . $this->model
-                : 'LLM';
+            return $this->model !== null && $this->model !== '' ? 'Live model · ' . $this->model : 'Live model';
         }
-        return 'Built-in generator';
+        return 'Scripted demo';
+    }
+
+    /**
+     * @return array{mode: string, label: string}
+     */
+    public function provenance(): array
+    {
+        return ['mode' => $this->mode, 'label' => $this->label()];
     }
 }
