@@ -9,5 +9,7 @@
 /package-lock.json       export-ignore
 /phpstan.neon            export-ignore
 
-# The vendored conformance schemas are data, not code.
+# The vendored specification schemas and conformance streams are data, not code.
 /Tests/Conformance/Schemas/** linguist-vendored
+/Tests/Conformance/A2a/Schemas/** linguist-vendored
+/Tests/Conformance/Agui/Streams/** linguist-vendored

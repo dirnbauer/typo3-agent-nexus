@@ -270,9 +270,12 @@
 .agui-asst__events-dot,
 .a2a-cc__events-dot,
 .ucp-cc__events-dot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--accent); flex: none; }
+/* width 0 + min-width 100%: the chips scroll inside the strip instead of
+   setting the widget's minimum width, which let a long run stretch the widget
+   to thousands of pixels inside a grid column. */
 .agui-asst__events-list,
 .a2a-cc__events-list,
-.ucp-cc__events-list { display: flex; gap: .3rem; overflow-x: auto; padding-bottom: .25rem; }
+.ucp-cc__events-list { display: flex; gap: .3rem; overflow-x: auto; padding-bottom: .25rem; width: 0; min-width: 100%; }
 .agui-asst__evt,
 .a2a-cc__evt,
 .ucp-cc__evt {
