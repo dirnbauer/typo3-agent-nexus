@@ -1,0 +1,85 @@
+AG-UI 1.0 conformance streams - vendored for the Agent Nexus stream verifier tests.
+
+Upstream   https://github.com/ag-ui-protocol/ag-ui
+Path       spec/1.0/conformance/streams/ (see MANIFEST.txt; README in spec/1.0/conformance/)
+Commit     f08ccf853497914ef70a5f0197af45bb74915bc2 (2026-09-17, the commit the 1.0.0 packages were published from)
+License    MIT (see LICENSE in this directory)
+Retrieved  2026-09-23
+
+The files are unchanged. Each one is a stream a *client* must either consume or reject.
+OfficialStreamsTest replays them through Agui\Protocol\EventVerifier, which checks *producer*
+streams: every stream a client must reject, the verifier rejects too; every stream a client
+consumes as it is, the verifier accepts. Streams a client only survives by stripping
+unrecognised material are rejected, because a producer must never send such material.
+
+SHA-256 of every vendored file:
+b2d5c6b8e73f1ca602e0089caa720396b937156b93b2e8c4ba65ce70734c2c1f  activity-delta-missing-target-tolerated.json
+3aadbfcac6f579522ef16f5d3b7940286ca3b5c42a9790d3d98d9d140d8c15ae  activity-replace-false-preserves.json
+a365c827e5eee08bc58efac19e9a69adf6e9ab2dbcc725cee2c3527f25a0bf53  activity-snapshot-then-delta.json
+e737645cb20078b22d1d1267f20d87bfb0778aefa19b82de20bbb46bf8e32766  chunk-conflicting-role-fatal.json
+c0c4c1708ddfb2884a97e9e04ded7fcfca79e8a4afe3d38214d6fee8a6ecb243  chunk-conflicting-tool-name-fatal.json
+3ee01c006d685ff1023ab7d7cf5ce68954ad043e55e7e66a54371c7c8fbfd752  chunk-expansion-assembles.json
+59e91956e4de2a963950eaedffad0947037d724d92f7cd14089ecba4fdede7a2  chunk-repeat-identical-accepted.json
+6d76bc7676537c7ef13de4d03ae828fa2f64695aa7a79a364cd9f70c67b5182f  conformant-run-is-quiet.json
+fe881c0e5a1e3d853baeec000598e4a1f43e3bf2f1def3e165d9ad39c5eb9ed5  content-without-start-fatal.json
+c1bc23ef82f05872ae6784f937b070b5350f82b78aad6a5a0a55a96e436ac534  current-peer-declares-protocol-version.json
+fbe1dac1d81a5a47640d9cb38638cd9cce762a493121dc9d4801f9e64057e05b  custom-closes-chunk-stream-fatal.json
+14ad848604283a9bce84aba8e5ef59da5c66d3b280c07fc4e509f923c9c8e4a0  encrypted-value-unknown-entity-tolerated.json
+6fb2312575a5c4522a5eb380c2353afa5400175880aeda6aac9f56ec4a03772d  era-0-0-39-flattens-content.json
+fceb826e441aaa6cdead8784073174f99ee9866d5af5e1dfd23492cad125a28e  era-0-0-45-thinking-translated.json
+18e2757984a0cb47a02db3a42b21a544a7c49a0c96dccb703bef97513ac2e635  era-0-0-47-upgrades-binary-content.json
+168bcadfad1f2e1d60b39bea922ffbd6e248dffa08320fe5ac0929fbf3090d8f  era-0-0-57-subagent-dropped-with-warning.json
+c8451f24764e7419c4fcb72fe4e7e0e5eed6f03d2ccc0df9ed7617e9f41473d6  era-current-peer-keeps-modern-content.json
+503ad088595a9fe8609db1373ada3dc53d0d5f5bb29a9aef31f0ad5bccd86748  era-pinned-peer-omits-protocol-version.json
+2f1cef66b153713c362f9be70a18b67d4acaa7c62455ccb71494584daae226c0  event-after-run-finished-fatal.json
+b8e92f8e88475c3fe1ec47bff7e2a8a7b2dfd7e47b537723cac2b791cd2b130a  first-chunk-missing-id-fatal.json
+913b1f8c47e75bb5862fa94c8847749580e054ad2e0a5d1438d58eb4542d2a82  first-event-not-run-started-fatal.json
+50981583f948961b72187f77bcf1baa7d360a5fdf3731a40a89003eae42b2a9a  first-tool-chunk-missing-name-fatal.json
+55594901a7ec30d6302048cf0bbcf5e31da1910f792155febc28fd2802dc9909  late-run-error-after-finished-run-continues.json
+87d43ff51de6927cd4096ac67ded2d332c0db472680b63fac037d98d95b78734  malformed-known-field-fatal.json
+5a6aaf72e10a19c9b05d4ecb92945c890692e11dc8f7497ae6084c0f85744f48  messages-snapshot-reconciles-by-id.json
+9fd679b964e84a26f9e9abdd920520bbf04dfc9564d7237587aae6f097e6cec1  metadata-merges-last-write-wins.json
+765216d58b9523faed91eef77e88c1649361b5629d851739d3aa4b8a69775fc9  nested-run-started-fatal.json
+239de7e76cc3ae7b0028866170348cba6af36bf2c4c51a3194cfc9900a15d026  open-message-at-run-finished-fatal.json
+0b266ed1914a95849b9abdeb62e334c1a2d078d1c043509b210885868e2cf623  open-metadata-preserved.json
+0d28336fdb04afa0f63e8f2df2bd281f44b406ff1118401a0ffedf5c40a848cd  open-object-patch-op-extras.json
+d48bd5872b0b26144883209a06d686cfe6098f76d577e06e342b20e46f44055f  producer-declares-newer-version-warns.json
+a300b257fd37f40b4e287d4301a7d013853baf0dbf428b6e2d7d7bfa5fd6dce7  producer-declares-same-version-quiet.json
+bef0ac028ed37e400fc72cd05e8843e6508b400531a4b85f8d42c41d4b55ee5a  producer-declares-uninterpretable-version-warns.json
+34db4ab03eae5a359cdb77fa50f0ab52d4267dd0e334580b00133a3f63c0215e  raw-and-custom-pass-through.json
+5ca40d940f308b6d38d0bc1e2f4d99c73696da637453348db80816e74328eeea  raw-does-not-close-chunk-stream.json
+fd5def113d8cdf921f717b0eface77ee8f54b330df24927285925be9040a7bb9  reasoning-discipline-verified.json
+b0df95da038c69c1cebec57ce900658a71ba921d752d75157d79d9948f426e93  reasoning-message-wrong-role-fatal.json
+b54bf100db33b07d4d591bc815afde56ec549a481afdfa9c4b54d81dcd871b90  reasoning-span-and-message.json
+f183d68694df4ca5536bfbcd76c29e671b333e7ebe9d9872d8e8f48ae2fb5e92  reopen-closed-message-appends.json
+432e343a6ed5dceedeab4b3e9e6039a5c6b9c7c833d245d18891d949237bf51e  run-error-first-run-continues.json
+6c2eac0ce6e1ca8b4c306d8e7cfd8668f9681e292a7fbad90dfeaf4fedee7b40  run-error-then-new-run-continues.json
+9f8326ef26d1b1b77b5a81107a3e88a56a069ddcc79bc4bc6a74b8583b05275c  run-finished-cancelled-outcome-accepted.json
+95a4e83c4bbfc430312520e84d86ae5dd310a788ddd769b75a2dc95e53c851ef  run-finished-interrupt-outcome-accepted.json
+b5e02e24f4613c4ebe9f03b3315ae6d2532bda9b353e04d4c4f9c7d2360245ec  run-finished-with-active-subagent-fatal.json
+af7c6ac7375f37064762a5737855d732b077921c0448579dde6bd718b437d357  state-delta-applies.json
+1089b49cec433803d44facd7c637a686d0f9f2557eb29ae95848659059e001a2  state-delta-unappliable-warns-and-keeps.json
+650a77fcbd3e874ba0bfb9a585131433f2877b705f02a51eb326fb158719b58f  state-delta-unknown-op-dropped.json
+f28cc0884eb06f15c0aae73296546263f180c240fa6f4b90368281ebacbc80ec  state-falsy-snapshot-applies.json
+267c92c3c6475f72a09c6a8c434ec9eff1ccdde6466e6569f00b690126f62540  state-null-snapshot-applies.json
+d53eae74f426b2e9c43d17a40fb92e2c0c71facebfb0bf0809b6a46ffca56b20  state-snapshot-replaces.json
+3d0de1ae9ff5a1a989a15cdbcd56888ac6d91eee6d0d5b781c348f786b5b17cf  step-finished-without-start-fatal.json
+f0ae2b99bf666cb4f6e44d058702d741b5974478bc22984363e51d0d3c5380e0  subagent-attribution-mismatch-fatal.json
+fd4d5a7483bc968fd670bd902f5f4fb7c757e59413b7ccb4ef7c5d3e072b20f2  subagent-finished-unstarted-fatal.json
+d2d4085c11c4b6a6376ced3be5988878f6a7e1684135ba193993271aa47af00d  subagent-started-missing-name-fatal.json
+cd41b2108c2c7c1b18bd1a7a7b4a54775a7dc54685e2d904f93408d42e2b5554  subagent-terminal-closes-open-chunk-stream.json
+79fcd94dd19ce82709108fdb1894de73a6871e1cc715d7b2e10b01570f74ce36  subagent-unannounced-attribution-accepted.json
+3c342bb57bf098c7bade374d892fb5e62a9f511d6032214ec0d22d351ab8b3f8  tool-call-metadata-lands-on-the-call.json
+70879cec59ec4229a36367a718c27b20f4a432b111725fff312d3bb269f3229a  tool-call-triad-assembles.json
+479ec50bf1a9fce1c330773d5f50f6c347cf0eed22ef0624abad37d24e25f23c  tool-result-file-source-passes-through.json
+c52d32f27b95731d2548e11402cb5140371cfd0ce264493e8e6eb39a279433c4  tool-result-parts-mint-tool-message.json
+6894e7aabdb33ac935a75324e8470cc61189d0537f3ec472044643a6b5405f5e  triad-assembles-message.json
+0b4e7b329c1f0b2fe200016dd2a65c1dd1f138027a00d956c934f8cd4c16a7d2  two-sequential-runs-accumulate.json
+5fcca4a8a568f269673b2be31111a4f9480704502bea6c899bca4a0da8ec7f0e  unknown-enum-value-role-fatal.json
+590704163423c1fea095fe06ecfe7a1444c121c0e46a6bbde62a39bfc4b947fc  unknown-event-dropped.json
+61781945cc1c8e183487e035d0675daf2dd007786fe9877e990e4b4352829914  unknown-outcome-array-fatal.json
+6ded990f1d009bb36ca409071c6aec801ea47e48744e629daf92ea24e325a43b  unknown-outcome-stripped.json
+56832596e03598ca02d22c9249b44662db4adf98b9dab100efafc5108d13a7b1  unknown-part-in-message-list.json
+08e7f04257bdb70cb35bce776e993c61ceaa3233669034afad98fc6599eebc4f  unknown-property-stripped.json
+cad0d42b7d3e1a70d32fe4bd15411147409451a235ea64b21ad990700bce26ed  MANIFEST.txt
+06dcddbb6908a0c6dd4a9e8ec822eea41d5a460a53089fecccc8a68049e99241  LICENSE
