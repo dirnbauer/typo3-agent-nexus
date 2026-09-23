@@ -1,14 +1,28 @@
 sequenceDiagram
     autonumber
     actor V as Visitor
-    participant S as Trusted surface
-    participant M as Mandate service<br/>ap2_authorize
-    participant P as Verifier
-    V->>S: sets spending cap + approves quote
-    S->>M: mint intent mandate
-    M-->>S: signed JWT (cap, expiry)
-    S->>M: mint cart mandate (exact total)
-    M-->>S: signed JWT (chained hash)
-    S->>P: verify chain
-    P-->>S: chain valid: authorized
-    S-->>V: verifiable receipt
+    participant T as Trusted Surface<br/>/api/agent-nexus/ap2/authorize
+    participant A as Shopping agent
+    participant M as Merchant
+    participant C as Credential provider
+    participant P as Payment processor
+    V->>T: approves a shopping list and a spending cap
+    T->>T: signs open checkout + open payment mandate (SD-JWT, ES256, cnf = agent key)
+    T->>A: open mandates
+    A->>M: cart within the constraints
+    M-->>A: checkout_jwt (signed UCP checkout)
+    M-->>A: challenge (nonce)
+    C-->>A: challenge (nonce)
+    A->>A: closes both mandates with its key (kb+sd-jwt, sd_hash, aud, nonce)
+    A->>C: open ~~ closed payment mandate
+    alt a constraint fails
+        C-->>A: unresolved_constraint + payment_receipt (Error)
+        A-->>V: back to the Trusted Surface: approve this exact order (human present)
+    else every check passes
+        C-->>A: payment credential
+        A->>M: open ~~ closed checkout mandate
+        M-->>A: checkout_receipt (Success)
+        M->>P: payment credential + payment mandate
+        P-->>M: payment_receipt (Success, simulated)
+        T-->>V: authorised: every token, every check, both receipts
+    end
