@@ -157,6 +157,9 @@ final class AgentRunnerTest extends UnitTestCase
         EventVerifier::verify($events, 't', 'r');
         self::assertSame('For ', self::first($events, 'TEXT_MESSAGE_CONTENT')['delta']);
         self::assertArrayNotHasKey('usage', self::first($events, 'RUN_FINISHED'));
+        $provenance = array_column(array_filter($events, static fn(array $event): bool => $event['type'] === 'CUSTOM'), 'value');
+        self::assertCount(2, $provenance, 'The label is corrected once the model has failed.');
+        self::assertSame('scripted', $provenance[array_key_last($provenance)]['mode'] ?? null);
     }
 
     #[Test]

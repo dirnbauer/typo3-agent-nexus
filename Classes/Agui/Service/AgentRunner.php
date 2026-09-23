@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Agui\Service;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Webconsulting\AgentNexus\Agui\Agent\Approval;
 use Webconsulting\AgentNexus\Agui\Agent\Scenario;
 use Webconsulting\AgentNexus\Agui\Event\EventFactory;
@@ -50,6 +52,7 @@ final readonly class AgentRunner
         private LanguageModel $model,
         private UsageLedger $ledger,
         private Applier $applier,
+        private LoggerInterface $logger = new NullLogger(),
     ) {}
 
     /**
@@ -90,6 +93,10 @@ final readonly class AgentRunner
             ? yield from $this->streamAnswer($answerId, $scenario, $question, $llm, $connection['modelId'])
             : false;
         if (!$streamed) {
+            if ($connection !== null) {
+                // The label said "Live model"; say what really answers.
+                yield EventFactory::custom(self::PROVENANCE, ['mode' => 'scripted', 'label' => 'Scripted demo', 'reason' => 'the model did not answer']);
+            }
             foreach (self::words($scenario->answer) as $word) {
                 yield EventFactory::textMessageContent($answerId, $word);
             }
@@ -180,13 +187,15 @@ final readonly class AgentRunner
                 $text .= $chunk;
                 yield EventFactory::textMessageContent($messageId, $chunk);
             }
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            $this->logger->warning('AG-UI: the model stopped answering ({message}); the script takes over.', ['message' => $e->getMessage(), 'exception' => $e]);
             if ($text === '') {
                 return false;
             }
             yield EventFactory::textMessageContent($messageId, ' I could not finish this answer. The details below are correct.');
         }
         if ($text === '') {
+            $this->logger->warning('AG-UI: the model returned no text within {tokens} output tokens; the script takes over.', ['tokens' => $llm->maxTokens]);
             return false;
         }
 

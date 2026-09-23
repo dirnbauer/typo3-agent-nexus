@@ -5,6 +5,10 @@
 
 .agui-asst__input:disabled { opacity: .6; }
 
+/* The event strip scrolls on its own: without this its chips widen the widget,
+   and a grid cell around it, to the length of the whole stream. */
+.agui-asst__events-list { width: 0; min-width: 100%; }
+
 /* The inquiry widget shares the preset row. */
 .a2ui-inquiry__presets-wrap,
 .agui-asst__presets-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
