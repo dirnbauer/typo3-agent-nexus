@@ -1,0 +1,30 @@
+AP2 (Agent Payments Protocol) v0.2.0 - official example tokens, used by OfficialExamplesTest.
+
+Upstream   https://github.com/google-agentic-commerce/AP2
+License    Apache License 2.0
+           (full text: Tests/Conformance/Schemas/ap2/LICENSE)
+Retrieved  2026-09-23, tag v0.2.0 (commit b4587ac1d055888a73b4b21750973cffba961793)
+
+Each file is the "Encoded Token" block of the "Examples" section, copied verbatim
+(one line each; the final newline is not part of the token):
+
+  open_checkout_mandate.sdjwt.txt                     docs/ap2/checkout_mandate.md, "Open Checkout Mandate"
+  closed_checkout_mandate.sdjwt.txt                   docs/ap2/checkout_mandate.md, "Closed Checkout Mandate"
+  open_plus_closed_checkout_mandate_chain.sdjwt.txt   docs/ap2/checkout_mandate.md, the open mandate chained with the closed one
+  open_payment_mandate.sdjwt.txt                      docs/ap2/payment_mandate.md, "Open Payment Mandate SD-JWT plus disclosures"
+  closed_payment_mandate.sdjwt.txt                    docs/ap2/payment_mandate.md, "Closed Payment Mandate SD-JWT plus disclosures"
+  open_plus_closed_payment_mandate_chain.sdjwt.txt    docs/ap2/payment_mandate.md, the open mandate chained with the closed one
+
+The issuer key of the open mandates ("agent-provider-key-1") and the merchant key
+of the checkout JWT ("merchant-key-1") are not published, so those two signatures
+cannot be checked. Everything else can: the closed mandates' key-binding
+signatures under the open mandates' cnf.jwk, sd_hash, checkout_hash,
+transaction_id and the payment reference.
+
+SHA-256:
+5fa2bbcc2925b8eea22f3cf1cad53e8cc8e28b7429633c99585e11bd058c2b3b  closed_checkout_mandate.sdjwt.txt
+50e9130301ed6fc0c74dc407d6ffd1cef257662c467f3b68cca3c5433257aa8d  closed_payment_mandate.sdjwt.txt
+56fc068e4d3e7aa04a75fa01743e0461c6dad5cc1567fa72f9774e993a5422cf  open_checkout_mandate.sdjwt.txt
+ccaafbcc76f03a398cdcb3851ffcfdb5cce38ccf62aa6eeae5f446db9ea552c0  open_payment_mandate.sdjwt.txt
+550c3dc9d476c176dfc4710f6e7b9db0b45c3e99712b9afb6fc6b9683f54f910  open_plus_closed_checkout_mandate_chain.sdjwt.txt
+8cd1064c0f9a95a7b0383eaabfdd6f75227f0febb62d9c82508b6a551c6a99f6  open_plus_closed_payment_mandate_chain.sdjwt.txt
