@@ -108,8 +108,32 @@ final class TrafficRedactor
                 $data[$key] = self::MASK;
             } elseif (is_array($value)) {
                 $data[$key] = $this->value($value);
+            } elseif (is_string($value)) {
+                $data[$key] = $this->embedded($value);
             }
         }
         return $data;
+    }
+
+    /**
+     * Protocols carry JSON inside strings — AG-UI tool-call arguments and
+     * results, A2A data parts serialised by a client — so a string that is a
+     * JSON object or array is masked the same way and written back.
+     */
+    private function embedded(string $value): string
+    {
+        $trimmed = ltrim($value);
+        if ($trimmed === '' || ($trimmed[0] !== '{' && $trimmed[0] !== '[')) {
+            return $value;
+        }
+        $decoded = json_decode($value, true);
+        if (!is_array($decoded)) {
+            return $value;
+        }
+        $masked = $this->value($decoded);
+        if ($masked === $decoded) {
+            return $value;
+        }
+        return (string)json_encode($masked, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }

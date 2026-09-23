@@ -26,19 +26,18 @@ final readonly class RateLimiter implements SingletonInterface
 
     public function passes(ServerRequestInterface $request, string $bucket, int $limit, int $windowSeconds): bool
     {
-        try {
-            $cache = $this->cacheManager->getCache(self::CACHE);
-        } catch (\Throwable) {
-            return true;
-        }
-
         $ip = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
         $key = 'rl_' . preg_replace('/[^a-z0-9_]/i', '_', $bucket) . '_' . sha1($ip);
-        $count = (int)$cache->get($key);
-        if ($count >= $limit) {
-            return false;
+        try {
+            $cache = $this->cacheManager->getCache(self::CACHE);
+            $count = (int)$cache->get($key);
+            if ($count >= $limit) {
+                return false;
+            }
+            $cache->set($key, $count + 1, [], $windowSeconds);
+        } catch (\Throwable) {
+            // Unavailable, unreadable or unwritable: let the request through.
         }
-        $cache->set($key, $count + 1, [], $windowSeconds);
         return true;
     }
 }

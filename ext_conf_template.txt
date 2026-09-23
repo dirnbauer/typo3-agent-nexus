@@ -46,6 +46,12 @@ a2aLlmEnabled = 1
 # cat=ucp/enable; type=boolean; label=Enable UCP LLM rationale: When on, the shopping agent's recommendation text is model-written. Cart contents and prices always stay deterministic.
 ucpLlmEnabled = 1
 
+# cat=ucp/links; type=string; label=UCP terms of service URL: An absolute https URL. Every checkout session links to it as its terms_of_service; leave empty to omit the link.
+ucpTermsOfServiceUrl =
+
+# cat=ucp/links; type=string; label=UCP privacy policy URL: An absolute https URL. Every checkout session links to it as its privacy_policy; leave empty to omit the link.
+ucpPrivacyPolicyUrl =
+
 # cat=ucp/apply; type=boolean; label=UCP really charge: Keep off for demos. When off, every checkout is simulated and no order is placed with a real system.
 ucpReallyApply = 0
 

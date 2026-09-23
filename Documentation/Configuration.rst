@@ -133,6 +133,20 @@ that keep the demos harmless:
     Keep this off for demos. With it off, an approved AG-UI write is simulated
     and logged instead of executed.
 
+..  confval:: ucpTermsOfServiceUrl
+    :type: string
+    :Default: (empty)
+
+    An absolute ``https`` URL every UCP checkout session links to as its
+    ``terms_of_service``. Empty omits the link.
+
+..  confval:: ucpPrivacyPolicyUrl
+    :type: string
+    :Default: (empty)
+
+    An absolute ``https`` URL every UCP checkout session links to as its
+    ``privacy_policy``. Empty omits the link.
+
 ..  confval:: ucpReallyApply
     :type: bool
     :Default: 0
