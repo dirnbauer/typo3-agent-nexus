@@ -165,6 +165,23 @@ final class A2aServerTest extends UnitTestCase
     }
 
     #[Test]
+    public function aGetTaskWhileTheCreatingStreamRunsDoesNotRunTheTaskTwice(): void
+    {
+        $turn = $this->server->sendStreamingMessage($this->params('Summarise the pricing page'), new CallContext());
+        $taskId = $turn->current()['task']['id'];
+
+        $seen = $this->server->getTask(new TaskIdParams($taskId), new CallContext());
+        self::assertSame(TaskState::Submitted->value, $seen['status']['state'], 'The stream that created the task works on it, not the reader.');
+
+        while ($turn->valid()) {
+            $turn->next();
+        }
+        $saves = array_count_values(array_column(array_filter($this->store->saves, static fn(array $save): bool => $save['taskId'] === $taskId), 'state'));
+        self::assertSame(['TASK_STATE_SUBMITTED' => 1, 'TASK_STATE_WORKING' => 2, 'TASK_STATE_COMPLETED' => 1], $saves, 'One run: working, the artifact, completed.');
+        self::assertSame([], $this->lock->held, 'The lock is released when the stream ends.');
+    }
+
+    #[Test]
     public function aMessageForAnUnknownTaskIsTaskNotFound(): void
     {
         $this->expectA2aError(A2aError::TaskNotFound);

@@ -359,9 +359,7 @@ final class A2aServer
     private function accept(Message $message, CallContext $context): array
     {
         if ($message->taskId === '') {
-            $stored = $this->create($message, $context);
-            $context->correlate($stored->task->id);
-            return [$stored, false, static function (): void {}];
+            return $this->create($message, $context);
         }
 
         $context->correlate($message->taskId);
@@ -393,7 +391,14 @@ final class A2aServer
         }
     }
 
-    private function create(Message $message, CallContext $context): StoredTask
+    /**
+     * A new task, locked for the request that creates it: a client that reads
+     * the task id from the first frame and asks for the task at once must not
+     * start a second run of it.
+     *
+     * @return array{0: StoredTask, 1: false, 2: \Closure(): void}
+     */
+    private function create(Message $message, CallContext $context): array
     {
         $contextId = $message->contextId;
         if ($contextId !== '' && !Ids::isAcceptable($contextId)) {
@@ -401,9 +406,16 @@ final class A2aServer
         }
         $contextId = $contextId !== '' ? $contextId : Ids::uuid();
         $taskId = Ids::uuid();
+        $context->correlate($taskId);
+        $release = $this->lock->acquire($taskId) ?? static function (): void {};
         $task = new Task($taskId, $contextId, TaskStatus::now(TaskState::Submitted), [], [$message->inTask($contextId, $taskId)]);
-
-        return $this->store->save(new StoredTask($task, $context->channel, $context->pid), 'Message ' . $message->messageId);
+        try {
+            $stored = $this->store->save(new StoredTask($task, $context->channel, $context->pid), 'Message ' . $message->messageId);
+        } catch (\Throwable $exception) {
+            $release();
+            throw $exception;
+        }
+        return [$stored, false, $release];
     }
 
     private function drivePending(StoredTask $stored, CallContext $context): ?StoredTask
