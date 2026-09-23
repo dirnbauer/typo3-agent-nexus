@@ -4,323 +4,229 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Agui\Service;
 
-use TYPO3\CMS\Core\SingletonInterface;
-use Webconsulting\AgentNexus\Agui\Event\Events;
+use Webconsulting\AgentNexus\Agui\Agent\Approval;
+use Webconsulting\AgentNexus\Agui\Agent\Scenario;
+use Webconsulting\AgentNexus\Agui\Event\EventFactory;
+use Webconsulting\AgentNexus\Agui\Protocol\Json;
+use Webconsulting\AgentNexus\Agui\Protocol\RunInput;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
-use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
- * The "agent": an AG-UI event emitter.
+ * The demo agents: they turn a RunAgentInput into AG-UI 1.0 events.
  *
- * It turns a RunAgentInput into a strictly-ordered stream of AG-UI events.
- * On the frontend, the assistant's answer text can come from a real model
- * (nr-llm, soft dependency) streamed chunk by chunk; everything around it —
- * and the whole run when no LLM is available/allowed — stays scripted per
- * task preset so the demo always works without an API key.
+ * A run either proposes or resumes.
  *
- * The human-in-the-loop pause is the centrepiece either way: the first run
- * proposes and ends with a `confirm_apply`/`confirm_booking` tool call; only
- * a second run carrying the user's approval triggers the apply phase. The
- * gate, the apply phase and the lead write are NEVER model-controlled.
+ * - propose: reasoning (a span with one reasoning message), shared state, the
+ *   answer — streamed from the live model when the site assistant's element
+ *   allows it, scripted otherwise — the plan comparison as an activity, and
+ *   the proposed change as a tool call. The run then ends with an interrupt
+ *   outcome: it waits for a person.
+ * - resume: the next run answers that interrupt in RunAgentInput.resume. Only
+ *   an approval carries out the change; the result comes back as
+ *   TOOL_CALL_RESULT for the original tool call, then RUN_FINISHED.
+ *
+ * The approval gate, the tool arguments and the write are never
+ * model-controlled; a model can only word the answer.
  */
-final class AgentRunner implements SingletonInterface
+final readonly class AgentRunner
 {
+    /** Prefix of this installation's own names in CUSTOM events, activity types and metadata. */
+    public const string VENDOR_KEY = 'at.webconsulting.agentnexus';
+
+    /** CUSTOM event saying whether the answer comes from a live model or the script. */
+    public const string PROVENANCE = self::VENDOR_KEY . '.provenance';
+
+    /** Activity type of the site assistant's plan comparison. */
+    public const string PLAN_COMPARISON = self::VENDOR_KEY . '.plan-comparison';
+
+    /** Interrupt reason: a person confirms the proposed change. */
+    public const string INTERRUPT_REASON = 'confirmation';
+
+    /** A visitor's question beyond this is cut before it reaches a model. */
+    private const int MAX_QUESTION_LENGTH = 600;
+
     public function __construct(
-        private readonly Applier $applier,
-        private readonly LanguageModel $llmClient,
-        private readonly LlmGuard $llmGuard,
-        private readonly UsageLedger $usageTracker,
+        private LanguageModel $model,
+        private UsageLedger $ledger,
+        private Applier $applier,
     ) {}
 
     /**
-     * @param array<string, mixed> $input RunAgentInput {threadId, runId, preset, messages, state, approval}
-     *                                    plus server-injected keys: _settings (FlexForm), _llm (bool)
      * @return \Generator<int, array<string, mixed>>
      */
-    public function run(array $input, string $source): \Generator
+    public function propose(RunInput $input, Scenario $scenario, ?LlmPlan $llm = null, string $scriptedReason = ''): \Generator
     {
-        $preset = is_string($input['preset'] ?? null) && $input['preset'] !== '' ? $input['preset'] : 'seo';
-        $config = $this->presets($source)[$preset] ?? $this->presets($source)['seo'] ?? $this->presets('backend')['seo'];
-        $threadId = (string)($input['threadId'] ?? ('t-' . substr(md5($source . $preset), 0, 8)));
-        $approval = is_array($input['approval'] ?? null) ? $input['approval'] : null;
+        $question = mb_substr($input->lastUserText(), 0, self::MAX_QUESTION_LENGTH);
+        $connection = $llm !== null && $question !== '' ? $this->model->getConnectionInfo() : null;
 
-        if ($approval !== null) {
-            yield from $this->applyPhase($threadId, $preset, $config, $approval);
-            return;
+        yield EventFactory::runStarted($input->threadId, $input->runId);
+        yield EventFactory::custom(self::PROVENANCE, $connection !== null
+            ? ['mode' => 'llm', 'model' => $connection['model'], 'label' => 'Live model · ' . $connection['model']]
+            : ['mode' => 'scripted', 'label' => 'Scripted demo'] + ($scriptedReason !== '' ? ['reason' => $scriptedReason] : []));
+
+        yield EventFactory::stepStarted('analyse');
+        $spanId = EventFactory::mintId('rsn');
+        $reasoningId = EventFactory::mintId('msg');
+        yield EventFactory::reasoningStart($spanId);
+        yield EventFactory::reasoningMessageStart($reasoningId);
+        foreach (self::words($scenario->reasoning) as $word) {
+            yield EventFactory::reasoningMessageContent($reasoningId, $word);
         }
-        yield from $this->proposePhase($threadId, $config, $source, $input);
-    }
-
-    /**
-     * @param array<string, mixed> $c preset config
-     * @param array<string, mixed> $input full RunAgentInput
-     * @return \Generator<int, array<string, mixed>>
-     */
-    private function proposePhase(string $threadId, array $c, string $source, array $input): \Generator
-    {
-        $runId = 'r-' . substr(md5($threadId . microtime(false)), 0, 8);
-        $intent = trim((string)($input['intent'] ?? ''));
-        $settings = is_array($input['_settings'] ?? null) ? $input['_settings'] : [];
-        $useLlm = (bool)($input['_llm'] ?? false) && $intent !== '';
-
-        yield Events::runStarted($threadId, $runId);
-
-        // Provenance first, so the UI can label the whole run.
-        if ($useLlm) {
-            $connection = $this->llmClient->getConnectionInfo();
-            $model = $connection['model'] ?? 'default model';
-            yield Events::custom('provenance', ['mode' => 'llm', 'model' => $model, 'label' => 'Live model · ' . $model]);
-        } else {
-            yield Events::custom('provenance', ['mode' => 'scripted', 'model' => '', 'label' => 'Scripted demo']);
+        yield EventFactory::reasoningMessageEnd($reasoningId);
+        yield EventFactory::reasoningEnd($spanId);
+        if ($scenario->state !== null) {
+            yield EventFactory::stateSnapshot($scenario->state);
         }
-
-        yield Events::stepStarted('analyze');
-
-        // Reasoning (chain-of-thought summary)
-        yield Events::reasoningStart();
-        foreach ($this->chunks($c['reasoning']) as $part) {
-            yield Events::reasoningContent($part);
+        if ($scenario->stateDelta !== []) {
+            yield EventFactory::stateDelta($scenario->stateDelta);
         }
-        yield Events::reasoningEnd();
+        yield EventFactory::stepFinished('analyse');
 
-        // Optional shared-state demo (e.g. the translation preset)
-        if (isset($c['state'])) {
-            yield Events::stateSnapshot($c['state']);
-        }
-        if (isset($c['stateDelta'])) {
-            yield Events::stateDelta($c['stateDelta']);
-        }
-
-        yield Events::stepFinished('analyze');
-        yield Events::stepStarted('draft');
-
-        // Assistant text: a real model answer when allowed, the scripted
-        // draft otherwise — the event shape is identical.
-        $messageId = 'm-' . substr(md5($runId), 0, 6);
-        yield Events::textStart($messageId);
-        $streamed = $useLlm ? yield from $this->streamLlmAnswer($messageId, $c, $intent, $settings) : false;
+        yield EventFactory::stepStarted('answer');
+        $answerId = EventFactory::mintId('msg');
+        yield EventFactory::textMessageStart($answerId);
+        $streamed = $connection !== null && $llm !== null
+            ? yield from $this->streamAnswer($answerId, $scenario, $question, $llm, $connection['modelId'])
+            : false;
         if (!$streamed) {
-            foreach ($this->words($c['draft']) as $word) {
-                yield Events::textContent($messageId, $word);
+            foreach (self::words($scenario->answer) as $word) {
+                yield EventFactory::textMessageContent($answerId, $word);
             }
         }
-        yield Events::textEnd($messageId);
-        yield Events::stepFinished('draft');
-
-        // Generative-UI tool call (frontend) — agent picks the widget to render
-        if (isset($c['uiTool'])) {
-            $uiId = 'tc-ui-' . substr(md5($runId), 0, 5);
-            yield Events::toolStart($uiId, $c['uiTool']['name']);
-            yield Events::toolArgs($uiId, (string)json_encode($c['uiTool']['args'], JSON_UNESCAPED_SLASHES));
-            yield Events::toolEnd($uiId);
+        yield EventFactory::textMessageEnd($answerId);
+        if ($scenario->activity !== null) {
+            yield EventFactory::activitySnapshot(EventFactory::mintId('act'), self::PLAN_COMPARISON, $scenario->activity);
         }
+        yield EventFactory::stepFinished('answer');
 
-        // Human-in-the-loop: propose the change behind a confirm tool, then end
-        // the run. Nothing is written — the UI now shows Approve / Reject.
-        $toolId = 'tc-' . substr(md5($runId . 'confirm'), 0, 6);
-        yield Events::toolStart($toolId, $c['tool']);
-        yield Events::toolArgs($toolId, (string)json_encode($c['toolArgs'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-        yield Events::toolEnd($toolId);
+        yield EventFactory::stepStarted('propose');
+        $toolCallId = EventFactory::mintId('call');
+        yield EventFactory::toolCallStart($toolCallId, $scenario->tool, $answerId);
+        foreach (mb_str_split(Json::encode(Json::object($scenario->toolArgs)), 40) as $delta) {
+            yield EventFactory::toolCallArgs($toolCallId, $delta);
+        }
+        yield EventFactory::toolCallEnd($toolCallId);
+        yield EventFactory::stepFinished('propose');
 
-        yield Events::runFinished($threadId, $runId, ['awaiting' => 'approval', 'toolCallId' => $toolId]);
+        $interrupt = EventFactory::interrupt(
+            id: EventFactory::mintId('int'),
+            reason: self::INTERRUPT_REASON,
+            message: $scenario->approvalPrompt,
+            toolCallId: $toolCallId,
+            responseSchema: $scenario->responseSchema(),
+            metadata: [self::VENDOR_KEY => ['preset' => $scenario->id]],
+        );
+        $usage = $streamed && $connection !== null
+            ? [EventFactory::tokenUsage(provider: $connection['adapter'] !== '' ? strtolower($connection['adapter']) : null, model: $connection['modelId'])]
+            : [];
+        yield EventFactory::runFinished($input->threadId, $input->runId, EventFactory::interrupted([$interrupt]), usage: $usage);
     }
 
     /**
-     * @param array<string, mixed> $c preset config
-     * @param array<string, mixed> $approval {toolCallId, decision}
      * @return \Generator<int, array<string, mixed>>
      */
-    private function applyPhase(string $threadId, string $preset, array $c, array $approval): \Generator
+    public function resume(RunInput $input, Scenario $scenario, Resumption $resumption): \Generator
     {
-        $runId = 'r-' . substr(md5($threadId . 'apply' . microtime(false)), 0, 8);
-        $decision = (string)($approval['decision'] ?? 'approved');
-        $toolCallId = (string)($approval['toolCallId'] ?? 'tc');
-
-        yield Events::runStarted($threadId, $runId);
-
-        if ($decision !== 'approved') {
-            yield Events::toolResult('m-rej', $toolCallId, 'rejected');
-            $messageId = 'm-' . substr(md5($runId), 0, 6);
-            yield Events::textStart($messageId);
-            foreach ($this->words('No problem — I discarded that change and wrote nothing.') as $w) {
-                yield Events::textContent($messageId, $w);
-            }
-            yield Events::textEnd($messageId);
-            yield Events::runFinished($threadId, $runId, ['updated' => 0, 'decision' => 'rejected']);
+        yield EventFactory::runStarted($input->threadId, $input->runId);
+        try {
+            $approval = Approval::read($resumption->entry, $scenario, $resumption->proposal);
+        } catch (\InvalidArgumentException $e) {
+            // The interrupt stays open: a corrected answer may follow.
+            yield EventFactory::runError($e->getMessage(), 'invalid_answer');
             return;
         }
 
-        yield Events::toolResult('m-app', $toolCallId, 'approved');
-        yield Events::stepStarted('apply');
-
-        // The write happens ONLY here, after a verified approval.
-        $result = $this->applier->apply($preset, is_array($c['toolArgs'] ?? null) ? $c['toolArgs'] : []);
-
-        $messageId = 'm-' . substr(md5($runId), 0, 6);
-        yield Events::textStart($messageId);
-        foreach ($this->words($c['applyText'] . ($result['simulated'] ? ' (simulated — safe demo mode)' : '')) as $w) {
-            yield Events::textContent($messageId, $w);
+        yield EventFactory::stepStarted('apply');
+        if ($approval->approved) {
+            $result = $this->applier->apply($scenario, $approval);
+            $simulated = ($result['simulated'] ?? false) === true;
+            $toolResult = ['status' => $result['status'], 'simulated' => $simulated];
+            $text = $scenario->doneText . ($simulated ? ' ' . $scenario->simulatedNote : '');
+        } else {
+            $result = $this->applier->decline($scenario, $approval);
+            $toolResult = ['status' => 'declined', 'decision' => $approval->decision];
+            $text = $scenario->declinedText;
         }
-        yield Events::textEnd($messageId);
-        yield Events::stepFinished('apply');
-        yield Events::runFinished($threadId, $runId, $result);
+        // The call was proposed in the interrupted run; only its result belongs here.
+        yield EventFactory::toolCallResult(EventFactory::mintId('msg'), $resumption->toolCallId, Json::encode($toolResult));
+        $messageId = EventFactory::mintId('msg');
+        yield EventFactory::textMessageStart($messageId);
+        foreach (self::words($text) as $word) {
+            yield EventFactory::textMessageContent($messageId, $word);
+        }
+        yield EventFactory::textMessageEnd($messageId);
+        yield EventFactory::stepFinished('apply');
+        yield EventFactory::runFinished($input->threadId, $input->runId, EventFactory::success(), $result);
     }
 
     /**
-     * Task presets per surface (backend module vs frontend assistant).
+     * Stream the answer from the model. Returns false when nothing arrived,
+     * so the caller streams the scripted answer instead; a failure after the
+     * first chunk keeps what arrived and closes with one scripted sentence.
      *
-     * @return array<string, array<string, mixed>>
-     */
-    private function presets(string $source): array
-    {
-        $backend = [
-            'seo' => [
-                'reasoning' => 'The page emphasises flexible team plans and transparent pricing, so the description should lead with the value and a clear call to action, and stay under 160 characters.',
-                'draft' => 'Compare flexible team plans with transparent pricing — start free, scale as you grow, and cancel anytime.',
-                'tool' => 'confirm_apply',
-                'toolArgs' => ['field' => 'description', 'target' => 'page 42 “Pricing”', 'value' => 'Compare flexible team plans with transparent pricing — start free, scale as you grow, and cancel anytime.'],
-                'applyText' => 'Done — the meta description was written to the page.',
-            ],
-            'translate' => [
-                'reasoning' => 'Three pages need English titles. I will propose translations but keep them editable, because brand terms sometimes stay in German.',
-                'state' => ['targetLang' => 'en', 'pages' => [['uid' => 7, 'title' => 'Über uns'], ['uid' => 8, 'title' => 'Leistungen'], ['uid' => 9, 'title' => 'Kontakt']]],
-                'stateDelta' => [
-                    ['op' => 'replace', 'path' => '/pages/0/title', 'value' => 'About us'],
-                    ['op' => 'replace', 'path' => '/pages/1/title', 'value' => 'Services'],
-                    ['op' => 'replace', 'path' => '/pages/2/title', 'value' => 'Contact'],
-                ],
-                'draft' => 'I translated the three page titles. Review the live state on the right — edit any title before you approve.',
-                'tool' => 'confirm_apply',
-                'toolArgs' => ['action' => 'translate_titles', 'count' => 3, 'targetLang' => 'en'],
-                'applyText' => 'Applied — three page titles were translated to English.',
-            ],
-            'news' => [
-                'reasoning' => 'The brief is about a product launch. I will draft a concise news lede with the date and a quote slot, in the house tone.',
-                'draft' => 'Today we launched our redesigned team workspace, bringing real-time collaboration and transparent pricing to growing companies.',
-                'tool' => 'confirm_apply',
-                'toolArgs' => ['action' => 'create_news', 'table' => 'tx_news_domain_model_news', 'title' => 'New team workspace launches'],
-                'applyText' => 'Created — a new news draft is ready for review.',
-            ],
-        ];
-
-        $frontend = [
-            'plan' => [
-                'reasoning' => 'They need a plan for 5 people under €50. The Team plan at €39 fits; I will render a comparison card and let them confirm before I capture anything.',
-                'draft' => 'For a team of 5 under €50, the Team plan is the best fit at €39 / month. Here is a quick comparison.',
-                'uiTool' => ['name' => 'render_plan_card', 'args' => ['recommended' => 'Team', 'plans' => [['name' => 'Starter', 'price' => 0, 'seats' => 2], ['name' => 'Team', 'price' => 39, 'seats' => 5], ['name' => 'Business', 'price' => 79, 'seats' => 15]]]],
-                'state' => ['selection' => null],
-                'stateDelta' => [['op' => 'replace', 'path' => '/selection', 'value' => 'Team']],
-                'tool' => 'confirm_booking',
-                'toolArgs' => ['plan' => 'Team', 'price' => 39, 'seats' => 5, 'needs' => ['name', 'email']],
-                'applyText' => 'Thanks — your interest in the Team plan was sent to our team.',
-            ],
-            'support' => [
-                'reasoning' => 'They want to book a consultation. I will gather the essentials and confirm before creating the request.',
-                'draft' => 'I can set up a consultation. Tell me a good time and I will confirm the details before sending anything.',
-                'tool' => 'confirm_booking',
-                'toolArgs' => ['action' => 'book_consultation', 'needs' => ['name', 'email', 'preferredTime']],
-                'applyText' => 'Done — your consultation request was sent. We will be in touch shortly.',
-            ],
-        ];
-
-        return $source === 'frontend' ? $frontend : $backend;
-    }
-
-    /**
-     * Stream a real model answer as TEXT_MESSAGE_CONTENT events.
-     *
-     * Returns true when at least one chunk was streamed; false lets the
-     * caller fall back to the scripted draft. A failure mid-stream degrades
-     * gracefully: whatever arrived stays, a short scripted close follows.
-     *
-     * @param array<string, mixed> $c preset config
-     * @param array<string, mixed> $settings FlexForm settings (server-loaded)
      * @return \Generator<int, array<string, mixed>, mixed, bool>
      */
-    private function streamLlmAnswer(string $messageId, array $c, string $intent, array $settings): \Generator
+    private function streamAnswer(string $messageId, Scenario $scenario, string $question, LlmPlan $llm, string $modelId): \Generator
     {
-        $systemPrompt = trim((string)($settings['llm_system_prompt'] ?? ''));
-        if ($systemPrompt === '') {
-            $systemPrompt = $this->buildSystemPrompt($c);
-        }
-        $maxTokens = $this->llmGuard->maxOutputTokens((int)($settings['llm_max_tokens'] ?? 0));
-
+        $systemPrompt = $llm->systemPrompt !== '' ? $llm->systemPrompt : $this->systemPrompt($scenario);
         $text = '';
         try {
-            foreach ($this->llmClient->streamText($systemPrompt, $intent, $maxTokens) as $chunk) {
+            foreach ($this->model->streamText($systemPrompt, $question, $llm->maxTokens) as $chunk) {
                 if ($chunk === '') {
+                    // 1.0 allows empty deltas; older clients reject them.
                     continue;
                 }
                 $text .= $chunk;
-                yield Events::textContent($messageId, $chunk);
+                yield EventFactory::textMessageContent($messageId, $chunk);
             }
         } catch (\Throwable) {
             if ($text === '') {
                 return false;
             }
-            yield Events::textContent($messageId, ' — and to keep things simple, let me hand over to the summary below.');
+            yield EventFactory::textMessageContent($messageId, ' I could not finish this answer. The details below are correct.');
         }
-
         if ($text === '') {
             return false;
         }
 
-        $promptTokens = $this->llmClient->estimateTokens($systemPrompt . ' ' . $intent);
-        $completionTokens = $this->llmClient->estimateTokens($text);
-        $this->usageTracker->record(
+        $promptTokens = $this->model->estimateTokens($systemPrompt . ' ' . $question);
+        $completionTokens = $this->model->estimateTokens($text);
+        $this->ledger->record(
             'agui',
             UsageLedger::SOURCE_FRONTEND,
-            'default',
+            $modelId,
             $promptTokens,
             $completionTokens,
-            $this->llmClient->estimateCost($promptTokens, $completionTokens),
+            $this->model->estimateCost($promptTokens, $completionTokens),
         );
-
         return true;
     }
 
     /**
-     * Built-in system prompt embedding the scenario's domain knowledge, used
-     * when the FlexForm does not override it.
-     *
-     * @param array<string, mixed> $c preset config
+     * The built-in system prompt: the task's own facts, so the model has
+     * nothing to invent. A content element may replace it.
      */
-    private function buildSystemPrompt(array $c): string
+    private function systemPrompt(Scenario $scenario): string
     {
-        $knowledge = [
-            'scenario_summary' => (string)($c['reasoning'] ?? ''),
-            'confirm_tool' => (string)($c['tool'] ?? 'confirm_booking'),
-            'confirm_details' => $c['toolArgs'] ?? [],
-        ];
-        if (isset($c['uiTool']['args'])) {
-            $knowledge['offer_data'] = $c['uiTool']['args'];
+        $facts = ['summary' => $scenario->reasoning, 'proposal_tool' => $scenario->tool, 'proposal' => $scenario->toolArgs];
+        if ($scenario->activity !== null) {
+            $facts['offer'] = $scenario->activity;
         }
-
-        return 'You are the live assistant on this website, answering one visitor question. '
-            . 'Answer helpfully and concretely in 2-4 short sentences of plain text — no markdown, no lists, no links. '
-            . 'Ground every claim in this scenario data (never invent prices or features beyond it): '
-            . json_encode($knowledge, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
-            . ' After your answer the interface offers the visitor an explicit confirmation step; '
-            . 'do not tell them to click anything — just end with a sentence that naturally leads toward confirming.';
+        return 'You are the assistant on this website and answer one visitor question. '
+            . 'Answer in two to four short sentences of plain text: no Markdown, no lists, no links. '
+            . 'Use only these facts and never invent prices or features: ' . Json::encode($facts)
+            . ' After your answer the page asks the visitor to confirm the proposal. '
+            . 'Do not tell them to click anything; end with a sentence that leads towards confirming.';
     }
 
-    /** @return list<string> words with trailing spaces, for token streaming */
-    private function words(string $text): array
+    /**
+     * Words with their trailing space, the pieces a scripted run streams.
+     *
+     * @return list<string>
+     */
+    private static function words(string $text): array
     {
-        $out = [];
-        foreach (preg_split('/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [] as $token) {
-            $out[] = $token;
-        }
-        return $out;
-    }
-
-    /** @return list<string> coarse chunks for reasoning streaming */
-    private function chunks(string $text): array
-    {
-        return array_values(array_map(
-            static fn(string $s): string => $s . ' ',
-            array_filter(explode(' ', $text), static fn(string $s): bool => $s !== ''),
-        ));
+        return preg_match_all('/\S+\s*/u', $text, $matches) > 0 ? $matches[0] : [];
     }
 }

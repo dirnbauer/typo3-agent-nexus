@@ -6,56 +6,59 @@ namespace Webconsulting\AgentNexus\Agui\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Webconsulting\AgentNexus\Agui\Service\AgentRunner;
-use Webconsulting\AgentNexus\Agui\Service\EventEncoder;
-use Webconsulting\AgentNexus\Agui\Service\RunLogger;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use Webconsulting\AgentNexus\Agui\Agent\Audience;
+use Webconsulting\AgentNexus\Agui\Http\AguiEndpoint;
+use Webconsulting\AgentNexus\Agui\Protocol\InvalidRunInput;
+use Webconsulting\AgentNexus\Agui\Protocol\RunInput;
+use Webconsulting\AgentNexus\Agui\Service\RunConflict;
+use Webconsulting\AgentNexus\Agui\Service\RunPlan;
+use Webconsulting\AgentNexus\Agui\Service\RunService;
+use Webconsulting\AgentNexus\Shared\Traffic\Channel;
+use Webconsulting\AgentNexus\Shared\Traffic\TrafficCapture;
 
 /**
- * Backend AJAX route target for the Run Console: accepts a RunAgentInput (JSON
- * POST) and streams the agent's AG-UI events back as Server-Sent Events. Runs in
- * an authenticated backend context (the AJAX route carries the BE token).
+ * The run console's own endpoint (AJAX route `agentnexus_agui_run`): the
+ * editor agent, for backend users only.
+ *
+ * It speaks exactly what the public endpoint speaks — a RunAgentInput in, an
+ * AG-UI 1.0 event stream out, approval as an interrupt answered by `resume` —
+ * with the task in `forwardedProps.agentNexus.preset` (seo, translate, news).
+ * Its interrupts can only be answered here, never through the public
+ * endpoint.
  */
-final class RunController
+#[Autoconfigure(public: true)]
+final readonly class RunController
 {
     public function __construct(
-        private readonly AgentRunner $runner,
-        private readonly EventEncoder $encoder,
-        private readonly RunLogger $runLogger,
+        private RunService $runs,
     ) {}
 
     public function run(ServerRequestInterface $request): ResponseInterface
     {
-        $beUser = (int)($GLOBALS['BE_USER']->user['uid'] ?? 0);
-        $input = json_decode((string)$request->getBody(), true);
-        $input = is_array($input) ? $input : [];
+        try {
+            $input = RunInput::fromJson((string)$request->getBody());
+        } catch (InvalidRunInput $e) {
+            return AguiEndpoint::error($e->status, $e->reason, $e->getMessage(), $e->pointer);
+        }
+        $capture = $request->getAttribute(TrafficCapture::ATTRIBUTE);
+        if ($capture instanceof TrafficCapture) {
+            $capture->correlate($input->runId);
+        }
+        $preset = $input->agentNexus()['preset'] ?? '';
+        $backendUser = $GLOBALS['BE_USER'] ?? null;
 
-        $preset = is_string($input['preset'] ?? null) ? $input['preset'] : 'seo';
-        $threadId = is_string($input['threadId'] ?? null) ? $input['threadId'] : 't-be';
-        $runId = is_string($input['runId'] ?? null) ? $input['runId'] : '';
-        $approved = is_array($input['approval'] ?? null);
-
-        $count = 0;
-        $outcome = 'finished';
-
-        // Wrap the runner so we can count events and log the run on completion
-        // (the generator's finally fires when the SSE loop exhausts it).
-        $events = (function () use ($input, &$count, &$outcome, $threadId, $runId, $preset, $approved, $beUser): \Generator {
-            try {
-                foreach ($this->runner->run($input, 'backend') as $event) {
-                    $count++;
-                    $type = $event['type'] ?? '';
-                    if ($type === 'RUN_ERROR') {
-                        $outcome = 'error';
-                    } elseif ($type === 'RUN_FINISHED' && ($event['result']['decision'] ?? null) === 'rejected') {
-                        $outcome = 'rejected';
-                    }
-                    yield $event;
-                }
-            } finally {
-                $this->runLogger->log(RunLogger::SOURCE_BACKEND, $threadId, $runId, $preset, $count, $approved, $outcome, $beUser);
-            }
-        })();
-
-        return $this->encoder->stream($events, 70);
+        try {
+            return $this->runs->start($input, new RunPlan(
+                audience: Audience::Editor,
+                preset: is_string($preset) ? $preset : '',
+                channel: Channel::Backend,
+                beUser: $backendUser instanceof BackendUserAuthentication ? (int)($backendUser->user['uid'] ?? 0) : 0,
+                delayMs: 60,
+            ));
+        } catch (RunConflict $e) {
+            return AguiEndpoint::error(409, $e->reason, $e->getMessage());
+        }
     }
 }

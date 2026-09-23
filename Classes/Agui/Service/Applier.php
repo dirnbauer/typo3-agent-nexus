@@ -4,46 +4,55 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Agui\Service;
 
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
-use TYPO3\CMS\Core\SingletonInterface;
+use Webconsulting\AgentNexus\Agui\Agent\Approval;
+use Webconsulting\AgentNexus\Agui\Agent\Audience;
+use Webconsulting\AgentNexus\Agui\Agent\Scenario;
+use Webconsulting\AgentNexus\Agui\Protocol\Json;
+use Webconsulting\AgentNexus\Shared\Configuration\ExtensionSettings;
 
 /**
- * Performs the write that an approved `confirm_apply` represents.
+ * Carries out what a person approved, and only that.
  *
- * Default behaviour is SIMULATED: it records what *would* be written and returns
- * a result, so the demo never mutates real content. A real DataHandler write can
- * be enabled per-install (reallyApply) and wired to a concrete target — but the
- * teaching point is the human-in-the-loop gate, not the mutation, so safe mode is
- * the default.
+ * The outcome is the run's result: RUN_FINISHED carries it and the run record
+ * keeps it, which is where a visitor's request (the lead) is stored now that
+ * there is no lead table. Writes stay simulated unless the `aguiReallyApply`
+ * extension setting is on — the teaching point is the approval gate, not the
+ * write — so the result says `simulated: true` by default.
  */
-final class Applier implements SingletonInterface
+final readonly class Applier
 {
     public function __construct(
-        private readonly ExtensionConfiguration $extensionConfiguration,
+        private ExtensionSettings $settings,
     ) {}
 
     /**
-     * @param array<string, mixed> $args
-     * @return array{updated: int, simulated: bool, preset: string, args: array<string, mixed>}
+     * @return array<string, mixed>
      */
-    public function apply(string $preset, array $args): array
+    public function apply(Scenario $scenario, Approval $approval): array
     {
-        $reallyApply = false;
-        try {
-            $settings = (array)$this->extensionConfiguration->get('agent_nexus');
-            $reallyApply = (bool)($settings['aguiReallyApply'] ?? false);
-        } catch (\Throwable) {
-            // keep safe default
-        }
-
-        // In this demo we keep writes simulated even when the flag is on, unless a
-        // concrete, reversible target is configured — a real DataHandler write
-        // would belong here, gated behind $reallyApply.
-        return [
+        $result = [
+            'status' => $scenario->audience === Audience::Site ? 'sent' : 'applied',
+            'preset' => $scenario->id,
             'updated' => 1,
-            'simulated' => !$reallyApply,
-            'preset' => $preset,
-            'args' => $args,
+            'simulated' => !$this->settings->bool('aguiReallyApply', false),
+            'arguments' => Json::object($approval->arguments),
+        ];
+        if ($approval->contact !== []) {
+            $result['lead'] = $approval->contact;
+        }
+        return $result;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function decline(Scenario $scenario, Approval $approval): array
+    {
+        return [
+            'status' => 'declined',
+            'preset' => $scenario->id,
+            'updated' => 0,
+            'decision' => $approval->decision,
         ];
     }
 }
