@@ -1,193 +1,198 @@
 /**
- * A2UI Playground — the page controller for the backend module.
+ * A2UI playground — the backend screen that plays both ends of A2UI.
  *
- * It ties the three panes together: it sends the editor's natural-language
- * intent to the agent (server side), receives an A2UI v1.0 surface, renders it
- * live with the trusted {@link A2UIClient}, and mirrors the raw JSON, the live
- * data model and the last emitted user action so the whole
- * "agent → JSON → native UI → signal" loop is visible at a glance.
+ * It asks the agent for a surface (the backend route agentnexus_a2ui_generate,
+ * which runs the same binding as POST /a2ui/surfaces), lists every message
+ * numbered in the order it travelled, draws the surface with the renderer and
+ * sends the renderer's actions back (agentnexus_a2ui_action), showing the
+ * action, its metadata and the agent's answer in the same stream.
  */
-import { A2UIClient } from '@webconsulting/agent-nexus/a2ui-renderer.js';
-import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
+import AjaxRequest from '@typo3/core/ajax/ajax-request.js';
+import Notification from '@typo3/backend/notification.js';
+import labels from '~labels/agent_nexus.a2ui';
+import { A2uiRenderer, capabilities } from '@webconsulting/agent-nexus/a2ui-renderer.js';
+import { BACKEND_CLASSES, rendererLabels } from '@webconsulting/agent-nexus/a2ui-backend.js';
 
-// Card entrance is CSS (.anx-reveal); only the stat count-ups need JavaScript.
-countUpAll(document.querySelector('.anx'));
+const JSON_HEADERS = { headers: { 'Content-Type': 'application/json; charset=utf-8' } };
 
-function ready(fn) {
-  if (document.readyState !== 'loading') {
-    fn();
-  } else {
-    document.addEventListener('DOMContentLoaded', fn);
+class Playground {
+  constructor(root) {
+    this.root = root;
+    this.form = root.querySelector('[data-a2ui-form]');
+    this.intent = root.querySelector('[data-a2ui-intent]');
+    this.example = root.querySelector('[data-a2ui-example]');
+    this.generateButton = root.querySelector('[data-a2ui-generate]');
+    this.resetButton = root.querySelector('[data-a2ui-reset]');
+    this.status = root.querySelector('[data-a2ui-status]');
+    this.notes = root.querySelector('[data-a2ui-notes]');
+    this.notesList = root.querySelector('[data-a2ui-notes-list]');
+    this.stream = root.querySelector('[data-a2ui-stream]');
+    this.streamEmpty = root.querySelector('[data-a2ui-stream-empty]');
+    this.provenance = root.querySelector('[data-a2ui-provenance]');
+    this.data = root.querySelector('[data-a2ui-data]');
+    this.count = 0;
+    this.surfaceId = null;
+
+    this.renderer = new A2uiRenderer(root.querySelector('[data-a2ui-mount]'), {
+      headingBase: 3,
+      classes: BACKEND_CLASSES,
+      labels: rendererLabels(),
+      onAction: (message, metadata) => this.send(message, metadata),
+      onError: (message) => this.log('renderer', message),
+      onChange: (surfaceId, dataModel) => { this.data.textContent = JSON.stringify(dataModel, null, 2); },
+      onLifecycle: (type) => {
+        if (type === 'deleted') {
+          this.say(labels.get('js.status.deleted'));
+          this.data.textContent = '{}';
+        }
+      },
+    });
+
+    this.form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.generate();
+    });
+    this.example.addEventListener('change', () => {
+      if (this.example.value !== '') this.intent.value = this.example.value;
+    });
+    this.resetButton.addEventListener('click', () => this.reset());
+  }
+
+  version() {
+    const checked = this.form.querySelector('input[name="version"]:checked');
+    return checked ? checked.value : 'v0.9.1';
+  }
+
+  async generate() {
+    const intent = this.intent.value.trim();
+    if (intent === '') {
+      this.say(labels.get('js.status.intent'));
+      this.intent.focus();
+      return;
+    }
+    const version = this.version();
+    this.reset(false);
+    this.busy(true);
+    this.say(labels.get('js.status.generating'));
+    try {
+      const response = await new AjaxRequest(TYPO3.settings.ajaxUrls.agentnexus_a2ui_generate)
+        .post({ intent, version, ...capabilities(version) }, JSON_HEADERS);
+      const result = await response.resolve();
+      result.messages.forEach((message) => this.log('agent', message));
+      this.renderer.processAll(result.messages);
+      this.surfaceId = result.surfaceId;
+      this.data.textContent = JSON.stringify(this.renderer.dataModel(result.surfaceId) || {}, null, 2);
+      this.provenance.textContent = result.provenance.label;
+      this.showNotes(result.notes || []);
+      this.say(labels.get('js.status.generated', [result.surfaceId, String(result.messages.length), result.provenance.label]));
+      this.resetButton.hidden = false;
+    } catch (error) {
+      await this.fail(error);
+    } finally {
+      this.busy(false);
+    }
+  }
+
+  /** The renderer's action goes to the agent; the answer comes back into the renderer. */
+  async send(message, metadata) {
+    const body = Object.keys(metadata).length > 0 ? { ...message, metadata } : message;
+    this.log('renderer', body);
+    this.say(labels.get('js.status.sending'));
+    try {
+      const response = await new AjaxRequest(TYPO3.settings.ajaxUrls.agentnexus_a2ui_action).post(body, JSON_HEADERS);
+      const result = await response.resolve();
+      result.messages.forEach((reply) => this.log('agent', reply));
+      this.say(labels.get('js.status.answered', [String(result.messages.length)]));
+      return result.messages;
+    } catch (error) {
+      await this.fail(error);
+      return [];
+    }
+  }
+
+  log(direction, message) {
+    this.count += 1;
+    const type = Object.keys(message).find((key) => key !== 'version' && key !== 'metadata') || 'message';
+    const item = document.createElement('li');
+    item.className = `anx-events__item anx-a2ui__message anx-a2ui__message--${direction}`;
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    const index = document.createElement('span');
+    index.className = 'anx-events__index';
+    index.textContent = String(this.count);
+    const badge = document.createElement('span');
+    badge.className = `badge ${direction === 'agent' ? 'badge-info' : 'badge-default'}`;
+    badge.textContent = labels.get(direction === 'agent' ? 'js.stream.agent' : 'js.stream.renderer');
+    const name = document.createElement('code');
+    name.className = 'anx-events__name';
+    name.textContent = type;
+    summary.append(index, badge, name);
+    if (message.metadata) {
+      const extra = document.createElement('span');
+      extra.className = 'text-variant';
+      extra.textContent = labels.get('js.stream.metadata');
+      summary.append(extra);
+    }
+    const pre = document.createElement('pre');
+    pre.className = 'anx-code';
+    pre.tabIndex = 0;
+    const code = document.createElement('code');
+    code.textContent = JSON.stringify(message, null, 2);
+    pre.appendChild(code);
+    details.append(summary, pre);
+    item.appendChild(details);
+    this.stream.appendChild(item);
+    this.stream.hidden = false;
+    this.streamEmpty.hidden = true;
+  }
+
+  showNotes(notes) {
+    this.notesList.replaceChildren(...notes.map((note) => {
+      const li = document.createElement('li');
+      li.textContent = note;
+      return li;
+    }));
+    this.notes.hidden = notes.length === 0;
+  }
+
+  reset(clearIntent = true) {
+    this.renderer.clear();
+    this.stream.replaceChildren();
+    this.stream.hidden = true;
+    this.streamEmpty.hidden = false;
+    this.count = 0;
+    this.surfaceId = null;
+    this.data.textContent = '{}';
+    this.showNotes([]);
+    this.resetButton.hidden = true;
+    if (clearIntent) {
+      this.status.textContent = '';
+      this.intent.focus();
+    }
+  }
+
+  busy(on) {
+    this.generateButton.disabled = on;
+    this.root.setAttribute('aria-busy', on ? 'true' : 'false');
+  }
+
+  say(text) {
+    this.status.textContent = text;
+  }
+
+  async fail(error) {
+    let message = error instanceof Error ? error.message : '';
+    if (error && typeof error.resolve === 'function') {
+      try {
+        const body = await error.resolve('json');
+        message = body && body.error ? `${body.error.code}: ${body.error.message}` : message;
+      } catch (e) {
+        /* not JSON */
+      }
+    }
+    this.say(labels.get('js.status.failed', [message]));
+    Notification.error(labels.get('js.notification.failed'), message);
   }
 }
 
-ready(() => {
-  const root = document.querySelector('[data-a2ui-playground]');
-  if (!root) {
-    return;
-  }
-
-  const endpoint = root.dataset.a2uiEndpoint;
-  const respondEndpoint = root.dataset.a2uiRespond;
-  const liveEl = root.querySelector('[data-a2ui-live]');
-  const jsonEl = root.querySelector('[data-a2ui-json]');
-  const dataEl = root.querySelector('[data-a2ui-datamodel]');
-  const actionEl = root.querySelector('[data-a2ui-action]');
-  const actionWrap = root.querySelector('[data-a2ui-action-wrap]');
-  const provEl = root.querySelector('[data-a2ui-provenance]');
-  const notesEl = root.querySelector('[data-a2ui-notes]');
-  const input = root.querySelector('[data-a2ui-intent]');
-  const form = root.querySelector('[data-a2ui-form]');
-
-  const warnings = [];
-
-  const client = new A2UIClient({
-    onDataChange: (dataModel) => {
-      if (dataEl) dataEl.textContent = JSON.stringify(dataModel, null, 2);
-    },
-    onAction: (userAction) => {
-      if (actionEl) actionEl.textContent = JSON.stringify(userAction, null, 2);
-      if (actionWrap) actionWrap.classList.remove('d-none');
-      respond(userAction);
-    },
-    onWarning: (message) => {
-      warnings.push(message);
-      renderNotes();
-    },
-  });
-
-  /**
-   * The other half of the loop: when an action fires, ask the agent to respond
-   * and stream the returned components into the live surface (the client appends
-   * the confirmation section to root and re-renders).
-   */
-  async function respond(userAction) {
-    if (!respondEndpoint || !userAction || userAction.type !== 'event') return;
-    const rootComponent = client.components.get('root');
-    if (!rootComponent) return;
-    try {
-      const body = new URLSearchParams();
-      body.set('actionName', userAction.name || '');
-      body.set('context', JSON.stringify(userAction.context || {}));
-      const response = await fetch(respondEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
-      });
-      const data = await response.json();
-      if (!data || !data.success) return;
-
-      const children = (rootComponent.children || []).slice();
-      if (!children.includes(data.ackId)) children.push(data.ackId);
-      const updatedRoot = { ...rootComponent, children };
-
-      // Apply the streamed update — surface patches and re-renders with the ack.
-      client.apply({ version: 'v1.0', updateComponents: { components: [updatedRoot, ...data.components] } });
-      if (liveEl) {
-        const ack = liveEl.querySelector('#a2ui_ack, .a2ui-card:last-child');
-        if (ack && ack.scrollIntoView) ack.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-      }
-    } catch (error) {
-      /* non-fatal: the loop demo is best-effort */
-    }
-  }
-
-  function renderNotes(serverNotes = []) {
-    if (!notesEl) return;
-    const all = [...serverNotes, ...warnings];
-    if (all.length === 0) {
-      notesEl.classList.add('d-none');
-      notesEl.innerHTML = '';
-      return;
-    }
-    notesEl.classList.remove('d-none');
-    notesEl.innerHTML = '';
-    all.forEach((note) => {
-      const li = document.createElement('li');
-      li.textContent = note;
-      notesEl.appendChild(li);
-    });
-  }
-
-  function setProvenance(provenance) {
-    if (!provEl) return;
-    const isLlm = provenance && provenance.source === 'llm';
-    provEl.textContent = provenance ? provenance.label : '—';
-    provEl.className = 'anx-badge ' + (isLlm ? 'anx-badge--accent' : 'anx-badge--sim');
-    provEl.title = isLlm
-      ? 'This interface was generated by a real language model.'
-      : 'This interface was produced by the built-in deterministic generator (no LLM).';
-  }
-
-  function setBusy(busy) {
-    root.querySelectorAll('button, input, select, textarea').forEach((el) => {
-      if (el.dataset.a2uiKeepEnabled === undefined) el.disabled = busy;
-    });
-    if (liveEl && busy) {
-      liveEl.innerHTML = '<div class="a2ui-busy">'
-        + '<span class="anx-spinner"></span> The agent is composing your interface…</div>';
-    }
-  }
-
-  async function generate(intent) {
-    if (!intent || !intent.trim()) return;
-    warnings.length = 0;
-    setBusy(true);
-    try {
-      // v14 backend module routes take plain arguments (not Extbase-namespaced).
-      const body = new URLSearchParams();
-      body.set('intent', intent);
-      body.set('format', 'json');
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
-      });
-      if (!response.ok) {
-        throw new Error(`Request failed (${response.status})`);
-      }
-      const data = await response.json();
-
-      if (jsonEl) jsonEl.textContent = JSON.stringify(data.payload, null, 2);
-      setProvenance(data.provenance);
-      if (actionWrap) actionWrap.classList.add('d-none');
-
-      setBusy(false);
-      client.render(data.payload, liveEl);
-      renderNotes((data.provenance && data.provenance.notes) || []);
-    } catch (error) {
-      setBusy(false);
-      if (liveEl) {
-        liveEl.innerHTML = '';
-        const alert = document.createElement('div');
-        alert.className = 'a2ui-error';
-        alert.setAttribute('role', 'alert');
-        alert.textContent = `Could not generate UI: ${error.message}`;
-        liveEl.appendChild(alert);
-      }
-    }
-  }
-
-  if (form) {
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      generate(input ? input.value : '');
-    });
-  }
-
-  root.querySelectorAll('[data-a2ui-preset]').forEach((btn) => {
-    btn.addEventListener('click', (event) => {
-      event.preventDefault();
-      const intent = btn.dataset.a2uiPreset;
-      if (input) input.value = intent;
-      generate(intent);
-    });
-  });
-
-  // Show something immediately so the concept lands without any typing.
-  const firstPreset = root.querySelector('[data-a2ui-preset]');
-  if (firstPreset) {
-    generate(firstPreset.dataset.a2uiPreset);
-  }
-});
+document.querySelectorAll('[data-a2ui-playground]').forEach((root) => new Playground(root));

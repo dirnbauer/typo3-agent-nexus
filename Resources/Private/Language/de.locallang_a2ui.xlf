@@ -1,8 +1,863 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>A2UI Playground</source><target>A2UI Playground</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>A2UI Playground</source><target>A2UI Playground</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>An AI agent describes a UI as JSON and TYPO3 renders it with trusted components.</source><target>Ein KI-Agent beschreibt eine UI als JSON und TYPO3 rendert sie mit vertrauenswürdigen Komponenten.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="a2ui">
+    <unit id="playground.heading">
+      <segment state="final">
+        <source>A2UI playground</source>
+        <target>A2UI-Playground</target>
+      </segment>
+    </unit>
+    <unit id="playground.lede">
+      <segment state="final">
+        <source>Describe a form in one line. The agent answers with A2UI messages, and the renderer draws the surface from the official basic catalogue.</source>
+        <target>Beschreiben Sie ein Formular in einem Satz. Der Agent antwortet mit A2UI-Nachrichten, und der Renderer zeichnet die Oberfläche aus dem offiziellen Basiskatalog.</target>
+      </segment>
+    </unit>
+    <unit id="playground.scripted.title">
+      <segment state="final">
+        <source>Scripted demo</source>
+        <target>Skript-Demo</target>
+      </segment>
+    </unit>
+    <unit id="playground.scripted.message">
+      <segment state="final">
+        <source>No model is configured, so the built-in generator answers. Install and configure netresearch/nr-llm to let a model write the surfaces.</source>
+        <target>Es ist kein Modell eingerichtet, daher antwortet der eingebaute Generator. Installieren und konfigurieren Sie netresearch/nr-llm, damit ein Modell die Oberflächen schreibt.</target>
+      </segment>
+    </unit>
+    <unit id="playground.intent.label">
+      <segment state="final">
+        <source>Describe the form you need</source>
+        <target>Beschreiben Sie das benötigte Formular</target>
+      </segment>
+    </unit>
+    <unit id="playground.intent.placeholder">
+      <segment state="final">
+        <source>For example: a contact form with name, email and a message</source>
+        <target>Zum Beispiel: ein Kontaktformular mit Name, E-Mail und Nachricht</target>
+      </segment>
+    </unit>
+    <unit id="playground.intent.hint">
+      <segment state="final">
+        <source>One sentence is enough. The agent only uses components from the basic catalogue.</source>
+        <target>Ein Satz genügt. Der Agent verwendet nur Komponenten aus dem Basiskatalog.</target>
+      </segment>
+    </unit>
+    <unit id="playground.example.label">
+      <segment state="final">
+        <source>Or pick an example</source>
+        <target>Oder wählen Sie ein Beispiel</target>
+      </segment>
+    </unit>
+    <unit id="playground.example.none">
+      <segment state="final">
+        <source>No example</source>
+        <target>Kein Beispiel</target>
+      </segment>
+    </unit>
+    <unit id="playground.version.legend">
+      <segment state="final">
+        <source>A2UI version</source>
+        <target>A2UI-Version</target>
+      </segment>
+    </unit>
+    <unit id="playground.generate">
+      <segment state="final">
+        <source>Generate surface</source>
+        <target>Oberfläche erzeugen</target>
+      </segment>
+    </unit>
+    <unit id="playground.reset">
+      <segment state="final">
+        <source>Start again</source>
+        <target>Neu beginnen</target>
+      </segment>
+    </unit>
+    <unit id="playground.notes">
+      <segment state="final">
+        <source>Notes from the agent</source>
+        <target>Hinweise des Agenten</target>
+      </segment>
+    </unit>
+    <unit id="playground.stream.heading">
+      <segment state="final">
+        <source>Message stream</source>
+        <target>Nachrichtenfolge</target>
+      </segment>
+    </unit>
+    <unit id="playground.stream.lede">
+      <segment state="final">
+        <source>Every message in order: what the agent sends to the renderer, and what the renderer sends back.</source>
+        <target>Jede Nachricht in ihrer Reihenfolge: was der Agent an den Renderer schickt und was der Renderer zurückschickt.</target>
+      </segment>
+    </unit>
+    <unit id="playground.stream.empty">
+      <segment state="final">
+        <source>No messages yet. Generate a surface to see them here.</source>
+        <target>Noch keine Nachrichten. Erzeugen Sie eine Oberfläche, um sie hier zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="playground.surface.heading">
+      <segment state="final">
+        <source>Rendered surface</source>
+        <target>Gerenderte Oberfläche</target>
+      </segment>
+    </unit>
+    <unit id="playground.surface.lede">
+      <segment state="final">
+        <source>The renderer draws the messages with native components. Fill in the form and send it to see the action and the answer.</source>
+        <target>Der Renderer zeichnet die Nachrichten mit nativen Komponenten. Füllen Sie das Formular aus und senden Sie es ab, um die Aktion und die Antwort zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="playground.dataModel">
+      <segment state="final">
+        <source>Data model</source>
+        <target>Datenmodell</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.heading">
+      <segment state="final">
+        <source>Recent surfaces</source>
+        <target>Letzte Oberflächen</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.caption">
+      <segment state="final">
+        <source>The surfaces this installation created most recently</source>
+        <target>Die zuletzt von dieser Installation erzeugten Oberflächen</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.surface">
+      <segment state="final">
+        <source>Surface</source>
+        <target>Oberfläche</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.request">
+      <segment state="final">
+        <source>Request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.version">
+      <segment state="final">
+        <source>Version</source>
+        <target>Version</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.source">
+      <segment state="final">
+        <source>Source</source>
+        <target>Quelle</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.updated">
+      <segment state="final">
+        <source>Updated</source>
+        <target>Aktualisiert</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.all">
+      <segment state="final">
+        <source>Open all surfaces in the inspector</source>
+        <target>Alle Oberflächen im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="playground.recent.empty">
+      <segment state="final">
+        <source>No surfaces yet. Generate one above.</source>
+        <target>Noch keine Oberflächen. Erzeugen Sie oben eine.</target>
+      </segment>
+    </unit>
+    <unit id="playground.api.heading">
+      <segment state="final">
+        <source>Use it from another client</source>
+        <target>Aus einem anderen Client nutzen</target>
+      </segment>
+    </unit>
+    <unit id="playground.api.lede">
+      <segment state="final">
+        <source>The playground uses the same binding as the public endpoints. Any client can create surfaces and send actions over HTTP.</source>
+        <target>Der Playground nutzt dieselbe Anbindung wie die öffentlichen Endpunkte. Jeder Client kann Oberflächen über HTTP erzeugen und Aktionen senden.</target>
+      </segment>
+    </unit>
+    <unit id="playground.api.curl">
+      <segment state="final">
+        <source>Example request with curl</source>
+        <target>Beispielanfrage mit curl</target>
+      </segment>
+    </unit>
+    <unit id="playground.api.catalogue">
+      <segment state="final">
+        <source>Open the catalogue</source>
+        <target>Katalog öffnen</target>
+      </segment>
+    </unit>
+    <unit id="playground.api.frontend">
+      <segment state="final">
+        <source>Open the live page</source>
+        <target>Live-Seite öffnen</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.heading">
+      <segment state="final">
+        <source>Model</source>
+        <target>Modell</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.provider">
+      <segment state="final">
+        <source>Provider</source>
+        <target>Anbieter</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.model">
+      <segment state="final">
+        <source>Model</source>
+        <target>Modell</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.price">
+      <segment state="final">
+        <source>Price per million tokens (in / out)</source>
+        <target>Preis pro Million Token (ein / aus)</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.none">
+      <segment state="final">
+        <source>No model is active. The built-in generator answers every request.</source>
+        <target>Es ist kein Modell aktiv. Der eingebaute Generator beantwortet jede Anfrage.</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.today">
+      <segment state="final">
+        <source>Spent today</source>
+        <target>Heute ausgegeben</target>
+      </segment>
+    </unit>
+    <unit id="playground.model.month">
+      <segment state="final">
+        <source>%s for %s requests</source>
+        <target>%s für %s Anfragen</target>
+      </segment>
+    </unit>
+    <unit id="version.stable">
+      <segment state="final">
+        <source>stable</source>
+        <target>stabil</target>
+      </segment>
+    </unit>
+    <unit id="version.candidate">
+      <segment state="final">
+        <source>release candidate</source>
+        <target>Release Candidate</target>
+      </segment>
+    </unit>
+    <unit id="state.created">
+      <segment state="final">
+        <source>created</source>
+        <target>erstellt</target>
+      </segment>
+    </unit>
+    <unit id="state.submitted">
+      <segment state="final">
+        <source>submitted</source>
+        <target>gesendet</target>
+      </segment>
+    </unit>
+    <unit id="state.deleted">
+      <segment state="final">
+        <source>deleted</source>
+        <target>gelöscht</target>
+      </segment>
+    </unit>
+    <unit id="source.api">
+      <segment state="final">
+        <source>API</source>
+        <target>API</target>
+      </segment>
+    </unit>
+    <unit id="source.widget">
+      <segment state="final">
+        <source>Widget</source>
+        <target>Widget</target>
+      </segment>
+    </unit>
+    <unit id="source.backend">
+      <segment state="final">
+        <source>Backend</source>
+        <target>Backend</target>
+      </segment>
+    </unit>
+    <unit id="source.agent">
+      <segment state="final">
+        <source>Agent</source>
+        <target>Agent</target>
+      </segment>
+    </unit>
+    <unit id="example.contact">
+      <segment state="final">
+        <source>Contact form</source>
+        <target>Kontaktformular</target>
+      </segment>
+    </unit>
+    <unit id="example.quote">
+      <segment state="final">
+        <source>Quote request</source>
+        <target>Angebotsanfrage</target>
+      </segment>
+    </unit>
+    <unit id="example.callback">
+      <segment state="final">
+        <source>Callback request</source>
+        <target>Rückrufbitte</target>
+      </segment>
+    </unit>
+    <unit id="example.application">
+      <segment state="final">
+        <source>Job application</source>
+        <target>Bewerbung</target>
+      </segment>
+    </unit>
+    <unit id="example.event">
+      <segment state="final">
+        <source>Event registration</source>
+        <target>Veranstaltungsanmeldung</target>
+      </segment>
+    </unit>
+    <unit id="example.newsletter">
+      <segment state="final">
+        <source>Newsletter sign-up (with a dialog)</source>
+        <target>Newsletter-Anmeldung (mit Dialog)</target>
+      </segment>
+    </unit>
+    <unit id="example.page">
+      <segment state="final">
+        <source>New page</source>
+        <target>Neue Seite</target>
+      </segment>
+    </unit>
+    <unit id="example.content">
+      <segment state="final">
+        <source>Content element</source>
+        <target>Inhaltselement</target>
+      </segment>
+    </unit>
+    <unit id="example.seo">
+      <segment state="final">
+        <source>SEO metadata (with tabs)</source>
+        <target>SEO-Metadaten (mit Tabs)</target>
+      </segment>
+    </unit>
+    <unit id="example.schedule">
+      <segment state="final">
+        <source>Publication schedule</source>
+        <target>Veröffentlichungsplan</target>
+      </segment>
+    </unit>
+    <unit id="catalog.heading">
+      <segment state="final">
+        <source>Basic catalogue</source>
+        <target>Basiskatalog</target>
+      </segment>
+    </unit>
+    <unit id="catalog.lede">
+      <segment state="final">
+        <source>The official A2UI basic catalogue: every component the agent may use, its properties and a live example drawn by the same renderer the playground and the widget use.</source>
+        <target>Der offizielle A2UI-Basiskatalog: jede Komponente, die der Agent verwenden darf, ihre Eigenschaften und ein Live-Beispiel, gezeichnet vom selben Renderer wie im Playground und im Widget.</target>
+      </segment>
+    </unit>
+    <unit id="catalog.versions">
+      <segment state="final">
+        <source>Catalogue version</source>
+        <target>Katalogversion</target>
+      </segment>
+    </unit>
+    <unit id="catalog.candidate.title">
+      <segment state="final">
+        <source>Release candidate</source>
+        <target>Release Candidate</target>
+      </segment>
+    </unit>
+    <unit id="catalog.candidate.message">
+      <segment state="final">
+        <source>v1.0 is still changing. No official renderer supports it yet, so use it to try out what is coming.</source>
+        <target>v1.0 ändert sich noch. Noch kein offizieller Renderer unterstützt sie, nutzen Sie sie also, um Kommendes auszuprobieren.</target>
+      </segment>
+    </unit>
+    <unit id="catalog.catalogId">
+      <segment state="final">
+        <source>Catalogue id</source>
+        <target>Katalog-ID</target>
+      </segment>
+    </unit>
+    <unit id="catalog.version">
+      <segment state="final">
+        <source>Wire version</source>
+        <target>Version im Protokoll</target>
+      </segment>
+    </unit>
+    <unit id="catalog.properties">
+      <segment state="final">
+        <source>Properties of %s</source>
+        <target>Eigenschaften von %s</target>
+      </segment>
+    </unit>
+    <unit id="catalog.property">
+      <segment state="final">
+        <source>Property</source>
+        <target>Eigenschaft</target>
+      </segment>
+    </unit>
+    <unit id="catalog.type">
+      <segment state="final">
+        <source>Type</source>
+        <target>Typ</target>
+      </segment>
+    </unit>
+    <unit id="catalog.required">
+      <segment state="final">
+        <source>Required</source>
+        <target>Pflicht</target>
+      </segment>
+    </unit>
+    <unit id="catalog.values">
+      <segment state="final">
+        <source>Values</source>
+        <target>Werte</target>
+      </segment>
+    </unit>
+    <unit id="catalog.yes">
+      <segment state="final">
+        <source>yes</source>
+        <target>ja</target>
+      </segment>
+    </unit>
+    <unit id="catalog.no">
+      <segment state="final">
+        <source>no</source>
+        <target>nein</target>
+      </segment>
+    </unit>
+    <unit id="catalog.default">
+      <segment state="final">
+        <source>Default: %s</source>
+        <target>Standard: %s</target>
+      </segment>
+    </unit>
+    <unit id="catalog.example">
+      <segment state="final">
+        <source>Example</source>
+        <target>Beispiel</target>
+      </segment>
+    </unit>
+    <unit id="catalog.messages">
+      <segment state="final">
+        <source>The messages behind the example</source>
+        <target>Die Nachrichten hinter dem Beispiel</target>
+      </segment>
+    </unit>
+    <unit id="catalog.common">
+      <segment state="final">
+        <source>Properties of every component</source>
+        <target>Eigenschaften jeder Komponente</target>
+      </segment>
+    </unit>
+    <unit id="catalog.common.lede">
+      <segment state="final">
+        <source>Every component has an id and may carry accessibility attributes. A direct child of a Row or Column may carry a weight.</source>
+        <target>Jede Komponente hat eine ID und kann Attribute für die Barrierefreiheit tragen. Ein direktes Kind einer Row oder Column kann ein Gewicht tragen.</target>
+      </segment>
+    </unit>
+    <unit id="catalog.functions">
+      <segment state="final">
+        <source>Functions</source>
+        <target>Funktionen</target>
+      </segment>
+    </unit>
+    <unit id="catalog.functions.lede">
+      <segment state="final">
+        <source>The renderer runs these functions. An agent only names them: in checks, in computed values and in actions.</source>
+        <target>Der Renderer führt diese Funktionen aus. Ein Agent nennt sie nur: in Prüfungen, in berechneten Werten und in Aktionen.</target>
+      </segment>
+    </unit>
+    <unit id="catalog.function">
+      <segment state="final">
+        <source>Function</source>
+        <target>Funktion</target>
+      </segment>
+    </unit>
+    <unit id="catalog.purpose">
+      <segment state="final">
+        <source>What it does</source>
+        <target>Was sie tut</target>
+      </segment>
+    </unit>
+    <unit id="catalog.arguments">
+      <segment state="final">
+        <source>Arguments (* = required)</source>
+        <target>Argumente (* = Pflicht)</target>
+      </segment>
+    </unit>
+    <unit id="catalog.returns">
+      <segment state="final">
+        <source>Returns</source>
+        <target>Rückgabe</target>
+      </segment>
+    </unit>
+    <unit id="catalog.oneOf">
+      <segment state="final">
+        <source>at least one of %s</source>
+        <target>mindestens eines von %s</target>
+      </segment>
+    </unit>
+    <unit id="catalog.theme">
+      <segment state="final">
+        <source>Theme</source>
+        <target>Theme</target>
+      </segment>
+    </unit>
+    <unit id="catalog.theme.lede">
+      <segment state="final">
+        <source>v0.9.1 lets createSurface carry a theme. v1.0 removed it and leaves styling to the renderer.</source>
+        <target>v0.9.1 erlaubt ein Theme in createSurface. v1.0 hat es entfernt und überlässt die Gestaltung dem Renderer.</target>
+      </segment>
+    </unit>
+    <unit id="category.display">
+      <segment state="final">
+        <source>Display</source>
+        <target>Anzeige</target>
+      </segment>
+    </unit>
+    <unit id="category.layout">
+      <segment state="final">
+        <source>Layout</source>
+        <target>Layout</target>
+      </segment>
+    </unit>
+    <unit id="category.interactive">
+      <segment state="final">
+        <source>Interaction</source>
+        <target>Interaktion</target>
+      </segment>
+    </unit>
+    <unit id="category.input">
+      <segment state="final">
+        <source>Input</source>
+        <target>Eingabe</target>
+      </segment>
+    </unit>
+    <unit id="component.Text">
+      <segment state="final">
+        <source>Displays text. Supports simple Markdown.</source>
+        <target>Zeigt Text an. Unterstützt einfaches Markdown.</target>
+      </segment>
+    </unit>
+    <unit id="component.Image">
+      <segment state="final">
+        <source>Displays an image from a URL.</source>
+        <target>Zeigt ein Bild von einer URL an.</target>
+      </segment>
+    </unit>
+    <unit id="component.Icon">
+      <segment state="final">
+        <source>Displays an icon from a fixed list.</source>
+        <target>Zeigt ein Symbol aus einer festen Liste an.</target>
+      </segment>
+    </unit>
+    <unit id="component.Video">
+      <segment state="final">
+        <source>Plays a video from a URL.</source>
+        <target>Spielt ein Video von einer URL ab.</target>
+      </segment>
+    </unit>
+    <unit id="component.AudioPlayer">
+      <segment state="final">
+        <source>Plays audio from a URL.</source>
+        <target>Spielt Audio von einer URL ab.</target>
+      </segment>
+    </unit>
+    <unit id="component.Row">
+      <segment state="final">
+        <source>Arranges its children side by side.</source>
+        <target>Ordnet seine Kinder nebeneinander an.</target>
+      </segment>
+    </unit>
+    <unit id="component.Column">
+      <segment state="final">
+        <source>Arranges its children one below the other.</source>
+        <target>Ordnet seine Kinder untereinander an.</target>
+      </segment>
+    </unit>
+    <unit id="component.List">
+      <segment state="final">
+        <source>A scrollable list; it can repeat one component for every item of a list in the data model.</source>
+        <target>Eine scrollbare Liste; sie kann eine Komponente für jeden Eintrag einer Liste im Datenmodell wiederholen.</target>
+      </segment>
+    </unit>
+    <unit id="component.Card">
+      <segment state="final">
+        <source>Groups exactly one child in a card.</source>
+        <target>Fasst genau ein Kind in einer Karte zusammen.</target>
+      </segment>
+    </unit>
+    <unit id="component.Tabs">
+      <segment state="final">
+        <source>A set of tabs, each with a title and one child.</source>
+        <target>Eine Gruppe von Tabs, jeder mit einem Titel und einem Kind.</target>
+      </segment>
+    </unit>
+    <unit id="component.Modal">
+      <segment state="final">
+        <source>A dialog that opens from a trigger in the main content.</source>
+        <target>Ein Dialog, der sich über einen Auslöser im Hauptinhalt öffnet.</target>
+      </segment>
+    </unit>
+    <unit id="component.Divider">
+      <segment state="final">
+        <source>A horizontal or vertical line.</source>
+        <target>Eine horizontale oder vertikale Linie.</target>
+      </segment>
+    </unit>
+    <unit id="component.Button">
+      <segment state="final">
+        <source>A button that sends an action. Its label is a child component.</source>
+        <target>Ein Button, der eine Aktion sendet. Seine Beschriftung ist eine Kind-Komponente.</target>
+      </segment>
+    </unit>
+    <unit id="component.TextField">
+      <segment state="final">
+        <source>A field for text: one line, several lines, a number or a password.</source>
+        <target>Ein Feld für Text: eine Zeile, mehrere Zeilen, eine Zahl oder ein Passwort.</target>
+      </segment>
+    </unit>
+    <unit id="component.CheckBox">
+      <segment state="final">
+        <source>A box with a label and a true or false value.</source>
+        <target>Ein Kästchen mit Beschriftung und einem Wert wahr oder falsch.</target>
+      </segment>
+    </unit>
+    <unit id="component.ChoicePicker">
+      <segment state="final">
+        <source>Choose one or several options, as a list or as chips.</source>
+        <target>Eine oder mehrere Optionen wählen, als Liste oder als Chips.</target>
+      </segment>
+    </unit>
+    <unit id="component.Slider">
+      <segment state="final">
+        <source>Choose a number within a range.</source>
+        <target>Eine Zahl innerhalb eines Bereichs wählen.</target>
+      </segment>
+    </unit>
+    <unit id="component.DateTimeInput">
+      <segment state="final">
+        <source>Choose a date, a time or both.</source>
+        <target>Ein Datum, eine Uhrzeit oder beides wählen.</target>
+      </segment>
+    </unit>
+    <unit id="function.required">
+      <segment state="final">
+        <source>Checks that there is a value.</source>
+        <target>Prüft, dass ein Wert vorhanden ist.</target>
+      </segment>
+    </unit>
+    <unit id="function.regex">
+      <segment state="final">
+        <source>Checks a value against a regular expression.</source>
+        <target>Prüft einen Wert gegen einen regulären Ausdruck.</target>
+      </segment>
+    </unit>
+    <unit id="function.length">
+      <segment state="final">
+        <source>Checks the length of a text.</source>
+        <target>Prüft die Länge eines Textes.</target>
+      </segment>
+    </unit>
+    <unit id="function.numeric">
+      <segment state="final">
+        <source>Checks that a number is within a range.</source>
+        <target>Prüft, dass eine Zahl in einem Bereich liegt.</target>
+      </segment>
+    </unit>
+    <unit id="function.email">
+      <segment state="final">
+        <source>Checks that a value is an email address.</source>
+        <target>Prüft, dass ein Wert eine E-Mail-Adresse ist.</target>
+      </segment>
+    </unit>
+    <unit id="function.formatString">
+      <segment state="final">
+        <source>Puts values from the data model into a text.</source>
+        <target>Setzt Werte aus dem Datenmodell in einen Text ein.</target>
+      </segment>
+    </unit>
+    <unit id="function.formatNumber">
+      <segment state="final">
+        <source>Formats a number.</source>
+        <target>Formatiert eine Zahl.</target>
+      </segment>
+    </unit>
+    <unit id="function.formatCurrency">
+      <segment state="final">
+        <source>Formats an amount of money.</source>
+        <target>Formatiert einen Geldbetrag.</target>
+      </segment>
+    </unit>
+    <unit id="function.formatDate">
+      <segment state="final">
+        <source>Formats a date with a pattern.</source>
+        <target>Formatiert ein Datum nach einem Muster.</target>
+      </segment>
+    </unit>
+    <unit id="function.pluralize">
+      <segment state="final">
+        <source>Picks the right text for a number.</source>
+        <target>Wählt den passenden Text für eine Zahl.</target>
+      </segment>
+    </unit>
+    <unit id="function.openUrl">
+      <segment state="final">
+        <source>Opens a web address.</source>
+        <target>Öffnet eine Webadresse.</target>
+      </segment>
+    </unit>
+    <unit id="function.and">
+      <segment state="final">
+        <source>True when all values are true.</source>
+        <target>Wahr, wenn alle Werte wahr sind.</target>
+      </segment>
+    </unit>
+    <unit id="function.or">
+      <segment state="final">
+        <source>True when one of the values is true.</source>
+        <target>Wahr, wenn einer der Werte wahr ist.</target>
+      </segment>
+    </unit>
+    <unit id="function.not">
+      <segment state="final">
+        <source>Turns true into false and false into true.</source>
+        <target>Macht aus wahr falsch und aus falsch wahr.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.generating">
+      <segment state="final">
+        <source>Generating a surface…</source>
+        <target>Oberfläche wird erzeugt …</target>
+      </segment>
+    </unit>
+    <unit id="js.status.generated">
+      <segment state="final">
+        <source>Surface %s created with %s messages (%s).</source>
+        <target>Oberfläche %s mit %s Nachrichten erzeugt (%s).</target>
+      </segment>
+    </unit>
+    <unit id="js.status.sending">
+      <segment state="final">
+        <source>Sending the action to the agent…</source>
+        <target>Aktion wird an den Agenten gesendet …</target>
+      </segment>
+    </unit>
+    <unit id="js.status.answered">
+      <segment state="final">
+        <source>The agent answered with %s messages.</source>
+        <target>Der Agent hat mit %s Nachrichten geantwortet.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.deleted">
+      <segment state="final">
+        <source>The agent deleted the surface. Generate a new one to continue.</source>
+        <target>Der Agent hat die Oberfläche gelöscht. Erzeugen Sie eine neue, um weiterzumachen.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.intent">
+      <segment state="final">
+        <source>Describe the form you need first.</source>
+        <target>Beschreiben Sie zuerst das benötigte Formular.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.failed">
+      <segment state="final">
+        <source>The request failed: %s</source>
+        <target>Die Anfrage ist fehlgeschlagen: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.stream.agent">
+      <segment state="final">
+        <source>agent to renderer</source>
+        <target>Agent an Renderer</target>
+      </segment>
+    </unit>
+    <unit id="js.stream.renderer">
+      <segment state="final">
+        <source>renderer to agent</source>
+        <target>Renderer an Agent</target>
+      </segment>
+    </unit>
+    <unit id="js.stream.metadata">
+      <segment state="final">
+        <source>with the data model in the metadata</source>
+        <target>mit dem Datenmodell in den Metadaten</target>
+      </segment>
+    </unit>
+    <unit id="js.notification.failed">
+      <segment state="final">
+        <source>A2UI request failed</source>
+        <target>A2UI-Anfrage fehlgeschlagen</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.required">
+      <segment state="final">
+        <source>required</source>
+        <target>Pflichtfeld</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.close">
+      <segment state="final">
+        <source>Close</source>
+        <target>Schließen</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.dialog">
+      <segment state="final">
+        <source>Dialog</source>
+        <target>Dialog</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.invalid">
+      <segment state="final">
+        <source>Check this field.</source>
+        <target>Prüfen Sie dieses Feld.</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.checkFields">
+      <segment state="final">
+        <source>Check the highlighted fields.</source>
+        <target>Prüfen Sie die markierten Felder.</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.filter">
+      <segment state="final">
+        <source>Filter the options</source>
+        <target>Optionen filtern</target>
+      </segment>
+    </unit>
+    <unit id="js.renderer.noMedia">
+      <segment state="final">
+        <source>Nothing to play yet.</source>
+        <target>Noch nichts zum Abspielen.</target>
+      </segment>
+    </unit>
+    <unit id="js.catalog.action">
+      <segment state="final">
+        <source>The example sent the action %s. In a live surface it goes to the agent.</source>
+        <target>Das Beispiel hat die Aktion %s gesendet. In einer echten Oberfläche geht sie an den Agenten.</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>

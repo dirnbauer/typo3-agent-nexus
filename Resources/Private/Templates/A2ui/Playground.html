@@ -1,0 +1,197 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-accent--a2ui anx-a2ui" data-a2ui-playground>
+
+    <h1><f:translate domain="agent_nexus.a2ui" key="playground.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.a2ui" key="playground.lede" /></p>
+
+    <f:if condition="!{modelAvailable}">
+        <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}"
+                      title="{f:translate(domain: 'agent_nexus.a2ui', key: 'playground.scripted.title')}">
+            <p><f:translate domain="agent_nexus.a2ui" key="playground.scripted.message" /></p>
+        </f:be.infobox>
+    </f:if>
+
+    <form class="anx-a2ui__compose" data-a2ui-form novalidate>
+        <div class="form-group">
+            <label class="form-label" for="a2ui-intent"><f:translate domain="agent_nexus.a2ui" key="playground.intent.label" /></label>
+            <input class="form-control" type="text" id="a2ui-intent" name="intent" maxlength="600" required
+                   aria-describedby="a2ui-intent-hint"
+                   placeholder="{f:translate(domain: 'agent_nexus.a2ui', key: 'playground.intent.placeholder')}" data-a2ui-intent />
+            <p class="form-text" id="a2ui-intent-hint"><f:translate domain="agent_nexus.a2ui" key="playground.intent.hint" /></p>
+        </div>
+        <div class="anx-a2ui__compose-row">
+            <div class="form-group">
+                <label class="form-label" for="a2ui-example"><f:translate domain="agent_nexus.a2ui" key="playground.example.label" /></label>
+                <select class="form-select" id="a2ui-example" data-a2ui-example>
+                    <option value=""><f:translate domain="agent_nexus.a2ui" key="playground.example.none" /></option>
+                    <f:for each="{examples}" as="example">
+                        <option value="{example.intent}"><f:translate domain="agent_nexus.a2ui" key="example.{example.key}" /></option>
+                    </f:for>
+                </select>
+            </div>
+            <fieldset class="form-group anx-a2ui__versions">
+                <legend class="form-label"><f:translate domain="agent_nexus.a2ui" key="playground.version.legend" /></legend>
+                <f:for each="{versions}" as="version" iteration="loop">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="version" id="a2ui-version-{loop.index}" value="{version.value}" {f:if(condition: loop.isFirst, then: 'checked')} />
+                        <label class="form-check-label" for="a2ui-version-{loop.index}">
+                            {version.value}
+                            <f:if condition="{version.stable}">
+                                <f:then><span class="badge badge-success"><f:translate domain="agent_nexus.a2ui" key="version.stable" /></span></f:then>
+                                <f:else><span class="badge badge-warning"><f:translate domain="agent_nexus.a2ui" key="version.candidate" /></span></f:else>
+                            </f:if>
+                        </label>
+                    </div>
+                </f:for>
+            </fieldset>
+        </div>
+        <div class="anx-a2ui__compose-actions">
+            <button type="submit" class="btn btn-primary" data-a2ui-generate>
+                <core:icon identifier="actions-play" size="small" />
+                <f:translate domain="agent_nexus.a2ui" key="playground.generate" />
+            </button>
+            <button type="button" class="btn btn-default" data-a2ui-reset hidden>
+                <core:icon identifier="actions-refresh" size="small" />
+                <f:translate domain="agent_nexus.a2ui" key="playground.reset" />
+            </button>
+        </div>
+    </form>
+
+    <p class="anx-a2ui__status" role="status" aria-live="polite" data-a2ui-status></p>
+    <div class="callout callout-info anx-a2ui__notes" data-a2ui-notes hidden>
+        <div class="callout-content">
+            <p class="callout-title"><f:translate domain="agent_nexus.a2ui" key="playground.notes" /></p>
+            <ul data-a2ui-notes-list></ul>
+        </div>
+    </div>
+
+    <div class="anx-a2ui__workspace">
+        <section class="anx-a2ui__panel" aria-labelledby="a2ui-stream-heading">
+            <h2 id="a2ui-stream-heading"><f:translate domain="agent_nexus.a2ui" key="playground.stream.heading" /></h2>
+            <p class="text-variant"><f:translate domain="agent_nexus.a2ui" key="playground.stream.lede" /></p>
+            <ol class="anx-events anx-a2ui__stream" data-a2ui-stream hidden></ol>
+            <div class="anx-empty" data-a2ui-stream-empty>
+                <core:icon identifier="agentnexus-module-a2ui" size="large" />
+                <p><f:translate domain="agent_nexus.a2ui" key="playground.stream.empty" /></p>
+            </div>
+        </section>
+
+        <section class="anx-a2ui__panel" aria-labelledby="a2ui-surface-heading">
+            <h2 id="a2ui-surface-heading"><f:translate domain="agent_nexus.a2ui" key="playground.surface.heading" /></h2>
+            <p class="text-variant" data-a2ui-provenance><f:translate domain="agent_nexus.a2ui" key="playground.surface.lede" /></p>
+            <div class="anx-a2ui__frame" data-a2ui-mount aria-labelledby="a2ui-surface-heading" role="group"></div>
+            <details class="anx-a2ui__data">
+                <summary><f:translate domain="agent_nexus.a2ui" key="playground.dataModel" /></summary>
+                <pre class="anx-code" tabindex="0"><code data-a2ui-data>{}</code></pre>
+            </details>
+        </section>
+    </div>
+
+    <section class="anx-section" aria-labelledby="a2ui-recent-heading">
+        <h2 id="a2ui-recent-heading"><f:translate domain="agent_nexus.a2ui" key="playground.recent.heading" /></h2>
+        <f:if condition="{recent}">
+            <f:then>
+                <div class="table-fit">
+                    <table class="table table-striped table-hover">
+                        <caption class="visually-hidden"><f:translate domain="agent_nexus.a2ui" key="playground.recent.caption" /></caption>
+                        <thead>
+                            <tr>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.surface" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.request" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.version" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.state" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.source" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.a2ui" key="playground.recent.updated" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{recent}" as="surface">
+                                <tr>
+                                    <td>
+                                        <f:if condition="{surface.uri}">
+                                            <f:then><a href="{surface.uri}"><code>{surface.surfaceId}</code></a></f:then>
+                                            <f:else><code>{surface.surfaceId}</code></f:else>
+                                        </f:if>
+                                    </td>
+                                    <td>{surface.label}</td>
+                                    <td><code>{surface.version}</code></td>
+                                    <td><span class="badge badge-{surface.stateBadge}"><f:translate domain="agent_nexus.a2ui" key="state.{surface.state}" default="{surface.state}" /></span></td>
+                                    <td><f:translate domain="agent_nexus.a2ui" key="source.{surface.source}" default="{surface.source}" /></td>
+                                    <td><time datetime="{f:format.date(date: '@{surface.updated}', format: 'c')}"><f:format.date format="Y-m-d H:i">@{surface.updated}</f:format.date></time></td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+                <f:if condition="{inspectorUri}">
+                    <p><a class="btn btn-default" href="{inspectorUri}"><core:icon identifier="actions-search" size="small" /> <f:translate domain="agent_nexus.a2ui" key="playground.recent.all" /></a></p>
+                </f:if>
+            </f:then>
+            <f:else>
+                <div class="anx-empty">
+                    <core:icon identifier="agentnexus-module-a2ui" size="large" />
+                    <p><f:translate domain="agent_nexus.a2ui" key="playground.recent.empty" /></p>
+                </div>
+            </f:else>
+        </f:if>
+    </section>
+
+    <div class="card-container anx-section">
+        <section class="card" aria-labelledby="a2ui-api-heading">
+            <div class="card-header"><h2 class="card-title" id="a2ui-api-heading"><f:translate domain="agent_nexus.a2ui" key="playground.api.heading" /></h2></div>
+            <div class="card-body">
+                <p><f:translate domain="agent_nexus.a2ui" key="playground.api.lede" /></p>
+                <dl class="anx-dl anx-dl--compact">
+                    <div><dt>POST</dt><dd><code>{endpoints.surfaces}</code></dd></div>
+                    <div><dt>POST</dt><dd><code>{endpoints.actions}</code></dd></div>
+                    <div><dt>GET</dt><dd><code>{endpoints.catalog}</code></dd></div>
+                </dl>
+                <pre class="anx-code" tabindex="0" aria-label="{f:translate(domain: 'agent_nexus.a2ui', key: 'playground.api.curl')}"><code>{curl}</code></pre>
+                <p class="anx-a2ui__links">
+                    <a class="btn btn-default" href="{catalogUri}"><core:icon identifier="actions-list" size="small" /> <f:translate domain="agent_nexus.a2ui" key="playground.api.catalogue" /></a>
+                    <f:if condition="{frontendUrl}">
+                        <a class="btn btn-default" href="{frontendUrl}" target="_blank" rel="noopener noreferrer">
+                            <core:icon identifier="actions-view-page" size="small" />
+                            <f:translate domain="agent_nexus.a2ui" key="playground.api.frontend" />
+                        </a>
+                    </f:if>
+                </p>
+            </div>
+        </section>
+
+        <section class="card" aria-labelledby="a2ui-model-heading">
+            <div class="card-header"><h2 class="card-title" id="a2ui-model-heading"><f:translate domain="agent_nexus.a2ui" key="playground.model.heading" /></h2></div>
+            <div class="card-body">
+                <f:if condition="{connection}">
+                    <f:then>
+                        <dl class="anx-dl anx-dl--compact">
+                            <div><dt><f:translate domain="agent_nexus.a2ui" key="playground.model.provider" /></dt><dd>{connection.provider}</dd></div>
+                            <div><dt><f:translate domain="agent_nexus.a2ui" key="playground.model.model" /></dt><dd>{connection.model}</dd></div>
+                            <f:if condition="{connection.hasPricing}">
+                                <div><dt><f:translate domain="agent_nexus.a2ui" key="playground.model.price" /></dt><dd>{connection.priceInput} / {connection.priceOutput}</dd></div>
+                            </f:if>
+                        </dl>
+                    </f:then>
+                    <f:else>
+                        <p><f:translate domain="agent_nexus.a2ui" key="playground.model.none" /></p>
+                    </f:else>
+                </f:if>
+                <dl class="anx-dl anx-dl--compact">
+                    <div><dt><f:translate domain="agent_nexus.a2ui" key="playground.model.today" /></dt><dd>{cost.today}</dd></div>
+                    <f:for each="{cost.months}" as="month">
+                        <div><dt>{month.label}</dt><dd><f:translate domain="agent_nexus.a2ui" key="playground.model.month" arguments="{0: month.cost, 1: month.requests}" /></dd></div>
+                    </f:for>
+                </dl>
+            </div>
+        </section>
+    </div>
+</div>
+</f:section>
+
+</html>

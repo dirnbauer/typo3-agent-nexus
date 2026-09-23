@@ -1,233 +1,161 @@
-/**
- * A2UI module layer — only what the nexus primitives can't express.
- * Consumes --anx-* tokens and var(--accent) exclusively (scope: .anx-accent--a2ui).
- * Everything is scoped under .anx so nothing leaks into the rest of the backend.
+/* Agent Nexus — A2UI playground and catalogue (backend).
+ *
+ * Loads after the base layers. The screens are core markup; this file lays
+ * out the playground and styles the surfaces a2ui-renderer.js draws. The
+ * renderer adds core classes to its controls (form-control, btn, card …), so
+ * only layout, the pieces core has no component for (tabs, chips, the
+ * dialog) and the error text are styled here. Tokens only: light and dark
+ * mode follow the backend scheme.
  */
 
-/* ---- spacing helpers ----------------------------------------------------- */
+/* ---- playground ------------------------------------------------------------ */
 
-.anx .a2ui-block { margin-bottom: 1rem; }
-.anx .a2ui-block--sm { margin-bottom: 0.7rem; }
-.anx .a2ui-example { margin-bottom: 1rem; }
+.anx-a2ui__compose { max-width: 60rem; }
+.anx-a2ui__compose-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0 1.5rem; }
+.anx-a2ui__compose-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.anx-a2ui__versions .badge { margin-left: 0.35rem; }
+.anx-a2ui__status { min-height: 1.5em; margin: 0.75rem 0; color: var(--anx-muted-fg); }
+.anx-a2ui__notes ul { margin: 0; padding-left: 1.2rem; }
 
-/* Guarantee the JS show/hide toggle independent of backend Bootstrap. */
-.anx .d-none { display: none !important; }
-
-/* ---- intent bar + presets ------------------------------------------------- */
-
-.anx .a2ui-intent-row {
-  display: flex;
-  gap: 0.6rem;
-  align-items: stretch;
+.anx-a2ui__workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; margin-top: 1rem; }
+@media (min-width: 1200px) {
+  .anx-a2ui__workspace { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 }
-.anx .a2ui-intent-row .anx-input { flex: 1 1 auto; }
-.anx .a2ui-intent-row .anx-btn { flex: 0 0 auto; }
-
-.anx .a2ui-presets {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-/* ---- connection key/value list -------------------------------------------- */
-
-.anx .a2ui-kv {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.3rem 0.9rem;
-  margin: 0;
-  font-size: var(--anx-text-sm);
-}
-.anx .a2ui-kv dt {
-  color: var(--anx-muted-fg);
-  font-weight: 500;
-  white-space: nowrap;
-}
-.anx .a2ui-kv dd {
-  margin: 0;
-  color: var(--anx-fg);
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-.anx .a2ui-kv .a2ui-kv__muted { color: var(--anx-muted-fg); font-weight: 400; }
-.anx .a2ui-kv .a2ui-kv__truncate,
-.anx .a2ui-kv dd.a2ui-kv__truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-weight: 400;
-  font-family: var(--anx-font-mono);
-  font-size: var(--anx-text-xs);
-}
-.anx .a2ui-instance-note {
-  margin: 0.7rem 0 0;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--anx-border);
-}
-
-/* ---- notes (server + client warnings) -------------------------------------- */
-
-.anx .a2ui-notes {
-  margin: 0 0 1rem;
-  padding: 0.6rem 0.9rem 0.6rem 1.9rem;
-  border: 1px solid color-mix(in srgb, var(--anx-warn) 40%, var(--anx-border));
-  border-left: 3px solid var(--anx-warn);
-  border-radius: var(--anx-radius);
-  background: color-mix(in srgb, var(--anx-warn) 7%, var(--anx-card));
-  font-size: var(--anx-text-sm);
-  color: var(--anx-fg);
-}
-.anx .a2ui-notes li { margin: 0.1rem 0; }
-
-/* ---- the three working panes ------------------------------------------------ */
-
-.anx .a2ui-panes {
-  display: grid;
-  grid-template-columns: 1.6fr 1.25fr 1fr;
-  gap: 0.9rem;
-  align-items: stretch;
-}
-@media (max-width: 1280px) {
-  .anx .a2ui-panes { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 920px) {
-  .anx .a2ui-panes { grid-template-columns: 1fr; }
-}
-
-/* The live rendering frame — visually separates "what the agent produced". */
-.anx .a2ui-live-frame {
-  min-height: 220px;
+.anx-a2ui__panel { min-width: 0; }
+.anx-a2ui__stream .anx-events__item summary { flex-wrap: wrap; }
+.anx-a2ui__message--renderer { border-left: 3px solid var(--accent); }
+.anx-a2ui__frame {
+  padding: 1rem;
   border: 1px dashed var(--anx-border);
   border-radius: var(--anx-radius-sm);
-  padding: 1rem;
-  background:
-    linear-gradient(45deg, color-mix(in srgb, var(--anx-fg) 2%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, var(--anx-fg) 2%, transparent) 75%),
-    linear-gradient(45deg, color-mix(in srgb, var(--anx-fg) 2%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in srgb, var(--anx-fg) 2%, transparent) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
-}
-
-/* JSON / data-model / action viewers. */
-.anx .a2ui-json {
-  margin: 0;
-  max-height: 360px;
-  overflow: auto;
-  font-family: var(--anx-font-mono);
-  font-size: 0.74rem;
-  line-height: 1.6;
-  border: 1px solid var(--anx-border);
-  border-radius: var(--anx-radius-sm);
-  padding: 0.75rem 0.85rem;
   background: var(--anx-surface-1);
-  color: var(--anx-fg);
+  min-height: 8rem;
 }
-.anx .a2ui-json--sm { max-height: 200px; }
-.anx .a2ui-json code,
-.anx .anx-spec__code code {
-  /* The backend styles `code` with !important; force the high-contrast body color. */
-  color: inherit !important;
-  background: transparent;
-  font-family: inherit;
-  padding: 0;
-}
-.anx .a2ui-scroll { max-height: 30rem; overflow: auto; }
-.anx .a2ui-action-echo { margin-top: 0.8rem; }
+.anx-a2ui__data { margin-top: 1rem; }
+.anx-a2ui__links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 
-/* JS-injected busy + error states inside the live frame. */
-.anx .a2ui-busy {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.85rem 0.35rem;
-  color: var(--anx-muted-fg);
-  font-size: var(--anx-text-sm);
-}
-.anx .a2ui-error {
-  border: 1px solid color-mix(in srgb, var(--anx-danger) 45%, var(--anx-border));
-  border-left: 3px solid var(--anx-danger);
-  border-radius: var(--anx-radius-sm);
-  background: color-mix(in srgb, var(--anx-danger) 7%, var(--anx-card));
-  color: var(--anx-danger);
-  font-size: var(--anx-text-sm);
-  padding: 0.6rem 0.8rem;
-}
+/* ---- catalogue ------------------------------------------------------------- */
 
-/* ---- "Emit → Render → Signal → Reason" loop --------------------------------- */
-
-.anx .a2ui-loop {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
-  gap: 0.7rem;
+.anx-a2ui__versions-nav { margin-bottom: 1rem; }
+.anx-a2ui__component { margin-bottom: 1rem; }
+.anx-a2ui__component .card-subtitle { margin: 0.25rem 0 0; color: var(--anx-muted-fg); }
+.anx-a2ui__component-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+@media (min-width: 1200px) {
+  .anx-a2ui__component-body { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
 }
-.anx .a2ui-loop-step {
+.anx-a2ui__example-title { font-size: var(--anx-text-base); margin: 0 0 0.5rem; }
+.anx-a2ui__values { white-space: normal; overflow-wrap: anywhere; }
+.anx-a2ui__action-log { min-height: 1.5em; color: var(--anx-muted-fg); }
+
+/* ---- surfaces drawn by a2ui-renderer.js ------------------------------------ */
+
+.anx-a2ui .a2ui-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.anx-a2ui .a2ui-surface { color: var(--anx-fg); }
+.anx-a2ui .a2ui-surface + .a2ui-surface { margin-top: 1rem; }
+.anx-a2ui .a2ui-row,
+.anx-a2ui .a2ui-column { display: flex; gap: 0.75rem; }
+.anx-a2ui .a2ui-row { flex-direction: row; flex-wrap: wrap; }
+.anx-a2ui .a2ui-column { flex-direction: column; }
+.anx-a2ui .a2ui-justify--center { justify-content: center; }
+.anx-a2ui .a2ui-justify--end { justify-content: flex-end; }
+.anx-a2ui .a2ui-justify--spaceBetween { justify-content: space-between; }
+.anx-a2ui .a2ui-justify--spaceAround { justify-content: space-around; }
+.anx-a2ui .a2ui-justify--spaceEvenly { justify-content: space-evenly; }
+.anx-a2ui .a2ui-align--start { align-items: flex-start; }
+.anx-a2ui .a2ui-align--center { align-items: center; }
+.anx-a2ui .a2ui-align--end { align-items: flex-end; }
+.anx-a2ui .a2ui-align--stretch { align-items: stretch; }
+.anx-a2ui .a2ui-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.anx-a2ui .a2ui-list--horizontal { flex-direction: row; overflow-x: auto; }
+.anx-a2ui .a2ui-list--horizontal > .a2ui-list__item { max-width: 18rem; flex: 0 0 auto; }
+.anx-a2ui .a2ui-card { margin: 0; }
+.anx-a2ui .a2ui-heading { margin: 0; }
+.anx-a2ui .a2ui-heading:focus { outline: none; }
+.anx-a2ui .a2ui-heading:focus-visible { outline: 2px solid var(--typo3-component-focus-border-color, var(--accent)); outline-offset: 2px; }
+.anx-a2ui .a2ui-text p { margin: 0; }
+.anx-a2ui .a2ui-list__item > .a2ui-column { gap: 0.1rem; }
+.anx-a2ui .a2ui-text__caption { font-size: var(--anx-text-sm); color: var(--anx-muted-fg); }
+.anx-a2ui .a2ui-field { margin: 0; }
+.anx-a2ui .a2ui-field__required { font-weight: 400; color: var(--anx-muted-fg); }
+.anx-a2ui .a2ui-field__error,
+.anx-a2ui .a2ui-button__hint { margin: 0.25rem 0 0; font-size: var(--anx-text-sm); color: var(--typo3-state-danger-color, var(--anx-danger)); }
+.anx-a2ui .a2ui-button__hint { color: var(--anx-muted-fg); }
+.anx-a2ui .a2ui-choice__fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.anx-a2ui .a2ui-choice__filter { margin-bottom: 0.5rem; }
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__options { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__option { position: relative; padding: 0; margin: 0; }
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__control { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__label {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
   border: 1px solid var(--anx-border);
-  border-radius: var(--anx-radius-sm);
-  padding: 0.75rem 0.85rem;
-  background: var(--anx-surface-1);
-  font-size: var(--anx-text-sm);
-  color: var(--anx-fg);
-}
-.anx .a2ui-loop-step__num {
-  display: block;
-  font-size: var(--anx-text-xs);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 0.25rem;
-}
-.anx .a2ui-catalog-lede { margin: 0 0 0.45rem; }
-.anx .a2ui-catalog {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-/* ---- rendered-surface widgets (emitted by a2ui-renderer.js / server partials) */
-
-.anx .a2ui-tabs__nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem;
-  border-bottom: 1px solid var(--anx-border);
-  margin-bottom: 0.85rem;
-}
-.anx .a2ui-tabs__tab {
-  padding: 0.45rem 0.9rem;
-  border: 0;
-  background: none;
+  border-radius: var(--anx-radius-full);
+  background: var(--anx-card);
   cursor: pointer;
-  border-bottom: 2px solid transparent;
-  color: var(--anx-muted-fg);
-  font-size: var(--anx-text-sm);
 }
-.anx .a2ui-tabs__tab.active {
-  border-bottom-color: var(--accent);
-  color: var(--anx-fg);
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__control:checked + .a2ui-choice__label {
+  border-color: var(--accent);
+  background: var(--accent-soft);
   font-weight: 600;
 }
-.anx .a2ui-modal {
+.anx-a2ui .a2ui-choice--chips .a2ui-choice__control:focus-visible + .a2ui-choice__label {
+  outline: 2px solid var(--typo3-component-focus-border-color, var(--accent));
+  outline-offset: 2px;
+}
+.anx-a2ui .a2ui-slider__row { display: flex; align-items: center; gap: 0.75rem; }
+.anx-a2ui .a2ui-slider__control { flex: 1 1 auto; accent-color: var(--accent); }
+.anx-a2ui .a2ui-slider__value { min-width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums; }
+.anx-a2ui .a2ui-tabs__list { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 1px solid var(--anx-border); margin-bottom: 0.75rem; }
+.anx-a2ui .a2ui-tabs__tab {
+  padding: 0.4rem 0.9rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--anx-muted-fg);
+  cursor: pointer;
+}
+.anx-a2ui .a2ui-tabs__tab.is-active { border-bottom-color: var(--accent); color: var(--anx-fg); font-weight: 600; }
+.anx-a2ui .a2ui-tabs__tab:focus-visible,
+.anx-a2ui .a2ui-tabs__panel:focus-visible { outline: 2px solid var(--typo3-component-focus-border-color, var(--accent)); outline-offset: 2px; }
+.anx-a2ui .a2ui-divider { border: 0; border-top: 1px solid var(--anx-border); margin: 0.5rem 0; }
+.anx-a2ui .a2ui-divider--vertical { border-top: 0; border-left: 1px solid var(--anx-border); align-self: stretch; margin: 0 0.5rem; }
+.anx-a2ui .a2ui-icon { width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.anx-a2ui .a2ui-icon .a2ui-icon__fill { fill: currentColor; stroke: none; }
+.anx-a2ui .a2ui-image { display: block; max-width: 100%; height: auto; border-radius: var(--anx-radius-sm); }
+.anx-a2ui .a2ui-image--icon { width: 1.5rem; height: 1.5rem; }
+.anx-a2ui .a2ui-image--avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+.anx-a2ui .a2ui-image--smallFeature { width: 6rem; height: 6rem; }
+.anx-a2ui .a2ui-image--mediumFeature { width: 100%; max-width: 20rem; }
+.anx-a2ui .a2ui-image--largeFeature { width: 100%; max-height: 25rem; }
+.anx-a2ui .a2ui-image--header { width: 100%; height: 12rem; object-fit: cover; }
+.anx-a2ui .a2ui-media video,
+.anx-a2ui .a2ui-media audio { display: block; width: 100%; }
+.anx-a2ui .a2ui-media { margin: 0; }
+.anx-a2ui .a2ui-media--empty {
+  padding: 1rem;
+  border: 1px dashed var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  color: var(--anx-muted-fg);
+  text-align: center;
+}
+.anx-a2ui .a2ui-modal__dialog {
+  max-width: min(36rem, 90vw);
+  padding: 1.25rem;
   border: 1px solid var(--anx-border);
   border-radius: var(--anx-radius);
-  padding: 1.25rem;
-  max-width: 540px;
-  color: var(--anx-fg);
   background: var(--anx-card);
-  box-shadow: var(--anx-shadow-md);
+  color: var(--anx-fg);
 }
-.anx .a2ui-modal::backdrop { background: var(--anx-shadow-color); }
-.anx .a2ui-modal__title { margin: 0 0 0.75rem; }
-.anx .a2ui-modal__close { margin-top: 1rem; }
-.anx .a2ui-slider__value {
-  min-width: 2.5rem;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ---- responsive --------------------------------------------------------------- */
-
-@media (max-width: 720px) {
-  .anx .a2ui-intent-row { flex-direction: column; align-items: stretch; }
-  .anx .a2ui-intent-row .anx-btn { width: 100%; }
-}
+.anx-a2ui .a2ui-modal__dialog::backdrop { background: color-mix(in srgb, var(--anx-fg) 40%, transparent); }
+.anx-a2ui .a2ui-modal__close { float: right; margin: -0.5rem -0.5rem 0.5rem 0.5rem; }
+.anx-a2ui .a2ui-button { display: inline-flex; align-items: center; gap: 0.35rem; }
+.anx-a2ui .a2ui-button .a2ui-text p { margin: 0; color: inherit; }
+.anx-a2ui .a2ui-button[aria-busy="true"] { cursor: progress; }

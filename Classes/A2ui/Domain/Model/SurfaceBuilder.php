@@ -203,6 +203,16 @@ final class SurfaceBuilder
     }
 
     /**
+     * Any other catalogue component, written out.
+     *
+     * @param array<string, mixed> $properties
+     */
+    public function component(string $id, string $type, array $properties): string
+    {
+        return $this->add($id, $type, $properties);
+    }
+
+    /**
      * Set a value of the data model that no input writes (a list a template reads).
      */
     public function data(string $key, mixed $value): void

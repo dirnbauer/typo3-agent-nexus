@@ -1,0 +1,170 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-accent--a2ui anx-a2ui" data-a2ui-catalog data-version="{version}">
+
+    <h1><f:translate domain="agent_nexus.a2ui" key="catalog.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.a2ui" key="catalog.lede" /></p>
+
+    <nav class="anx-a2ui__versions-nav" aria-label="{f:translate(domain: 'agent_nexus.a2ui', key: 'catalog.versions')}">
+        <div class="btn-group" role="group">
+            <f:for each="{versionLinks}" as="link">
+                <a class="btn btn-default{f:if(condition: link.active, then: ' active')}" href="{link.uri}" aria-current="{f:if(condition: link.active, then: 'page', else: 'false')}">
+                    {link.value}
+                    <f:if condition="{link.stable}">
+                        <f:then>(<f:translate domain="agent_nexus.a2ui" key="version.stable" />)</f:then>
+                        <f:else>(<f:translate domain="agent_nexus.a2ui" key="version.candidate" />)</f:else>
+                    </f:if>
+                </a>
+            </f:for>
+        </div>
+    </nav>
+
+    <f:if condition="!{stable}">
+        <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')}"
+                      title="{f:translate(domain: 'agent_nexus.a2ui', key: 'catalog.candidate.title')}">
+            <p><f:translate domain="agent_nexus.a2ui" key="catalog.candidate.message" /></p>
+        </f:be.infobox>
+    </f:if>
+
+    <dl class="anx-dl anx-dl--compact">
+        <div><dt><f:translate domain="agent_nexus.a2ui" key="catalog.catalogId" /></dt><dd><code>{catalogId}</code></dd></div>
+        <div><dt><f:translate domain="agent_nexus.a2ui" key="catalog.version" /></dt><dd><code>{version}</code></dd></div>
+    </dl>
+
+    <p class="anx-a2ui__action-log" role="status" aria-live="polite" data-a2ui-action-status></p>
+
+    <f:for each="{categories}" as="components" key="category">
+        <section class="anx-section" aria-labelledby="a2ui-category-{category}">
+            <h2 id="a2ui-category-{category}"><f:translate domain="agent_nexus.a2ui" key="category.{category}" /></h2>
+            <f:for each="{components}" as="component">
+                <article class="card anx-a2ui__component" id="{component.anchor}" aria-labelledby="{component.anchor}-title">
+                    <div class="card-header">
+                        <h3 class="card-title" id="{component.anchor}-title"><code>{component.name}</code></h3>
+                        <p class="card-subtitle"><f:translate domain="agent_nexus.a2ui" key="component.{component.name}" /></p>
+                    </div>
+                    <div class="card-body anx-a2ui__component-body">
+                        <div class="table-fit">
+                            <table class="table table-striped">
+                                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2ui" key="catalog.properties" arguments="{0: component.name}" /></caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.property" /></th>
+                                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.type" /></th>
+                                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.required" /></th>
+                                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.values" /></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <f:for each="{component.properties}" as="property">
+                                        <tr>
+                                            <th scope="row"><code>{property.name}</code></th>
+                                            <td><code>{property.type}</code></td>
+                                            <td>
+                                                <f:if condition="{property.required}">
+                                                    <f:then><span class="badge badge-info"><f:translate domain="agent_nexus.a2ui" key="catalog.yes" /></span></f:then>
+                                                    <f:else><span class="text-variant"><f:translate domain="agent_nexus.a2ui" key="catalog.no" /></span></f:else>
+                                                </f:if>
+                                            </td>
+                                            <td>
+                                                <f:if condition="{property.values}"><code class="anx-a2ui__values">{property.values}</code></f:if>
+                                                <f:if condition="{property.default}"><span class="text-variant"><f:translate domain="agent_nexus.a2ui" key="catalog.default" arguments="{0: property.default}" /></span></f:if>
+                                            </td>
+                                        </tr>
+                                    </f:for>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="anx-a2ui__example">
+                            <h4 class="anx-a2ui__example-title"><f:translate domain="agent_nexus.a2ui" key="catalog.example" /></h4>
+                            <div class="anx-a2ui__frame" data-a2ui-example data-a2ui-messages="{component.messages}"></div>
+                            <details>
+                                <summary><f:translate domain="agent_nexus.a2ui" key="catalog.messages" /></summary>
+                                <pre class="anx-code" tabindex="0"><code data-a2ui-example-json></code></pre>
+                            </details>
+                        </div>
+                    </div>
+                </article>
+            </f:for>
+        </section>
+    </f:for>
+
+    <section class="anx-section" aria-labelledby="a2ui-common-heading">
+        <h2 id="a2ui-common-heading"><f:translate domain="agent_nexus.a2ui" key="catalog.common" /></h2>
+        <p><f:translate domain="agent_nexus.a2ui" key="catalog.common.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.property" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.type" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.required" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{common}" as="property">
+                        <tr>
+                            <th scope="row"><code>{property.name}</code></th>
+                            <td><code>{property.type}</code></td>
+                            <td>
+                                <f:if condition="{property.required}">
+                                    <f:then><span class="badge badge-info"><f:translate domain="agent_nexus.a2ui" key="catalog.yes" /></span></f:then>
+                                    <f:else><span class="text-variant"><f:translate domain="agent_nexus.a2ui" key="catalog.no" /></span></f:else>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="anx-section" aria-labelledby="a2ui-functions-heading">
+        <h2 id="a2ui-functions-heading"><f:translate domain="agent_nexus.a2ui" key="catalog.functions" /></h2>
+        <p><f:translate domain="agent_nexus.a2ui" key="catalog.functions.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.function" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.purpose" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.arguments" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2ui" key="catalog.returns" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{functions}" as="function">
+                        <tr>
+                            <th scope="row"><code>{function.name}</code></th>
+                            <td><f:translate domain="agent_nexus.a2ui" key="function.{function.name}" /></td>
+                            <td>
+                                <code>{function.arguments}</code>
+                                <f:if condition="{function.oneOf}"><span class="text-variant"><f:translate domain="agent_nexus.a2ui" key="catalog.oneOf" arguments="{0: function.oneOf}" /></span></f:if>
+                            </td>
+                            <td><code>{function.returnType}</code></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <f:if condition="{theme}">
+        <section class="anx-section" aria-labelledby="a2ui-theme-heading">
+            <h2 id="a2ui-theme-heading"><f:translate domain="agent_nexus.a2ui" key="catalog.theme" /></h2>
+            <p><f:translate domain="agent_nexus.a2ui" key="catalog.theme.lede" /></p>
+            <ul>
+                <f:for each="{theme}" as="property">
+                    <li><code>{property.name}</code> (<code>{property.type}</code>)</li>
+                </f:for>
+            </ul>
+        </section>
+    </f:if>
+</div>
+</f:section>
+
+</html>

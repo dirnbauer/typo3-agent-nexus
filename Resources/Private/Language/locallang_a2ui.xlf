@@ -1,8 +1,720 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment><source>A2UI Playground</source></segment></unit>
-        <unit id="mlang_tabs_tab"><segment><source>A2UI Playground</source></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment><source>An AI agent describes a UI as JSON and TYPO3 renders it with trusted components.</source></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="a2ui">
+    <unit id="playground.heading">
+      <segment>
+        <source>A2UI playground</source>
+      </segment>
+    </unit>
+    <unit id="playground.lede">
+      <segment>
+        <source>Describe a form in one line. The agent answers with A2UI messages, and the renderer draws the surface from the official basic catalogue.</source>
+      </segment>
+    </unit>
+    <unit id="playground.scripted.title">
+      <segment>
+        <source>Scripted demo</source>
+      </segment>
+    </unit>
+    <unit id="playground.scripted.message">
+      <segment>
+        <source>No model is configured, so the built-in generator answers. Install and configure netresearch/nr-llm to let a model write the surfaces.</source>
+      </segment>
+    </unit>
+    <unit id="playground.intent.label">
+      <segment>
+        <source>Describe the form you need</source>
+      </segment>
+    </unit>
+    <unit id="playground.intent.placeholder">
+      <segment>
+        <source>For example: a contact form with name, email and a message</source>
+      </segment>
+    </unit>
+    <unit id="playground.intent.hint">
+      <segment>
+        <source>One sentence is enough. The agent only uses components from the basic catalogue.</source>
+      </segment>
+    </unit>
+    <unit id="playground.example.label">
+      <segment>
+        <source>Or pick an example</source>
+      </segment>
+    </unit>
+    <unit id="playground.example.none">
+      <segment>
+        <source>No example</source>
+      </segment>
+    </unit>
+    <unit id="playground.version.legend">
+      <segment>
+        <source>A2UI version</source>
+      </segment>
+    </unit>
+    <unit id="playground.generate">
+      <segment>
+        <source>Generate surface</source>
+      </segment>
+    </unit>
+    <unit id="playground.reset">
+      <segment>
+        <source>Start again</source>
+      </segment>
+    </unit>
+    <unit id="playground.notes">
+      <segment>
+        <source>Notes from the agent</source>
+      </segment>
+    </unit>
+    <unit id="playground.stream.heading">
+      <segment>
+        <source>Message stream</source>
+      </segment>
+    </unit>
+    <unit id="playground.stream.lede">
+      <segment>
+        <source>Every message in order: what the agent sends to the renderer, and what the renderer sends back.</source>
+      </segment>
+    </unit>
+    <unit id="playground.stream.empty">
+      <segment>
+        <source>No messages yet. Generate a surface to see them here.</source>
+      </segment>
+    </unit>
+    <unit id="playground.surface.heading">
+      <segment>
+        <source>Rendered surface</source>
+      </segment>
+    </unit>
+    <unit id="playground.surface.lede">
+      <segment>
+        <source>The renderer draws the messages with native components. Fill in the form and send it to see the action and the answer.</source>
+      </segment>
+    </unit>
+    <unit id="playground.dataModel">
+      <segment>
+        <source>Data model</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.heading">
+      <segment>
+        <source>Recent surfaces</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.caption">
+      <segment>
+        <source>The surfaces this installation created most recently</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.surface">
+      <segment>
+        <source>Surface</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.request">
+      <segment>
+        <source>Request</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.version">
+      <segment>
+        <source>Version</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.state">
+      <segment>
+        <source>State</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.source">
+      <segment>
+        <source>Source</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.updated">
+      <segment>
+        <source>Updated</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.all">
+      <segment>
+        <source>Open all surfaces in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="playground.recent.empty">
+      <segment>
+        <source>No surfaces yet. Generate one above.</source>
+      </segment>
+    </unit>
+    <unit id="playground.api.heading">
+      <segment>
+        <source>Use it from another client</source>
+      </segment>
+    </unit>
+    <unit id="playground.api.lede">
+      <segment>
+        <source>The playground uses the same binding as the public endpoints. Any client can create surfaces and send actions over HTTP.</source>
+      </segment>
+    </unit>
+    <unit id="playground.api.curl">
+      <segment>
+        <source>Example request with curl</source>
+      </segment>
+    </unit>
+    <unit id="playground.api.catalogue">
+      <segment>
+        <source>Open the catalogue</source>
+      </segment>
+    </unit>
+    <unit id="playground.api.frontend">
+      <segment>
+        <source>Open the live page</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.heading">
+      <segment>
+        <source>Model</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.provider">
+      <segment>
+        <source>Provider</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.model">
+      <segment>
+        <source>Model</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.price">
+      <segment>
+        <source>Price per million tokens (in / out)</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.none">
+      <segment>
+        <source>No model is active. The built-in generator answers every request.</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.today">
+      <segment>
+        <source>Spent today</source>
+      </segment>
+    </unit>
+    <unit id="playground.model.month">
+      <segment>
+        <source>%s for %s requests</source>
+      </segment>
+    </unit>
+    <unit id="version.stable">
+      <segment>
+        <source>stable</source>
+      </segment>
+    </unit>
+    <unit id="version.candidate">
+      <segment>
+        <source>release candidate</source>
+      </segment>
+    </unit>
+    <unit id="state.created">
+      <segment>
+        <source>created</source>
+      </segment>
+    </unit>
+    <unit id="state.submitted">
+      <segment>
+        <source>submitted</source>
+      </segment>
+    </unit>
+    <unit id="state.deleted">
+      <segment>
+        <source>deleted</source>
+      </segment>
+    </unit>
+    <unit id="source.api">
+      <segment>
+        <source>API</source>
+      </segment>
+    </unit>
+    <unit id="source.widget">
+      <segment>
+        <source>Widget</source>
+      </segment>
+    </unit>
+    <unit id="source.backend">
+      <segment>
+        <source>Backend</source>
+      </segment>
+    </unit>
+    <unit id="source.agent">
+      <segment>
+        <source>Agent</source>
+      </segment>
+    </unit>
+    <unit id="example.contact">
+      <segment>
+        <source>Contact form</source>
+      </segment>
+    </unit>
+    <unit id="example.quote">
+      <segment>
+        <source>Quote request</source>
+      </segment>
+    </unit>
+    <unit id="example.callback">
+      <segment>
+        <source>Callback request</source>
+      </segment>
+    </unit>
+    <unit id="example.application">
+      <segment>
+        <source>Job application</source>
+      </segment>
+    </unit>
+    <unit id="example.event">
+      <segment>
+        <source>Event registration</source>
+      </segment>
+    </unit>
+    <unit id="example.newsletter">
+      <segment>
+        <source>Newsletter sign-up (with a dialog)</source>
+      </segment>
+    </unit>
+    <unit id="example.page">
+      <segment>
+        <source>New page</source>
+      </segment>
+    </unit>
+    <unit id="example.content">
+      <segment>
+        <source>Content element</source>
+      </segment>
+    </unit>
+    <unit id="example.seo">
+      <segment>
+        <source>SEO metadata (with tabs)</source>
+      </segment>
+    </unit>
+    <unit id="example.schedule">
+      <segment>
+        <source>Publication schedule</source>
+      </segment>
+    </unit>
+    <unit id="catalog.heading">
+      <segment>
+        <source>Basic catalogue</source>
+      </segment>
+    </unit>
+    <unit id="catalog.lede">
+      <segment>
+        <source>The official A2UI basic catalogue: every component the agent may use, its properties and a live example drawn by the same renderer the playground and the widget use.</source>
+      </segment>
+    </unit>
+    <unit id="catalog.versions">
+      <segment>
+        <source>Catalogue version</source>
+      </segment>
+    </unit>
+    <unit id="catalog.candidate.title">
+      <segment>
+        <source>Release candidate</source>
+      </segment>
+    </unit>
+    <unit id="catalog.candidate.message">
+      <segment>
+        <source>v1.0 is still changing. No official renderer supports it yet, so use it to try out what is coming.</source>
+      </segment>
+    </unit>
+    <unit id="catalog.catalogId">
+      <segment>
+        <source>Catalogue id</source>
+      </segment>
+    </unit>
+    <unit id="catalog.version">
+      <segment>
+        <source>Wire version</source>
+      </segment>
+    </unit>
+    <unit id="catalog.properties">
+      <segment>
+        <source>Properties of %s</source>
+      </segment>
+    </unit>
+    <unit id="catalog.property">
+      <segment>
+        <source>Property</source>
+      </segment>
+    </unit>
+    <unit id="catalog.type">
+      <segment>
+        <source>Type</source>
+      </segment>
+    </unit>
+    <unit id="catalog.required">
+      <segment>
+        <source>Required</source>
+      </segment>
+    </unit>
+    <unit id="catalog.values">
+      <segment>
+        <source>Values</source>
+      </segment>
+    </unit>
+    <unit id="catalog.yes">
+      <segment>
+        <source>yes</source>
+      </segment>
+    </unit>
+    <unit id="catalog.no">
+      <segment>
+        <source>no</source>
+      </segment>
+    </unit>
+    <unit id="catalog.default">
+      <segment>
+        <source>Default: %s</source>
+      </segment>
+    </unit>
+    <unit id="catalog.example">
+      <segment>
+        <source>Example</source>
+      </segment>
+    </unit>
+    <unit id="catalog.messages">
+      <segment>
+        <source>The messages behind the example</source>
+      </segment>
+    </unit>
+    <unit id="catalog.common">
+      <segment>
+        <source>Properties of every component</source>
+      </segment>
+    </unit>
+    <unit id="catalog.common.lede">
+      <segment>
+        <source>Every component has an id and may carry accessibility attributes. A direct child of a Row or Column may carry a weight.</source>
+      </segment>
+    </unit>
+    <unit id="catalog.functions">
+      <segment>
+        <source>Functions</source>
+      </segment>
+    </unit>
+    <unit id="catalog.functions.lede">
+      <segment>
+        <source>The renderer runs these functions. An agent only names them: in checks, in computed values and in actions.</source>
+      </segment>
+    </unit>
+    <unit id="catalog.function">
+      <segment>
+        <source>Function</source>
+      </segment>
+    </unit>
+    <unit id="catalog.purpose">
+      <segment>
+        <source>What it does</source>
+      </segment>
+    </unit>
+    <unit id="catalog.arguments">
+      <segment>
+        <source>Arguments (* = required)</source>
+      </segment>
+    </unit>
+    <unit id="catalog.returns">
+      <segment>
+        <source>Returns</source>
+      </segment>
+    </unit>
+    <unit id="catalog.oneOf">
+      <segment>
+        <source>at least one of %s</source>
+      </segment>
+    </unit>
+    <unit id="catalog.theme">
+      <segment>
+        <source>Theme</source>
+      </segment>
+    </unit>
+    <unit id="catalog.theme.lede">
+      <segment>
+        <source>v0.9.1 lets createSurface carry a theme. v1.0 removed it and leaves styling to the renderer.</source>
+      </segment>
+    </unit>
+    <unit id="category.display">
+      <segment>
+        <source>Display</source>
+      </segment>
+    </unit>
+    <unit id="category.layout">
+      <segment>
+        <source>Layout</source>
+      </segment>
+    </unit>
+    <unit id="category.interactive">
+      <segment>
+        <source>Interaction</source>
+      </segment>
+    </unit>
+    <unit id="category.input">
+      <segment>
+        <source>Input</source>
+      </segment>
+    </unit>
+    <unit id="component.Text">
+      <segment>
+        <source>Displays text. Supports simple Markdown.</source>
+      </segment>
+    </unit>
+    <unit id="component.Image">
+      <segment>
+        <source>Displays an image from a URL.</source>
+      </segment>
+    </unit>
+    <unit id="component.Icon">
+      <segment>
+        <source>Displays an icon from a fixed list.</source>
+      </segment>
+    </unit>
+    <unit id="component.Video">
+      <segment>
+        <source>Plays a video from a URL.</source>
+      </segment>
+    </unit>
+    <unit id="component.AudioPlayer">
+      <segment>
+        <source>Plays audio from a URL.</source>
+      </segment>
+    </unit>
+    <unit id="component.Row">
+      <segment>
+        <source>Arranges its children side by side.</source>
+      </segment>
+    </unit>
+    <unit id="component.Column">
+      <segment>
+        <source>Arranges its children one below the other.</source>
+      </segment>
+    </unit>
+    <unit id="component.List">
+      <segment>
+        <source>A scrollable list; it can repeat one component for every item of a list in the data model.</source>
+      </segment>
+    </unit>
+    <unit id="component.Card">
+      <segment>
+        <source>Groups exactly one child in a card.</source>
+      </segment>
+    </unit>
+    <unit id="component.Tabs">
+      <segment>
+        <source>A set of tabs, each with a title and one child.</source>
+      </segment>
+    </unit>
+    <unit id="component.Modal">
+      <segment>
+        <source>A dialog that opens from a trigger in the main content.</source>
+      </segment>
+    </unit>
+    <unit id="component.Divider">
+      <segment>
+        <source>A horizontal or vertical line.</source>
+      </segment>
+    </unit>
+    <unit id="component.Button">
+      <segment>
+        <source>A button that sends an action. Its label is a child component.</source>
+      </segment>
+    </unit>
+    <unit id="component.TextField">
+      <segment>
+        <source>A field for text: one line, several lines, a number or a password.</source>
+      </segment>
+    </unit>
+    <unit id="component.CheckBox">
+      <segment>
+        <source>A box with a label and a true or false value.</source>
+      </segment>
+    </unit>
+    <unit id="component.ChoicePicker">
+      <segment>
+        <source>Choose one or several options, as a list or as chips.</source>
+      </segment>
+    </unit>
+    <unit id="component.Slider">
+      <segment>
+        <source>Choose a number within a range.</source>
+      </segment>
+    </unit>
+    <unit id="component.DateTimeInput">
+      <segment>
+        <source>Choose a date, a time or both.</source>
+      </segment>
+    </unit>
+    <unit id="function.required">
+      <segment>
+        <source>Checks that there is a value.</source>
+      </segment>
+    </unit>
+    <unit id="function.regex">
+      <segment>
+        <source>Checks a value against a regular expression.</source>
+      </segment>
+    </unit>
+    <unit id="function.length">
+      <segment>
+        <source>Checks the length of a text.</source>
+      </segment>
+    </unit>
+    <unit id="function.numeric">
+      <segment>
+        <source>Checks that a number is within a range.</source>
+      </segment>
+    </unit>
+    <unit id="function.email">
+      <segment>
+        <source>Checks that a value is an email address.</source>
+      </segment>
+    </unit>
+    <unit id="function.formatString">
+      <segment>
+        <source>Puts values from the data model into a text.</source>
+      </segment>
+    </unit>
+    <unit id="function.formatNumber">
+      <segment>
+        <source>Formats a number.</source>
+      </segment>
+    </unit>
+    <unit id="function.formatCurrency">
+      <segment>
+        <source>Formats an amount of money.</source>
+      </segment>
+    </unit>
+    <unit id="function.formatDate">
+      <segment>
+        <source>Formats a date with a pattern.</source>
+      </segment>
+    </unit>
+    <unit id="function.pluralize">
+      <segment>
+        <source>Picks the right text for a number.</source>
+      </segment>
+    </unit>
+    <unit id="function.openUrl">
+      <segment>
+        <source>Opens a web address.</source>
+      </segment>
+    </unit>
+    <unit id="function.and">
+      <segment>
+        <source>True when all values are true.</source>
+      </segment>
+    </unit>
+    <unit id="function.or">
+      <segment>
+        <source>True when one of the values is true.</source>
+      </segment>
+    </unit>
+    <unit id="function.not">
+      <segment>
+        <source>Turns true into false and false into true.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.generating">
+      <segment>
+        <source>Generating a surface…</source>
+      </segment>
+    </unit>
+    <unit id="js.status.generated">
+      <segment>
+        <source>Surface %s created with %s messages (%s).</source>
+      </segment>
+    </unit>
+    <unit id="js.status.sending">
+      <segment>
+        <source>Sending the action to the agent…</source>
+      </segment>
+    </unit>
+    <unit id="js.status.answered">
+      <segment>
+        <source>The agent answered with %s messages.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.deleted">
+      <segment>
+        <source>The agent deleted the surface. Generate a new one to continue.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.intent">
+      <segment>
+        <source>Describe the form you need first.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.failed">
+      <segment>
+        <source>The request failed: %s</source>
+      </segment>
+    </unit>
+    <unit id="js.stream.agent">
+      <segment>
+        <source>agent to renderer</source>
+      </segment>
+    </unit>
+    <unit id="js.stream.renderer">
+      <segment>
+        <source>renderer to agent</source>
+      </segment>
+    </unit>
+    <unit id="js.stream.metadata">
+      <segment>
+        <source>with the data model in the metadata</source>
+      </segment>
+    </unit>
+    <unit id="js.notification.failed">
+      <segment>
+        <source>A2UI request failed</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.required">
+      <segment>
+        <source>required</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.close">
+      <segment>
+        <source>Close</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.dialog">
+      <segment>
+        <source>Dialog</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.invalid">
+      <segment>
+        <source>Check this field.</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.checkFields">
+      <segment>
+        <source>Check the highlighted fields.</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.filter">
+      <segment>
+        <source>Filter the options</source>
+      </segment>
+    </unit>
+    <unit id="js.renderer.noMedia">
+      <segment>
+        <source>Nothing to play yet.</source>
+      </segment>
+    </unit>
+    <unit id="js.catalog.action">
+      <segment>
+        <source>The example sent the action %s. In a live surface it goes to the agent.</source>
+      </segment>
+    </unit>
+  </file>
 </xliff>
