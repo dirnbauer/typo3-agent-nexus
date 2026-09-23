@@ -501,8 +501,7 @@
 /* ---- reveal animation ------------------------------------------------------------------
  * Entrance motion for server-rendered content is CSS, not JavaScript: it starts
  * with the first paint, needs no library, and prefers-reduced-motion switches it
- * off below without anything having to ask. nexus-motion.js only animates markup
- * that JavaScript itself inserts.
+ * off below without anything having to ask.
  */
 
 .anx-reveal,
