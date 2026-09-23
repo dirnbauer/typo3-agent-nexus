@@ -4,7 +4,7 @@
 <section class="anx anx--frontend anx-accent--agui agui-asst"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'agui')}"
          data-agui-assistant
-         data-run-url="/index.php?eID=agui_assistant"
+         data-endpoint="{endpoint}"
          data-scenario="{f:if(condition: settings.scenario, then: settings.scenario, else: 'plan')}"
          data-page="{pageId}"
          data-ce="{data.uid}"
@@ -33,6 +33,8 @@
             <input type="text"
                    class="agui-asst__input"
                    data-agui-intent
+                   autocomplete="off"
+                   maxlength="600"
                    placeholder="{settings.placeholder}"
                    aria-label="Tell the assistant what you need" />
             <button type="submit" class="agui-asst__go" data-agui-send>
@@ -46,7 +48,7 @@
             <div class="agui-asst__presets" data-agui-presets></div>
         </div>
 
-        <div class="agui-asst__thread" data-agui-thread aria-live="polite"></div>
+        <div class="agui-asst__thread" data-agui-thread role="log" aria-live="polite" aria-label="Conversation with the assistant"></div>
 
         <div class="agui-asst__events" data-agui-events hidden role="region" aria-label="Protocol frames">
             <div class="agui-asst__events-head">
