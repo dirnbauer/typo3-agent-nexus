@@ -13,7 +13,7 @@
         "generative-ui",
         "agentic-commerce"
     ],
-    "homepage": "https://webconsulting.at",
+    "homepage": "https://github.com/dirnbauer/typo3-agent-nexus",
     "license": "GPL-2.0-or-later",
     "authors": [
         {
@@ -37,15 +37,15 @@
         "typo3/cms-frontend": "^14.3.7"
     },
     "require-dev": {
-        "dg/bypass-finals": "^1.9",
-        "friendsofphp/php-cs-fixer": "^3.90",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "opis/json-schema": "^2.6",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.2",
         "phpstan/phpstan-phpunit": "^2.0",
-        "phpunit/phpunit": "^12.4 || ^13.0",
+        "phpunit/phpunit": "^13.3",
         "saschaegerer/phpstan-typo3": "^3.1",
-        "typo3/coding-standards": "^0.8",
-        "typo3/testing-framework": "^9.5"
+        "typo3/coding-standards": "^0.9",
+        "typo3/testing-framework": "^9.7"
     },
     "suggest": {
         "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
