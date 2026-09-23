@@ -1,15 +1,20 @@
 sequenceDiagram
     autonumber
     actor V as Visitor
-    participant W as Inquiry widget
-    participant E as TYPO3 eID<br/>a2ui_generate
-    participant A as Agent (nr-llm)
-    V->>W: describes need in one sentence
-    W->>E: POST intent
-    E->>A: system prompt + component catalog
-    A-->>E: surface JSON (components + data model)
-    E-->>W: validated A2UI surface
-    W->>W: render native form from JSON
-    V->>W: fills fields, submits
-    W->>E: POST a2ui_submit (data model)
-    E-->>V: stored inquiry + confirmation
+    participant R as Renderer<br/>(inquiry widget)
+    participant E as A2UI binding<br/>/api/agent-nexus/a2ui
+    participant A as Agent<br/>(model or built-in generator)
+    V->>R: describes a need in one sentence
+    R->>E: POST /surfaces {intent, version v0.9.1, capabilities}
+    E->>A: request + basic catalogue
+    A-->>E: components + data model
+    E->>E: sanitise against the basic catalogue
+    E-->>R: createSurface, updateComponents, updateDataModel
+    R->>R: draw the form, bind inputs, run checks
+    V->>R: fills in the form, sends it
+    R->>E: POST /actions {action, metadata.a2uiClientDataModel}
+    E->>E: store action and data model on the surface
+    E-->>R: updateComponents + updateDataModel (confirmation)
+    V->>R: Start over (instead)
+    R->>E: POST /actions {action "discard"}
+    E-->>R: deleteSurface
