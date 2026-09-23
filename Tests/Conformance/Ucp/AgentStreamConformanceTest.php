@@ -76,8 +76,7 @@ final class AgentStreamConformanceTest extends ConformanceTestCase
     #[Test]
     public function theApprovalIsAnInterruptOutcome(): void
     {
-        $events = $this->events('propose');
-        $finished = $events[array_key_last($events)];
+        $finished = $this->last($this->events('propose'));
 
         self::assertConformsTo(SchemaValidator::AGUI_SCHEMA_ID . '#RunFinishedInterruptOutcome', $finished['outcome']);
         self::assertConformsTo(SchemaValidator::AGUI_SCHEMA_ID . '#Interrupt', $finished['outcome']['interrupts'][0]);
@@ -98,7 +97,7 @@ final class AgentStreamConformanceTest extends ConformanceTestCase
     #[Test]
     public function anInterruptCarryingNullIsRejected(): void
     {
-        $interrupt = $this->events('propose')[array_key_last($this->events('propose'))]['outcome']['interrupts'][0];
+        $interrupt = $this->last($this->events('propose'))['outcome']['interrupts'][0];
         $interrupt['expiresAt'] = null;
 
         self::assertViolates(SchemaValidator::AGUI_SCHEMA_ID . '#Interrupt', $interrupt, 'AG-UI 1.0 omits optional fields instead of sending null.');
@@ -142,6 +141,16 @@ final class AgentStreamConformanceTest extends ConformanceTestCase
             'askAgain' => ['interruptId' => $interruptId, 'status' => 'resolved', 'payload' => ['approved' => true]],
             default => ['interruptId' => 'int_forged', 'status' => 'resolved', 'payload' => ['approved' => true]],
         }]));
+    }
+
+    /**
+     * @param list<array<string, mixed>> $events
+     * @return array<string, mixed>
+     */
+    private function last(array $events): array
+    {
+        self::assertNotSame([], $events);
+        return $events[count($events) - 1];
     }
 
     /**

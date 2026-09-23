@@ -1,8 +1,790 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment><source>UCP Console</source></segment></unit>
-        <unit id="mlang_tabs_tab"><segment><source>UCP Console</source></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment><source>Inspect a merchant manifest and a simulated agent-driven checkout state machine.</source></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="ucp">
+    <unit id="console.heading">
+      <segment>
+        <source>Checkout console</source>
+      </segment>
+    </unit>
+    <unit id="console.lede">
+      <segment>
+        <source>Run the shopping agent the way the checkout widget runs it. It reads the store's UCP profile, opens a checkout session priced by the store and stops until you approve the order.</source>
+      </segment>
+    </unit>
+    <unit id="console.note.title">
+      <segment>
+        <source>Sandbox store</source>
+      </segment>
+    </unit>
+    <unit id="console.note">
+      <segment>
+        <source>No payment is taken and nothing is delivered. The sandbox payment handler accepts the token sandbox-success and declines sandbox-decline.</source>
+      </segment>
+    </unit>
+    <unit id="console.profile">
+      <segment>
+        <source>See the business profile</source>
+      </segment>
+    </unit>
+    <unit id="console.demo">
+      <segment>
+        <source>Open the demo</source>
+      </segment>
+    </unit>
+    <unit id="stats.label">
+      <segment>
+        <source>Checkout sessions in this installation</source>
+      </segment>
+    </unit>
+    <unit id="stats.total">
+      <segment>
+        <source>Sessions</source>
+      </segment>
+    </unit>
+    <unit id="stats.open">
+      <segment>
+        <source>Open</source>
+      </segment>
+    </unit>
+    <unit id="stats.completed">
+      <segment>
+        <source>Completed</source>
+      </segment>
+    </unit>
+    <unit id="stats.canceled">
+      <segment>
+        <source>Canceled</source>
+      </segment>
+    </unit>
+    <unit id="run.heading">
+      <segment>
+        <source>Run the shopping agent</source>
+      </segment>
+    </unit>
+    <unit id="run.intent">
+      <segment>
+        <source>What should the agent buy?</source>
+      </segment>
+    </unit>
+    <unit id="run.email">
+      <segment>
+        <source>Email address for the licence</source>
+      </segment>
+    </unit>
+    <unit id="run.email.hint">
+      <segment>
+        <source>Optional. Without it, the agent asks for one when you approve the order.</source>
+      </segment>
+    </unit>
+    <unit id="run.decline">
+      <segment>
+        <source>Simulate a declined payment</source>
+      </segment>
+    </unit>
+    <unit id="run.decline.hint">
+      <segment>
+        <source>The agent then submits the sandbox token that fails.</source>
+      </segment>
+    </unit>
+    <unit id="run.model.on">
+      <segment>
+        <source>Live model: a language model writes the agent's explanation. Prices always come from the store.</source>
+      </segment>
+    </unit>
+    <unit id="run.model.off">
+      <segment>
+        <source>Scripted demo: the agent's explanation is a fixed text (%s).</source>
+      </segment>
+    </unit>
+    <unit id="run.start">
+      <segment>
+        <source>Start the agent</source>
+      </segment>
+    </unit>
+    <unit id="checkout.heading">
+      <segment>
+        <source>Checkout session</source>
+      </segment>
+    </unit>
+    <unit id="checkout.none">
+      <segment>
+        <source>No session</source>
+      </segment>
+    </unit>
+    <unit id="checkout.empty">
+      <segment>
+        <source>The session the agent opens appears here, as the store returns it.</source>
+      </segment>
+    </unit>
+    <unit id="checkout.id">
+      <segment>
+        <source>Session</source>
+      </segment>
+    </unit>
+    <unit id="checkout.expires">
+      <segment>
+        <source>Expires</source>
+      </segment>
+    </unit>
+    <unit id="checkout.order">
+      <segment>
+        <source>Order</source>
+      </segment>
+    </unit>
+    <unit id="checkout.caption">
+      <segment>
+        <source>Line items and totals of the checkout session</source>
+      </segment>
+    </unit>
+    <unit id="checkout.item">
+      <segment>
+        <source>Item</source>
+      </segment>
+    </unit>
+    <unit id="checkout.quantity">
+      <segment>
+        <source>Quantity</source>
+      </segment>
+    </unit>
+    <unit id="checkout.price">
+      <segment>
+        <source>Price</source>
+      </segment>
+    </unit>
+    <unit id="checkout.amount">
+      <segment>
+        <source>Amount</source>
+      </segment>
+    </unit>
+    <unit id="checkout.inspect">
+      <segment>
+        <source>Open in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="approval.heading">
+      <segment>
+        <source>Approve this order</source>
+      </segment>
+    </unit>
+    <unit id="approval.email">
+      <segment>
+        <source>Email address for the licence</source>
+      </segment>
+    </unit>
+    <unit id="approval.email.invalid">
+      <segment>
+        <source>Enter a valid email address.</source>
+      </segment>
+    </unit>
+    <unit id="approval.approve">
+      <segment>
+        <source>Approve</source>
+      </segment>
+    </unit>
+    <unit id="approval.reject">
+      <segment>
+        <source>Not now</source>
+      </segment>
+    </unit>
+    <unit id="stream.heading">
+      <segment>
+        <source>Agent stream</source>
+      </segment>
+    </unit>
+    <unit id="stream.clear">
+      <segment>
+        <source>Clear</source>
+      </segment>
+    </unit>
+    <unit id="stream.redacted">
+      <segment>
+        <source>Personal data in the requests and responses is masked, as in the traffic log.</source>
+      </segment>
+    </unit>
+    <unit id="stream.empty">
+      <segment>
+        <source>Start the agent to see its AG-UI events and every UCP request it sends.</source>
+      </segment>
+    </unit>
+    <unit id="manual.heading">
+      <segment>
+        <source>Call the REST API yourself</source>
+      </segment>
+    </unit>
+    <unit id="manual.lede">
+      <segment>
+        <source>Read or cancel a session with the headers every platform sends: UCP-Agent, Request-Id and, to cancel, an Idempotency-Key.</source>
+      </segment>
+    </unit>
+    <unit id="manual.id">
+      <segment>
+        <source>Checkout session id</source>
+      </segment>
+    </unit>
+    <unit id="manual.id.hint">
+      <segment>
+        <source>For example chk_ followed by 24 hexadecimal characters.</source>
+      </segment>
+    </unit>
+    <unit id="manual.get">
+      <segment>
+        <source>Get the session</source>
+      </segment>
+    </unit>
+    <unit id="manual.cancel">
+      <segment>
+        <source>Cancel the session</source>
+      </segment>
+    </unit>
+    <unit id="recent.heading">
+      <segment>
+        <source>Recent checkout sessions</source>
+      </segment>
+    </unit>
+    <unit id="recent.lede">
+      <segment>
+        <source>The newest sessions this installation stored, from any caller. Open one to see its history and traffic.</source>
+      </segment>
+    </unit>
+    <unit id="recent.caption">
+      <segment>
+        <source>Recent checkout sessions</source>
+      </segment>
+    </unit>
+    <unit id="recent.session">
+      <segment>
+        <source>Session</source>
+      </segment>
+    </unit>
+    <unit id="recent.total">
+      <segment>
+        <source>Total</source>
+      </segment>
+    </unit>
+    <unit id="recent.state">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="recent.source">
+      <segment>
+        <source>Caller</source>
+      </segment>
+    </unit>
+    <unit id="recent.updated">
+      <segment>
+        <source>Updated</source>
+      </segment>
+    </unit>
+    <unit id="recent.open">
+      <segment>
+        <source>Open %s in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="recent.all">
+      <segment>
+        <source>All checkout sessions</source>
+      </segment>
+    </unit>
+    <unit id="recent.empty.title">
+      <segment>
+        <source>No checkout sessions yet</source>
+      </segment>
+    </unit>
+    <unit id="recent.empty.text">
+      <segment>
+        <source>Start the shopping agent to open the first one.</source>
+      </segment>
+    </unit>
+    <unit id="recent.empty.action">
+      <segment>
+        <source>Start the agent</source>
+      </segment>
+    </unit>
+    <unit id="state.incomplete">
+      <segment>
+        <source>Incomplete</source>
+      </segment>
+    </unit>
+    <unit id="state.requires_escalation">
+      <segment>
+        <source>Needs the buyer</source>
+      </segment>
+    </unit>
+    <unit id="state.ready_for_complete">
+      <segment>
+        <source>Ready to complete</source>
+      </segment>
+    </unit>
+    <unit id="state.complete_in_progress">
+      <segment>
+        <source>Completing</source>
+      </segment>
+    </unit>
+    <unit id="state.completed">
+      <segment>
+        <source>Completed</source>
+      </segment>
+    </unit>
+    <unit id="state.canceled">
+      <segment>
+        <source>Canceled</source>
+      </segment>
+    </unit>
+    <unit id="profile.heading">
+      <segment>
+        <source>Business profile</source>
+      </segment>
+    </unit>
+    <unit id="profile.lede">
+      <segment>
+        <source>What a shopping agent reads first: the UCP version, the services it can call, the capabilities and the payment handlers. It is built from code, so it always describes what the API does.</source>
+      </segment>
+    </unit>
+    <unit id="profile.open">
+      <segment>
+        <source>Open the profile</source>
+      </segment>
+    </unit>
+    <unit id="profile.openPlatform">
+      <segment>
+        <source>Open the agent's platform profile</source>
+      </segment>
+    </unit>
+    <unit id="profile.console">
+      <segment>
+        <source>Run the agent</source>
+      </segment>
+    </unit>
+    <unit id="profile.noWellKnown">
+      <segment>
+        <source>Well-known documents are switched off in the extension configuration, so the profile is served at the API path only. Shopping agents look for it at /.well-known/ucp.</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.heading">
+      <segment>
+        <source>Rules of UCP %s</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.valid">
+      <segment>
+        <source>Valid</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.invalid">
+      <segment>
+        <source>Problems found</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.lede">
+      <segment>
+        <source>The published profile, checked against the rules a business profile must follow. The test suite also validates it against the official JSON Schema.</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.pass">
+      <segment>
+        <source>Passed:</source>
+      </segment>
+    </unit>
+    <unit id="profile.checks.fail">
+      <segment>
+        <source>Failed:</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.version">
+      <segment>
+        <source>The version is a date and the one this business implements</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.entryVersions">
+      <segment>
+        <source>Every dev.ucp entry carries the profile version</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.https">
+      <segment>
+        <source>Every service endpoint uses https</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.capabilitySchemas">
+      <segment>
+        <source>Every capability names its schema on ucp.dev</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.handlers">
+      <segment>
+        <source>Payment handlers have an id, a version and a reverse-domain name outside dev.ucp</source>
+      </segment>
+    </unit>
+    <unit id="profile.check.caching">
+      <segment>
+        <source>Served with public caching of at least 60 seconds</source>
+      </segment>
+    </unit>
+    <unit id="profile.services.heading">
+      <segment>
+        <source>Services</source>
+      </segment>
+    </unit>
+    <unit id="profile.name">
+      <segment>
+        <source>Name</source>
+      </segment>
+    </unit>
+    <unit id="profile.transport">
+      <segment>
+        <source>Transport</source>
+      </segment>
+    </unit>
+    <unit id="profile.version">
+      <segment>
+        <source>Version</source>
+      </segment>
+    </unit>
+    <unit id="profile.endpoint">
+      <segment>
+        <source>Endpoint</source>
+      </segment>
+    </unit>
+    <unit id="profile.capabilities.heading">
+      <segment>
+        <source>Capabilities</source>
+      </segment>
+    </unit>
+    <unit id="profile.capabilities.lede">
+      <segment>
+        <source>This sandbox does not fetch the platform profile a caller names, so every capability is active in every session.</source>
+      </segment>
+    </unit>
+    <unit id="profile.schema">
+      <segment>
+        <source>Schema</source>
+      </segment>
+    </unit>
+    <unit id="profile.handlers.heading">
+      <segment>
+        <source>Payment handlers</source>
+      </segment>
+    </unit>
+    <unit id="profile.handlers.lede">
+      <segment>
+        <source>UCP defines no payment handler of its own. This store has one under its own name, and it never moves money.</source>
+      </segment>
+    </unit>
+    <unit id="profile.handlerId">
+      <segment>
+        <source>Id</source>
+      </segment>
+    </unit>
+    <unit id="profile.instruments">
+      <segment>
+        <source>Instruments</source>
+      </segment>
+    </unit>
+    <unit id="profile.config">
+      <segment>
+        <source>Configuration</source>
+      </segment>
+    </unit>
+    <unit id="profile.tokens.heading">
+      <segment>
+        <source>Sandbox tokens</source>
+      </segment>
+    </unit>
+    <unit id="profile.token">
+      <segment>
+        <source>Token</source>
+      </segment>
+    </unit>
+    <unit id="profile.outcome">
+      <segment>
+        <source>What happens</source>
+      </segment>
+    </unit>
+    <unit id="profile.token.success">
+      <segment>
+        <source>The payment is accepted and the checkout completes with an order.</source>
+      </segment>
+    </unit>
+    <unit id="profile.token.decline">
+      <segment>
+        <source>The payment fails with payment_failed and the session stays as it was.</source>
+      </segment>
+    </unit>
+    <unit id="profile.catalogue.heading">
+      <segment>
+        <source>Product catalogue</source>
+      </segment>
+    </unit>
+    <unit id="profile.catalogue.lede">
+      <segment>
+        <source>Every price in a checkout comes from here, in minor units. A language model never writes one.</source>
+      </segment>
+    </unit>
+    <unit id="profile.product">
+      <segment>
+        <source>Product</source>
+      </segment>
+    </unit>
+    <unit id="profile.itemId">
+      <segment>
+        <source>Item id</source>
+      </segment>
+    </unit>
+    <unit id="profile.price">
+      <segment>
+        <source>Price</source>
+      </segment>
+    </unit>
+    <unit id="profile.billing">
+      <segment>
+        <source>Billing</source>
+      </segment>
+    </unit>
+    <unit id="profile.description">
+      <segment>
+        <source>Description</source>
+      </segment>
+    </unit>
+    <unit id="profile.billing.monthly">
+      <segment>
+        <source>Per month</source>
+      </segment>
+    </unit>
+    <unit id="profile.billing.once">
+      <segment>
+        <source>Once</source>
+      </segment>
+    </unit>
+    <unit id="profile.intents.heading">
+      <segment>
+        <source>What the agent buys</source>
+      </segment>
+    </unit>
+    <unit id="profile.intent">
+      <segment>
+        <source>Wish</source>
+      </segment>
+    </unit>
+    <unit id="profile.products">
+      <segment>
+        <source>Products</source>
+      </segment>
+    </unit>
+    <unit id="profile.total">
+      <segment>
+        <source>Total</source>
+      </segment>
+    </unit>
+    <unit id="profile.endpoints.heading">
+      <segment>
+        <source>Endpoints</source>
+      </segment>
+    </unit>
+    <unit id="profile.method">
+      <segment>
+        <source>Method</source>
+      </segment>
+    </unit>
+    <unit id="profile.path">
+      <segment>
+        <source>Path</source>
+      </segment>
+    </unit>
+    <unit id="profile.operation">
+      <segment>
+        <source>Operation</source>
+      </segment>
+    </unit>
+    <unit id="profile.purpose">
+      <segment>
+        <source>Purpose</source>
+      </segment>
+    </unit>
+    <unit id="profile.json.heading">
+      <segment>
+        <source>Profile document</source>
+      </segment>
+    </unit>
+    <unit id="profile.json.lede">
+      <segment>
+        <source>Exactly what this host publishes.</source>
+      </segment>
+    </unit>
+    <unit id="profile.json.show">
+      <segment>
+        <source>Show the JSON</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.run">
+      <segment>
+        <source>Run</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.step">
+      <segment>
+        <source>Step</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.agent">
+      <segment>
+        <source>Agent</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.reasoning">
+      <segment>
+        <source>Why</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.provenance">
+      <segment>
+        <source>Written by</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.error">
+      <segment>
+        <source>Error</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.call">
+      <segment>
+        <source>UCP</source>
+      </segment>
+    </unit>
+    <unit id="js.kind.you">
+      <segment>
+        <source>You</source>
+      </segment>
+    </unit>
+    <unit id="js.row.runStarted">
+      <segment>
+        <source>Run started (AG-UI %s)</source>
+      </segment>
+    </unit>
+    <unit id="js.row.step">
+      <segment>
+        <source>Step: %s</source>
+      </segment>
+    </unit>
+    <unit id="js.row.request">
+      <segment>
+        <source>Request</source>
+      </segment>
+    </unit>
+    <unit id="js.row.response">
+      <segment>
+        <source>Response</source>
+      </segment>
+    </unit>
+    <unit id="js.row.proposed">
+      <segment>
+        <source>Waiting for your approval</source>
+      </segment>
+    </unit>
+    <unit id="js.row.notSent">
+      <segment>
+        <source>Not sent</source>
+      </segment>
+    </unit>
+    <unit id="js.row.finished.interrupt">
+      <segment>
+        <source>Run finished: the agent waits for your approval</source>
+      </segment>
+    </unit>
+    <unit id="js.row.finished.success">
+      <segment>
+        <source>Run finished</source>
+      </segment>
+    </unit>
+    <unit id="js.row.error">
+      <segment>
+        <source>The run stopped: %s</source>
+      </segment>
+    </unit>
+    <unit id="js.raw.heading">
+      <segment>
+        <source>Every AG-UI event (%s)</source>
+      </segment>
+    </unit>
+    <unit id="js.state.none">
+      <segment>
+        <source>No session</source>
+      </segment>
+    </unit>
+    <unit id="js.status.running">
+      <segment>
+        <source>The agent is working.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.interrupted">
+      <segment>
+        <source>The agent waits for your approval.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.finished">
+      <segment>
+        <source>The run finished.</source>
+      </segment>
+    </unit>
+    <unit id="js.status.failed">
+      <segment>
+        <source>The run stopped: %s</source>
+      </segment>
+    </unit>
+    <unit id="js.status.unreachable">
+      <segment>
+        <source>The agent could not be reached.</source>
+      </segment>
+    </unit>
+    <unit id="js.approval.approved">
+      <segment>
+        <source>You approved the order.</source>
+      </segment>
+    </unit>
+    <unit id="js.approval.rejected">
+      <segment>
+        <source>You did not approve the order.</source>
+      </segment>
+    </unit>
+    <unit id="js.notify.completed.title">
+      <segment>
+        <source>Order confirmed</source>
+      </segment>
+    </unit>
+    <unit id="js.notify.completed">
+      <segment>
+        <source>Sandbox order %s is placed. No payment was taken.</source>
+      </segment>
+    </unit>
+    <unit id="js.notify.canceled.title">
+      <segment>
+        <source>Checkout canceled</source>
+      </segment>
+    </unit>
+    <unit id="js.notify.canceled">
+      <segment>
+        <source>Nothing was ordered.</source>
+      </segment>
+    </unit>
+    <unit id="js.notify.error.title">
+      <segment>
+        <source>The agent stopped</source>
+      </segment>
+    </unit>
+    <unit id="js.manual.invalid.title">
+      <segment>
+        <source>No session id</source>
+      </segment>
+    </unit>
+    <unit id="js.manual.invalid">
+      <segment>
+        <source>Enter a checkout session id: chk_ followed by 24 hexadecimal characters.</source>
+      </segment>
+    </unit>
+    <unit id="js.manual.failed">
+      <segment>
+        <source>The request failed</source>
+      </segment>
+    </unit>
+  </file>
 </xliff>

@@ -5,173 +5,251 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
+<div class="anx anx--backend anx-accent--ucp anx-ucp"
+     data-ucp-console
+     data-agent-url="{agentUrl}"
+     data-rest-endpoint="{restEndpoint}"
+     data-platform-profile="{platformProfileUrl}"
+     data-inspector-url="{inspectorUri}">
 
-<div class="anx anx--backend anx-accent--ucp anx-module" data-ucp-console data-manifest-url="{manifestUrl}">
+    <h1><f:translate domain="agent_nexus.ucp" key="console.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.ucp" key="console.lede" /></p>
 
-    <header class="anx-page-head">
-        <div class="anx-page-head__titles">
-            <span class="anx-page-head__kicker">UCP <em>agent &#8596; merchant</em></span>
-            <h1 class="anx-title">UCP Console</h1>
-            <p class="anx-lede">
-                Act as a <strong>shopping agent</strong>: discover the merchant manifest, pick an intent
-                and watch the agent <strong>build a cart</strong> and stream the checkout — pausing at the
-                human <strong>authorization gate</strong> before anything is placed.
-            </p>
-        </div>
-        <div class="anx-page-head__meta">
-            <div class="anx-actions">
-                <f:if condition="{llm}">
-                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
-                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
-                </f:if>
-                <span class="anx-badge anx-badge--warn">No payment is taken</span>
-            </div>
-            <a class="anx-btn anx-btn--ghost anx-btn--sm" href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ucp" target="_blank" rel="noreferrer">Frontend demo</a>
-        </div>
-    </header>
+    <f:be.infobox title="{f:translate(domain: 'agent_nexus.ucp', key: 'console.note.title')}" state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}">
+        <p><f:translate domain="agent_nexus.ucp" key="console.note" /></p>
+        <p class="anx-ucp__links">
+            <a class="btn btn-default btn-sm" href="{profileScreenUri}"><core:icon identifier="actions-eye" size="small" /> <f:translate domain="agent_nexus.ucp" key="console.profile" /></a>
+            <f:if condition="{demoUrl}">
+                <a class="btn btn-default btn-sm" href="{demoUrl}" target="_blank" rel="noopener"><core:icon identifier="actions-window-open" size="small" /> <f:translate domain="agent_nexus.ucp" key="console.demo" /></a>
+            </f:if>
+        </p>
+    </f:be.infobox>
 
-    <!-- The 2026 agent-nexus family -->
-    <div class="anx-actions ucp-stack">
-        <span class="anx-console__title">Agent stack</span>
-        <f:for each="{stack}" as="s">
-            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key} <em>{s.label}</em></span>
-        </f:for>
-    </div>
-
-    <!-- Today's simulated activity -->
-    <div class="anx-stats anx-reveal">
+    <div class="anx-stats" role="group" aria-label="{f:translate(domain: 'agent_nexus.ucp', key: 'stats.label')}">
         <div class="anx-stat">
-            <span class="anx-stat__value" data-anx-count="{today.orders}">{today.orders}</span>
-            <span class="anx-stat__label">Checkouts today</span>
-            <span class="anx-stat__hint">simulated runs</span>
+            <span class="anx-stat__value">{counts.total}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ucp" key="stats.total" /></span>
         </div>
         <div class="anx-stat">
-            <span class="anx-stat__value" data-anx-count="{today.confirmed}">{today.confirmed}</span>
-            <span class="anx-stat__label">Confirmed</span>
-            <span class="anx-stat__hint">passed the human gate</span>
+            <span class="anx-stat__value">{counts.open}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ucp" key="stats.open" /></span>
         </div>
         <div class="anx-stat">
-            <span class="anx-stat__value" data-anx-count="{today.volume}" data-ucp-volume>{today.volume}</span>
-            <span class="anx-stat__label">Volume (cents)</span>
-            <span class="anx-stat__hint">confirmed orders only</span>
+            <span class="anx-stat__value">{counts.completed}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ucp" key="stats.completed" /></span>
         </div>
         <div class="anx-stat">
-            <span class="anx-stat__value" data-anx-count="{recent -> f:count()}">{recent -> f:count()}</span>
-            <span class="anx-stat__label">Recent runs</span>
-            <span class="anx-stat__hint">last 8 logged</span>
+            <span class="anx-stat__value">{counts.canceled}</span>
+            <span class="anx-stat__label"><f:translate domain="agent_nexus.ucp" key="stats.canceled" /></span>
         </div>
     </div>
 
-    <div class="ucp-vstack">
+    <div class="anx-ucp__setup">
+        <section class="card" aria-labelledby="anx-ucp-run">
+            <div class="card-header">
+                <h2 class="card-title h4" id="anx-ucp-run"><f:translate domain="agent_nexus.ucp" key="run.heading" /></h2>
+            </div>
+            <div class="card-body">
+                <form data-ucp-form novalidate>
+                    <fieldset class="form-group">
+                        <legend class="form-label"><f:translate domain="agent_nexus.ucp" key="run.intent" /></legend>
+                        <f:for each="{intents}" as="intent" iteration="loop">
+                            <div class="form-check">
+                                <f:if condition="{loop.isFirst}">
+                                    <f:then><input class="form-check-input" type="radio" name="anx-ucp-intent" id="anx-ucp-intent-{intent.id}" value="{intent.id}" data-label="{intent.label}" checked="checked" /></f:then>
+                                    <f:else><input class="form-check-input" type="radio" name="anx-ucp-intent" id="anx-ucp-intent-{intent.id}" value="{intent.id}" data-label="{intent.label}" /></f:else>
+                                </f:if>
+                                <label class="form-check-label" for="anx-ucp-intent-{intent.id}">
+                                    {intent.label}
+                                    <span class="text-variant">{intent.products} · {intent.total}</span>
+                                </label>
+                            </div>
+                        </f:for>
+                    </fieldset>
 
-        <!-- Merchant manifest -->
-        <div class="anx-card anx-card--flush anx-reveal">
-            <div class="anx-card__head">
-                <span class="anx-console__title"><core:icon identifier="actions-cart" size="small" /> Merchant manifest <em class="ucp-dim">discovery</em></span>
-                <a href="{manifestUrl}" target="_blank" rel="noreferrer" class="anx-code">{manifestUrl}</a>
-            </div>
-            <div class="anx-card__body">
-                <div class="ucp-merchant" data-ucp-merchant><span class="ucp-muted">Loading the merchant manifest&#8230;</span></div>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <label class="form-label" for="anx-ucp-email"><f:translate domain="agent_nexus.ucp" key="run.email" /></label>
+                        <input class="form-control" type="email" id="anx-ucp-email" autocomplete="email" aria-describedby="anx-ucp-email-hint" data-ucp-email />
+                        <p class="form-text" id="anx-ucp-email-hint"><f:translate domain="agent_nexus.ucp" key="run.email.hint" /></p>
+                    </div>
 
-        <!-- Intent controls -->
-        <div class="anx-card anx-reveal">
-            <div class="anx-actions">
-                <span class="anx-console__title">Intent</span>
-                <f:for each="{presets}" as="preset" iteration="it">
-                    <button type="button" class="anx-btn anx-btn--outline anx-btn--sm ucp-preset{f:if(condition: it.isFirst, then: ' active')}"
-                            data-ucp-intent="{preset.id}" title="{preset.hint}">{preset.label}</button>
-                </f:for>
-                <span class="anx-console__bar-spacer"></span>
-                <button type="button" class="anx-btn anx-btn--primary" data-ucp-run>
-                    <core:icon identifier="actions-play" size="small" /> Run checkout
-                </button>
-            </div>
-        </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="anx-ucp-decline" aria-describedby="anx-ucp-decline-hint" data-ucp-decline />
+                            <label class="form-check-label" for="anx-ucp-decline"><f:translate domain="agent_nexus.ucp" key="run.decline" /></label>
+                        </div>
+                        <p class="form-text" id="anx-ucp-decline-hint"><f:translate domain="agent_nexus.ucp" key="run.decline.hint" /></p>
+                    </div>
 
-        <!-- Live panes -->
-        <div class="anx-grid2 anx-reveal">
-            <div class="anx-console">
-                <div class="anx-console__bar">
-                    <span class="anx-console__title"><core:icon identifier="actions-list-alternative" size="small" /> Commerce events</span>
-                    <span class="anx-console__bar-spacer"></span>
-                    <span class="anx-badge" data-ucp-eventcount>0 events</span>
-                </div>
-                <div class="anx-console__body" data-ucp-timeline aria-live="polite">
-                    <div class="anx-console__empty">Pick an intent and press <strong>Run checkout</strong> to start the stream.</div>
-                </div>
-            </div>
-            <div class="anx-card anx-card--flush">
-                <div class="anx-card__head">
-                    <span class="anx-console__title"><core:icon identifier="actions-cart" size="small" /> Cart &amp; checkout</span>
-                    <span class="anx-badge" data-ucp-state>idle</span>
-                </div>
-                <div class="anx-card__body" aria-live="polite">
-                    <div class="ucp-reasoning d-none" data-ucp-reasoning></div>
-                    <div class="ucp-cart" data-ucp-cart><span class="ucp-muted">The agent's cart appears here.</span></div>
-                    <div class="ucp-auth d-none" data-ucp-auth></div>
-                    <div class="ucp-receipt d-none" data-ucp-receipt></div>
-                </div>
-            </div>
-        </div>
+                    <p class="text-variant">
+                        <f:if condition="{modelAllowed}">
+                            <f:then><f:translate domain="agent_nexus.ucp" key="run.model.on" /></f:then>
+                            <f:else><f:translate domain="agent_nexus.ucp" key="run.model.off" arguments="{0: modelReason}" /></f:else>
+                        </f:if>
+                    </p>
 
-        <!-- Order log -->
-        <f:if condition="{recent}">
-            <section class="anx-reveal">
-                <div class="ucp-cathead">
-                    <span class="anx-section-label">Order log &#183; today &#183; simulated</span>
-                    <a href="{f:uri.action(action: 'catalog')}" class="anx-btn anx-btn--ghost anx-btn--sm">
-                        <core:icon identifier="actions-list" size="small" /> Commerce Inspector
+                    <button type="submit" class="btn btn-primary" data-ucp-start>
+                        <core:icon identifier="actions-play" size="small" />
+                        <f:translate domain="agent_nexus.ucp" key="run.start" />
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section class="card anx-ucp__checkout" aria-labelledby="anx-ucp-checkout" data-ucp-checkout>
+            <div class="card-header anx-ucp__checkout-header">
+                <h2 class="card-title h4" id="anx-ucp-checkout"><f:translate domain="agent_nexus.ucp" key="checkout.heading" /></h2>
+                <span class="badge badge-default" data-ucp-state><f:translate domain="agent_nexus.ucp" key="checkout.none" /></span>
+            </div>
+            <div class="card-body">
+                <p class="text-variant" data-ucp-checkout-empty><f:translate domain="agent_nexus.ucp" key="checkout.empty" /></p>
+                <div data-ucp-checkout-body hidden>
+                    <dl class="anx-dl">
+                        <div><dt><f:translate domain="agent_nexus.ucp" key="checkout.id" /></dt><dd><code data-ucp-checkout-id></code></dd></div>
+                        <div><dt><f:translate domain="agent_nexus.ucp" key="checkout.expires" /></dt><dd data-ucp-expires></dd></div>
+                        <div data-ucp-order-row hidden><dt><f:translate domain="agent_nexus.ucp" key="checkout.order" /></dt><dd data-ucp-order></dd></div>
+                    </dl>
+                    <div class="table-fit">
+                        <table class="table table-striped table-hover">
+                            <caption class="visually-hidden"><f:translate domain="agent_nexus.ucp" key="checkout.caption" /></caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col"><f:translate domain="agent_nexus.ucp" key="checkout.item" /></th>
+                                    <th scope="col" class="text-end"><f:translate domain="agent_nexus.ucp" key="checkout.quantity" /></th>
+                                    <th scope="col" class="text-end"><f:translate domain="agent_nexus.ucp" key="checkout.price" /></th>
+                                    <th scope="col" class="text-end"><f:translate domain="agent_nexus.ucp" key="checkout.amount" /></th>
+                                </tr>
+                            </thead>
+                            <tbody data-ucp-lines></tbody>
+                            <tfoot data-ucp-totals></tfoot>
+                        </table>
+                    </div>
+                    <ul class="anx-ucp__messages" data-ucp-messages></ul>
+                    <a class="btn btn-link" href="{inspectorUri}" data-ucp-inspect hidden>
+                        <core:icon identifier="agentnexus-module-inspector" size="small" />
+                        <f:translate domain="agent_nexus.ucp" key="checkout.inspect" />
                     </a>
                 </div>
-                <div class="anx-table-wrap">
-                    <table class="anx-table">
+
+                <div class="callout callout-warning anx-ucp__approval" data-ucp-approval hidden>
+                    <h3 class="callout-title h5" id="anx-ucp-approval" tabindex="-1" data-ucp-approval-heading><f:translate domain="agent_nexus.ucp" key="approval.heading" /></h3>
+                    <div class="callout-body">
+                        <p data-ucp-approval-message></p>
+                        <form data-ucp-approval-form novalidate>
+                            <div class="form-group" data-ucp-approval-email hidden>
+                                <label class="form-label" for="anx-ucp-approval-email"><f:translate domain="agent_nexus.ucp" key="approval.email" /></label>
+                                <input class="form-control" type="email" id="anx-ucp-approval-email" autocomplete="email" aria-describedby="anx-ucp-approval-email-error" data-ucp-approval-email-input />
+                                <p class="form-text text-danger" id="anx-ucp-approval-email-error" data-ucp-approval-email-error hidden><f:translate domain="agent_nexus.ucp" key="approval.email.invalid" /></p>
+                            </div>
+                            <div class="anx-ucp__actions">
+                                <button type="submit" class="btn btn-primary" data-ucp-approve>
+                                    <core:icon identifier="actions-check" size="small" />
+                                    <f:translate domain="agent_nexus.ucp" key="approval.approve" />
+                                </button>
+                                <button type="button" class="btn btn-default" data-ucp-reject>
+                                    <core:icon identifier="actions-close" size="small" />
+                                    <f:translate domain="agent_nexus.ucp" key="approval.reject" />
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="anx-console anx-ucp__stream" aria-labelledby="anx-ucp-stream">
+        <div class="anx-console__bar">
+            <h2 class="anx-console__title" id="anx-ucp-stream"><f:translate domain="agent_nexus.ucp" key="stream.heading" /></h2>
+            <span class="anx-console__bar-spacer"></span>
+            <span class="badge badge-default" data-ucp-eventcount>0</span>
+            <button type="button" class="btn btn-default btn-sm" data-ucp-clear><f:translate domain="agent_nexus.ucp" key="stream.clear" /></button>
+        </div>
+        <p class="anx-ucp__status" role="status" aria-live="polite" data-ucp-status></p>
+        <f:if condition="{redacted}">
+            <p class="text-variant anx-ucp__redacted"><f:translate domain="agent_nexus.ucp" key="stream.redacted" /></p>
+        </f:if>
+        <p class="anx-console__empty" data-ucp-events-empty><f:translate domain="agent_nexus.ucp" key="stream.empty" /></p>
+        <ol class="anx-events anx-ucp__events" data-ucp-events aria-live="polite"></ol>
+    </section>
+
+    <section class="anx-section card" aria-labelledby="anx-ucp-manual">
+        <div class="card-header">
+            <h2 class="card-title h4" id="anx-ucp-manual"><f:translate domain="agent_nexus.ucp" key="manual.heading" /></h2>
+        </div>
+        <div class="card-body">
+            <p class="text-variant"><f:translate domain="agent_nexus.ucp" key="manual.lede" /></p>
+            <form class="anx-ucp__manual" data-ucp-manual novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="anx-ucp-manual-id"><f:translate domain="agent_nexus.ucp" key="manual.id" /></label>
+                    <input class="form-control" type="text" id="anx-ucp-manual-id" autocomplete="off" spellcheck="false" pattern="chk_[0-9a-f]{24}" aria-describedby="anx-ucp-manual-id-hint" data-ucp-manual-id />
+                    <p class="form-text" id="anx-ucp-manual-id-hint"><f:translate domain="agent_nexus.ucp" key="manual.id.hint" /></p>
+                </div>
+                <div class="anx-ucp__actions">
+                    <button type="submit" class="btn btn-default" data-ucp-manual-get>
+                        <core:icon identifier="actions-refresh" size="small" />
+                        <f:translate domain="agent_nexus.ucp" key="manual.get" />
+                    </button>
+                    <button type="button" class="btn btn-danger" data-ucp-manual-cancel>
+                        <core:icon identifier="actions-close" size="small" />
+                        <f:translate domain="agent_nexus.ucp" key="manual.cancel" />
+                    </button>
+                </div>
+            </form>
+            <div class="anx-ucp__manual-result" aria-live="polite" data-ucp-manual-result hidden>
+                <p><span class="badge badge-default" data-ucp-manual-status></span> <code data-ucp-manual-request></code></p>
+                <pre class="anx-code" tabindex="0"><code data-ucp-manual-body></code></pre>
+            </div>
+        </div>
+    </section>
+
+    <section class="anx-section" aria-labelledby="anx-ucp-recent">
+        <h2 id="anx-ucp-recent"><f:translate domain="agent_nexus.ucp" key="recent.heading" /></h2>
+        <f:if condition="{recent}">
+            <f:then>
+                <p class="text-variant"><f:translate domain="agent_nexus.ucp" key="recent.lede" /></p>
+                <div class="table-fit">
+                    <table class="table table-striped table-hover">
+                        <caption class="visually-hidden"><f:translate domain="agent_nexus.ucp" key="recent.caption" /></caption>
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Source</th>
-                                <th>Intent</th>
-                                <th>Final state</th>
-                                <th>Items</th>
-                                <th>Total</th>
+                                <th scope="col"><f:translate domain="agent_nexus.ucp" key="recent.session" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.ucp" key="recent.total" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.ucp" key="recent.state" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.ucp" key="recent.source" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.ucp" key="recent.updated" /></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <f:for each="{recent}" as="r">
+                            <f:for each="{recent}" as="row">
                                 <tr>
-                                    <td><f:format.date format="d.m. H:i">@{r.crdate}</f:format.date></td>
-                                    <td>{r.source}</td>
-                                    <td><code>{r.intent}</code></td>
-                                    <td><span class="anx-badge{f:if(condition: '{r.final_state} == \'confirmed\'', then: ' anx-badge--ok')}{f:if(condition: '{r.final_state} == \'declined\'', then: ' anx-badge--danger')}">{r.final_state}</span></td>
-                                    <td>{r.item_count}</td>
-                                    <td><code>&#8364;<f:format.number decimals="2">{r.total_cents / 100}</f:format.number></code></td>
+                                    <td>
+                                        <a href="{row.detailUri}" title="{f:translate(domain: 'agent_nexus.ucp', key: 'recent.open', arguments: '{0: row.objectId}')}">
+                                            <code>{row.objectId}</code>
+                                        </a>
+                                    </td>
+                                    <td>{row.label}</td>
+                                    <td><span class="badge badge-{row.stateBadge}"><f:translate domain="agent_nexus.ucp" key="state.{row.state}" default="{row.state}" /></span></td>
+                                    <td><f:if condition="{row.source}"><f:translate domain="agent_nexus.inspector" key="source.{row.source}" default="{row.source}" /></f:if></td>
+                                    <td><time datetime="{f:format.date(date: '@{row.updated}', format: 'c')}"><f:format.date format="Y-m-d H:i:s">@{row.updated}</f:format.date></time></td>
                                 </tr>
                             </f:for>
                         </tbody>
                     </table>
                 </div>
-            </section>
+                <p><a class="btn btn-default" href="{inspectorUri}"><core:icon identifier="agentnexus-module-inspector" size="small" /> <f:translate domain="agent_nexus.ucp" key="recent.all" /></a></p>
+            </f:then>
+            <f:else>
+                <div class="anx-empty">
+                    <core:icon identifier="agentnexus-module-ucp" size="large" />
+                    <p class="anx-empty__title"><f:translate domain="agent_nexus.ucp" key="recent.empty.title" /></p>
+                    <p><f:translate domain="agent_nexus.ucp" key="recent.empty.text" /></p>
+                    <a class="btn btn-primary" href="#anx-ucp-run"><f:translate domain="agent_nexus.ucp" key="recent.empty.action" /></a>
+                </div>
+            </f:else>
         </f:if>
-
-        <!-- About -->
-        <div class="anx-card anx-card--accent anx-reveal">
-            <h2 class="anx-h2">What is UCP?</h2>
-            <p class="ucp-copy">
-                <strong>UCP (Universal Commerce Protocol)</strong> is the emerging layer for <em>agentic commerce</em>:
-                a merchant publishes a machine-readable <strong>manifest</strong> and <strong>catalog</strong>, and a shopping
-                agent discovers it, builds a cart and runs a <strong>checkout</strong> on the shopper's behalf.
-            </p>
-            <p class="ucp-muted">
-                The safeguard is the <strong>authorization gate</strong>: the agent assembles the order but a human (or a
-                signed mandate — see <strong>AP2</strong>) must authorize it before any purchase. In this demo every order is
-                <strong>simulated</strong> — no payment is ever taken.
-            </p>
-        </div>
-
-    </div>
+    </section>
 </div>
-
 </f:section>
 
 </html>

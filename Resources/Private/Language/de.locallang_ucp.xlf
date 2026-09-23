@@ -1,8 +1,947 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>UCP Console</source><target>UCP Console</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>UCP Console</source><target>UCP Console</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>Inspect a merchant manifest and a simulated agent-driven checkout state machine.</source><target>Merchant-Manifest und simulierte agentengesteuerte Checkout-State-Machine prüfen.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="ucp">
+    <unit id="console.heading">
+      <segment state="final">
+        <source>Checkout console</source>
+        <target>Checkout-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="console.lede">
+      <segment state="final">
+        <source>Run the shopping agent the way the checkout widget runs it. It reads the store's UCP profile, opens a checkout session priced by the store and stops until you approve the order.</source>
+        <target>Starten Sie den Einkaufsagenten so, wie ihn das Checkout-Widget startet. Er liest das UCP-Profil des Shops, eröffnet eine Checkout-Session mit den Preisen des Shops und wartet, bis Sie die Bestellung freigeben.</target>
+      </segment>
+    </unit>
+    <unit id="console.note.title">
+      <segment state="final">
+        <source>Sandbox store</source>
+        <target>Sandbox-Shop</target>
+      </segment>
+    </unit>
+    <unit id="console.note">
+      <segment state="final">
+        <source>No payment is taken and nothing is delivered. The sandbox payment handler accepts the token sandbox-success and declines sandbox-decline.</source>
+        <target>Es wird nichts bezahlt und nichts geliefert. Der Sandbox-Zahlungsanbieter akzeptiert das Token sandbox-success und lehnt sandbox-decline ab.</target>
+      </segment>
+    </unit>
+    <unit id="console.profile">
+      <segment state="final">
+        <source>See the business profile</source>
+        <target>Business-Profil ansehen</target>
+      </segment>
+    </unit>
+    <unit id="console.demo">
+      <segment state="final">
+        <source>Open the demo</source>
+        <target>Demo öffnen</target>
+      </segment>
+    </unit>
+    <unit id="stats.label">
+      <segment state="final">
+        <source>Checkout sessions in this installation</source>
+        <target>Checkout-Sessions dieser Installation</target>
+      </segment>
+    </unit>
+    <unit id="stats.total">
+      <segment state="final">
+        <source>Sessions</source>
+        <target>Sessions</target>
+      </segment>
+    </unit>
+    <unit id="stats.open">
+      <segment state="final">
+        <source>Open</source>
+        <target>Offen</target>
+      </segment>
+    </unit>
+    <unit id="stats.completed">
+      <segment state="final">
+        <source>Completed</source>
+        <target>Abgeschlossen</target>
+      </segment>
+    </unit>
+    <unit id="stats.canceled">
+      <segment state="final">
+        <source>Canceled</source>
+        <target>Abgebrochen</target>
+      </segment>
+    </unit>
+    <unit id="run.heading">
+      <segment state="final">
+        <source>Run the shopping agent</source>
+        <target>Einkaufsagenten starten</target>
+      </segment>
+    </unit>
+    <unit id="run.intent">
+      <segment state="final">
+        <source>What should the agent buy?</source>
+        <target>Was soll der Agent kaufen?</target>
+      </segment>
+    </unit>
+    <unit id="run.email">
+      <segment state="final">
+        <source>Email address for the licence</source>
+        <target>E-Mail-Adresse für die Lizenz</target>
+      </segment>
+    </unit>
+    <unit id="run.email.hint">
+      <segment state="final">
+        <source>Optional. Without it, the agent asks for one when you approve the order.</source>
+        <target>Optional. Ohne Adresse fragt der Agent bei der Freigabe danach.</target>
+      </segment>
+    </unit>
+    <unit id="run.decline">
+      <segment state="final">
+        <source>Simulate a declined payment</source>
+        <target>Abgelehnte Zahlung simulieren</target>
+      </segment>
+    </unit>
+    <unit id="run.decline.hint">
+      <segment state="final">
+        <source>The agent then submits the sandbox token that fails.</source>
+        <target>Der Agent sendet dann das Sandbox-Token, das abgelehnt wird.</target>
+      </segment>
+    </unit>
+    <unit id="run.model.on">
+      <segment state="final">
+        <source>Live model: a language model writes the agent's explanation. Prices always come from the store.</source>
+        <target>Live-Modell: Ein Sprachmodell schreibt die Begründung des Agenten. Preise kommen immer vom Shop.</target>
+      </segment>
+    </unit>
+    <unit id="run.model.off">
+      <segment state="final">
+        <source>Scripted demo: the agent's explanation is a fixed text (%s).</source>
+        <target>Skript-Demo: Die Begründung des Agenten ist ein fester Text (%s).</target>
+      </segment>
+    </unit>
+    <unit id="run.start">
+      <segment state="final">
+        <source>Start the agent</source>
+        <target>Agent starten</target>
+      </segment>
+    </unit>
+    <unit id="checkout.heading">
+      <segment state="final">
+        <source>Checkout session</source>
+        <target>Checkout-Session</target>
+      </segment>
+    </unit>
+    <unit id="checkout.none">
+      <segment state="final">
+        <source>No session</source>
+        <target>Keine Session</target>
+      </segment>
+    </unit>
+    <unit id="checkout.empty">
+      <segment state="final">
+        <source>The session the agent opens appears here, as the store returns it.</source>
+        <target>Hier erscheint die Session, die der Agent eröffnet, so wie der Shop sie zurückgibt.</target>
+      </segment>
+    </unit>
+    <unit id="checkout.id">
+      <segment state="final">
+        <source>Session</source>
+        <target>Session</target>
+      </segment>
+    </unit>
+    <unit id="checkout.expires">
+      <segment state="final">
+        <source>Expires</source>
+        <target>Läuft ab</target>
+      </segment>
+    </unit>
+    <unit id="checkout.order">
+      <segment state="final">
+        <source>Order</source>
+        <target>Bestellung</target>
+      </segment>
+    </unit>
+    <unit id="checkout.caption">
+      <segment state="final">
+        <source>Line items and totals of the checkout session</source>
+        <target>Positionen und Summen der Checkout-Session</target>
+      </segment>
+    </unit>
+    <unit id="checkout.item">
+      <segment state="final">
+        <source>Item</source>
+        <target>Artikel</target>
+      </segment>
+    </unit>
+    <unit id="checkout.quantity">
+      <segment state="final">
+        <source>Quantity</source>
+        <target>Menge</target>
+      </segment>
+    </unit>
+    <unit id="checkout.price">
+      <segment state="final">
+        <source>Price</source>
+        <target>Preis</target>
+      </segment>
+    </unit>
+    <unit id="checkout.amount">
+      <segment state="final">
+        <source>Amount</source>
+        <target>Betrag</target>
+      </segment>
+    </unit>
+    <unit id="checkout.inspect">
+      <segment state="final">
+        <source>Open in the inspector</source>
+        <target>Im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="approval.heading">
+      <segment state="final">
+        <source>Approve this order</source>
+        <target>Diese Bestellung freigeben</target>
+      </segment>
+    </unit>
+    <unit id="approval.email">
+      <segment state="final">
+        <source>Email address for the licence</source>
+        <target>E-Mail-Adresse für die Lizenz</target>
+      </segment>
+    </unit>
+    <unit id="approval.email.invalid">
+      <segment state="final">
+        <source>Enter a valid email address.</source>
+        <target>Geben Sie eine gültige E-Mail-Adresse ein.</target>
+      </segment>
+    </unit>
+    <unit id="approval.approve">
+      <segment state="final">
+        <source>Approve</source>
+        <target>Freigeben</target>
+      </segment>
+    </unit>
+    <unit id="approval.reject">
+      <segment state="final">
+        <source>Not now</source>
+        <target>Jetzt nicht</target>
+      </segment>
+    </unit>
+    <unit id="stream.heading">
+      <segment state="final">
+        <source>Agent stream</source>
+        <target>Agenten-Stream</target>
+      </segment>
+    </unit>
+    <unit id="stream.clear">
+      <segment state="final">
+        <source>Clear</source>
+        <target>Leeren</target>
+      </segment>
+    </unit>
+    <unit id="stream.redacted">
+      <segment state="final">
+        <source>Personal data in the requests and responses is masked, as in the traffic log.</source>
+        <target>Personenbezogene Daten in Anfragen und Antworten sind maskiert, wie im Traffic-Log.</target>
+      </segment>
+    </unit>
+    <unit id="stream.empty">
+      <segment state="final">
+        <source>Start the agent to see its AG-UI events and every UCP request it sends.</source>
+        <target>Starten Sie den Agenten, um seine AG-UI-Events und jede UCP-Anfrage zu sehen, die er sendet.</target>
+      </segment>
+    </unit>
+    <unit id="manual.heading">
+      <segment state="final">
+        <source>Call the REST API yourself</source>
+        <target>REST-API selbst aufrufen</target>
+      </segment>
+    </unit>
+    <unit id="manual.lede">
+      <segment state="final">
+        <source>Read or cancel a session with the headers every platform sends: UCP-Agent, Request-Id and, to cancel, an Idempotency-Key.</source>
+        <target>Lesen oder stornieren Sie eine Session mit den Headern, die jede Plattform sendet: UCP-Agent, Request-Id und zum Stornieren ein Idempotency-Key.</target>
+      </segment>
+    </unit>
+    <unit id="manual.id">
+      <segment state="final">
+        <source>Checkout session id</source>
+        <target>ID der Checkout-Session</target>
+      </segment>
+    </unit>
+    <unit id="manual.id.hint">
+      <segment state="final">
+        <source>For example chk_ followed by 24 hexadecimal characters.</source>
+        <target>Zum Beispiel chk_ gefolgt von 24 Hexadezimalzeichen.</target>
+      </segment>
+    </unit>
+    <unit id="manual.get">
+      <segment state="final">
+        <source>Get the session</source>
+        <target>Session abrufen</target>
+      </segment>
+    </unit>
+    <unit id="manual.cancel">
+      <segment state="final">
+        <source>Cancel the session</source>
+        <target>Session stornieren</target>
+      </segment>
+    </unit>
+    <unit id="recent.heading">
+      <segment state="final">
+        <source>Recent checkout sessions</source>
+        <target>Letzte Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="recent.lede">
+      <segment state="final">
+        <source>The newest sessions this installation stored, from any caller. Open one to see its history and traffic.</source>
+        <target>Die neuesten Sessions dieser Installation, von jedem Aufrufer. Öffnen Sie eine, um Verlauf und Traffic zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="recent.caption">
+      <segment state="final">
+        <source>Recent checkout sessions</source>
+        <target>Letzte Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="recent.session">
+      <segment state="final">
+        <source>Session</source>
+        <target>Session</target>
+      </segment>
+    </unit>
+    <unit id="recent.total">
+      <segment state="final">
+        <source>Total</source>
+        <target>Summe</target>
+      </segment>
+    </unit>
+    <unit id="recent.state">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="recent.source">
+      <segment state="final">
+        <source>Caller</source>
+        <target>Aufrufer</target>
+      </segment>
+    </unit>
+    <unit id="recent.updated">
+      <segment state="final">
+        <source>Updated</source>
+        <target>Aktualisiert</target>
+      </segment>
+    </unit>
+    <unit id="recent.open">
+      <segment state="final">
+        <source>Open %s in the inspector</source>
+        <target>%s im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="recent.all">
+      <segment state="final">
+        <source>All checkout sessions</source>
+        <target>Alle Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.title">
+      <segment state="final">
+        <source>No checkout sessions yet</source>
+        <target>Noch keine Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.text">
+      <segment state="final">
+        <source>Start the shopping agent to open the first one.</source>
+        <target>Starten Sie den Einkaufsagenten, um die erste zu eröffnen.</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.action">
+      <segment state="final">
+        <source>Start the agent</source>
+        <target>Agent starten</target>
+      </segment>
+    </unit>
+    <unit id="state.incomplete">
+      <segment state="final">
+        <source>Incomplete</source>
+        <target>Unvollständig</target>
+      </segment>
+    </unit>
+    <unit id="state.requires_escalation">
+      <segment state="final">
+        <source>Needs the buyer</source>
+        <target>Braucht den Käufer</target>
+      </segment>
+    </unit>
+    <unit id="state.ready_for_complete">
+      <segment state="final">
+        <source>Ready to complete</source>
+        <target>Bereit zum Abschluss</target>
+      </segment>
+    </unit>
+    <unit id="state.complete_in_progress">
+      <segment state="final">
+        <source>Completing</source>
+        <target>Wird abgeschlossen</target>
+      </segment>
+    </unit>
+    <unit id="state.completed">
+      <segment state="final">
+        <source>Completed</source>
+        <target>Abgeschlossen</target>
+      </segment>
+    </unit>
+    <unit id="state.canceled">
+      <segment state="final">
+        <source>Canceled</source>
+        <target>Abgebrochen</target>
+      </segment>
+    </unit>
+    <unit id="profile.heading">
+      <segment state="final">
+        <source>Business profile</source>
+        <target>Business-Profil</target>
+      </segment>
+    </unit>
+    <unit id="profile.lede">
+      <segment state="final">
+        <source>What a shopping agent reads first: the UCP version, the services it can call, the capabilities and the payment handlers. It is built from code, so it always describes what the API does.</source>
+        <target>Was ein Einkaufsagent zuerst liest: die UCP-Version, die Services, die er aufrufen kann, die Capabilities und die Zahlungsanbieter. Es wird aus dem Code erzeugt und beschreibt daher immer, was die API tut.</target>
+      </segment>
+    </unit>
+    <unit id="profile.open">
+      <segment state="final">
+        <source>Open the profile</source>
+        <target>Profil öffnen</target>
+      </segment>
+    </unit>
+    <unit id="profile.openPlatform">
+      <segment state="final">
+        <source>Open the agent's platform profile</source>
+        <target>Plattform-Profil des Agenten öffnen</target>
+      </segment>
+    </unit>
+    <unit id="profile.console">
+      <segment state="final">
+        <source>Run the agent</source>
+        <target>Agent starten</target>
+      </segment>
+    </unit>
+    <unit id="profile.noWellKnown">
+      <segment state="final">
+        <source>Well-known documents are switched off in the extension configuration, so the profile is served at the API path only. Shopping agents look for it at /.well-known/ucp.</source>
+        <target>Well-known-Dokumente sind in der Extension-Konfiguration ausgeschaltet, daher liegt das Profil nur unter dem API-Pfad. Einkaufsagenten suchen es unter /.well-known/ucp.</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.heading">
+      <segment state="final">
+        <source>Rules of UCP %s</source>
+        <target>Regeln von UCP %s</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.valid">
+      <segment state="final">
+        <source>Valid</source>
+        <target>Gültig</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.invalid">
+      <segment state="final">
+        <source>Problems found</source>
+        <target>Probleme gefunden</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.lede">
+      <segment state="final">
+        <source>The published profile, checked against the rules a business profile must follow. The test suite also validates it against the official JSON Schema.</source>
+        <target>Das veröffentlichte Profil, geprüft gegen die Regeln für Business-Profile. Die Testsuite validiert es zusätzlich gegen das offizielle JSON-Schema.</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.pass">
+      <segment state="final">
+        <source>Passed:</source>
+        <target>Erfüllt:</target>
+      </segment>
+    </unit>
+    <unit id="profile.checks.fail">
+      <segment state="final">
+        <source>Failed:</source>
+        <target>Nicht erfüllt:</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.version">
+      <segment state="final">
+        <source>The version is a date and the one this business implements</source>
+        <target>Die Version ist ein Datum und die, die dieses Business implementiert</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.entryVersions">
+      <segment state="final">
+        <source>Every dev.ucp entry carries the profile version</source>
+        <target>Jeder dev.ucp-Eintrag trägt die Profilversion</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.https">
+      <segment state="final">
+        <source>Every service endpoint uses https</source>
+        <target>Jeder Service-Endpunkt verwendet https</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.capabilitySchemas">
+      <segment state="final">
+        <source>Every capability names its schema on ucp.dev</source>
+        <target>Jede Capability nennt ihr Schema auf ucp.dev</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.handlers">
+      <segment state="final">
+        <source>Payment handlers have an id, a version and a reverse-domain name outside dev.ucp</source>
+        <target>Zahlungsanbieter haben eine ID, eine Version und einen Reverse-Domain-Namen außerhalb von dev.ucp</target>
+      </segment>
+    </unit>
+    <unit id="profile.check.caching">
+      <segment state="final">
+        <source>Served with public caching of at least 60 seconds</source>
+        <target>Mit öffentlichem Caching von mindestens 60 Sekunden ausgeliefert</target>
+      </segment>
+    </unit>
+    <unit id="profile.services.heading">
+      <segment state="final">
+        <source>Services</source>
+        <target>Services</target>
+      </segment>
+    </unit>
+    <unit id="profile.name">
+      <segment state="final">
+        <source>Name</source>
+        <target>Name</target>
+      </segment>
+    </unit>
+    <unit id="profile.transport">
+      <segment state="final">
+        <source>Transport</source>
+        <target>Transport</target>
+      </segment>
+    </unit>
+    <unit id="profile.version">
+      <segment state="final">
+        <source>Version</source>
+        <target>Version</target>
+      </segment>
+    </unit>
+    <unit id="profile.endpoint">
+      <segment state="final">
+        <source>Endpoint</source>
+        <target>Endpunkt</target>
+      </segment>
+    </unit>
+    <unit id="profile.capabilities.heading">
+      <segment state="final">
+        <source>Capabilities</source>
+        <target>Capabilities</target>
+      </segment>
+    </unit>
+    <unit id="profile.capabilities.lede">
+      <segment state="final">
+        <source>This sandbox does not fetch the platform profile a caller names, so every capability is active in every session.</source>
+        <target>Diese Sandbox lädt das Plattform-Profil eines Aufrufers nicht, daher ist jede Capability in jeder Session aktiv.</target>
+      </segment>
+    </unit>
+    <unit id="profile.schema">
+      <segment state="final">
+        <source>Schema</source>
+        <target>Schema</target>
+      </segment>
+    </unit>
+    <unit id="profile.handlers.heading">
+      <segment state="final">
+        <source>Payment handlers</source>
+        <target>Zahlungsanbieter</target>
+      </segment>
+    </unit>
+    <unit id="profile.handlers.lede">
+      <segment state="final">
+        <source>UCP defines no payment handler of its own. This store has one under its own name, and it never moves money.</source>
+        <target>UCP definiert keinen eigenen Zahlungsanbieter. Dieser Shop hat einen unter eigenem Namen, und er bewegt nie Geld.</target>
+      </segment>
+    </unit>
+    <unit id="profile.handlerId">
+      <segment state="final">
+        <source>Id</source>
+        <target>ID</target>
+      </segment>
+    </unit>
+    <unit id="profile.instruments">
+      <segment state="final">
+        <source>Instruments</source>
+        <target>Zahlungsmittel</target>
+      </segment>
+    </unit>
+    <unit id="profile.config">
+      <segment state="final">
+        <source>Configuration</source>
+        <target>Konfiguration</target>
+      </segment>
+    </unit>
+    <unit id="profile.tokens.heading">
+      <segment state="final">
+        <source>Sandbox tokens</source>
+        <target>Sandbox-Tokens</target>
+      </segment>
+    </unit>
+    <unit id="profile.token">
+      <segment state="final">
+        <source>Token</source>
+        <target>Token</target>
+      </segment>
+    </unit>
+    <unit id="profile.outcome">
+      <segment state="final">
+        <source>What happens</source>
+        <target>Was passiert</target>
+      </segment>
+    </unit>
+    <unit id="profile.token.success">
+      <segment state="final">
+        <source>The payment is accepted and the checkout completes with an order.</source>
+        <target>Die Zahlung wird akzeptiert und der Checkout endet mit einer Bestellung.</target>
+      </segment>
+    </unit>
+    <unit id="profile.token.decline">
+      <segment state="final">
+        <source>The payment fails with payment_failed and the session stays as it was.</source>
+        <target>Die Zahlung schlägt mit payment_failed fehl und die Session bleibt unverändert.</target>
+      </segment>
+    </unit>
+    <unit id="profile.catalogue.heading">
+      <segment state="final">
+        <source>Product catalogue</source>
+        <target>Produktkatalog</target>
+      </segment>
+    </unit>
+    <unit id="profile.catalogue.lede">
+      <segment state="final">
+        <source>Every price in a checkout comes from here, in minor units. A language model never writes one.</source>
+        <target>Jeder Preis in einem Checkout kommt von hier, in der kleinsten Währungseinheit. Ein Sprachmodell schreibt nie einen Preis.</target>
+      </segment>
+    </unit>
+    <unit id="profile.product">
+      <segment state="final">
+        <source>Product</source>
+        <target>Produkt</target>
+      </segment>
+    </unit>
+    <unit id="profile.itemId">
+      <segment state="final">
+        <source>Item id</source>
+        <target>Artikel-ID</target>
+      </segment>
+    </unit>
+    <unit id="profile.price">
+      <segment state="final">
+        <source>Price</source>
+        <target>Preis</target>
+      </segment>
+    </unit>
+    <unit id="profile.billing">
+      <segment state="final">
+        <source>Billing</source>
+        <target>Abrechnung</target>
+      </segment>
+    </unit>
+    <unit id="profile.description">
+      <segment state="final">
+        <source>Description</source>
+        <target>Beschreibung</target>
+      </segment>
+    </unit>
+    <unit id="profile.billing.monthly">
+      <segment state="final">
+        <source>Per month</source>
+        <target>Pro Monat</target>
+      </segment>
+    </unit>
+    <unit id="profile.billing.once">
+      <segment state="final">
+        <source>Once</source>
+        <target>Einmalig</target>
+      </segment>
+    </unit>
+    <unit id="profile.intents.heading">
+      <segment state="final">
+        <source>What the agent buys</source>
+        <target>Was der Agent kauft</target>
+      </segment>
+    </unit>
+    <unit id="profile.intent">
+      <segment state="final">
+        <source>Wish</source>
+        <target>Wunsch</target>
+      </segment>
+    </unit>
+    <unit id="profile.products">
+      <segment state="final">
+        <source>Products</source>
+        <target>Produkte</target>
+      </segment>
+    </unit>
+    <unit id="profile.total">
+      <segment state="final">
+        <source>Total</source>
+        <target>Summe</target>
+      </segment>
+    </unit>
+    <unit id="profile.endpoints.heading">
+      <segment state="final">
+        <source>Endpoints</source>
+        <target>Endpunkte</target>
+      </segment>
+    </unit>
+    <unit id="profile.method">
+      <segment state="final">
+        <source>Method</source>
+        <target>Methode</target>
+      </segment>
+    </unit>
+    <unit id="profile.path">
+      <segment state="final">
+        <source>Path</source>
+        <target>Pfad</target>
+      </segment>
+    </unit>
+    <unit id="profile.operation">
+      <segment state="final">
+        <source>Operation</source>
+        <target>Operation</target>
+      </segment>
+    </unit>
+    <unit id="profile.purpose">
+      <segment state="final">
+        <source>Purpose</source>
+        <target>Zweck</target>
+      </segment>
+    </unit>
+    <unit id="profile.json.heading">
+      <segment state="final">
+        <source>Profile document</source>
+        <target>Profil-Dokument</target>
+      </segment>
+    </unit>
+    <unit id="profile.json.lede">
+      <segment state="final">
+        <source>Exactly what this host publishes.</source>
+        <target>Genau das, was dieser Host veröffentlicht.</target>
+      </segment>
+    </unit>
+    <unit id="profile.json.show">
+      <segment state="final">
+        <source>Show the JSON</source>
+        <target>JSON anzeigen</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.run">
+      <segment state="final">
+        <source>Run</source>
+        <target>Lauf</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.step">
+      <segment state="final">
+        <source>Step</source>
+        <target>Schritt</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.agent">
+      <segment state="final">
+        <source>Agent</source>
+        <target>Agent</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.reasoning">
+      <segment state="final">
+        <source>Why</source>
+        <target>Warum</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.provenance">
+      <segment state="final">
+        <source>Written by</source>
+        <target>Geschrieben von</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.error">
+      <segment state="final">
+        <source>Error</source>
+        <target>Fehler</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.call">
+      <segment state="final">
+        <source>UCP</source>
+        <target>UCP</target>
+      </segment>
+    </unit>
+    <unit id="js.kind.you">
+      <segment state="final">
+        <source>You</source>
+        <target>Sie</target>
+      </segment>
+    </unit>
+    <unit id="js.row.runStarted">
+      <segment state="final">
+        <source>Run started (AG-UI %s)</source>
+        <target>Lauf gestartet (AG-UI %s)</target>
+      </segment>
+    </unit>
+    <unit id="js.row.step">
+      <segment state="final">
+        <source>Step: %s</source>
+        <target>Schritt: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.row.request">
+      <segment state="final">
+        <source>Request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="js.row.response">
+      <segment state="final">
+        <source>Response</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="js.row.proposed">
+      <segment state="final">
+        <source>Waiting for your approval</source>
+        <target>Wartet auf Ihre Freigabe</target>
+      </segment>
+    </unit>
+    <unit id="js.row.notSent">
+      <segment state="final">
+        <source>Not sent</source>
+        <target>Nicht gesendet</target>
+      </segment>
+    </unit>
+    <unit id="js.row.finished.interrupt">
+      <segment state="final">
+        <source>Run finished: the agent waits for your approval</source>
+        <target>Lauf beendet: Der Agent wartet auf Ihre Freigabe</target>
+      </segment>
+    </unit>
+    <unit id="js.row.finished.success">
+      <segment state="final">
+        <source>Run finished</source>
+        <target>Lauf beendet</target>
+      </segment>
+    </unit>
+    <unit id="js.row.error">
+      <segment state="final">
+        <source>The run stopped: %s</source>
+        <target>Der Lauf wurde beendet: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.raw.heading">
+      <segment state="final">
+        <source>Every AG-UI event (%s)</source>
+        <target>Alle AG-UI-Events (%s)</target>
+      </segment>
+    </unit>
+    <unit id="js.state.none">
+      <segment state="final">
+        <source>No session</source>
+        <target>Keine Session</target>
+      </segment>
+    </unit>
+    <unit id="js.status.running">
+      <segment state="final">
+        <source>The agent is working.</source>
+        <target>Der Agent arbeitet.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.interrupted">
+      <segment state="final">
+        <source>The agent waits for your approval.</source>
+        <target>Der Agent wartet auf Ihre Freigabe.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.finished">
+      <segment state="final">
+        <source>The run finished.</source>
+        <target>Der Lauf ist beendet.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.failed">
+      <segment state="final">
+        <source>The run stopped: %s</source>
+        <target>Der Lauf wurde beendet: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.status.unreachable">
+      <segment state="final">
+        <source>The agent could not be reached.</source>
+        <target>Der Agent ist nicht erreichbar.</target>
+      </segment>
+    </unit>
+    <unit id="js.approval.approved">
+      <segment state="final">
+        <source>You approved the order.</source>
+        <target>Sie haben die Bestellung freigegeben.</target>
+      </segment>
+    </unit>
+    <unit id="js.approval.rejected">
+      <segment state="final">
+        <source>You did not approve the order.</source>
+        <target>Sie haben die Bestellung nicht freigegeben.</target>
+      </segment>
+    </unit>
+    <unit id="js.notify.completed.title">
+      <segment state="final">
+        <source>Order confirmed</source>
+        <target>Bestellung bestätigt</target>
+      </segment>
+    </unit>
+    <unit id="js.notify.completed">
+      <segment state="final">
+        <source>Sandbox order %s is placed. No payment was taken.</source>
+        <target>Sandbox-Bestellung %s ist aufgegeben. Es wurde nichts bezahlt.</target>
+      </segment>
+    </unit>
+    <unit id="js.notify.canceled.title">
+      <segment state="final">
+        <source>Checkout canceled</source>
+        <target>Checkout abgebrochen</target>
+      </segment>
+    </unit>
+    <unit id="js.notify.canceled">
+      <segment state="final">
+        <source>Nothing was ordered.</source>
+        <target>Es wurde nichts bestellt.</target>
+      </segment>
+    </unit>
+    <unit id="js.notify.error.title">
+      <segment state="final">
+        <source>The agent stopped</source>
+        <target>Der Agent wurde beendet</target>
+      </segment>
+    </unit>
+    <unit id="js.manual.invalid.title">
+      <segment state="final">
+        <source>No session id</source>
+        <target>Keine Session-ID</target>
+      </segment>
+    </unit>
+    <unit id="js.manual.invalid">
+      <segment state="final">
+        <source>Enter a checkout session id: chk_ followed by 24 hexadecimal characters.</source>
+        <target>Geben Sie eine Checkout-Session-ID ein: chk_ gefolgt von 24 Hexadezimalzeichen.</target>
+      </segment>
+    </unit>
+    <unit id="js.manual.failed">
+      <segment state="final">
+        <source>The request failed</source>
+        <target>Die Anfrage ist fehlgeschlagen</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>

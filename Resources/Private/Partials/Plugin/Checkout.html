@@ -4,10 +4,11 @@
 <section class="anx anx--frontend anx-accent--ucp ucp-cc"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ucp')}"
          data-ucp-checkout
-         data-run-url="/index.php?eID=ucp_checkout"
+         data-agent-url="{agentUrl}"
          data-page="{pageId}"
          data-ce="{data.uid}"
-         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
+         data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}"
+         aria-labelledby="ucp-cc-title-{data.uid}">
 
     <div class="ucp-cc__panel">
         <div class="ucp-cc__head">
@@ -15,15 +16,18 @@
                 <svg class="ucp-cc__spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4L14 6.6 9.6 8 8 12 6.4 8 2 6.6 6.4 5z"/></svg>
                 Shopping agent · UCP
             </span>
-            <f:if condition="{data.header}"><h2 class="ucp-cc__title">{data.header}</h2></f:if>
+            <f:if condition="{data.header}">
+                <f:then><h2 class="ucp-cc__title" id="ucp-cc-title-{data.uid}">{data.header}</h2></f:then>
+                <f:else><h2 class="ucp-cc__title ucp-cc__sr-only" id="ucp-cc-title-{data.uid}">Shopping agent</h2></f:else>
+            </f:if>
             <f:if condition="{settings.intro}"><p class="ucp-cc__intro">{settings.intro}</p></f:if>
             <p class="ucp-cc__sim">Demo store: every order is <strong>simulated</strong> and no payment is taken.</p>
         </div>
 
         <div class="ucp-cc__intents" data-ucp-intents role="group" aria-label="What the agent should buy">
-            <button type="button" class="ucp-cc__intent is-active" data-intent="pro">Pro licence</button>
-            <button type="button" class="ucp-cc__intent" data-intent="agency">Agency and onboarding</button>
-            <button type="button" class="ucp-cc__intent" data-intent="support">Priority support</button>
+            <button type="button" class="ucp-cc__intent is-active" data-intent="pro" aria-pressed="true">Pro licence</button>
+            <button type="button" class="ucp-cc__intent" data-intent="agency" aria-pressed="false">Agency and onboarding</button>
+            <button type="button" class="ucp-cc__intent" data-intent="support" aria-pressed="false">Priority support</button>
         </div>
 
         <div class="ucp-cc__run">
@@ -33,11 +37,39 @@
             </button>
         </div>
 
-        <div class="ucp-cc__stage" data-ucp-stage></div>
+        <div class="ucp-cc__stage" data-ucp-stage hidden>
+            <div class="ucp-cc__card">
+                <div class="ucp-cc__status">
+                    <span class="ucp-cc__state" data-ucp-state>starting</span>
+                    <span class="ucp-cc__provenance" data-ucp-provenance hidden></span>
+                </div>
+                <ol class="ucp-cc__thread" role="log" aria-live="polite" aria-label="What the agent is doing" data-ucp-thread></ol>
+                <div class="ucp-cc__cart" data-ucp-cart hidden></div>
 
-        <div class="ucp-cc__events" data-ucp-events hidden role="region" aria-label="Protocol frames">
-            <div class="ucp-cc__events-head"><span class="ucp-cc__events-dot" aria-hidden="true"></span> UCP events: <span data-ucp-eventcount>0</span></div>
-            <div class="ucp-cc__events-list" data-ucp-events-list></div>
+                <div class="ucp-cc__auth" data-ucp-auth hidden>
+                    <h3 class="ucp-cc__auth-badge" tabindex="-1" data-ucp-auth-heading>Approve this order</h3>
+                    <p class="ucp-cc__auth-line" data-ucp-auth-line></p>
+                    <form data-ucp-auth-form novalidate>
+                        <div class="ucp-cc__field" data-ucp-email-field hidden>
+                            <label class="ucp-cc__label" for="ucp-cc-email-{data.uid}">Email address for the licence</label>
+                            <input class="ucp-cc__input" type="email" id="ucp-cc-email-{data.uid}" name="email" autocomplete="email" aria-describedby="ucp-cc-email-error-{data.uid}" data-ucp-email />
+                            <p class="ucp-cc__err" id="ucp-cc-email-error-{data.uid}" data-ucp-email-error hidden>Enter a valid email address.</p>
+                        </div>
+                        <div class="ucp-cc__auth-actions">
+                            <button type="submit" class="ucp-cc__approve">Approve</button>
+                            <button type="button" class="ucp-cc__decline" data-ucp-decline>Not now</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="ucp-cc__receipt" data-ucp-receipt hidden tabindex="-1"></div>
+                <p class="ucp-cc__err" role="alert" data-ucp-error hidden></p>
+            </div>
+        </div>
+
+        <div class="ucp-cc__events" data-ucp-events hidden role="region" aria-label="UCP calls">
+            <div class="ucp-cc__events-head"><span class="ucp-cc__events-dot" aria-hidden="true"></span> UCP calls: <span data-ucp-eventcount>0</span></div>
+            <ol class="ucp-cc__events-list" data-ucp-events-list></ol>
         </div>
     </div>
 
