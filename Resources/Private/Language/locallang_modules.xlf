@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="modules">
+    <unit id="main.title">
+      <segment>
+        <source>Agent Nexus</source>
+      </segment>
+    </unit>
+    <unit id="main.short_description">
+      <segment>
+        <source>Agent protocols</source>
+      </segment>
+    </unit>
+    <unit id="main.description">
+      <segment>
+        <source>Five agent protocols running against this installation: A2UI, AG-UI, A2A, UCP and AP2.</source>
+      </segment>
+    </unit>
+    <unit id="overview.title">
+      <segment>
+        <source>Overview</source>
+      </segment>
+    </unit>
+    <unit id="overview.short_description">
+      <segment>
+        <source>What runs here</source>
+      </segment>
+    </unit>
+    <unit id="overview.description">
+      <segment>
+        <source>Which protocols are ready, which specification versions they implement, and what ran recently.</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.title">
+      <segment>
+        <source>A2UI</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.short_description">
+      <segment>
+        <source>Agent to interface</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.description">
+      <segment>
+        <source>An agent describes a form as data; the site renders it from a fixed component catalogue.</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.title">
+      <segment>
+        <source>Playground</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.short_description">
+      <segment>
+        <source>Generate a surface</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.description">
+      <segment>
+        <source>Describe a form, let the agent build the A2UI messages and fill it in.</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.title">
+      <segment>
+        <source>Component catalogue</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.short_description">
+      <segment>
+        <source>The trusted components</source>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.description">
+      <segment>
+        <source>The basic catalogue this site renders, with every allowed property.</source>
+      </segment>
+    </unit>
+    <unit id="agui.title">
+      <segment>
+        <source>AG-UI</source>
+      </segment>
+    </unit>
+    <unit id="agui.short_description">
+      <segment>
+        <source>Agent to user</source>
+      </segment>
+    </unit>
+    <unit id="agui.description">
+      <segment>
+        <source>An agent run streams as typed events and stops for a person's approval before it writes.</source>
+      </segment>
+    </unit>
+    <unit id="agui.console.title">
+      <segment>
+        <source>Run console</source>
+      </segment>
+    </unit>
+    <unit id="agui.console.short_description">
+      <segment>
+        <source>Start and approve runs</source>
+      </segment>
+    </unit>
+    <unit id="agui.console.description">
+      <segment>
+        <source>Start an agent run, watch its events arrive and answer its interrupt.</source>
+      </segment>
+    </unit>
+    <unit id="agui.events.title">
+      <segment>
+        <source>Event reference</source>
+      </segment>
+    </unit>
+    <unit id="agui.events.short_description">
+      <segment>
+        <source>Every AG-UI event</source>
+      </segment>
+    </unit>
+    <unit id="agui.events.description">
+      <segment>
+        <source>The AG-UI 1.0 event types with their fields and ordering rules.</source>
+      </segment>
+    </unit>
+    <unit id="a2a.title">
+      <segment>
+        <source>A2A</source>
+      </segment>
+    </unit>
+    <unit id="a2a.short_description">
+      <segment>
+        <source>Agent to agent</source>
+      </segment>
+    </unit>
+    <unit id="a2a.description">
+      <segment>
+        <source>An Agent Card lets another agent find this one, delegate a task and collect the result.</source>
+      </segment>
+    </unit>
+    <unit id="a2a.console.title">
+      <segment>
+        <source>Task console</source>
+      </segment>
+    </unit>
+    <unit id="a2a.console.short_description">
+      <segment>
+        <source>Delegate a task</source>
+      </segment>
+    </unit>
+    <unit id="a2a.console.description">
+      <segment>
+        <source>Act as a client agent: read the Agent Card, send a message and follow the task.</source>
+      </segment>
+    </unit>
+    <unit id="a2a.card.title">
+      <segment>
+        <source>Agent Card</source>
+      </segment>
+    </unit>
+    <unit id="a2a.card.short_description">
+      <segment>
+        <source>Card, skills and interfaces</source>
+      </segment>
+    </unit>
+    <unit id="a2a.card.description">
+      <segment>
+        <source>The published Agent Card: skills, interfaces, capabilities and task states.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.title">
+      <segment>
+        <source>UCP</source>
+      </segment>
+    </unit>
+    <unit id="ucp.short_description">
+      <segment>
+        <source>Agent to merchant</source>
+      </segment>
+    </unit>
+    <unit id="ucp.description">
+      <segment>
+        <source>A shopping agent checks out through the merchant's UCP API; a person approves before the order is placed.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.console.title">
+      <segment>
+        <source>Checkout console</source>
+      </segment>
+    </unit>
+    <unit id="ucp.console.short_description">
+      <segment>
+        <source>Run an agent checkout</source>
+      </segment>
+    </unit>
+    <unit id="ucp.console.description">
+      <segment>
+        <source>Let the shopping agent build a checkout session and approve it.</source>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.title">
+      <segment>
+        <source>Business profile</source>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.short_description">
+      <segment>
+        <source>Profile and catalogue</source>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.description">
+      <segment>
+        <source>The published UCP business profile, its capabilities and the product catalogue.</source>
+      </segment>
+    </unit>
+    <unit id="ap2.title">
+      <segment>
+        <source>AP2</source>
+      </segment>
+    </unit>
+    <unit id="ap2.short_description">
+      <segment>
+        <source>Agent to payment</source>
+      </segment>
+    </unit>
+    <unit id="ap2.description">
+      <segment>
+        <source>Signed mandates prove that a person approved this purchase, within limits they set.</source>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.title">
+      <segment>
+        <source>Mandate studio</source>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.short_description">
+      <segment>
+        <source>Mint and verify mandates</source>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.description">
+      <segment>
+        <source>Sign open and closed mandates with sandbox keys and verify the chain.</source>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.title">
+      <segment>
+        <source>Mandate reference</source>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.short_description">
+      <segment>
+        <source>Types, roles and checks</source>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.description">
+      <segment>
+        <source>The AP2 v0.2 mandate types, the roles that sign them and the checks a verifier runs.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.title">
+      <segment>
+        <source>Inspector</source>
+      </segment>
+    </unit>
+    <unit id="inspector.short_description">
+      <segment>
+        <source>Protocol objects</source>
+      </segment>
+    </unit>
+    <unit id="inspector.description">
+      <segment>
+        <source>Every surface, run, task, checkout session and mandate the protocols created, with its history.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.title">
+      <segment>
+        <source>A2A tasks</source>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.short_description">
+      <segment>
+        <source>Tasks and artifacts</source>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.description">
+      <segment>
+        <source>A2A tasks with their status history, messages and artifacts.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.title">
+      <segment>
+        <source>AG-UI runs</source>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.short_description">
+      <segment>
+        <source>Runs and interrupts</source>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.description">
+      <segment>
+        <source>AG-UI runs with their input, outcome and interrupts.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.title">
+      <segment>
+        <source>UCP checkouts</source>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.short_description">
+      <segment>
+        <source>Checkout sessions</source>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.description">
+      <segment>
+        <source>UCP checkout sessions with their line items, totals and status history.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.title">
+      <segment>
+        <source>AP2 mandates</source>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.short_description">
+      <segment>
+        <source>Mandates and receipts</source>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.description">
+      <segment>
+        <source>AP2 mandates and receipts with their decoded claims and verification results.</source>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.title">
+      <segment>
+        <source>A2UI surfaces</source>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.short_description">
+      <segment>
+        <source>Surfaces and submissions</source>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.description">
+      <segment>
+        <source>A2UI surfaces with the messages that built them and the data they returned.</source>
+      </segment>
+    </unit>
+    <unit id="traffic.title">
+      <segment>
+        <source>Traffic</source>
+      </segment>
+    </unit>
+    <unit id="traffic.short_description">
+      <segment>
+        <source>Live traffic log</source>
+      </segment>
+    </unit>
+    <unit id="traffic.description">
+      <segment>
+        <source>Every request, response and streamed event of the protocol endpoints, filterable and live.</source>
+      </segment>
+    </unit>
+  </file>
+</xliff>

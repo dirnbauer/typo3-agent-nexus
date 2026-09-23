@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="modules">
+    <unit id="main.title">
+      <segment state="final">
+        <source>Agent Nexus</source>
+        <target>Agent Nexus</target>
+      </segment>
+    </unit>
+    <unit id="main.short_description">
+      <segment state="final">
+        <source>Agent protocols</source>
+        <target>Agenten-Protokolle</target>
+      </segment>
+    </unit>
+    <unit id="main.description">
+      <segment state="final">
+        <source>Five agent protocols running against this installation: A2UI, AG-UI, A2A, UCP and AP2.</source>
+        <target>Fünf Agenten-Protokolle, die auf dieser Installation laufen: A2UI, AG-UI, A2A, UCP und AP2.</target>
+      </segment>
+    </unit>
+    <unit id="overview.title">
+      <segment state="final">
+        <source>Overview</source>
+        <target>Übersicht</target>
+      </segment>
+    </unit>
+    <unit id="overview.short_description">
+      <segment state="final">
+        <source>What runs here</source>
+        <target>Was hier läuft</target>
+      </segment>
+    </unit>
+    <unit id="overview.description">
+      <segment state="final">
+        <source>Which protocols are ready, which specification versions they implement, and what ran recently.</source>
+        <target>Welche Protokolle bereit sind, welche Spezifikationsversionen sie umsetzen und was zuletzt gelaufen ist.</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.title">
+      <segment state="final">
+        <source>A2UI</source>
+        <target>A2UI</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.short_description">
+      <segment state="final">
+        <source>Agent to interface</source>
+        <target>Agent zu Oberfläche</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.description">
+      <segment state="final">
+        <source>An agent describes a form as data; the site renders it from a fixed component catalogue.</source>
+        <target>Ein Agent beschreibt ein Formular als Daten; die Website rendert es aus einem festen Komponentenkatalog.</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.title">
+      <segment state="final">
+        <source>Playground</source>
+        <target>Playground</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.short_description">
+      <segment state="final">
+        <source>Generate a surface</source>
+        <target>Oberfläche erzeugen</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.playground.description">
+      <segment state="final">
+        <source>Describe a form, let the agent build the A2UI messages and fill it in.</source>
+        <target>Ein Formular beschreiben, den Agenten die A2UI-Nachrichten bauen lassen und es ausfüllen.</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.title">
+      <segment state="final">
+        <source>Component catalogue</source>
+        <target>Komponentenkatalog</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.short_description">
+      <segment state="final">
+        <source>The trusted components</source>
+        <target>Die erlaubten Komponenten</target>
+      </segment>
+    </unit>
+    <unit id="a2ui.catalog.description">
+      <segment state="final">
+        <source>The basic catalogue this site renders, with every allowed property.</source>
+        <target>Der Basiskatalog, den diese Website rendert, mit allen erlaubten Eigenschaften.</target>
+      </segment>
+    </unit>
+    <unit id="agui.title">
+      <segment state="final">
+        <source>AG-UI</source>
+        <target>AG-UI</target>
+      </segment>
+    </unit>
+    <unit id="agui.short_description">
+      <segment state="final">
+        <source>Agent to user</source>
+        <target>Agent zu Mensch</target>
+      </segment>
+    </unit>
+    <unit id="agui.description">
+      <segment state="final">
+        <source>An agent run streams as typed events and stops for a person's approval before it writes.</source>
+        <target>Ein Agentenlauf wird als typisierte Ereignisse gestreamt und hält vor dem Schreiben für eine Freigabe an.</target>
+      </segment>
+    </unit>
+    <unit id="agui.console.title">
+      <segment state="final">
+        <source>Run console</source>
+        <target>Lauf-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="agui.console.short_description">
+      <segment state="final">
+        <source>Start and approve runs</source>
+        <target>Läufe starten und freigeben</target>
+      </segment>
+    </unit>
+    <unit id="agui.console.description">
+      <segment state="final">
+        <source>Start an agent run, watch its events arrive and answer its interrupt.</source>
+        <target>Einen Agentenlauf starten, die Ereignisse verfolgen und die Unterbrechung beantworten.</target>
+      </segment>
+    </unit>
+    <unit id="agui.events.title">
+      <segment state="final">
+        <source>Event reference</source>
+        <target>Ereignis-Referenz</target>
+      </segment>
+    </unit>
+    <unit id="agui.events.short_description">
+      <segment state="final">
+        <source>Every AG-UI event</source>
+        <target>Alle AG-UI-Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="agui.events.description">
+      <segment state="final">
+        <source>The AG-UI 1.0 event types with their fields and ordering rules.</source>
+        <target>Die Ereignistypen von AG-UI 1.0 mit ihren Feldern und Reihenfolgeregeln.</target>
+      </segment>
+    </unit>
+    <unit id="a2a.title">
+      <segment state="final">
+        <source>A2A</source>
+        <target>A2A</target>
+      </segment>
+    </unit>
+    <unit id="a2a.short_description">
+      <segment state="final">
+        <source>Agent to agent</source>
+        <target>Agent zu Agent</target>
+      </segment>
+    </unit>
+    <unit id="a2a.description">
+      <segment state="final">
+        <source>An Agent Card lets another agent find this one, delegate a task and collect the result.</source>
+        <target>Eine Agent Card lässt andere Agenten diesen finden, Aufgaben delegieren und das Ergebnis abholen.</target>
+      </segment>
+    </unit>
+    <unit id="a2a.console.title">
+      <segment state="final">
+        <source>Task console</source>
+        <target>Task-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="a2a.console.short_description">
+      <segment state="final">
+        <source>Delegate a task</source>
+        <target>Eine Aufgabe delegieren</target>
+      </segment>
+    </unit>
+    <unit id="a2a.console.description">
+      <segment state="final">
+        <source>Act as a client agent: read the Agent Card, send a message and follow the task.</source>
+        <target>Als Client-Agent arbeiten: Agent Card lesen, eine Nachricht senden und den Task verfolgen.</target>
+      </segment>
+    </unit>
+    <unit id="a2a.card.title">
+      <segment state="final">
+        <source>Agent Card</source>
+        <target>Agent Card</target>
+      </segment>
+    </unit>
+    <unit id="a2a.card.short_description">
+      <segment state="final">
+        <source>Card, skills and interfaces</source>
+        <target>Karte, Skills und Schnittstellen</target>
+      </segment>
+    </unit>
+    <unit id="a2a.card.description">
+      <segment state="final">
+        <source>The published Agent Card: skills, interfaces, capabilities and task states.</source>
+        <target>Die veröffentlichte Agent Card: Skills, Schnittstellen, Fähigkeiten und Task-Zustände.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.title">
+      <segment state="final">
+        <source>UCP</source>
+        <target>UCP</target>
+      </segment>
+    </unit>
+    <unit id="ucp.short_description">
+      <segment state="final">
+        <source>Agent to merchant</source>
+        <target>Agent zu Händler</target>
+      </segment>
+    </unit>
+    <unit id="ucp.description">
+      <segment state="final">
+        <source>A shopping agent checks out through the merchant's UCP API; a person approves before the order is placed.</source>
+        <target>Ein Shopping-Agent kauft über die UCP-Schnittstelle des Händlers ein; ein Mensch gibt vor der Bestellung frei.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.console.title">
+      <segment state="final">
+        <source>Checkout console</source>
+        <target>Checkout-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="ucp.console.short_description">
+      <segment state="final">
+        <source>Run an agent checkout</source>
+        <target>Einen Agenten-Checkout ausführen</target>
+      </segment>
+    </unit>
+    <unit id="ucp.console.description">
+      <segment state="final">
+        <source>Let the shopping agent build a checkout session and approve it.</source>
+        <target>Den Shopping-Agenten eine Checkout-Session aufbauen lassen und sie freigeben.</target>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.title">
+      <segment state="final">
+        <source>Business profile</source>
+        <target>Händlerprofil</target>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.short_description">
+      <segment state="final">
+        <source>Profile and catalogue</source>
+        <target>Profil und Katalog</target>
+      </segment>
+    </unit>
+    <unit id="ucp.profile.description">
+      <segment state="final">
+        <source>The published UCP business profile, its capabilities and the product catalogue.</source>
+        <target>Das veröffentlichte UCP-Händlerprofil, seine Fähigkeiten und der Produktkatalog.</target>
+      </segment>
+    </unit>
+    <unit id="ap2.title">
+      <segment state="final">
+        <source>AP2</source>
+        <target>AP2</target>
+      </segment>
+    </unit>
+    <unit id="ap2.short_description">
+      <segment state="final">
+        <source>Agent to payment</source>
+        <target>Agent zu Zahlung</target>
+      </segment>
+    </unit>
+    <unit id="ap2.description">
+      <segment state="final">
+        <source>Signed mandates prove that a person approved this purchase, within limits they set.</source>
+        <target>Signierte Mandate belegen, dass ein Mensch diesen Kauf innerhalb seiner Grenzen freigegeben hat.</target>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.title">
+      <segment state="final">
+        <source>Mandate studio</source>
+        <target>Mandats-Studio</target>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.short_description">
+      <segment state="final">
+        <source>Mint and verify mandates</source>
+        <target>Mandate erzeugen und prüfen</target>
+      </segment>
+    </unit>
+    <unit id="ap2.studio.description">
+      <segment state="final">
+        <source>Sign open and closed mandates with sandbox keys and verify the chain.</source>
+        <target>Offene und geschlossene Mandate mit Sandbox-Schlüsseln signieren und die Kette prüfen.</target>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.title">
+      <segment state="final">
+        <source>Mandate reference</source>
+        <target>Mandats-Referenz</target>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.short_description">
+      <segment state="final">
+        <source>Types, roles and checks</source>
+        <target>Typen, Rollen und Prüfungen</target>
+      </segment>
+    </unit>
+    <unit id="ap2.reference.description">
+      <segment state="final">
+        <source>The AP2 v0.2 mandate types, the roles that sign them and the checks a verifier runs.</source>
+        <target>Die Mandatstypen von AP2 v0.2, die signierenden Rollen und die Prüfungen eines Verifizierers.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.title">
+      <segment state="final">
+        <source>Inspector</source>
+        <target>Inspektor</target>
+      </segment>
+    </unit>
+    <unit id="inspector.short_description">
+      <segment state="final">
+        <source>Protocol objects</source>
+        <target>Protokoll-Objekte</target>
+      </segment>
+    </unit>
+    <unit id="inspector.description">
+      <segment state="final">
+        <source>Every surface, run, task, checkout session and mandate the protocols created, with its history.</source>
+        <target>Alle Oberflächen, Läufe, Tasks, Checkout-Sessions und Mandate, die die Protokolle erzeugt haben, mit Verlauf.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.title">
+      <segment state="final">
+        <source>A2A tasks</source>
+        <target>A2A-Tasks</target>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.short_description">
+      <segment state="final">
+        <source>Tasks and artifacts</source>
+        <target>Tasks und Artefakte</target>
+      </segment>
+    </unit>
+    <unit id="inspector.tasks.description">
+      <segment state="final">
+        <source>A2A tasks with their status history, messages and artifacts.</source>
+        <target>A2A-Tasks mit Statusverlauf, Nachrichten und Artefakten.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.title">
+      <segment state="final">
+        <source>AG-UI runs</source>
+        <target>AG-UI-Läufe</target>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.short_description">
+      <segment state="final">
+        <source>Runs and interrupts</source>
+        <target>Läufe und Unterbrechungen</target>
+      </segment>
+    </unit>
+    <unit id="inspector.runs.description">
+      <segment state="final">
+        <source>AG-UI runs with their input, outcome and interrupts.</source>
+        <target>AG-UI-Läufe mit Eingabe, Ergebnis und Unterbrechungen.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.title">
+      <segment state="final">
+        <source>UCP checkouts</source>
+        <target>UCP-Checkouts</target>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.short_description">
+      <segment state="final">
+        <source>Checkout sessions</source>
+        <target>Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="inspector.checkouts.description">
+      <segment state="final">
+        <source>UCP checkout sessions with their line items, totals and status history.</source>
+        <target>UCP-Checkout-Sessions mit Positionen, Summen und Statusverlauf.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.title">
+      <segment state="final">
+        <source>AP2 mandates</source>
+        <target>AP2-Mandate</target>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.short_description">
+      <segment state="final">
+        <source>Mandates and receipts</source>
+        <target>Mandate und Belege</target>
+      </segment>
+    </unit>
+    <unit id="inspector.mandates.description">
+      <segment state="final">
+        <source>AP2 mandates and receipts with their decoded claims and verification results.</source>
+        <target>AP2-Mandate und Belege mit dekodierten Claims und Prüfergebnissen.</target>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.title">
+      <segment state="final">
+        <source>A2UI surfaces</source>
+        <target>A2UI-Oberflächen</target>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.short_description">
+      <segment state="final">
+        <source>Surfaces and submissions</source>
+        <target>Oberflächen und Eingaben</target>
+      </segment>
+    </unit>
+    <unit id="inspector.surfaces.description">
+      <segment state="final">
+        <source>A2UI surfaces with the messages that built them and the data they returned.</source>
+        <target>A2UI-Oberflächen mit den Nachrichten, die sie gebaut haben, und den zurückgegebenen Daten.</target>
+      </segment>
+    </unit>
+    <unit id="traffic.title">
+      <segment state="final">
+        <source>Traffic</source>
+        <target>Datenverkehr</target>
+      </segment>
+    </unit>
+    <unit id="traffic.short_description">
+      <segment state="final">
+        <source>Live traffic log</source>
+        <target>Live-Verkehrsprotokoll</target>
+      </segment>
+    </unit>
+    <unit id="traffic.description">
+      <segment state="final">
+        <source>Every request, response and streamed event of the protocol endpoints, filterable and live.</source>
+        <target>Jede Anfrage, Antwort und jedes gestreamte Ereignis der Protokoll-Endpunkte, filterbar und live.</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>
