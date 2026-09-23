@@ -96,6 +96,51 @@
         <source>Scripted demo</source>
       </segment>
     </unit>
+    <unit id="card.tagline.a2ui">
+      <segment>
+        <source>The agent describes an interface as data. The site builds it only from components it already trusts.</source>
+      </segment>
+    </unit>
+    <unit id="card.tagline.agui">
+      <segment>
+        <source>An agent run arrives as a stream of typed events. The page shows each step and asks you to approve.</source>
+      </segment>
+    </unit>
+    <unit id="card.tagline.a2a">
+      <segment>
+        <source>An Agent Card tells other agents what this site can do. They send it a task and get a result back.</source>
+      </segment>
+    </unit>
+    <unit id="card.tagline.ucp">
+      <segment>
+        <source>A shop publishes a UCP profile and an agent checks out through its API. A person approves before any order is placed.</source>
+      </segment>
+    </unit>
+    <unit id="card.tagline.ap2">
+      <segment>
+        <source>Signed mandates prove that a person approved this exact purchase, within the limits they set.</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.not_installed">
+      <segment>
+        <source>No language model: netresearch/nr-llm is not installed.</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.frontend_disabled">
+      <segment>
+        <source>Frontend model calls are switched off (llmFrontendEnabled).</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.protocol_disabled">
+      <segment>
+        <source>Model use is switched off for this protocol in the extension configuration.</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.budget_reached">
+      <segment>
+        <source>Today's model budget is used up (llmDailyBudget).</source>
+      </segment>
+    </unit>
     <unit id="card.last24h">
       <segment>
         <source>Last 24 hours</source>
@@ -194,6 +239,36 @@
     <unit id="spec.notImplemented">
       <segment>
         <source>Not implemented</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.provided">
+      <segment>
+        <source>Provided by %1$s %2$s</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.providedUnversioned">
+      <segment>
+        <source>Provided by %s</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.protocols">
+      <segment>
+        <source>Protocol versions %s</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.module">
+      <segment>
+        <source>Open the MCP server module</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.notInstalled">
+      <segment>
+        <source>Not installed</source>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.install">
+      <segment>
+        <source>Agent Nexus does not implement MCP. Install hn/typo3-mcp-server to serve it from this installation.</source>
       </segment>
     </unit>
     <unit id="spec.candidate">

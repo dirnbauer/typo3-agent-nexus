@@ -1,0 +1,15 @@
+# The shape of hn/typo3-mcp-server's capability manifest (0.9.x), cut down to
+# what McpServerDetector reads.
+capabilities:
+  version: '1.0'
+  extension: mcp_server
+  subsystems:
+    - database:read
+  x-mcp:
+    protocol:
+      stable_version: '2025-11-25'
+      preview_version: '2026-07-28'
+      compatibility: dual-era
+      transports:
+        - streamable-http
+        - stdio

@@ -115,6 +115,60 @@
         <target>Skript-Demo</target>
       </segment>
     </unit>
+    <unit id="card.tagline.a2ui">
+      <segment state="final">
+        <source>The agent describes an interface as data. The site builds it only from components it already trusts.</source>
+        <target>Der Agent beschreibt eine Oberfläche als Daten. Die Website baut sie nur aus Komponenten, denen sie bereits vertraut.</target>
+      </segment>
+    </unit>
+    <unit id="card.tagline.agui">
+      <segment state="final">
+        <source>An agent run arrives as a stream of typed events. The page shows each step and asks you to approve.</source>
+        <target>Ein Agentenlauf kommt als Strom typisierter Ereignisse an. Die Seite zeigt jeden Schritt und bittet um Freigabe.</target>
+      </segment>
+    </unit>
+    <unit id="card.tagline.a2a">
+      <segment state="final">
+        <source>An Agent Card tells other agents what this site can do. They send it a task and get a result back.</source>
+        <target>Eine Agent Card sagt anderen Agenten, was diese Website kann. Sie schicken ihr eine Aufgabe und bekommen ein Ergebnis zurück.</target>
+      </segment>
+    </unit>
+    <unit id="card.tagline.ucp">
+      <segment state="final">
+        <source>A shop publishes a UCP profile and an agent checks out through its API. A person approves before any order is placed.</source>
+        <target>Ein Shop veröffentlicht ein UCP-Profil, und ein Agent kauft über dessen API ein. Ein Mensch gibt frei, bevor eine Bestellung entsteht.</target>
+      </segment>
+    </unit>
+    <unit id="card.tagline.ap2">
+      <segment state="final">
+        <source>Signed mandates prove that a person approved this exact purchase, within the limits they set.</source>
+        <target>Signierte Mandate belegen, dass ein Mensch genau diesen Kauf freigegeben hat, innerhalb der Grenzen, die er gesetzt hat.</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.not_installed">
+      <segment state="final">
+        <source>No language model: netresearch/nr-llm is not installed.</source>
+        <target>Kein Sprachmodell: netresearch/nr-llm ist nicht installiert.</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.frontend_disabled">
+      <segment state="final">
+        <source>Frontend model calls are switched off (llmFrontendEnabled).</source>
+        <target>Modellaufrufe aus dem Frontend sind ausgeschaltet (llmFrontendEnabled).</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.protocol_disabled">
+      <segment state="final">
+        <source>Model use is switched off for this protocol in the extension configuration.</source>
+        <target>Die Modellnutzung ist für dieses Protokoll in der Erweiterungskonfiguration ausgeschaltet.</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.reason.budget_reached">
+      <segment state="final">
+        <source>Today's model budget is used up (llmDailyBudget).</source>
+        <target>Das heutige Modellbudget ist aufgebraucht (llmDailyBudget).</target>
+      </segment>
+    </unit>
     <unit id="card.last24h">
       <segment state="final">
         <source>Last 24 hours</source>
@@ -233,6 +287,42 @@
       <segment state="final">
         <source>Not implemented</source>
         <target>Nicht umgesetzt</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.provided">
+      <segment state="final">
+        <source>Provided by %1$s %2$s</source>
+        <target>Bereitgestellt von %1$s %2$s</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.providedUnversioned">
+      <segment state="final">
+        <source>Provided by %s</source>
+        <target>Bereitgestellt von %s</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.protocols">
+      <segment state="final">
+        <source>Protocol versions %s</source>
+        <target>Protokollversionen %s</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.module">
+      <segment state="final">
+        <source>Open the MCP server module</source>
+        <target>MCP-Server-Modul öffnen</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.notInstalled">
+      <segment state="final">
+        <source>Not installed</source>
+        <target>Nicht installiert</target>
+      </segment>
+    </unit>
+    <unit id="spec.mcp.install">
+      <segment state="final">
+        <source>Agent Nexus does not implement MCP. Install hn/typo3-mcp-server to serve it from this installation.</source>
+        <target>Agent Nexus setzt MCP nicht selbst um. Installieren Sie hn/typo3-mcp-server, um es aus dieser Installation anzubieten.</target>
       </segment>
     </unit>
     <unit id="spec.candidate">

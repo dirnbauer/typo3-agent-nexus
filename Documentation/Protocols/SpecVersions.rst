@@ -60,8 +60,8 @@ stable major version. Agent Nexus 4.0 implements the version in the last column.
         -   `modelcontextprotocol.io <https://modelcontextprotocol.io/specification/2026-07-28>`__
         -   not implemented
         -   **2026-07-28** (28 July 2026)
-        -   not implemented; referenced where the other
-            protocols bind to it
+        -   not implemented here; provided by hn/typo3-mcp-server when it is
+            installed
 
 What changed, per protocol
 ==========================
@@ -167,6 +167,16 @@ MCP 2026-07-28
 
 Agent Nexus does not implement MCP. The protocol map names it as the
 agent-to-tool layer, and UCP and A2UI both define MCP bindings; the version
-shown is the one those bindings would use. The 2026-07-28 revision removed the
+shown is the one those bindings would use.
+
+The MCP server of a TYPO3 installation is
+`hn/typo3-mcp-server <https://github.com/dirnbauer/typo3-mcp-server>`__. When it
+is installed and active, the overview's specification table says "Provided by
+typo3-mcp-server" with its version, the protocol versions it declares in the
+``x-mcp.protocol`` block of its :file:`Configuration/Capabilities.yaml`
+(0.9: ``2025-11-25`` sessions and stateless ``2026-07-28`` requests) and a link
+to its :guilabel:`User > MCP Server` module. Without it the row says "Not
+installed". Agent Nexus never references the package's classes, so it keeps
+working without it. The 2026-07-28 revision removed the
 ``initialize`` handshake and sessions: every request carries its protocol
 version in ``_meta``, and ``server/discover`` replaces discovery by handshake.

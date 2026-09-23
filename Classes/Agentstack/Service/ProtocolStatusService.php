@@ -76,6 +76,7 @@ final class ProtocolStatusService implements SingletonInterface
             playgroundUri: $this->moduleUri($module),
             frontendUrl: $this->siteLocator->protocolUrl($protocol->value),
             specVersion: $this->specificationVersions->for($protocol)['implemented'],
+            llmReasonCode: $llm['code'],
         );
     }
 

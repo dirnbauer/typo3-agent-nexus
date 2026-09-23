@@ -90,8 +90,8 @@ final class SpecificationVersions
     }
 
     /**
-     * Every specification, the five implemented ones and MCP, which Agent Nexus
-     * references but does not implement.
+     * Every specification: the five implemented ones and MCP, which Agent Nexus
+     * references but leaves to hn/typo3-mcp-server ({@see McpServerDetector}).
      *
      * @return list<array{key: string, label: string, implemented: string, latest: string, released: string, candidate: string, url: string, repository: string, current: bool}>
      */

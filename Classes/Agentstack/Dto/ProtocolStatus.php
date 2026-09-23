@@ -49,6 +49,7 @@ final readonly class ProtocolStatus
      * @param string $playgroundUri       Resolved backend URI of that module ('' when unroutable)
      * @param string|null $frontendUrl    Seeded demo page, when one is reachable
      * @param string $specVersion         Specification version implemented here ('' when none)
+     * @param string $llmReasonCode       $llmReason as a LlmGuard::DENIED_* code, for screens that translate it
      */
     public function __construct(
         public string $key,
@@ -67,6 +68,7 @@ final readonly class ProtocolStatus
         public string $playgroundUri,
         public ?string $frontendUrl,
         public string $specVersion = '',
+        public string $llmReasonCode = '',
     ) {
         // A missing endpoint is the only thing that actually breaks the
         // protocol; everything else is a degraded but working demo.

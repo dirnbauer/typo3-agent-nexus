@@ -43,7 +43,7 @@
                             <th scope="row"><code>{mandate.vct}</code></th>
                             <td><f:translate domain="agent_nexus.ap2" key="{f:if(condition: mandate.open, then: 'form.open', else: 'form.closed')}" /></td>
                             <td><f:translate domain="agent_nexus.ap2" key="signedBy.{mandate.key}" /></td>
-                            <td><f:translate domain="agent_nexus.ap2" key="checkedBy.{mandate.key}" /> <span class="text-variant">(aud <code>{mandate.audience}</code>)</span></td>
+                            <td><f:translate domain="agent_nexus.ap2" key="checkedBy.{mandate.key}" /> <span class="text-variant">(<code>aud</code> <code>{mandate.audience}</code>)</span></td>
                             <td><f:translate domain="agent_nexus.ap2" key="purpose.{mandate.key}" /></td>
                         </tr>
                     </f:for>

@@ -8,8 +8,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Package\PackageManager;
 use Webconsulting\AgentNexus\Agentstack\Dto\ProtocolStatus;
+use Webconsulting\AgentNexus\Agentstack\Service\McpServerDetector;
 use Webconsulting\AgentNexus\Agentstack\Service\ProtocolStatusService;
 use Webconsulting\AgentNexus\Agentstack\Service\SiteLocator;
 use Webconsulting\AgentNexus\Agentstack\Service\SpecificationVersions;
@@ -27,7 +29,8 @@ use Webconsulting\AgentNexus\Shared\Traffic\TrafficRepository;
  * here, which version of its specification does it implement, and what ran
  * recently. One card per protocol (health, specification version, activity,
  * the way into its console, its demo page and its objects), the specification
- * table with the newest published versions, the discovery documents this
+ * table with the newest published versions (and, for MCP, the server
+ * hn/typo3-mcp-server provides when it is installed), the discovery documents this
  * installation publishes, the most recent protocol objects and a setup list
  * that names what is still missing.
  */
@@ -48,6 +51,7 @@ final readonly class OverviewController
         private ExtensionSettings $settings,
         private PackageManager $packageManager,
         private UriBuilder $uriBuilder,
+        private McpServerDetector $mcpServerDetector,
     ) {}
 
     public function indexAction(ServerRequestInterface $request): ResponseInterface
@@ -71,6 +75,7 @@ final readonly class OverviewController
             ], $protocols),
             'specifications' => $this->specificationVersions->all(),
             'checked' => SpecificationVersions::CHECKED,
+            'mcp' => $this->mcpServerDetector->detect($this->backendUser()),
             'discovery' => $this->discovery($origin),
             'apiBase' => $origin . $this->routeRegistry->apiBasePath(),
             'activity' => $this->protocolStatusService->recentActivity(),
@@ -80,6 +85,12 @@ final readonly class OverviewController
         ]);
 
         return $view->renderResponse('Overview/Index');
+    }
+
+    private function backendUser(): ?BackendUserAuthentication
+    {
+        $user = $GLOBALS['BE_USER'] ?? null;
+        return $user instanceof BackendUserAuthentication ? $user : null;
     }
 
     private function version(): string

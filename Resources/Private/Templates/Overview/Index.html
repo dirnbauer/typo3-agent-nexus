@@ -52,7 +52,7 @@
                         </span>
                     </div>
                     <div class="card-body">
-                        <p class="card-text">{protocol.tagline}</p>
+                        <p class="card-text"><f:translate domain="agent_nexus.overview" key="card.tagline.{protocol.key}" /></p>
                         <dl class="anx-dl">
                             <f:if condition="{protocol.specVersion}">
                                 <div>
@@ -66,7 +66,11 @@
                             </div>
                             <div>
                                 <dt><f:translate domain="agent_nexus.overview" key="card.mode" /></dt>
-                                <dd title="{protocol.llmReason}">
+                                <f:variable name="modeReason" value="" />
+                                <f:if condition="{protocol.llmReasonCode}">
+                                    <f:variable name="modeReason" value="{f:translate(domain: 'agent_nexus.overview', key: 'card.mode.reason.{protocol.llmReasonCode}')}" />
+                                </f:if>
+                                <dd title="{modeReason}">
                                     <f:if condition="{protocol.llmEnabled}">
                                         <f:then><f:translate domain="agent_nexus.overview" key="card.mode.llm" /></f:then>
                                         <f:else><f:translate domain="agent_nexus.overview" key="card.mode.scripted" /></f:else>
@@ -129,17 +133,23 @@
                     <f:for each="{specifications}" as="spec">
                         <tr>
                             <th scope="row"><span class="anx-proto-chip anx-accent--{spec.key}">{spec.label}</span></th>
-                            <td>{spec.implemented -> f:or(alternative: '–')}</td>
+                            <td>
+                                <f:if condition="{spec.key} == 'mcp' && {mcp.installed}">
+                                    <f:then>{mcp.protocolVersionList -> f:or(alternative: '–')}</f:then>
+                                    <f:else>{spec.implemented -> f:or(alternative: '–')}</f:else>
+                                </f:if>
+                            </td>
                             <td>{spec.latest} <span class="text-variant">(<f:translate domain="agent_nexus.overview" key="spec.released" arguments="{0: spec.released}" />)</span></td>
                             <td>
-                                <f:if condition="{spec.implemented}">
-                                    <f:then>
+                                <f:if condition="{spec.key} == 'mcp'">
+                                    <f:then><f:render section="McpStatus" arguments="{mcp: mcp}" /></f:then>
+                                    <f:else if="{spec.implemented}">
                                         <f:if condition="{spec.current}">
                                             <f:then><span class="badge badge-success"><f:translate domain="agent_nexus.overview" key="spec.current" /></span></f:then>
                                             <f:else><span class="badge badge-warning"><f:translate domain="agent_nexus.overview" key="spec.behind" /></span></f:else>
                                         </f:if>
                                         <f:if condition="{spec.candidate}"><br /><span class="text-variant"><f:translate domain="agent_nexus.overview" key="spec.candidate" arguments="{0: spec.candidate}" /></span></f:if>
-                                    </f:then>
+                                    </f:else>
                                     <f:else><span class="badge badge-default"><f:translate domain="agent_nexus.overview" key="spec.notImplemented" /></span></f:else>
                                 </f:if>
                             </td>
@@ -209,6 +219,29 @@
     </div>
 
 </div>
+</f:section>
+
+<f:section name="McpStatus">
+    <f:comment>MCP is not implemented here; hn/typo3-mcp-server provides it when installed.</f:comment>
+    <f:if condition="{mcp.installed}">
+        <f:then>
+            <span class="badge badge-success">
+                <f:if condition="{mcp.version}">
+                    <f:then><f:translate domain="agent_nexus.overview" key="spec.mcp.provided" arguments="{0: mcp.name, 1: mcp.version}" /></f:then>
+                    <f:else><f:translate domain="agent_nexus.overview" key="spec.mcp.providedUnversioned" arguments="{0: mcp.name}" /></f:else>
+                </f:if>
+            </span>
+            <f:if condition="{mcp.protocolVersionList}">
+                <br /><span class="text-variant"><f:translate domain="agent_nexus.overview" key="spec.mcp.protocols" arguments="{0: mcp.protocolVersionList}" /></span>
+            </f:if>
+            <f:if condition="{mcp.moduleUri}">
+                <br /><a href="{mcp.moduleUri}"><core:icon identifier="actions-arrow-right" size="small" /> <f:translate domain="agent_nexus.overview" key="spec.mcp.module" /></a>
+            </f:if>
+        </f:then>
+        <f:else>
+            <span class="badge badge-default" title="{f:translate(domain: 'agent_nexus.overview', key: 'spec.mcp.install')}"><f:translate domain="agent_nexus.overview" key="spec.mcp.notInstalled" /></span>
+        </f:else>
+    </f:if>
 </f:section>
 
 </html>

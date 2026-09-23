@@ -8,6 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Route;
 use TYPO3\CMS\Backend\Routing\Router;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -26,6 +27,18 @@ abstract class AbstractBackendModuleTestCase extends AbstractAgentNexusTestCase
         parent::setUp();
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/be_users.csv');
         $backendUser = $this->setUpBackendUser(1);
+        $GLOBALS['LANG'] = $this->get(LanguageServiceFactory::class)->createFromUserPreferences($backendUser);
+    }
+
+    /**
+     * Switch the backend user to another interface language, e.g. "de".
+     */
+    protected function useBackendLanguage(string $language): void
+    {
+        $backendUser = $GLOBALS['BE_USER'];
+        self::assertInstanceOf(BackendUserAuthentication::class, $backendUser);
+        $backendUser->user['lang'] = $language;
+        $backendUser->uc['lang'] = $language;
         $GLOBALS['LANG'] = $this->get(LanguageServiceFactory::class)->createFromUserPreferences($backendUser);
     }
 

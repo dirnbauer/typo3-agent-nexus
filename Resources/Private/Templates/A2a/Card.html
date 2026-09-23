@@ -21,7 +21,7 @@
             <div><dt><f:translate domain="agent_nexus.a2a" key="identity.name" /></dt><dd>{card.name}</dd></div>
             <div><dt><f:translate domain="agent_nexus.a2a" key="identity.version" /></dt><dd><code>{card.version}</code></dd></div>
             <div><dt><f:translate domain="agent_nexus.a2a" key="identity.provider" /></dt><dd><a href="{card.provider.url}" target="_blank" rel="noopener">{card.provider.organization}</a></dd></div>
-            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.documentation" /></dt><dd><a href="{card.documentationUrl}" target="_blank" rel="noopener">A2A.rst</a></dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.documentation" /></dt><dd><a href="{card.documentationUrl}" target="_blank" rel="noopener"><code>A2A.rst</code></a></dd></div>
             <div><dt><f:translate domain="agent_nexus.a2a" key="identity.inputModes" /></dt><dd><f:for each="{card.defaultInputModes}" as="mode" iteration="i"><code>{mode}</code><f:if condition="{i.isLast}"><f:else>, </f:else></f:if></f:for></dd></div>
             <div><dt><f:translate domain="agent_nexus.a2a" key="identity.outputModes" /></dt><dd><f:for each="{card.defaultOutputModes}" as="mode" iteration="i"><code>{mode}</code><f:if condition="{i.isLast}"><f:else>, </f:else></f:if></f:for></dd></div>
         </dl>
