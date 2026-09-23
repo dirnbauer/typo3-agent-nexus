@@ -1,25 +1,25 @@
-/* Agent Nexus — A2UI renderer components.
+/* Agent Nexus — A2UI "Smart inquiry" widget.
  *
- * The classes below are emitted at runtime by a2ui-renderer.js when it rebuilds
- * an agent-described surface, so they cannot live in a template and are named
- * after the A2UI catalog rather than after this extension. Above them sit the
- * few widget states only A2UI has — the generated surface fading in, its loading
- * spinner and its result notice. Everything else (panel, header, bar, chips,
- * buttons) is shared with the other four plugins and lives in nexus-frontend.css.
+ * The panel, header, intent bar, chips and buttons are the shared shell in
+ * nexus-frontend.css. This file adds the widget's own states (status,
+ * notices, provenance) and styles the surface a2ui-renderer.js draws — its
+ * classes (a2ui-*) are named after the A2UI basic catalogue, not after this
+ * extension. Only --anx-* and host (shadcn) tokens, so the host theme and
+ * dark mode come from the token layer.
  */
 
-/* ---- states unique to the generated-surface widget ------------------------ */
+/* ---- widget states ---------------------------------------------------------- */
 
-.a2ui-inquiry__live:not(:empty) {
-  margin-top: 1.3rem;
-  padding-top: 1.3rem;
-  border-top: 1px solid var(--anx-border);
-  animation: a2ui-fade-in .25s ease;
-}
-@keyframes a2ui-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: none; }
-}
+/* Parts the script shows and hides keep their display value otherwise. */
+.a2ui-inquiry [hidden] { display: none !important; }
+
+.a2ui-inquiry__presets-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
+.a2ui-inquiry__presets-label { font-size: .8rem; color: var(--anx-muted-fg); }
+.a2ui-inquiry__presets { display: contents; }
+.a2ui-inquiry__preset:focus-visible,
+.a2ui-inquiry__go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.a2ui-inquiry__feedback:not(:empty) { margin-top: 1rem; }
 .a2ui-inquiry__status {
   display: flex;
   align-items: center;
@@ -48,119 +48,206 @@
   line-height: 1.45;
   border: 1px solid;
 }
-.a2ui-inquiry__notice--success {
-  color: var(--anx-ok);
-  background: color-mix(in srgb, var(--anx-ok) 12%, transparent);
-  border-color: color-mix(in srgb, var(--anx-ok) 35%, transparent);
-}
 .a2ui-inquiry__notice--error {
   color: var(--anx-danger);
   background: color-mix(in srgb, var(--anx-danger) 12%, transparent);
   border-color: color-mix(in srgb, var(--anx-danger) 35%, transparent);
 }
-.a2ui-inquiry button:disabled { opacity: .5; cursor: progress; }
-
-@media (prefers-reduced-motion: reduce) {
-  .a2ui-inquiry__live:not(:empty) { animation: none; }
-  .a2ui-inquiry__status::before { animation-duration: 1.6s; }
+.a2ui-inquiry__live:not(:empty) {
+  margin-top: 1.3rem;
+  padding-top: 1.3rem;
+  border-top: 1px solid var(--anx-border);
+  animation: a2ui-fade-in .25s ease;
 }
+@keyframes a2ui-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.a2ui-inquiry__provenance {
+  margin: .75rem 0 0;
+  font-size: var(--anx-text-xs);
+  color: var(--anx-muted-fg);
+}
+.a2ui-inquiry button:disabled { opacity: .55; cursor: not-allowed; }
 
-/* ---- A2UI renderer components (classes emitted by a2ui-renderer.js) ------ */
+/* ---- the surface (classes emitted by a2ui-renderer.js) ---------------------- */
 
-.a2ui-inquiry .card {
+.a2ui-inquiry .a2ui-visually-hidden,
+.a2ui-inquiry.a2ui-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.a2ui-inquiry .a2ui-surface { color: var(--anx-fg); }
+.a2ui-inquiry .a2ui-card {
   border: 1px solid var(--anx-border);
   border-radius: var(--anx-radius);
   background: var(--anx-card);
-  overflow: hidden;
+  padding: 1.1rem;
 }
-.a2ui-inquiry .card-header {
-  padding: .85rem 1.1rem;
-  background: var(--anx-surface-1);
-  border-bottom: 1px solid var(--anx-border);
-}
-.a2ui-inquiry .card-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--anx-fg); }
-.a2ui-inquiry .card-body { padding: 1.1rem; }
-.a2ui-inquiry .mb-3 { margin-bottom: .9rem; }
-.a2ui-inquiry .form-label { display: block; margin-bottom: .3rem; font-weight: 600; font-size: .9rem; color: var(--anx-fg); }
-.a2ui-inquiry .text-danger { color: var(--anx-danger); }
-.a2ui-inquiry .form-text { margin-top: .25rem; font-size: .8rem; color: var(--anx-muted-fg); }
-.a2ui-inquiry .form-control,
-.a2ui-inquiry .form-select {
+.a2ui-inquiry .a2ui-row,
+.a2ui-inquiry .a2ui-column { display: flex; gap: .9rem; }
+.a2ui-inquiry .a2ui-row { flex-direction: row; flex-wrap: wrap; gap: .6rem; }
+.a2ui-inquiry .a2ui-column { flex-direction: column; }
+.a2ui-inquiry .a2ui-justify--center { justify-content: center; }
+.a2ui-inquiry .a2ui-justify--end { justify-content: flex-end; }
+.a2ui-inquiry .a2ui-justify--spaceBetween { justify-content: space-between; }
+.a2ui-inquiry .a2ui-justify--spaceAround { justify-content: space-around; }
+.a2ui-inquiry .a2ui-justify--spaceEvenly { justify-content: space-evenly; }
+.a2ui-inquiry .a2ui-align--start { align-items: flex-start; }
+.a2ui-inquiry .a2ui-align--center { align-items: center; }
+.a2ui-inquiry .a2ui-align--end { align-items: flex-end; }
+.a2ui-inquiry .a2ui-align--stretch { align-items: stretch; }
+.a2ui-inquiry .a2ui-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
+.a2ui-inquiry .a2ui-list--horizontal { flex-direction: row; overflow-x: auto; }
+.a2ui-inquiry .a2ui-heading { margin: 0; font-size: 1.15rem; font-weight: 700; line-height: 1.3; color: var(--anx-fg); }
+.a2ui-inquiry .a2ui-heading:focus { outline: none; }
+.a2ui-inquiry .a2ui-heading:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.a2ui-inquiry .a2ui-text p { margin: 0; line-height: 1.5; }
+.a2ui-inquiry .a2ui-text__body { color: var(--anx-fg); }
+.a2ui-inquiry .a2ui-list__item > .a2ui-column { gap: .1rem; }
+.a2ui-inquiry .a2ui-text__caption { font-size: .85rem; color: var(--anx-muted-fg); }
+.a2ui-inquiry .a2ui-text code { font-family: var(--anx-font-mono); font-size: .9em; }
+
+/* fields */
+.a2ui-inquiry .a2ui-field__label { display: block; margin-bottom: .3rem; font-weight: 600; font-size: .9rem; color: var(--anx-fg); }
+.a2ui-inquiry .a2ui-field__required { font-weight: 400; color: var(--anx-muted-fg); }
+.a2ui-inquiry .a2ui-field__control,
+.a2ui-inquiry .a2ui-choice__filter {
+  display: block;
   width: 100%;
   padding: .55rem .75rem;
+  font: inherit;
   font-size: .98rem;
-  font-family: inherit;
   color: var(--anx-fg);
+  background: var(--anx-bg);
   border: 1px solid var(--anx-border);
   border-radius: var(--anx-radius-sm);
-  background: var(--anx-bg);
 }
-.a2ui-inquiry textarea.form-control { min-height: 5.5rem; resize: vertical; }
-.a2ui-inquiry .form-control:focus,
-.a2ui-inquiry .form-select:focus {
+.a2ui-inquiry textarea.a2ui-field__control { min-height: 6rem; resize: vertical; }
+.a2ui-inquiry .a2ui-field__control::placeholder { color: var(--anx-muted-fg); opacity: .8; }
+.a2ui-inquiry .a2ui-field__control:focus-visible,
+.a2ui-inquiry .a2ui-choice__filter:focus-visible {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
-.a2ui-inquiry .form-control::placeholder { color: var(--anx-muted-fg); opacity: .8; }
-.a2ui-inquiry .form-control.is-invalid,
-.a2ui-inquiry .form-select.is-invalid,
-.a2ui-inquiry .form-check-input.is-invalid {
+.a2ui-inquiry .is-invalid.a2ui-field__control {
   border-color: var(--anx-danger);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--anx-danger) 18%, transparent);
 }
-.a2ui-inquiry .invalid-feedback { margin-top: .3rem; font-size: var(--anx-text-sm); color: var(--anx-danger); }
-.a2ui-inquiry .form-check { display: flex; align-items: center; gap: .5rem; margin-bottom: .9rem; }
-.a2ui-inquiry .form-check-input { width: 1.05rem; height: 1.05rem; accent-color: var(--accent); }
-.a2ui-inquiry .form-check-label { font-size: .92rem; }
-.a2ui-inquiry .a2ui-column { display: flex; flex-direction: column; }
-.a2ui-inquiry .a2ui-row { display: flex; flex-direction: row; gap: 1rem; flex-wrap: wrap; }
-.a2ui-inquiry .a2ui-row > * { flex: 1 1 0; min-width: 0; }
-.a2ui-inquiry .btn-group { display: inline-flex; flex-wrap: wrap; gap: .4rem; }
-.a2ui-inquiry .btn-outline-primary {
-  padding: .42rem .8rem;
-  border-radius: var(--anx-radius-sm);
-  cursor: pointer;
-  font-family: inherit;
-  color: var(--anx-fg);
-  background: transparent;
+.a2ui-inquiry .a2ui-field__error { margin: .3rem 0 0; font-size: .85rem; color: var(--anx-danger); }
+.a2ui-inquiry .a2ui-checkbox__row,
+.a2ui-inquiry .a2ui-choice__option { display: flex; align-items: center; gap: .5rem; }
+.a2ui-inquiry .a2ui-checkbox__control,
+.a2ui-inquiry .a2ui-choice__control { width: 1.1rem; height: 1.1rem; margin: 0; accent-color: var(--accent); flex: none; }
+.a2ui-inquiry .a2ui-checkbox__label,
+.a2ui-inquiry .a2ui-choice__label { font-size: .95rem; }
+.a2ui-inquiry .a2ui-checkbox__control:focus-visible,
+.a2ui-inquiry .a2ui-choice__control:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.a2ui-inquiry .a2ui-choice__fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+.a2ui-inquiry .a2ui-choice__fieldset > legend { padding: 0; }
+.a2ui-inquiry .a2ui-choice__filter { margin-bottom: .5rem; }
+.a2ui-inquiry .a2ui-choice__options { display: flex; flex-direction: column; gap: .4rem; }
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__options { flex-direction: row; flex-wrap: wrap; }
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__option { position: relative; }
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__control { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__label {
+  padding: .3rem .8rem;
   border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-full);
+  background: var(--anx-surface-2);
+  font-size: var(--anx-text-sm);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
 }
-.a2ui-inquiry .btn-outline-primary.active {
-  color: var(--primary-foreground, #ffffff);
-  background: var(--primary, #2563eb);
-  border-color: var(--primary, #2563eb);
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__control:checked + .a2ui-choice__label {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--anx-fg);
+  font-weight: 600;
 }
-.a2ui-inquiry .a2ui-tabs__nav { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--anx-border); margin-bottom: .85rem; }
+.a2ui-inquiry .a2ui-choice--chips .a2ui-choice__control:focus-visible + .a2ui-choice__label { outline: 2px solid var(--accent); outline-offset: 2px; }
+.a2ui-inquiry .a2ui-slider__row { display: flex; align-items: center; gap: .75rem; }
+.a2ui-inquiry .a2ui-slider__control { flex: 1 1 auto; accent-color: var(--accent); }
+.a2ui-inquiry .a2ui-slider__value { min-width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* buttons */
+.a2ui-inquiry .a2ui-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .5rem .95rem;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  background: var(--anx-card);
+  color: var(--anx-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .15s, background .15s;
+}
+.a2ui-inquiry .a2ui-button .a2ui-text p { margin: 0; color: inherit; }
+.a2ui-inquiry .a2ui-button--primary {
+  border-color: transparent;
+  background: var(--primary, var(--accent));
+  color: var(--primary-foreground, var(--anx-card));
+}
+.a2ui-inquiry .a2ui-button--borderless {
+  border-color: transparent;
+  background: transparent;
+  color: var(--anx-fg);
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+.a2ui-inquiry .a2ui-button:hover:not(:disabled) { opacity: .9; }
+.a2ui-inquiry .a2ui-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.a2ui-inquiry .a2ui-button[aria-busy="true"] { cursor: progress; }
+.a2ui-inquiry .a2ui-button__hint { margin: .35rem 0 0; font-size: .85rem; color: var(--anx-muted-fg); }
+
+/* tabs, dialog, media */
+.a2ui-inquiry .a2ui-tabs__list { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--anx-border); margin-bottom: .85rem; }
 .a2ui-inquiry .a2ui-tabs__tab {
   padding: .45rem .9rem;
   border: 0;
-  background: none;
-  cursor: pointer;
   border-bottom: 2px solid transparent;
+  background: none;
   color: var(--anx-muted-fg);
-  font-family: inherit;
+  font: inherit;
   font-size: .95rem;
+  cursor: pointer;
 }
-.a2ui-inquiry .a2ui-tabs__tab.active { border-bottom-color: var(--accent); color: var(--anx-fg); font-weight: 600; }
-.a2ui-inquiry .a2ui-modal {
+.a2ui-inquiry .a2ui-tabs__tab.is-active { border-bottom-color: var(--accent); color: var(--anx-fg); font-weight: 600; }
+.a2ui-inquiry .a2ui-tabs__tab:focus-visible,
+.a2ui-inquiry .a2ui-tabs__panel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.a2ui-inquiry .a2ui-modal__dialog {
+  max-width: min(36rem, 92vw);
+  padding: 1.25rem;
   border: 1px solid var(--anx-border);
   border-radius: var(--anx-radius);
-  padding: 1.25rem;
-  max-width: 540px;
-  color: var(--anx-fg);
   background: var(--anx-card);
+  color: var(--anx-fg);
 }
-.a2ui-inquiry .a2ui-modal::backdrop { background: color-mix(in srgb, var(--anx-fg, #18181b) 40%, transparent); }
-.a2ui-inquiry .a2ui-modal__title { margin: 0 0 .75rem; }
-.a2ui-inquiry .a2ui-modal__close { margin-top: 1rem; }
-.a2ui-inquiry .a2ui-slider__value { min-width: 2.5rem; text-align: right; font-variant-numeric: tabular-nums; }
-.a2ui-inquiry .form-range { flex: 1 1 auto; accent-color: var(--accent); }
-.a2ui-inquiry .lead { font-size: 1.05rem; }
-.a2ui-inquiry .text-body-secondary { color: var(--anx-muted-fg); }
-.a2ui-inquiry hr { border: none; border-top: 1px solid var(--anx-border); margin: 1rem 0; }
+.a2ui-inquiry .a2ui-modal__dialog::backdrop { background: color-mix(in srgb, var(--anx-fg) 40%, transparent); }
+.a2ui-inquiry .a2ui-modal__close { float: right; margin: -.5rem -.5rem .5rem .5rem; padding: .35rem; }
+.a2ui-inquiry .a2ui-divider { border: 0; border-top: 1px solid var(--anx-border); margin: .5rem 0; }
+.a2ui-inquiry .a2ui-divider--vertical { border-top: 0; border-left: 1px solid var(--anx-border); align-self: stretch; }
+.a2ui-inquiry .a2ui-icon { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.a2ui-inquiry .a2ui-icon .a2ui-icon__fill { fill: currentColor; stroke: none; }
+.a2ui-inquiry .a2ui-image { display: block; max-width: 100%; height: auto; border-radius: var(--anx-radius-sm); }
+.a2ui-inquiry .a2ui-image--avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+.a2ui-inquiry .a2ui-image--icon { width: 1.5rem; height: 1.5rem; }
+.a2ui-inquiry .a2ui-image--header { width: 100%; height: 12rem; object-fit: cover; }
+.a2ui-inquiry .a2ui-media { margin: 0; }
+.a2ui-inquiry .a2ui-media video,
+.a2ui-inquiry .a2ui-media audio { display: block; width: 100%; }
+.a2ui-inquiry .a2ui-media--empty { padding: 1rem; border: 1px dashed var(--anx-border); border-radius: var(--anx-radius-sm); color: var(--anx-muted-fg); text-align: center; }
 
-/* ---- compact display mode -------------------------------------------------- */
+/* ---- compact display mode ---------------------------------------------------- */
 
 .a2ui-inquiry--compact .a2ui-inquiry__panel { padding: 1rem; }
 .a2ui-inquiry--compact .a2ui-inquiry__badge,
@@ -174,9 +261,10 @@
   .a2ui-inquiry__panel { padding: 1.15rem; }
   .a2ui-inquiry__bar { flex-wrap: wrap; }
   .a2ui-inquiry__go { width: 100%; justify-content: center; }
+  .a2ui-inquiry .a2ui-row > * { flex: 1 1 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .a2ui-inquiry__live:not(:empty),
-  .a2ui-inquiry__status::before { animation: none; }
+  .a2ui-inquiry__live:not(:empty) { animation: none; }
+  .a2ui-inquiry__status::before { animation-duration: 1.6s; }
   .a2ui-inquiry * { transition: none !important; }
 }

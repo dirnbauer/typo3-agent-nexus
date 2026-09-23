@@ -4,12 +4,12 @@
 <section class="anx anx--frontend anx-accent--a2ui a2ui-inquiry a2ui-inquiry--{f:if(condition: settings.display_mode, then: settings.display_mode, else: 'full')}"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'a2ui')}"
          data-a2ui-inquiry
-         data-generate-url="/index.php?eID=a2ui_generate"
-         data-submit-url="/index.php?eID=a2ui_submit"
+         data-surfaces-url="{surfacesUrl}"
+         data-actions-url="{actionsUrl}"
+         data-ce="{contentElement}"
          data-page="{pageId}"
-         data-business-context="{settings.business_context}"
-         data-presets="{settings.presets}"
-         data-success="{settings.success_message}">
+         data-version="v0.9.1"
+         data-presets="{settings.presets}">
 
     <div class="a2ui-inquiry__panel">
         <div class="a2ui-inquiry__head">
@@ -32,6 +32,7 @@
             <input type="text"
                    class="a2ui-inquiry__input"
                    data-a2ui-intent
+                   maxlength="600"
                    placeholder="{settings.placeholder}"
                    aria-label="Describe what you need" />
             <button type="submit" class="a2ui-inquiry__go">
@@ -45,7 +46,9 @@
             <div class="a2ui-inquiry__presets" data-a2ui-presets></div>
         </div>
 
-        <div class="a2ui-inquiry__live" data-a2ui-live aria-live="polite"></div>
+        <div class="a2ui-inquiry__feedback" data-a2ui-feedback role="status" aria-live="polite"></div>
+        <div class="a2ui-inquiry__live" data-a2ui-live></div>
+        <p class="a2ui-inquiry__provenance" data-a2ui-provenance hidden></p>
     </div>
 
     <noscript>
