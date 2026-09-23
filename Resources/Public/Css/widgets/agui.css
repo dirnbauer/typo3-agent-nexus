@@ -10,11 +10,8 @@
 .agui-asst__events-list { width: 0; min-width: 100%; }
 
 /* The inquiry widget shares the preset row. */
-.a2ui-inquiry__presets-wrap,
 .agui-asst__presets-wrap { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; margin-top: .7rem; }
-.a2ui-inquiry__presets-label,
 .agui-asst__presets-label { font-size: .8rem; color: var(--anx-muted-fg); }
-.a2ui-inquiry__presets { display: contents; }
 .agui-asst__presets { display: flex; flex-wrap: wrap; gap: .4rem; }
 .agui-asst__preset:disabled { opacity: .55; cursor: default; }
 

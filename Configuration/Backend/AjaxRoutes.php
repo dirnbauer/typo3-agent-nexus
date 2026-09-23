@@ -21,7 +21,7 @@ return [
         'methods' => ['POST'],
         'target' => PlaygroundAjaxController::class . '::generate',
         'inheritAccessFromModule' => 'agentnexus_a2ui_playground',
-        'agentnexus' => ['protocol' => 'a2ui', 'operation' => 'GenerateSurface'],
+        'agentnexus' => ['protocol' => 'a2ui', 'operation' => 'createSurface'],
     ],
     'agentnexus_a2ui_action' => [
         'path' => '/agentnexus/a2ui/action',
