@@ -1,193 +1,440 @@
 /**
- * AG-UI Run Console (backend).
+ * AG-UI run console (backend module "AG-UI > Run console").
  *
- * Sends a RunAgentInput to the backend SSE route and consumes the agent's typed
- * AG-UI event stream, rendering each event into a live timeline and driving the
- * draft pane, the shared-state inspector and the human-in-the-loop Approve/Reject
- * gate. SSE is read over `fetch()` (the run is a POST, so EventSource — GET only —
- * cannot be used).
+ * The browser is the AG-UI 1.0 client here: it sends a RunAgentInput, reads
+ * the event stream and answers an interrupt with a resume on the next run of
+ * the same thread. Editor tasks go to the module's backend route; site
+ * assistant tasks go to the public endpoint, exactly as any other client
+ * would call it.
  */
+import Notification from '@typo3/backend/notification.js';
+import labels from '~labels/agent_nexus.agui';
+import { Conversation, applyPatch, newId, runAgent, runInput } from '@webconsulting/agent-nexus/agui-stream.js';
 
-import { countUpAll } from '@webconsulting/agent-nexus/nexus-motion.js';
-
-// Card entrance is CSS (.anx-reveal); only the stat count-up needs JavaScript.
-// Runs on the Console and Catalog views alike.
-countUpAll(document.querySelector('.anx'));
-
-const CATEGORY = {
-  RUN_STARTED: 'lifecycle', RUN_FINISHED: 'lifecycle', RUN_ERROR: 'lifecycle', STEP_STARTED: 'lifecycle', STEP_FINISHED: 'lifecycle',
-  TEXT_MESSAGE_START: 'text', TEXT_MESSAGE_CONTENT: 'text', TEXT_MESSAGE_END: 'text', TEXT_MESSAGE_CHUNK: 'text',
-  TOOL_CALL_START: 'tool', TOOL_CALL_ARGS: 'tool', TOOL_CALL_END: 'tool', TOOL_CALL_RESULT: 'tool',
-  STATE_SNAPSHOT: 'state', STATE_DELTA: 'state', MESSAGES_SNAPSHOT: 'state', ACTIVITY_SNAPSHOT: 'state', ACTIVITY_DELTA: 'state',
-  REASONING_START: 'reason', REASONING_MESSAGE_CONTENT: 'reason', REASONING_END: 'reason',
-  RAW: 'special', CUSTOM: 'special',
+const FAMILY_BADGE = {
+  RUN: 'primary',
+  STEP: 'default',
+  TEXT: 'info',
+  TOOL: 'warning',
+  REASONING: 'secondary',
+  STATE: 'success',
+  MESSAGES: 'success',
+  ACTIVITY: 'success',
+  SUBAGENT: 'notice',
+  RAW: 'default',
+  CUSTOM: 'default',
 };
-const HITL_TOOLS = ['confirm_apply', 'confirm_booking'];
 
-function pointer(path) { return path.replace(/^\//, '').split('/').map((p) => p.replace(/~1/g, '/').replace(/~0/g, '~')); }
-function applyPatch(obj, ops) {
-  (ops || []).forEach((op) => {
-    const parts = pointer(op.path); const last = parts.pop();
-    let cur = obj; for (const p of parts) { if (cur[p] == null || typeof cur[p] !== 'object') cur[p] = {}; cur = cur[p]; }
-    if (op.op === 'remove') { if (Array.isArray(cur)) cur.splice(Number(last), 1); else delete cur[last]; }
-    else { cur[last] = op.value; }
-  });
-  return obj;
-}
+class RunConsole {
+  constructor(root) {
+    this.root = root;
+    this.runUrl = root.dataset.runUrl || (window.TYPO3?.settings?.ajaxUrls?.agentnexus_agui_run ?? '');
+    this.endpoint = root.dataset.endpoint || '';
+    this.select = root.querySelector('[data-agui-preset]');
+    this.message = root.querySelector('[data-agui-message]');
+    this.target = root.querySelector('[data-agui-target]');
+    this.startButton = root.querySelector('[data-agui-start]');
+    this.status = root.querySelector('[data-agui-status]');
+    this.count = root.querySelector('[data-agui-count]');
+    this.events = root.querySelector('[data-agui-events]');
+    this.eventsEmpty = root.querySelector('[data-agui-events-empty]');
+    this.provenance = root.querySelector('[data-agui-provenance]');
+    this.reasoning = root.querySelector('[data-agui-reasoning]');
+    this.reasoningText = root.querySelector('[data-agui-reasoning-text]');
+    this.answer = root.querySelector('[data-agui-answer]');
+    this.result = root.querySelector('[data-agui-result]');
+    this.interrupt = root.querySelector('[data-agui-interrupt]');
+    this.interruptMessage = root.querySelector('[data-agui-interrupt-message]');
+    this.interruptFacts = root.querySelector('[data-agui-interrupt-facts]');
+    this.interruptForm = root.querySelector('[data-agui-interrupt-form]');
+    this.interruptFields = root.querySelector('[data-agui-interrupt-fields]');
+    this.state = root.querySelector('[data-agui-state]');
+    this.deltas = root.querySelector('[data-agui-deltas]');
+    this.deltasEmpty = root.querySelector('[data-agui-deltas-empty]');
+    this.activityCard = root.querySelector('[data-agui-activity-card]');
+    this.activity = root.querySelector('[data-agui-activity]');
 
-function ready(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
+    this.busy = false;
+    this.thread = null;
 
-ready(() => {
-  const root = document.querySelector('[data-agui-console]');
-  if (!root) return;
-
-  const timelineEl = root.querySelector('[data-agui-timeline]');
-  const draftEl = root.querySelector('[data-agui-draft]');
-  const reasoningEl = root.querySelector('[data-agui-reasoning]');
-  const stateEl = root.querySelector('[data-agui-state]');
-  const hitlEl = root.querySelector('[data-agui-hitl]');
-  const uiSlotEl = root.querySelector('[data-agui-uislot]');
-  const countEl = root.querySelector('[data-agui-eventcount]');
-  const runBtn = root.querySelector('[data-agui-run]');
-
-  let preset = 'seo';
-  root.querySelectorAll('[data-agui-preset]').forEach((b) => {
-    b.addEventListener('click', () => {
-      root.querySelectorAll('[data-agui-preset]').forEach((x) => x.classList.remove('active'));
-      b.classList.add('active');
-      preset = b.dataset.aguiPreset;
+    this.select.addEventListener('change', () => this.presetChanged());
+    root.querySelector('[data-agui-form]').addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.start();
     });
-  });
-
-  const threadId = 't-' + Math.random().toString(36).slice(2, 8);
-  let count = 0;
-  let state = {};
-  const toolArgs = {};
-  const toolNames = {};
-
-  function reset() {
-    count = 0; state = {}; draftEl.innerHTML = ''; reasoningEl.innerHTML = ''; reasoningEl.classList.add('d-none');
-    timelineEl.innerHTML = ''; hitlEl.innerHTML = ''; hitlEl.classList.add('d-none'); uiSlotEl.innerHTML = '';
-    stateEl.textContent = '{}'; countEl.textContent = '0 events';
-  }
-
-  // Event kind → .anx-console__event modifier: accent for tool calls, ok for a
-  // finished run, warn while a HITL tool awaits approval, danger for errors,
-  // muted for the high-volume text/reasoning deltas.
-  function eventModifier(ev) {
-    const type = String(ev.type || '');
-    if (type === 'RUN_ERROR') return 'danger';
-    if (type === 'RUN_FINISHED') return 'ok';
-    if (type.indexOf('TOOL_CALL') === 0) {
-      if (type === 'TOOL_CALL_END' && HITL_TOOLS.includes(toolNames[ev.toolCallId] || '')) return 'warn';
-      return 'accent';
-    }
-    const cat = CATEGORY[type] || 'special';
-    return (cat === 'text' || cat === 'reason') ? 'muted' : '';
-  }
-
-  function addRow(ev) {
-    count++; countEl.textContent = count + ' events';
-    const mod = eventModifier(ev);
-    const row = document.createElement('div');
-    row.className = 'anx-console__event' + (mod ? ' anx-console__event--' + mod : '');
-    const { type, ...rest } = ev;
-    const kind = document.createElement('span');
-    kind.className = 'anx-console__kind';
-    kind.textContent = type;
-    row.appendChild(kind);
-    const payload = Object.keys(rest).length ? JSON.stringify(rest) : '';
-    if (payload) { const p = document.createElement('span'); p.className = 'agui-evt__payload'; p.textContent = payload.length > 90 ? payload.slice(0, 90) + '…' : payload; row.appendChild(p); }
-    timelineEl.appendChild(row);
-    timelineEl.scrollTop = timelineEl.scrollHeight;
-  }
-
-  function renderState() { stateEl.textContent = JSON.stringify(state, null, 2); }
-
-  function handle(ev) {
-    addRow(ev);
-    switch (ev.type) {
-      case 'REASONING_START': reasoningEl.classList.remove('d-none'); reasoningEl.textContent = ''; break;
-      case 'REASONING_MESSAGE_CONTENT': reasoningEl.textContent += ev.delta; break;
-      case 'TEXT_MESSAGE_START': draftEl.textContent = ''; break;
-      case 'TEXT_MESSAGE_CONTENT': draftEl.textContent += ev.delta; break;
-      case 'STATE_SNAPSHOT': state = ev.snapshot || {}; renderState(); break;
-      case 'STATE_DELTA': applyPatch(state, ev.delta); renderState(); break;
-      case 'TOOL_CALL_START': toolNames[ev.toolCallId] = ev.toolCallName; toolArgs[ev.toolCallId] = ''; break;
-      case 'TOOL_CALL_ARGS': toolArgs[ev.toolCallId] = (toolArgs[ev.toolCallId] || '') + ev.delta; break;
-      case 'TOOL_CALL_END': onToolEnd(ev.toolCallId); break;
-      case 'RUN_ERROR': addRunError(ev); break;
-      default: break;
-    }
-  }
-
-  function onToolEnd(id) {
-    let args = {}; try { args = JSON.parse(toolArgs[id] || '{}'); } catch (e) { /* ignore */ }
-    const name = toolNames[id] || '';
-    if (HITL_TOOLS.includes(name)) {
-      renderHitl(id, name, args);
-    } else if (name === 'render_plan_card') {
-      renderPlanCard(args);
-    }
-  }
-
-  function renderPlanCard(args) {
-    const plans = args.plans || [];
-    uiSlotEl.innerHTML = '<div class="agui-plancards">' + plans.map((p) =>
-      '<div class="agui-plancard' + (p.name === args.recommended ? ' is-rec' : '') + '">' +
-      (p.name === args.recommended ? '<span class="agui-plancard__tag">Recommended</span>' : '') +
-      '<div class="agui-plancard__name">' + p.name + '</div><div class="agui-plancard__price">€' + p.price + '<small>/mo</small></div>' +
-      '<div class="agui-plancard__seats">' + p.seats + ' seats</div></div>').join('') + '</div>';
-  }
-
-  function renderHitl(toolCallId, name, args) {
-    hitlEl.classList.remove('d-none');
-    const summary = Object.entries(args).map(([k, v]) =>
-      '<div class="agui-hitl__row"><span>' + k + '</span><b>' + (typeof v === 'object' ? JSON.stringify(v) : v) + '</b></div>').join('');
-    hitlEl.innerHTML =
-      '<div class="agui-hitl__head"><span class="anx-badge anx-badge--warn">Awaiting your approval</span>' +
-      '<span class="anx-code">' + name + '</span></div>' +
-      '<div class="agui-hitl__body">' + summary + '</div>' +
-      '<div class="agui-hitl__actions"><button type="button" class="anx-btn anx-btn--primary anx-btn--sm" data-decision="approved">Approve &amp; apply</button>' +
-      '<button type="button" class="anx-btn anx-btn--ghost anx-btn--sm" data-decision="rejected">Reject</button></div>';
-    hitlEl.querySelectorAll('[data-decision]').forEach((b) => {
-      b.addEventListener('click', () => {
-        hitlEl.classList.add('d-none');
-        run({ approval: { toolCallId, decision: b.dataset.decision } });
-      });
+    root.querySelector('[data-agui-clear]').addEventListener('click', () => this.clear());
+    this.interruptForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      this.answerInterrupt(true);
     });
+    root.querySelector('[data-agui-reject]').addEventListener('click', () => this.answerInterrupt(false));
+
+    this.presetChanged();
+    this.clear();
   }
 
-  function addRunError(ev) { draftEl.innerHTML = '<div class="agui-error">' + (ev.message || 'Run failed') + ' <small>(' + (ev.code || '') + ')</small></div>'; }
+  option() {
+    return this.select.options[this.select.selectedIndex];
+  }
 
-  async function run(extra) {
-    const url = window.TYPO3 && TYPO3.settings && TYPO3.settings.ajaxUrls ? TYPO3.settings.ajaxUrls.agui_run : null;
-    if (!url) { addRunError({ message: 'AJAX route unavailable', code: 'NO_ROUTE' }); return; }
-    if (!extra) reset();
-    runBtn.disabled = true;
-    const input = Object.assign({ threadId, runId: 'r-' + Math.random().toString(36).slice(2, 8), preset, messages: [], tools: [], state }, extra || {});
+  presetChanged() {
+    const option = this.option();
+    this.message.value = option.dataset.message || '';
+    this.target.textContent = labels.get(option.dataset.audience === 'site' ? 'console.target.site' : 'console.target.editor');
+  }
+
+  clear() {
+    this.events.replaceChildren();
+    this.eventsEmpty.hidden = false;
+    this.count.textContent = '0';
+    this.provenance.hidden = true;
+    this.reasoning.hidden = true;
+    this.reasoningText.textContent = '';
+    this.answer.textContent = '';
+    this.result.hidden = true;
+    this.result.textContent = '';
+    this.interrupt.hidden = true;
+    this.state.textContent = '{}';
+    this.deltas.replaceChildren();
+    this.deltasEmpty.hidden = false;
+    this.activityCard.hidden = true;
+    this.activity.textContent = '';
+    this.status.textContent = '';
+    this.thread = null;
+  }
+
+  /** A new conversation: a fresh thread for the selected task. */
+  start() {
+    if (this.busy) {
+      return;
+    }
+    const option = this.option();
+    const text = this.message.value.trim();
+    if (text === '') {
+      this.message.focus();
+      return;
+    }
+    this.clear();
+    const site = option.dataset.audience === 'site';
+    this.thread = {
+      id: newId('thread'),
+      url: site ? this.endpoint : this.runUrl,
+      preset: option.value,
+      conversation: new Conversation(),
+      state: {},
+      pending: null,
+    };
+    this.thread.conversation.addUser(text);
+    this.run(null);
+  }
+
+  async run(resume) {
+    const thread = this.thread;
+    if (!thread || !thread.url) {
+      this.setStatus(labels.get('js.status.noRoute'));
+      return;
+    }
+    const input = runInput({
+      threadId: thread.id,
+      messages: thread.conversation.messages(),
+      state: thread.state,
+      forwardedProps: { agentNexus: { preset: thread.preset } },
+      resume,
+    });
+    this.busy = true;
+    this.startButton.disabled = true;
+    this.interrupt.hidden = true;
+    this.answer.textContent = '';
+    this.result.hidden = true;
+    this.startedAt = performance.now();
+    this.setStatus(labels.get('js.status.running', [input.runId]));
+    let finished = false;
     try {
-      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(input) });
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buf = '';
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += decoder.decode(value, { stream: true });
-        let i;
-        while ((i = buf.indexOf('\n\n')) >= 0) {
-          const frame = buf.slice(0, i); buf = buf.slice(i + 2);
-          const line = frame.split('\n').find((l) => l.startsWith('data:'));
-          if (line) { const j = line.slice(5).trim(); if (j) { try { handle(JSON.parse(j)); } catch (e) { /* ignore */ } } }
+      await runAgent(thread.url, input, (event) => {
+        if (event.type === 'RUN_FINISHED' || event.type === 'RUN_ERROR') {
+          finished = true;
+        }
+        this.handle(event, input.runId);
+      });
+      if (!finished) {
+        this.setStatus(labels.get('js.status.truncated'));
+      }
+    } catch (error) {
+      const text = error.status
+        ? labels.get('js.status.refused', [String(error.status), error.message])
+        : labels.get('js.status.network', [error.message]);
+      this.setStatus(text);
+      Notification.error(labels.get('console.heading'), text);
+    } finally {
+      this.busy = false;
+      this.startButton.disabled = false;
+    }
+  }
+
+  handle(event, runId) {
+    this.addEvent(event);
+    this.thread.conversation.apply(event);
+    switch (event.type) {
+      case 'CUSTOM':
+        if (event.name === 'at.webconsulting.agentnexus.provenance' && event.value) {
+          this.provenance.hidden = false;
+          this.provenance.textContent = labels.get('js.provenance', [String(event.value.label || event.value.mode)]);
+          this.provenance.title = event.value.reason || '';
+        }
+        break;
+      case 'REASONING_MESSAGE_CONTENT':
+        this.reasoning.hidden = false;
+        this.reasoningText.textContent += event.delta;
+        break;
+      case 'TEXT_MESSAGE_CONTENT':
+        this.answer.textContent += event.delta;
+        break;
+      case 'STATE_SNAPSHOT':
+        this.thread.state = event.snapshot;
+        this.showState();
+        break;
+      case 'STATE_DELTA': {
+        const { value, error } = applyPatch(this.thread.state, event.delta);
+        this.thread.state = value;
+        this.showState();
+        this.addDelta(event.delta, error);
+        break;
+      }
+      case 'ACTIVITY_SNAPSHOT':
+        this.activityCard.hidden = false;
+        this.activity.textContent = JSON.stringify({ activityType: event.activityType, content: event.content }, null, 2);
+        break;
+      case 'RUN_FINISHED':
+        this.finished(event, runId);
+        break;
+      case 'RUN_ERROR':
+        this.setStatus(labels.get('js.status.error', [runId, event.message]));
+        break;
+      default:
+        break;
+    }
+  }
+
+  finished(event, runId) {
+    const outcome = event.outcome || { type: 'success' };
+    if (outcome.type === 'interrupt' && Array.isArray(outcome.interrupts) && outcome.interrupts.length > 0) {
+      this.thread.pending = { interrupt: outcome.interrupts[0], url: this.thread.url };
+      this.showInterrupt(outcome.interrupts[0]);
+      this.setStatus(labels.get('js.status.interrupted', [runId]));
+      return;
+    }
+    if (outcome.type === 'cancelled') {
+      this.setStatus(labels.get('js.status.cancelled', [runId]));
+      return;
+    }
+    this.setStatus(labels.get('js.status.finished', [runId]));
+    if (event.result && typeof event.result === 'object') {
+      this.result.hidden = false;
+      this.result.textContent = labels.get('js.result', [String(event.result.status || '')])
+        + (event.result.simulated ? ' ' + labels.get('js.result.simulated') : '');
+    }
+  }
+
+  showInterrupt(interrupt) {
+    this.interrupt.hidden = false;
+    this.interruptMessage.textContent = interrupt.message || '';
+    const proposal = this.thread.conversation.toolArguments(interrupt.toolCallId);
+    const call = this.thread.conversation.toolOwners.get(interrupt.toolCallId)?.toolCalls.find((item) => item.id === interrupt.toolCallId);
+    this.interruptFacts.replaceChildren(
+      fact(labels.get('js.interrupt.reason'), interrupt.reason),
+      fact(labels.get('js.interrupt.tool'), call ? call.function.name : interrupt.toolCallId || ''),
+    );
+
+    const schema = interrupt.responseSchema || {};
+    const properties = schema.properties || {};
+    const required = new Set([...(schema.required || []), ...((schema.then && schema.then.required) || [])]);
+    this.interruptFields.replaceChildren();
+    Object.entries(properties).forEach(([name, property]) => {
+      if (name === 'approved') {
+        return;
+      }
+      const id = 'agui-answer-' + name;
+      const group = document.createElement('div');
+      group.className = 'form-group';
+      const label = document.createElement('label');
+      label.className = 'form-label';
+      label.htmlFor = id;
+      let control;
+      if (name === 'editedArgs') {
+        label.textContent = labels.get('js.interrupt.edit');
+        control = document.createElement('textarea');
+        control.className = 'form-control agui-console__json';
+        control.rows = 8;
+        control.spellcheck = false;
+        control.value = JSON.stringify(proposal, null, 2);
+        control.dataset.original = control.value;
+        const help = document.createElement('p');
+        help.className = 'form-text';
+        help.id = id + '-help';
+        help.textContent = labels.get('js.interrupt.edit.help');
+        control.setAttribute('aria-describedby', help.id);
+        group.append(label, control, help);
+      } else {
+        label.textContent = property.title || name;
+        control = document.createElement('input');
+        control.className = 'form-control';
+        control.type = property.format === 'email' ? 'email' : 'text';
+        if (property.maxLength) {
+          control.maxLength = property.maxLength;
+        }
+        control.autocomplete = name === 'email' ? 'email' : (name === 'name' ? 'name' : 'off');
+        control.required = required.has(name);
+        group.append(label, control);
+      }
+      control.id = id;
+      control.name = name;
+      this.interruptFields.append(group);
+    });
+    if (!Object.prototype.hasOwnProperty.call(properties, 'editedArgs')) {
+      const pre = document.createElement('pre');
+      pre.className = 'anx-code';
+      pre.tabIndex = 0;
+      pre.setAttribute('aria-label', labels.get('js.interrupt.arguments'));
+      pre.textContent = JSON.stringify(proposal, null, 2);
+      this.interruptFields.prepend(pre);
+    }
+    const first = this.interruptFields.querySelector('input, textarea');
+    (first || this.interrupt.querySelector('[data-agui-approve]')).focus();
+  }
+
+  answerInterrupt(approved) {
+    const pending = this.thread && this.thread.pending;
+    if (!pending || this.busy) {
+      return;
+    }
+    const payload = { approved };
+    if (approved) {
+      for (const control of this.interruptFields.querySelectorAll('input, textarea')) {
+        control.setCustomValidity('');
+        if (control.name === 'editedArgs') {
+          if (control.value === control.dataset.original) {
+            continue;
+          }
+          try {
+            const edited = JSON.parse(control.value);
+            if (!edited || typeof edited !== 'object' || Array.isArray(edited)) {
+              throw new Error('not an object');
+            }
+            payload.editedArgs = edited;
+          } catch (e) {
+            control.setCustomValidity(labels.get('js.interrupt.edit.invalid'));
+          }
+        } else if (control.value.trim() !== '') {
+          payload[control.name] = control.value.trim();
+        } else if (control.required) {
+          control.setCustomValidity(labels.get('js.interrupt.required'));
         }
       }
-    } catch (e) {
-      addRunError({ message: e.message, code: 'STREAM' });
-    } finally {
-      runBtn.disabled = false;
+      if (!this.interruptForm.reportValidity()) {
+        return;
+      }
     }
+    this.thread.pending = null;
+    this.interrupt.hidden = true;
+    this.run([{ interruptId: pending.interrupt.id, status: 'resolved', payload }]);
   }
 
-  runBtn.addEventListener('click', () => run());
-});
+  addEvent(event) {
+    const index = this.events.children.length + 1;
+    this.eventsEmpty.hidden = true;
+    this.count.textContent = String(index);
+    const item = document.createElement('li');
+    item.className = 'anx-events__item';
+    const details = document.createElement('details');
+    const summary = document.createElement('summary');
+    const number = span('anx-events__index', String(index));
+    const badge = span('badge badge-' + (FAMILY_BADGE[event.type.split('_')[0]] || 'default'), event.type);
+    const brief = span('anx-events__name', describe(event));
+    const offset = span('anx-events__offset text-variant', labels.get('js.event.offset', [String(Math.round(performance.now() - this.startedAt))]));
+    summary.append(number, badge, brief, offset);
+    const pre = document.createElement('pre');
+    pre.className = 'anx-code';
+    const code = document.createElement('code');
+    code.textContent = JSON.stringify(event, null, 2);
+    pre.append(code);
+    details.append(summary, pre);
+    item.append(details);
+    this.events.append(item);
+  }
+
+  addDelta(delta, error) {
+    this.deltasEmpty.hidden = true;
+    const item = document.createElement('li');
+    const code = document.createElement('code');
+    code.textContent = JSON.stringify(delta);
+    item.append(code);
+    if (error) {
+      item.append(document.createTextNode(' — ' + error.message));
+    }
+    this.deltas.append(item);
+  }
+
+  showState() {
+    this.state.textContent = JSON.stringify(this.thread.state, null, 2);
+  }
+
+  setStatus(text) {
+    this.status.textContent = text;
+  }
+}
+
+function span(className, text) {
+  const element = document.createElement('span');
+  element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function fact(term, value) {
+  const group = document.createElement('div');
+  const dt = document.createElement('dt');
+  dt.textContent = term;
+  const dd = document.createElement('dd');
+  const code = document.createElement('code');
+  code.textContent = value || '';
+  dd.append(code);
+  group.append(dt, dd);
+  return group;
+}
+
+/** One line per event for the list; the full event is in the details. */
+function describe(event) {
+  switch (event.type) {
+    case 'RUN_STARTED':
+      return event.runId + ' · ' + (event.protocolVersion || '');
+    case 'RUN_FINISHED':
+      return (event.outcome && event.outcome.type) || 'success';
+    case 'RUN_ERROR':
+      return event.message;
+    case 'STEP_STARTED':
+    case 'STEP_FINISHED':
+      return event.stepName;
+    case 'TEXT_MESSAGE_CONTENT':
+    case 'REASONING_MESSAGE_CONTENT':
+    case 'TOOL_CALL_ARGS':
+      return JSON.stringify(event.delta);
+    case 'TOOL_CALL_START':
+      return event.toolCallName;
+    case 'TOOL_CALL_RESULT':
+      return typeof event.content === 'string' ? event.content : '[…]';
+    case 'STATE_DELTA':
+      return (event.delta || []).map((op) => op.op + ' ' + op.path).join(', ');
+    case 'ACTIVITY_SNAPSHOT':
+    case 'ACTIVITY_DELTA':
+      return event.activityType;
+    case 'CUSTOM':
+      return event.name;
+    default:
+      return event.messageId || event.toolCallId || '';
+  }
+}
+
+const root = document.querySelector('[data-agui-console]');
+if (root) {
+  new RunConsole(root);
+}

@@ -1,8 +1,941 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>AG-UI Playground</source><target>AG-UI Playground</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>A backend agent streams typed real-time events to the UI with human approval before writes.</source><target>Ein Backend-Agent streamt typisierte Echtzeit-Events in die UI, mit menschlicher Freigabe vor Schreibaktionen.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="agui">
+    <unit id="console.heading">
+      <segment state="final">
+        <source>Run console</source>
+        <target>Lauf-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="console.lede">
+      <segment state="final">
+        <source>Start a run and watch the agent stream AG-UI 1.0 events. When it proposes a change, the run stops and waits for you. Nothing is saved until you approve.</source>
+        <target>Starten Sie einen Lauf und sehen Sie zu, wie der Agent AG-UI-1.0-Ereignisse streamt. Schlägt er eine Änderung vor, hält der Lauf an und wartet auf Sie. Gespeichert wird erst nach Ihrer Freigabe.</target>
+      </segment>
+    </unit>
+    <unit id="console.task">
+      <segment state="final">
+        <source>Task</source>
+        <target>Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="console.group.editor">
+      <segment state="final">
+        <source>Editor agent (backend route)</source>
+        <target>Redaktions-Agent (Backend-Route)</target>
+      </segment>
+    </unit>
+    <unit id="console.group.site">
+      <segment state="final">
+        <source>Site assistant (public endpoint)</source>
+        <target>Website-Assistent (öffentlicher Endpunkt)</target>
+      </segment>
+    </unit>
+    <unit id="console.target.editor">
+      <segment state="final">
+        <source>Runs through this module's backend route. Only backend users can start and approve it.</source>
+        <target>Läuft über die Backend-Route dieses Moduls. Nur Backend-Benutzer können ihn starten und freigeben.</target>
+      </segment>
+    </unit>
+    <unit id="console.target.site">
+      <segment state="final">
+        <source>Runs through the public endpoint, exactly as another AG-UI client would call it.</source>
+        <target>Läuft über den öffentlichen Endpunkt, genau so, wie ihn ein anderer AG-UI-Client aufruft.</target>
+      </segment>
+    </unit>
+    <unit id="console.message">
+      <segment state="final">
+        <source>Message to the agent</source>
+        <target>Nachricht an den Agenten</target>
+      </segment>
+    </unit>
+    <unit id="console.start">
+      <segment state="final">
+        <source>Start run</source>
+        <target>Lauf starten</target>
+      </segment>
+    </unit>
+    <unit id="console.clear">
+      <segment state="final">
+        <source>Clear</source>
+        <target>Leeren</target>
+      </segment>
+    </unit>
+    <unit id="console.events">
+      <segment state="final">
+        <source>Events</source>
+        <target>Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="console.events.empty">
+      <segment state="final">
+        <source>No events yet. Start a run to see them arrive.</source>
+        <target>Noch keine Ereignisse. Starten Sie einen Lauf, um sie eintreffen zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="console.answer">
+      <segment state="final">
+        <source>Answer</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="console.answer.empty">
+      <segment state="final">
+        <source>The streamed answer appears here.</source>
+        <target>Hier erscheint die gestreamte Antwort.</target>
+      </segment>
+    </unit>
+    <unit id="console.reasoning">
+      <segment state="final">
+        <source>Reasoning</source>
+        <target>Überlegung</target>
+      </segment>
+    </unit>
+    <unit id="console.interrupt">
+      <segment state="final">
+        <source>Waiting for your approval</source>
+        <target>Wartet auf Ihre Freigabe</target>
+      </segment>
+    </unit>
+    <unit id="console.approve">
+      <segment state="final">
+        <source>Approve</source>
+        <target>Freigeben</target>
+      </segment>
+    </unit>
+    <unit id="console.reject">
+      <segment state="final">
+        <source>Reject</source>
+        <target>Ablehnen</target>
+      </segment>
+    </unit>
+    <unit id="console.state">
+      <segment state="final">
+        <source>Shared state</source>
+        <target>Gemeinsamer Zustand</target>
+      </segment>
+    </unit>
+    <unit id="console.deltas">
+      <segment state="final">
+        <source>Applied deltas</source>
+        <target>Angewendete Deltas</target>
+      </segment>
+    </unit>
+    <unit id="console.deltas.empty">
+      <segment state="final">
+        <source>No deltas in this run.</source>
+        <target>Keine Deltas in diesem Lauf.</target>
+      </segment>
+    </unit>
+    <unit id="console.activity">
+      <segment state="final">
+        <source>Activity</source>
+        <target>Aktivität</target>
+      </segment>
+    </unit>
+    <unit id="console.recent">
+      <segment state="final">
+        <source>Recent runs</source>
+        <target>Letzte Läufe</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.all">
+      <segment state="final">
+        <source>Open all runs</source>
+        <target>Alle Läufe öffnen</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.run">
+      <segment state="final">
+        <source>Run</source>
+        <target>Lauf</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.label">
+      <segment state="final">
+        <source>Task</source>
+        <target>Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.source">
+      <segment state="final">
+        <source>Caller</source>
+        <target>Aufrufer</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.events">
+      <segment state="final">
+        <source>Events</source>
+        <target>Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.updated">
+      <segment state="final">
+        <source>Updated</source>
+        <target>Geändert</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.open">
+      <segment state="final">
+        <source>Open run %s in the inspector</source>
+        <target>Lauf %s im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.empty.title">
+      <segment state="final">
+        <source>No runs yet</source>
+        <target>Noch keine Läufe</target>
+      </segment>
+    </unit>
+    <unit id="console.recent.empty">
+      <segment state="final">
+        <source>Start a run above. Every run is stored here and in the inspector.</source>
+        <target>Starten Sie oben einen Lauf. Jeder Lauf wird hier und im Inspektor gespeichert.</target>
+      </segment>
+    </unit>
+    <unit id="console.demo">
+      <segment state="final">
+        <source>Open the demo</source>
+        <target>Demo öffnen</target>
+      </segment>
+    </unit>
+    <unit id="console.newTab">
+      <segment state="final">
+        <source>(opens in a new tab)</source>
+        <target>(öffnet in einem neuen Tab)</target>
+      </segment>
+    </unit>
+    <unit id="preset.seo">
+      <segment state="final">
+        <source>Write SEO metadata</source>
+        <target>SEO-Metadaten schreiben</target>
+      </segment>
+    </unit>
+    <unit id="preset.translate">
+      <segment state="final">
+        <source>Translate page titles</source>
+        <target>Seitentitel übersetzen</target>
+      </segment>
+    </unit>
+    <unit id="preset.news">
+      <segment state="final">
+        <source>Draft a news item</source>
+        <target>Newsbeitrag entwerfen</target>
+      </segment>
+    </unit>
+    <unit id="preset.plan">
+      <segment state="final">
+        <source>Recommend a plan</source>
+        <target>Tarif empfehlen</target>
+      </segment>
+    </unit>
+    <unit id="preset.support">
+      <segment state="final">
+        <source>Book a consultation</source>
+        <target>Beratung buchen</target>
+      </segment>
+    </unit>
+    <unit id="state.running">
+      <segment state="final">
+        <source>Running</source>
+        <target>Läuft</target>
+      </segment>
+    </unit>
+    <unit id="state.interrupted">
+      <segment state="final">
+        <source>Waiting for approval</source>
+        <target>Wartet auf Freigabe</target>
+      </segment>
+    </unit>
+    <unit id="state.finished">
+      <segment state="final">
+        <source>Finished</source>
+        <target>Abgeschlossen</target>
+      </segment>
+    </unit>
+    <unit id="state.error">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Fehlgeschlagen</target>
+      </segment>
+    </unit>
+    <unit id="state.cancelled">
+      <segment state="final">
+        <source>Cancelled</source>
+        <target>Abgebrochen</target>
+      </segment>
+    </unit>
+    <unit id="source.api">
+      <segment state="final">
+        <source>Agent (API)</source>
+        <target>Agent (API)</target>
+      </segment>
+    </unit>
+    <unit id="source.widget">
+      <segment state="final">
+        <source>Frontend widget</source>
+        <target>Frontend-Widget</target>
+      </segment>
+    </unit>
+    <unit id="source.backend">
+      <segment state="final">
+        <source>Backend console</source>
+        <target>Backend-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="source.agent">
+      <segment state="final">
+        <source>Demo agent</source>
+        <target>Demo-Agent</target>
+      </segment>
+    </unit>
+    <unit id="js.status.running">
+      <segment state="final">
+        <source>Run %s is running.</source>
+        <target>Lauf %s läuft.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.interrupted">
+      <segment state="final">
+        <source>Run %s is waiting for your approval.</source>
+        <target>Lauf %s wartet auf Ihre Freigabe.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.finished">
+      <segment state="final">
+        <source>Run %s finished.</source>
+        <target>Lauf %s ist abgeschlossen.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.cancelled">
+      <segment state="final">
+        <source>Run %s was cancelled.</source>
+        <target>Lauf %s wurde abgebrochen.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.error">
+      <segment state="final">
+        <source>Run %s failed: %s</source>
+        <target>Lauf %s ist fehlgeschlagen: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.status.refused">
+      <segment state="final">
+        <source>The endpoint refused the run (HTTP %s): %s</source>
+        <target>Der Endpunkt hat den Lauf abgelehnt (HTTP %s): %s</target>
+      </segment>
+    </unit>
+    <unit id="js.status.network">
+      <segment state="final">
+        <source>The connection failed: %s</source>
+        <target>Die Verbindung ist fehlgeschlagen: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.status.truncated">
+      <segment state="final">
+        <source>The stream ended before the run finished.</source>
+        <target>Der Stream endete, bevor der Lauf abgeschlossen war.</target>
+      </segment>
+    </unit>
+    <unit id="js.status.noRoute">
+      <segment state="final">
+        <source>The run route is not available. Reload the module.</source>
+        <target>Die Route für Läufe ist nicht verfügbar. Laden Sie das Modul neu.</target>
+      </segment>
+    </unit>
+    <unit id="js.result">
+      <segment state="final">
+        <source>Result: %s</source>
+        <target>Resultat: %s</target>
+      </segment>
+    </unit>
+    <unit id="js.result.simulated">
+      <segment state="final">
+        <source>Simulated: nothing was written.</source>
+        <target>Simuliert: Es wurde nichts geschrieben.</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.reason">
+      <segment state="final">
+        <source>Reason</source>
+        <target>Grund</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.tool">
+      <segment state="final">
+        <source>Tool call</source>
+        <target>Tool-Aufruf</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.arguments">
+      <segment state="final">
+        <source>Proposed arguments</source>
+        <target>Vorgeschlagene Argumente</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.edit">
+      <segment state="final">
+        <source>Arguments to apply (JSON)</source>
+        <target>Anzuwendende Argumente (JSON)</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.edit.help">
+      <segment state="final">
+        <source>Change values before you approve. This object replaces the proposal.</source>
+        <target>Ändern Sie Werte vor der Freigabe. Dieses Objekt ersetzt den Vorschlag.</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.edit.invalid">
+      <segment state="final">
+        <source>The arguments are not a JSON object.</source>
+        <target>Die Argumente sind kein JSON-Objekt.</target>
+      </segment>
+    </unit>
+    <unit id="js.interrupt.required">
+      <segment state="final">
+        <source>Fill in this field to approve.</source>
+        <target>Füllen Sie dieses Feld aus, um freizugeben.</target>
+      </segment>
+    </unit>
+    <unit id="js.event.offset">
+      <segment state="final">
+        <source>+%s ms</source>
+        <target>+%s ms</target>
+      </segment>
+    </unit>
+    <unit id="js.provenance">
+      <segment state="final">
+        <source>Answer source: %s</source>
+        <target>Quelle der Antwort: %s</target>
+      </segment>
+    </unit>
+    <unit id="events.heading">
+      <segment state="final">
+        <source>AG-UI %s events</source>
+        <target>AG-UI-%s-Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="events.lede">
+      <segment state="final">
+        <source>The %s event types of AG-UI 1.0, grouped by family, with their fields and the rules a stream must follow. The event factory, the stream verifier and this page read the same catalogue.</source>
+        <target>Die %s Ereignistypen von AG-UI 1.0, nach Familie gruppiert, mit ihren Feldern und den Regeln, die ein Stream einhalten muss. Die Ereignis-Fabrik, die Stream-Prüfung und diese Seite lesen denselben Katalog.</target>
+      </segment>
+    </unit>
+    <unit id="events.transport">
+      <segment state="final">
+        <source>Transport</source>
+        <target>Transport</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.endpoint">
+      <segment state="final">
+        <source>Endpoint</source>
+        <target>Endpunkt</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.request">
+      <segment state="final">
+        <source>Request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.request.value">
+      <segment state="final">
+        <source>A RunAgentInput as JSON, sent with Content-Type: application/json and Accept: text/event-stream.</source>
+        <target>Ein RunAgentInput als JSON, gesendet mit Content-Type: application/json und Accept: text/event-stream.</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.response">
+      <segment state="final">
+        <source>Response</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.response.value">
+      <segment state="final">
+        <source>200 with text/event-stream, one event per data: line. Every run ends with RUN_FINISHED or RUN_ERROR.</source>
+        <target>200 mit text/event-stream, ein Ereignis je data:-Zeile. Jeder Lauf endet mit RUN_FINISHED oder RUN_ERROR.</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.refusal">
+      <segment state="final">
+        <source>Refused input</source>
+        <target>Abgelehnte Eingabe</target>
+      </segment>
+    </unit>
+    <unit id="events.transport.refusal.value">
+      <segment state="final">
+        <source>A JSON error and no stream: 400 for malformed input or another major version, 409 for a conflict with the thread, 413 for input that is too large, 429 for too many runs.</source>
+        <target>Ein JSON-Fehler und kein Stream: 400 bei fehlerhafter Eingabe oder einer anderen Hauptversion, 409 bei einem Konflikt mit dem Thread, 413 bei zu großer Eingabe, 429 bei zu vielen Läufen.</target>
+      </segment>
+    </unit>
+    <unit id="events.curl">
+      <segment state="final">
+        <source>Try it with curl</source>
+        <target>Mit curl ausprobieren</target>
+      </segment>
+    </unit>
+    <unit id="events.curl.note">
+      <segment state="final">
+        <source>The ids in this example are new on every page view. The endpoint refuses a run id it has seen before.</source>
+        <target>Die IDs in diesem Beispiel sind bei jedem Seitenaufruf neu. Der Endpunkt lehnt eine bereits verwendete Lauf-ID ab.</target>
+      </segment>
+    </unit>
+    <unit id="events.approval">
+      <segment state="final">
+        <source>Human approval</source>
+        <target>Freigabe durch Menschen</target>
+      </segment>
+    </unit>
+    <unit id="events.approval.propose">
+      <segment state="final">
+        <source>The run proposes a change as a tool call: TOOL_CALL_START, TOOL_CALL_ARGS, TOOL_CALL_END.</source>
+        <target>Der Lauf schlägt eine Änderung als Tool-Aufruf vor: TOOL_CALL_START, TOOL_CALL_ARGS, TOOL_CALL_END.</target>
+      </segment>
+    </unit>
+    <unit id="events.approval.interrupt">
+      <segment state="final">
+        <source>It ends with RUN_FINISHED and the outcome interrupt. The interrupt names the tool call and describes the expected answer in responseSchema.</source>
+        <target>Er endet mit RUN_FINISHED und dem Ergebnis interrupt. Die Unterbrechung nennt den Tool-Aufruf und beschreibt die erwartete Antwort in responseSchema.</target>
+      </segment>
+    </unit>
+    <unit id="events.approval.resume">
+      <segment state="final">
+        <source>The next run on the same thread answers it in resume: status resolved with approved true or false, or status cancelled.</source>
+        <target>Der nächste Lauf im selben Thread beantwortet sie in resume: Status resolved mit approved true oder false, oder Status cancelled.</target>
+      </segment>
+    </unit>
+    <unit id="events.approval.result">
+      <segment state="final">
+        <source>Only an approval runs the change. The result comes back as TOOL_CALL_RESULT for the original tool call, then RUN_FINISHED with the outcome success.</source>
+        <target>Nur eine Freigabe führt die Änderung aus. Das Resultat kommt als TOOL_CALL_RESULT zum ursprünglichen Tool-Aufruf zurück, danach RUN_FINISHED mit dem Ergebnis success.</target>
+      </segment>
+    </unit>
+    <unit id="events.families">
+      <segment state="final">
+        <source>Event families</source>
+        <target>Ereignisfamilien</target>
+      </segment>
+    </unit>
+    <unit id="events.column.type">
+      <segment state="final">
+        <source>Event</source>
+        <target>Ereignis</target>
+      </segment>
+    </unit>
+    <unit id="events.column.required">
+      <segment state="final">
+        <source>Required fields</source>
+        <target>Pflichtfelder</target>
+      </segment>
+    </unit>
+    <unit id="events.column.optional">
+      <segment state="final">
+        <source>Optional fields</source>
+        <target>Optionale Felder</target>
+      </segment>
+    </unit>
+    <unit id="events.column.purpose">
+      <segment state="final">
+        <source>Purpose</source>
+        <target>Zweck</target>
+      </segment>
+    </unit>
+    <unit id="events.none">
+      <segment state="final">
+        <source>None</source>
+        <target>Keine</target>
+      </segment>
+    </unit>
+    <unit id="events.example">
+      <segment state="final">
+        <source>Example</source>
+        <target>Beispiel</target>
+      </segment>
+    </unit>
+    <unit id="events.envelope">
+      <segment state="final">
+        <source>Every event may also carry timestamp (an integer, in milliseconds), rawEvent and metadata. An optional field without a value is left out, never sent as null.</source>
+        <target>Jedes Ereignis kann außerdem timestamp (eine Ganzzahl in Millisekunden), rawEvent und metadata tragen. Ein optionales Feld ohne Wert wird weggelassen und nie als null gesendet.</target>
+      </segment>
+    </unit>
+    <unit id="events.rules">
+      <segment state="final">
+        <source>Ordering rules</source>
+        <target>Reihenfolgeregeln</target>
+      </segment>
+    </unit>
+    <unit id="events.rules.lede">
+      <segment state="final">
+        <source>A 1.0 client fails the run when a stream breaks one of these rules. Every stream from this installation is checked against them in the tests and, in Development context, while it streams.</source>
+        <target>Ein 1.0-Client bricht den Lauf ab, wenn ein Stream eine dieser Regeln verletzt. Jeder Stream dieser Installation wird in den Tests und im Development-Kontext auch während des Streamens dagegen geprüft.</target>
+      </segment>
+    </unit>
+    <unit id="events.rules.id">
+      <segment state="final">
+        <source>Rule</source>
+        <target>Regel</target>
+      </segment>
+    </unit>
+    <unit id="events.rules.rule">
+      <segment state="final">
+        <source>What it requires</source>
+        <target>Was sie verlangt</target>
+      </segment>
+    </unit>
+    <unit id="family.lifecycle">
+      <segment state="final">
+        <source>Runs and steps</source>
+        <target>Läufe und Schritte</target>
+      </segment>
+    </unit>
+    <unit id="family.text">
+      <segment state="final">
+        <source>Text messages</source>
+        <target>Textnachrichten</target>
+      </segment>
+    </unit>
+    <unit id="family.tool">
+      <segment state="final">
+        <source>Tool calls</source>
+        <target>Tool-Aufrufe</target>
+      </segment>
+    </unit>
+    <unit id="family.reasoning">
+      <segment state="final">
+        <source>Reasoning</source>
+        <target>Überlegung</target>
+      </segment>
+    </unit>
+    <unit id="family.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Zustand</target>
+      </segment>
+    </unit>
+    <unit id="family.activity">
+      <segment state="final">
+        <source>Activity</source>
+        <target>Aktivität</target>
+      </segment>
+    </unit>
+    <unit id="family.subagents">
+      <segment state="final">
+        <source>Subagents</source>
+        <target>Subagenten</target>
+      </segment>
+    </unit>
+    <unit id="family.passthrough">
+      <segment state="final">
+        <source>Passthrough</source>
+        <target>Durchreichen</target>
+      </segment>
+    </unit>
+    <unit id="event.RUN_STARTED">
+      <segment state="final">
+        <source>Opens a run and declares the producer's own protocol version.</source>
+        <target>Öffnet einen Lauf und nennt die eigene Protokollversion des Senders.</target>
+      </segment>
+    </unit>
+    <unit id="event.RUN_FINISHED">
+      <segment state="final">
+        <source>Closes a run that did not fail: success, interrupt or cancelled.</source>
+        <target>Schließt einen Lauf, der nicht fehlgeschlagen ist: success, interrupt oder cancelled.</target>
+      </segment>
+    </unit>
+    <unit id="event.RUN_ERROR">
+      <segment state="final">
+        <source>Ends a run that failed. Only a new run may follow.</source>
+        <target>Beendet einen fehlgeschlagenen Lauf. Danach darf nur ein neuer Lauf folgen.</target>
+      </segment>
+    </unit>
+    <unit id="event.STEP_STARTED">
+      <segment state="final">
+        <source>Opens a named phase of the run.</source>
+        <target>Öffnet eine benannte Phase des Laufs.</target>
+      </segment>
+    </unit>
+    <unit id="event.STEP_FINISHED">
+      <segment state="final">
+        <source>Closes the phase with that name.</source>
+        <target>Schließt die Phase mit diesem Namen.</target>
+      </segment>
+    </unit>
+    <unit id="event.TEXT_MESSAGE_START">
+      <segment state="final">
+        <source>Opens a message. Without a role, it comes from the assistant.</source>
+        <target>Öffnet eine Nachricht. Ohne Rolle stammt sie vom Assistenten.</target>
+      </segment>
+    </unit>
+    <unit id="event.TEXT_MESSAGE_CONTENT">
+      <segment state="final">
+        <source>Adds text to an open message.</source>
+        <target>Hängt Text an eine offene Nachricht an.</target>
+      </segment>
+    </unit>
+    <unit id="event.TEXT_MESSAGE_END">
+      <segment state="final">
+        <source>Closes the message.</source>
+        <target>Schließt die Nachricht.</target>
+      </segment>
+    </unit>
+    <unit id="event.TEXT_MESSAGE_CHUNK">
+      <segment state="final">
+        <source>Short form of start, content and end. The first chunk carries the messageId.</source>
+        <target>Kurzform von Start, Inhalt und Ende. Der erste Chunk trägt die messageId.</target>
+      </segment>
+    </unit>
+    <unit id="event.TOOL_CALL_START">
+      <segment state="final">
+        <source>Opens a tool call, optionally attached to its message.</source>
+        <target>Öffnet einen Tool-Aufruf, optional mit seiner Nachricht verknüpft.</target>
+      </segment>
+    </unit>
+    <unit id="event.TOOL_CALL_ARGS">
+      <segment state="final">
+        <source>Adds text to the call's arguments, usually JSON.</source>
+        <target>Hängt Text an die Argumente des Aufrufs an, meist JSON.</target>
+      </segment>
+    </unit>
+    <unit id="event.TOOL_CALL_END">
+      <segment state="final">
+        <source>Closes the call. Its arguments are complete.</source>
+        <target>Schließt den Aufruf. Seine Argumente sind vollständig.</target>
+      </segment>
+    </unit>
+    <unit id="event.TOOL_CALL_CHUNK">
+      <segment state="final">
+        <source>Short form of a tool call. The first chunk carries the id and the name.</source>
+        <target>Kurzform eines Tool-Aufrufs. Der erste Chunk trägt ID und Namen.</target>
+      </segment>
+    </unit>
+    <unit id="event.TOOL_CALL_RESULT">
+      <segment state="final">
+        <source>The result of a call, as a new tool message.</source>
+        <target>Das Resultat eines Aufrufs als neue Tool-Nachricht.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_START">
+      <segment state="final">
+        <source>Opens a reasoning span. Its id names the span only.</source>
+        <target>Öffnet einen Überlegungs-Abschnitt. Seine ID benennt nur den Abschnitt.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_MESSAGE_START">
+      <segment state="final">
+        <source>Opens a reasoning message with the role reasoning.</source>
+        <target>Öffnet eine Überlegungs-Nachricht mit der Rolle reasoning.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_MESSAGE_CONTENT">
+      <segment state="final">
+        <source>Adds text to an open reasoning message.</source>
+        <target>Hängt Text an eine offene Überlegungs-Nachricht an.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_MESSAGE_END">
+      <segment state="final">
+        <source>Closes the reasoning message.</source>
+        <target>Schließt die Überlegungs-Nachricht.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_MESSAGE_CHUNK">
+      <segment state="final">
+        <source>Short form of a reasoning message.</source>
+        <target>Kurzform einer Überlegungs-Nachricht.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_END">
+      <segment state="final">
+        <source>Closes the reasoning span.</source>
+        <target>Schließt den Überlegungs-Abschnitt.</target>
+      </segment>
+    </unit>
+    <unit id="event.REASONING_ENCRYPTED_VALUE">
+      <segment state="final">
+        <source>Reasoning the provider keeps private. The client stores it and sends it back unread.</source>
+        <target>Überlegung, die der Anbieter privat hält. Der Client speichert sie und sendet sie ungelesen zurück.</target>
+      </segment>
+    </unit>
+    <unit id="event.STATE_SNAPSHOT">
+      <segment state="final">
+        <source>Replaces the shared state.</source>
+        <target>Ersetzt den gemeinsamen Zustand.</target>
+      </segment>
+    </unit>
+    <unit id="event.STATE_DELTA">
+      <segment state="final">
+        <source>Changes the shared state with a JSON Patch.</source>
+        <target>Ändert den gemeinsamen Zustand mit einem JSON Patch.</target>
+      </segment>
+    </unit>
+    <unit id="event.MESSAGES_SNAPSHOT">
+      <segment state="final">
+        <source>Restates the conversation. Messages are matched by id.</source>
+        <target>Gibt das Gespräch neu wieder. Nachrichten werden über ihre ID zugeordnet.</target>
+      </segment>
+    </unit>
+    <unit id="event.ACTIVITY_SNAPSHOT">
+      <segment state="final">
+        <source>Creates or replaces an activity: structured progress the page shows as its own element.</source>
+        <target>Erstellt oder ersetzt eine Aktivität: strukturierten Fortschritt, den die Seite als eigenes Element zeigt.</target>
+      </segment>
+    </unit>
+    <unit id="event.ACTIVITY_DELTA">
+      <segment state="final">
+        <source>Changes an activity with a JSON Patch.</source>
+        <target>Ändert eine Aktivität mit einem JSON Patch.</target>
+      </segment>
+    </unit>
+    <unit id="event.SUBAGENT_STARTED">
+      <segment state="final">
+        <source>Announces one invocation of a subagent.</source>
+        <target>Kündigt einen Aufruf eines Subagenten an.</target>
+      </segment>
+    </unit>
+    <unit id="event.SUBAGENT_FINISHED">
+      <segment state="final">
+        <source>Closes the invocation: success, or suspended for an interrupt.</source>
+        <target>Schließt den Aufruf: success oder suspended für eine Unterbrechung.</target>
+      </segment>
+    </unit>
+    <unit id="event.SUBAGENT_ERROR">
+      <segment state="final">
+        <source>The invocation failed. The run can go on.</source>
+        <target>Der Aufruf ist fehlgeschlagen. Der Lauf kann weitergehen.</target>
+      </segment>
+    </unit>
+    <unit id="event.RAW">
+      <segment state="final">
+        <source>A provider's own event, passed through unchanged.</source>
+        <target>Ein eigenes Ereignis des Anbieters, unverändert durchgereicht.</target>
+      </segment>
+    </unit>
+    <unit id="event.CUSTOM">
+      <segment state="final">
+        <source>An application's own event. Its name carries a vendor prefix.</source>
+        <target>Ein eigenes Ereignis der Anwendung. Sein Name trägt ein Hersteller-Präfix.</target>
+      </segment>
+    </unit>
+    <unit id="rule.closed-objects">
+      <segment state="final">
+        <source>Every event is one the schema describes: declared fields only, optional fields left out instead of null, integer timestamps.</source>
+        <target>Jedes Ereignis entspricht dem Schema: nur deklarierte Felder, optionale Felder weggelassen statt null, Zeitstempel als Ganzzahl.</target>
+      </segment>
+    </unit>
+    <unit id="rule.first-event">
+      <segment state="final">
+        <source>A stream starts with RUN_STARTED or RUN_ERROR.</source>
+        <target>Ein Stream beginnt mit RUN_STARTED oder RUN_ERROR.</target>
+      </segment>
+    </unit>
+    <unit id="rule.one-active-run">
+      <segment state="final">
+        <source>There is no RUN_STARTED while a run is active.</source>
+        <target>Solange ein Lauf aktiv ist, folgt kein RUN_STARTED.</target>
+      </segment>
+    </unit>
+    <unit id="rule.closed-run">
+      <segment state="final">
+        <source>After RUN_FINISHED only RUN_STARTED or a late RUN_ERROR may follow.</source>
+        <target>Nach RUN_FINISHED dürfen nur RUN_STARTED oder ein spätes RUN_ERROR folgen.</target>
+      </segment>
+    </unit>
+    <unit id="rule.failed-run">
+      <segment state="final">
+        <source>After RUN_ERROR only RUN_STARTED may follow.</source>
+        <target>Nach RUN_ERROR darf nur RUN_STARTED folgen.</target>
+      </segment>
+    </unit>
+    <unit id="rule.terminal-event">
+      <segment state="final">
+        <source>A stream ends with RUN_FINISHED or RUN_ERROR, also when something fails.</source>
+        <target>Ein Stream endet mit RUN_FINISHED oder RUN_ERROR, auch wenn etwas fehlschlägt.</target>
+      </segment>
+    </unit>
+    <unit id="rule.run-identity">
+      <segment state="final">
+        <source>RUN_STARTED and RUN_FINISHED carry the input's threadId and runId. A run id is never used twice.</source>
+        <target>RUN_STARTED und RUN_FINISHED tragen threadId und runId der Eingabe. Eine Lauf-ID wird nie zweimal verwendet.</target>
+      </segment>
+    </unit>
+    <unit id="rule.protocol-version">
+      <segment state="final">
+        <source>RUN_STARTED declares the producer's own version, 1.0.</source>
+        <target>RUN_STARTED nennt die eigene Version des Senders, 1.0.</target>
+      </segment>
+    </unit>
+    <unit id="rule.no-double-open">
+      <segment state="final">
+        <source>A message, tool call, reasoning span or step is not opened again while it is open.</source>
+        <target>Eine Nachricht, ein Tool-Aufruf, ein Überlegungs-Abschnitt oder ein Schritt wird nicht erneut geöffnet, solange er offen ist.</target>
+      </segment>
+    </unit>
+    <unit id="rule.open-before-continue">
+      <segment state="final">
+        <source>Content, argument and end events only follow an open start.</source>
+        <target>Inhalts-, Argument- und Ende-Ereignisse folgen nur auf einen offenen Start.</target>
+      </segment>
+    </unit>
+    <unit id="rule.steps-balanced">
+      <segment state="final">
+        <source>Every step that starts also finishes, matched by name.</source>
+        <target>Jeder begonnene Schritt wird auch beendet, zugeordnet über den Namen.</target>
+      </segment>
+    </unit>
+    <unit id="rule.reasoning-namespaces">
+      <segment state="final">
+        <source>Reasoning spans and reasoning messages have separate ids. A span's id does not open a message.</source>
+        <target>Überlegungs-Abschnitte und Überlegungs-Nachrichten haben getrennte IDs. Die ID eines Abschnitts öffnet keine Nachricht.</target>
+      </segment>
+    </unit>
+    <unit id="rule.closed-before-finish">
+      <segment state="final">
+        <source>Nothing is open at RUN_FINISHED: no step, message, tool call, reasoning span or subagent.</source>
+        <target>Bei RUN_FINISHED ist nichts mehr offen: kein Schritt, keine Nachricht, kein Tool-Aufruf, kein Überlegungs-Abschnitt und kein Subagent.</target>
+      </segment>
+    </unit>
+    <unit id="rule.unique-message-ids">
+      <segment state="final">
+        <source>A messageId names one message in the thread.</source>
+        <target>Eine messageId benennt genau eine Nachricht im Thread.</target>
+      </segment>
+    </unit>
+    <unit id="rule.activity-baseline">
+      <segment state="final">
+        <source>ACTIVITY_DELTA only follows an ACTIVITY_SNAPSHOT for the same activity.</source>
+        <target>ACTIVITY_DELTA folgt nur auf ein ACTIVITY_SNAPSHOT derselben Aktivität.</target>
+      </segment>
+    </unit>
+    <unit id="rule.chunk-form">
+      <segment state="final">
+        <source>The first chunk carries its ids. A later chunk does not contradict it. One item does not mix chunks and start events.</source>
+        <target>Der erste Chunk trägt seine IDs. Ein späterer Chunk widerspricht ihm nicht. Ein Element mischt keine Chunks mit Start-Ereignissen.</target>
+      </segment>
+    </unit>
+    <unit id="rule.subagent-lifecycle">
+      <segment state="final">
+        <source>A subagent is announced before its work, is never reused and finishes before the run does.</source>
+        <target>Ein Subagent wird vor seiner Arbeit angekündigt, nie wiederverwendet und endet vor dem Lauf.</target>
+      </segment>
+    </unit>
+    <unit id="rule.attribution">
+      <segment state="final">
+        <source>An event that continues an item agrees with the owner that opened it.</source>
+        <target>Ein Ereignis, das ein Element fortsetzt, stimmt mit dem Eigentümer überein, der es geöffnet hat.</target>
+      </segment>
+    </unit>
+    <unit id="rule.outcome">
+      <segment state="final">
+        <source>An interrupt outcome has at least one interrupt, each with its own id. Pending tool calls match the stream.</source>
+        <target>Ein interrupt-Ergebnis hat mindestens eine Unterbrechung, jede mit eigener ID. Offene Tool-Aufrufe stimmen mit dem Stream überein.</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>

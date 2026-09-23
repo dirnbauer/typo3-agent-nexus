@@ -5,186 +5,192 @@
 <f:layout name="Module" />
 
 <f:section name="Content">
+<div class="anx anx--backend anx-accent--agui agui-console"
+     data-agui-console
+     data-run-url="{runUrl}"
+     data-endpoint="{endpoint}"
+     data-protocol-version="{protocolVersion}">
 
-<div class="anx anx--backend anx-accent--agui anx-module" data-agui-console>
+    <h1><f:translate domain="agent_nexus.agui" key="console.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.agui" key="console.lede" /></p>
 
-    <header class="anx-page-head">
-        <div class="anx-page-head__titles">
-            <span class="anx-page-head__kicker">AG-UI <em>agent ↔ user</em></span>
-            <h1 class="anx-title">AG-UI Playground</h1>
-            <p class="anx-lede">
-                Start a task and watch the agent <strong>stream typed events</strong> to the UI in real time
-                — text deltas, tool calls, shared state — and <strong>approve before anything is written</strong>.
-            </p>
-        </div>
-        <div class="anx-page-head__meta">
-            <div class="anx-actions">
-                <f:if condition="{llm}">
-                    <f:then><span class="anx-badge anx-badge--accent">LLM: {llm.model}</span></f:then>
-                    <f:else><span class="anx-badge anx-badge--sim">Simulation</span></f:else>
-                </f:if>
-                <span class="anx-badge">POST → SSE</span>
+    <form class="card agui-console__form" data-agui-form>
+        <div class="card-body">
+            <div class="agui-console__fields">
+                <div class="form-group">
+                    <label class="form-label" for="agui-preset"><f:translate domain="agent_nexus.agui" key="console.task" /></label>
+                    <select class="form-select" id="agui-preset" name="preset" data-agui-preset aria-describedby="agui-preset-hint">
+                        <optgroup label="{f:translate(domain: 'agent_nexus.agui', key: 'console.group.editor')}">
+                            <f:for each="{editorPresets}" as="preset">
+                                <option value="{preset.id}" data-audience="editor" data-message="{preset.message}"><f:translate domain="agent_nexus.agui" key="preset.{preset.id}" /></option>
+                            </f:for>
+                        </optgroup>
+                        <optgroup label="{f:translate(domain: 'agent_nexus.agui', key: 'console.group.site')}">
+                            <f:for each="{sitePresets}" as="preset">
+                                <option value="{preset.id}" data-audience="site" data-message="{preset.message}"><f:translate domain="agent_nexus.agui" key="preset.{preset.id}" /></option>
+                            </f:for>
+                        </optgroup>
+                    </select>
+                    <p class="form-text" id="agui-preset-hint" data-agui-target>
+                        <f:translate domain="agent_nexus.agui" key="console.target.editor" />
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="agui-message"><f:translate domain="agent_nexus.agui" key="console.message" /></label>
+                    <textarea class="form-control" id="agui-message" name="message" rows="2" required data-agui-message></textarea>
+                </div>
             </div>
-            <a class="anx-btn anx-btn--ghost anx-btn--sm"
-               href="https://webconsulting-typo3-lab.ddev.site/desiderio/agent-nexus/ag-ui"
-               target="_blank" rel="noopener noreferrer">Frontend demo</a>
-        </div>
-    </header>
-
-    <!-- The 2026 agent-nexus family -->
-    <div class="agui-stack">
-        <span class="anx-section-label">Agent stack</span>
-        <f:for each="{stack}" as="s">
-            <span class="anx-chip anx-accent--{s.accent}{f:if(condition: s.self, then: ' is-self')}"><i class="anx-dot"></i>{s.key}<em>{s.label}</em></span>
-        </f:for>
-    </div>
-
-    <!-- Today's activity (RunLogger totals) -->
-    <div class="anx-stats">
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.runs}">{today.runs}</span>
-            <span class="anx-stat__label">Runs today</span>
-            <span class="anx-stat__hint">backend + frontend consoles</span>
-        </div>
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.approvals}">{today.approvals}</span>
-            <span class="anx-stat__label">Approvals</span>
-            <span class="anx-stat__hint">human-in-the-loop decisions</span>
-        </div>
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{today.events}">{today.events}</span>
-            <span class="anx-stat__label">Events streamed</span>
-            <span class="anx-stat__hint">typed AG-UI events</span>
-        </div>
-        <div class="anx-stat anx-reveal">
-            <span class="anx-stat__value" data-anx-count="{presets -> f:count()}">{presets -> f:count()}</span>
-            <span class="anx-stat__label">Task presets</span>
-            <span class="anx-stat__hint">deterministic demo flows</span>
-        </div>
-    </div>
-
-    <div class="agui-rows">
-
-        <!-- Run controls -->
-        <div class="anx-card anx-reveal">
-            <span class="anx-section-label">Run a task</span>
-            <div class="anx-actions">
-                <f:for each="{presets}" as="preset" iteration="it">
-                    <button type="button"
-                            class="anx-btn anx-btn--ghost anx-btn--sm agui-preset{f:if(condition: it.isFirst, then: ' active')}"
-                            data-agui-preset="{preset.id}" title="{preset.hint}">{preset.label}</button>
-                </f:for>
-                <span class="agui-spacer"></span>
-                <button type="button" class="anx-btn anx-btn--primary" data-agui-run>
-                    <core:icon identifier="actions-play" size="small" /> Run agent
+            <div class="agui-console__actions">
+                <button type="submit" class="btn btn-primary" data-agui-start>
+                    <core:icon identifier="actions-play" size="small" />
+                    <f:translate domain="agent_nexus.agui" key="console.start" />
                 </button>
+                <button type="button" class="btn btn-default" data-agui-clear>
+                    <core:icon identifier="actions-edit-delete" size="small" />
+                    <f:translate domain="agent_nexus.agui" key="console.clear" />
+                </button>
+                <p class="agui-console__status" role="status" data-agui-status></p>
             </div>
         </div>
+    </form>
 
-        <!-- Live panes -->
-        <div class="anx-grid2">
-            <div class="anx-console anx-reveal">
-                <div class="anx-console__bar">
-                    <span class="anx-console__title"><i class="anx-dot"></i> Event timeline</span>
-                    <span class="anx-console__bar-spacer"></span>
-                    <span class="anx-badge" data-agui-eventcount>0 events</span>
-                    <a href="{f:uri.action(action: 'catalog')}" class="anx-btn anx-btn--ghost anx-btn--sm">Event Inspector</a>
-                </div>
-                <div class="anx-console__body" data-agui-timeline aria-live="polite">
-                    <div class="anx-console__empty">Pick a task and press <strong>Run agent</strong> to start the stream.</div>
-                </div>
+    <div class="agui-console__columns">
+        <section class="agui-console__stream" aria-labelledby="agui-events-heading">
+            <div class="agui-console__section-head">
+                <h2 id="agui-events-heading"><f:translate domain="agent_nexus.agui" key="console.events" /></h2>
+                <span class="badge badge-default" data-agui-count>0</span>
             </div>
-            <div class="agui-col">
-                <div class="anx-card anx-card--flush anx-reveal">
-                    <div class="anx-card__head">
-                        <span class="anx-console__title">Draft</span>
-                    </div>
-                    <div class="anx-card__body">
-                        <div class="agui-reasoning d-none" data-agui-reasoning></div>
-                        <div class="agui-draft" data-agui-draft><span class="agui-muted">The streamed answer appears here, token by token.</span></div>
-                        <div class="agui-ui-slot" data-agui-uislot></div>
-                        <div class="agui-hitl d-none" data-agui-hitl aria-live="polite"></div>
-                    </div>
+            <p class="text-variant" data-agui-events-empty><f:translate domain="agent_nexus.agui" key="console.events.empty" /></p>
+            <ol class="anx-events" data-agui-events aria-labelledby="agui-events-heading"></ol>
+        </section>
+
+        <div class="agui-console__side">
+            <section class="card" aria-labelledby="agui-answer-heading">
+                <div class="card-header">
+                    <h2 class="card-title" id="agui-answer-heading"><f:translate domain="agent_nexus.agui" key="console.answer" /></h2>
                 </div>
-                <div class="anx-card anx-card--flush anx-spec agui-state anx-reveal">
-                    <div class="anx-spec__head">
-                        <span class="anx-spec__dots"><i></i><i></i><i></i></span>
-                        <span class="anx-spec__label">shared state — STATE_SNAPSHOT + STATE_DELTA</span>
-                    </div>
-                    <pre class="anx-spec__code"><code data-agui-state>{}</code></pre>
+                <div class="card-body" aria-live="polite">
+                    <p class="agui-console__provenance" data-agui-provenance hidden></p>
+                    <details class="agui-console__reasoning" data-agui-reasoning hidden>
+                        <summary><f:translate domain="agent_nexus.agui" key="console.reasoning" /></summary>
+                        <p data-agui-reasoning-text></p>
+                    </details>
+                    <p class="agui-console__answer" data-agui-answer><span class="text-variant"><f:translate domain="agent_nexus.agui" key="console.answer.empty" /></span></p>
+                    <p data-agui-result hidden></p>
                 </div>
-            </div>
+            </section>
+
+            <section class="card agui-console__interrupt" data-agui-interrupt hidden aria-labelledby="agui-interrupt-heading">
+                <div class="card-header">
+                    <h2 class="card-title" id="agui-interrupt-heading"><f:translate domain="agent_nexus.agui" key="console.interrupt" /></h2>
+                </div>
+                <div class="card-body">
+                    <p data-agui-interrupt-message></p>
+                    <dl class="anx-dl anx-dl--compact" data-agui-interrupt-facts></dl>
+                    <form data-agui-interrupt-form novalidate>
+                        <div data-agui-interrupt-fields></div>
+                        <div class="agui-console__actions">
+                            <button type="submit" class="btn btn-primary" data-agui-approve>
+                                <core:icon identifier="actions-check" size="small" />
+                                <f:translate domain="agent_nexus.agui" key="console.approve" />
+                            </button>
+                            <button type="button" class="btn btn-default" data-agui-reject>
+                                <core:icon identifier="actions-close" size="small" />
+                                <f:translate domain="agent_nexus.agui" key="console.reject" />
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section class="card" aria-labelledby="agui-state-heading">
+                <div class="card-header">
+                    <h2 class="card-title" id="agui-state-heading"><f:translate domain="agent_nexus.agui" key="console.state" /></h2>
+                </div>
+                <div class="card-body">
+                    <pre class="anx-code" tabindex="0" aria-label="{f:translate(domain: 'agent_nexus.agui', key: 'console.state')}"><code data-agui-state></code></pre>
+                    <h3 class="agui-console__subheading"><f:translate domain="agent_nexus.agui" key="console.deltas" /></h3>
+                    <p class="text-variant" data-agui-deltas-empty><f:translate domain="agent_nexus.agui" key="console.deltas.empty" /></p>
+                    <ol class="agui-console__deltas" data-agui-deltas></ol>
+                </div>
+            </section>
+
+            <section class="card" data-agui-activity-card hidden aria-labelledby="agui-activity-heading">
+                <div class="card-header">
+                    <h2 class="card-title" id="agui-activity-heading"><f:translate domain="agent_nexus.agui" key="console.activity" /></h2>
+                </div>
+                <div class="card-body">
+                    <pre class="anx-code" tabindex="0" aria-label="{f:translate(domain: 'agent_nexus.agui', key: 'console.activity')}"><code data-agui-activity></code></pre>
+                </div>
+            </section>
         </div>
+    </div>
 
-        <!-- Recent runs (activity / compliance record) -->
-        <f:if condition="{recent}">
-            <div class="anx-card anx-card--flush anx-reveal">
-                <div class="anx-card__head">
-                    <span class="anx-console__title">Recent runs</span>
-                    <span class="anx-badge">{recent -> f:count()} logged</span>
-                </div>
-                <div class="agui-scroll">
-                    <table class="anx-table">
+    <section class="anx-section" aria-labelledby="agui-recent-heading">
+        <div class="agui-console__section-head">
+            <h2 id="agui-recent-heading"><f:translate domain="agent_nexus.agui" key="console.recent" /></h2>
+            <f:if condition="{inspectorUri}">
+                <a class="btn btn-default btn-sm" href="{inspectorUri}">
+                    <core:icon identifier="agentnexus-module-inspector" size="small" />
+                    <f:translate domain="agent_nexus.agui" key="console.recent.all" />
+                </a>
+            </f:if>
+        </div>
+        <f:if condition="{recentRuns}">
+            <f:then>
+                <div class="table-fit">
+                    <table class="table table-striped table-hover">
+                        <caption class="visually-hidden"><f:translate domain="agent_nexus.agui" key="console.recent" /></caption>
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Source</th>
-                                <th>Task</th>
-                                <th>Events</th>
-                                <th>Approved</th>
-                                <th>Outcome</th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.run" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.label" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.state" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.source" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.events" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="console.recent.updated" /></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <f:for each="{recent}" as="run">
+                            <f:for each="{recentRuns}" as="run">
                                 <tr>
-                                    <td><f:format.date format="d.m.Y H:i">@{run.crdate}</f:format.date></td>
-                                    <td>{run.source}</td>
-                                    <td><code class="anx-code">{run.preset}</code></td>
-                                    <td>{run.event_count}</td>
                                     <td>
-                                        <f:if condition="{run.approved}">
-                                            <f:then><span class="anx-badge anx-badge--ok">yes</span></f:then>
-                                            <f:else><span class="anx-badge">no</span></f:else>
+                                        <f:if condition="{run.detailUri}">
+                                            <f:then><a href="{run.detailUri}" title="{f:translate(domain: 'agent_nexus.agui', key: 'console.recent.open', arguments: '{0: run.runId}')}"><code>{run.runId}</code></a></f:then>
+                                            <f:else><code>{run.runId}</code></f:else>
                                         </f:if>
                                     </td>
-                                    <td>
-                                        <f:if condition="{run.outcome} == 'error'">
-                                            <f:then><span class="anx-badge anx-badge--danger">error</span></f:then>
-                                            <f:else>
-                                                <f:if condition="{run.outcome} == 'rejected'">
-                                                    <f:then><span class="anx-badge anx-badge--warn">rejected</span></f:then>
-                                                    <f:else><span class="anx-badge anx-badge--ok">{run.outcome}</span></f:else>
-                                                </f:if>
-                                            </f:else>
-                                        </f:if>
-                                    </td>
+                                    <td>{run.label}</td>
+                                    <td><span class="badge badge-{run.badge}"><f:translate domain="agent_nexus.agui" key="state.{run.state}" default="{run.state}" /></span></td>
+                                    <td><f:translate domain="agent_nexus.agui" key="source.{run.source}" default="{run.source}" /></td>
+                                    <td>{run.events}</td>
+                                    <td><time datetime="{f:format.date(date: '@{run.updated}', format: 'c')}"><f:format.date format="Y-m-d H:i:s">@{run.updated}</f:format.date></time></td>
                                 </tr>
                             </f:for>
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </f:then>
+            <f:else>
+                <div class="anx-empty">
+                    <core:icon identifier="agentnexus-module-agui" size="large" />
+                    <p class="anx-empty__title"><f:translate domain="agent_nexus.agui" key="console.recent.empty.title" /></p>
+                    <p><f:translate domain="agent_nexus.agui" key="console.recent.empty" /></p>
+                </div>
+            </f:else>
         </f:if>
+    </section>
 
-        <!-- About -->
-        <div class="anx-card anx-reveal agui-about">
-            <h2 class="anx-h2">What is AG-UI?</h2>
-            <p>
-                <strong>AG-UI (Agent-User Interaction Protocol)</strong> standardises how a backend agent
-                <em>streams real-time events</em> to a frontend so people stay in the loop during long tasks.
-                The frontend POSTs a <code class="anx-code">RunAgentInput</code> (and declares which tools the agent may use), and the
-                agent replies with an ordered stream of typed events over SSE.
-            </p>
-            <p class="agui-muted">
-                The trust model is built in: the <strong>UI declares the tools</strong>, sensitive actions are gated behind a
-                <strong>human-in-the-loop</strong> confirmation (a tool the user must answer), and nothing is written until you approve.
-            </p>
-        </div>
-
-    </div>
+    <f:if condition="{demoUrl}">
+        <p class="anx-section">
+            <a class="btn btn-default" href="{demoUrl}" target="_blank" rel="noopener">
+                <core:icon identifier="actions-view-page" size="small" />
+                <f:translate domain="agent_nexus.agui" key="console.demo" />
+                <span class="visually-hidden"><f:translate domain="agent_nexus.agui" key="console.newTab" /></span>
+            </a>
+        </p>
+    </f:if>
 </div>
-
 </f:section>
 
 </html>

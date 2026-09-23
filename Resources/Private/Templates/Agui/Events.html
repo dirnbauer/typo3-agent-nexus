@@ -1,0 +1,136 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-accent--agui agui-events-reference">
+
+    <h1><f:translate domain="agent_nexus.agui" key="events.heading" arguments="{0: protocolVersion}" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.agui" key="events.lede" arguments="{0: eventCount}" /></p>
+
+    <section aria-labelledby="agui-transport-heading">
+        <h2 id="agui-transport-heading"><f:translate domain="agent_nexus.agui" key="events.transport" /></h2>
+        <dl class="anx-dl">
+            <div>
+                <dt><f:translate domain="agent_nexus.agui" key="events.transport.endpoint" /></dt>
+                <dd><code>POST {endpoint}</code></dd>
+            </div>
+            <div>
+                <dt><f:translate domain="agent_nexus.agui" key="events.transport.request" /></dt>
+                <dd><f:translate domain="agent_nexus.agui" key="events.transport.request.value" /></dd>
+            </div>
+            <div>
+                <dt><f:translate domain="agent_nexus.agui" key="events.transport.response" /></dt>
+                <dd><f:translate domain="agent_nexus.agui" key="events.transport.response.value" /></dd>
+            </div>
+            <div>
+                <dt><f:translate domain="agent_nexus.agui" key="events.transport.refusal" /></dt>
+                <dd><f:translate domain="agent_nexus.agui" key="events.transport.refusal.value" /></dd>
+            </div>
+        </dl>
+        <h3><f:translate domain="agent_nexus.agui" key="events.curl" /></h3>
+        <pre class="anx-code" tabindex="0" aria-label="{f:translate(domain: 'agent_nexus.agui', key: 'events.curl')}"><code>{curl}</code></pre>
+        <p class="text-variant"><f:translate domain="agent_nexus.agui" key="events.curl.note" /></p>
+    </section>
+
+    <section aria-labelledby="agui-approval-heading">
+        <h2 id="agui-approval-heading"><f:translate domain="agent_nexus.agui" key="events.approval" /></h2>
+        <ol class="agui-events-reference__steps">
+            <li><f:translate domain="agent_nexus.agui" key="events.approval.propose" /></li>
+            <li><f:translate domain="agent_nexus.agui" key="events.approval.interrupt" /></li>
+            <li><f:translate domain="agent_nexus.agui" key="events.approval.resume" /></li>
+            <li><f:translate domain="agent_nexus.agui" key="events.approval.result" /></li>
+        </ol>
+    </section>
+
+    <section aria-labelledby="agui-families-heading">
+        <h2 id="agui-families-heading"><f:translate domain="agent_nexus.agui" key="events.families" /></h2>
+        <f:for each="{families}" as="family">
+            <section class="anx-section" aria-labelledby="agui-family-{family.family}">
+                <h3 id="agui-family-{family.family}">
+                    <f:translate domain="agent_nexus.agui" key="family.{family.family}" />
+                    <span class="badge badge-default"><f:count subject="{family.events}" /></span>
+                </h3>
+                <div class="table-fit">
+                    <table class="table table-striped table-hover agui-events-reference__table">
+                        <caption class="visually-hidden"><f:translate domain="agent_nexus.agui" key="family.{family.family}" /></caption>
+                        <thead>
+                            <tr>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="events.column.type" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="events.column.required" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="events.column.optional" /></th>
+                                <th scope="col"><f:translate domain="agent_nexus.agui" key="events.column.purpose" /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{family.events}" as="event">
+                                <tr>
+                                    <th scope="row"><code>{event.type}</code></th>
+                                    <td>
+                                        <f:if condition="{event.required}">
+                                            <f:then>
+                                                <ul class="agui-events-reference__fields">
+                                                    <f:for each="{event.required}" as="type" key="name">
+                                                        <li><code>{name}</code> <span class="text-variant">{type}</span></li>
+                                                    </f:for>
+                                                </ul>
+                                            </f:then>
+                                            <f:else><span class="text-variant"><f:translate domain="agent_nexus.agui" key="events.none" /></span></f:else>
+                                        </f:if>
+                                    </td>
+                                    <td>
+                                        <ul class="agui-events-reference__fields">
+                                            <f:for each="{event.optional}" as="type" key="name">
+                                                <li><code>{name}</code> <span class="text-variant">{type}</span></li>
+                                            </f:for>
+                                            <f:if condition="{event.attributable}">
+                                                <li><code>subagentRunId</code> <span class="text-variant">string</span></li>
+                                            </f:if>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <f:translate domain="agent_nexus.agui" key="event.{event.type}" />
+                                        <details class="agui-events-reference__example">
+                                            <summary><f:translate domain="agent_nexus.agui" key="events.example" /></summary>
+                                            <pre class="anx-code" tabindex="0"><code>{event.example}</code></pre>
+                                        </details>
+                                    </td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </f:for>
+        <p class="text-variant"><f:translate domain="agent_nexus.agui" key="events.envelope" /></p>
+    </section>
+
+    <section aria-labelledby="agui-rules-heading">
+        <h2 id="agui-rules-heading"><f:translate domain="agent_nexus.agui" key="events.rules" /></h2>
+        <p><f:translate domain="agent_nexus.agui" key="events.rules.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.agui" key="events.rules" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.agui" key="events.rules.id" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.agui" key="events.rules.rule" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{rules}" as="rule">
+                        <tr>
+                            <th scope="row"><code>{rule}</code></th>
+                            <td><f:translate domain="agent_nexus.agui" key="rule.{rule}" /></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+</f:section>
+
+</html>
