@@ -1,0 +1,250 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-accent--a2a anx-a2a">
+
+    <h1><f:translate domain="agent_nexus.a2a" key="cardScreen.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.a2a" key="cardScreen.lede" /></p>
+    <p class="anx-a2a__card-actions">
+        <a class="btn btn-default" href="{cardUrl}" target="_blank" rel="noopener"><core:icon identifier="actions-window-open" size="small" /> <f:translate domain="agent_nexus.a2a" key="cardScreen.open" /></a>
+        <a class="btn btn-default" href="{consoleUri}"><core:icon identifier="agentnexus-module-a2a" size="small" /> <f:translate domain="agent_nexus.a2a" key="cardScreen.console" /></a>
+        <code class="anx-a2a__url">{cardUrl}</code>
+    </p>
+
+    <section aria-labelledby="anx-a2a-identity">
+        <h2 id="anx-a2a-identity"><f:translate domain="agent_nexus.a2a" key="identity.heading" /></h2>
+        <dl class="anx-dl">
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.name" /></dt><dd>{card.name}</dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.version" /></dt><dd><code>{card.version}</code></dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.provider" /></dt><dd><a href="{card.provider.url}" target="_blank" rel="noopener">{card.provider.organization}</a></dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.documentation" /></dt><dd><a href="{card.documentationUrl}" target="_blank" rel="noopener">A2A.rst</a></dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.inputModes" /></dt><dd><f:for each="{card.defaultInputModes}" as="mode" iteration="i"><code>{mode}</code><f:if condition="{i.isLast}"><f:else>, </f:else></f:if></f:for></dd></div>
+            <div><dt><f:translate domain="agent_nexus.a2a" key="identity.outputModes" /></dt><dd><f:for each="{card.defaultOutputModes}" as="mode" iteration="i"><code>{mode}</code><f:if condition="{i.isLast}"><f:else>, </f:else></f:if></f:for></dd></div>
+        </dl>
+        <p><span class="text-variant"><f:translate domain="agent_nexus.a2a" key="identity.description" />:</span> {card.description}</p>
+    </section>
+
+    <section aria-labelledby="anx-a2a-interfaces">
+        <h2 id="anx-a2a-interfaces"><f:translate domain="agent_nexus.a2a" key="interfaces.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="interfaces.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2a" key="interfaces.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="interfaces.binding" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="interfaces.version" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="interfaces.url" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{card.supportedInterfaces}" as="interface" iteration="i">
+                        <tr>
+                            <td>{i.cycle}</td>
+                            <td><code>{interface.protocolBinding}</code></td>
+                            <td><code>{interface.protocolVersion}</code></td>
+                            <td><code class="anx-a2a__url">{interface.url}</code></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-capabilities">
+        <h2 id="anx-a2a-capabilities"><f:translate domain="agent_nexus.a2a" key="capabilities.heading" /></h2>
+        <ul class="anx-a2a__capabilities">
+            <f:for each="{card.capabilities}" as="enabled" key="capability">
+                <li>
+                    <f:if condition="{enabled}">
+                        <f:then><span class="badge badge-success"><f:translate domain="agent_nexus.a2a" key="capabilities.on" /></span></f:then>
+                        <f:else><span class="badge badge-default"><f:translate domain="agent_nexus.a2a" key="capabilities.off" /></span></f:else>
+                    </f:if>
+                    <strong><f:translate domain="agent_nexus.a2a" key="capabilities.{capability}" /></strong>
+                    <code>capabilities.{capability}</code>
+                    <span class="text-variant"><f:translate domain="agent_nexus.a2a" key="capabilities.{capability}.info" /></span>
+                </li>
+            </f:for>
+        </ul>
+    </section>
+
+    <section aria-labelledby="anx-a2a-skills">
+        <h2 id="anx-a2a-skills"><f:translate domain="agent_nexus.a2a" key="skills.heading" /></h2>
+        <div class="card-container">
+            <f:for each="{skills}" as="skill">
+                <article class="card card-size-medium">
+                    <div class="card-header">
+                        <h3 class="card-title h5">{skill.name}</h3>
+                        <code>{skill.id}</code>
+                    </div>
+                    <div class="card-body">
+                        <p>{skill.description}</p>
+                        <dl class="anx-dl anx-dl--compact">
+                            <div>
+                                <dt><f:translate domain="agent_nexus.a2a" key="skills.tags" /></dt>
+                                <dd><f:for each="{skill.tags}" as="tag"><span class="badge badge-default">{tag}</span> </f:for></dd>
+                            </div>
+                            <div>
+                                <dt><f:translate domain="agent_nexus.a2a" key="skills.artifact" /></dt>
+                                <dd><code>{skill.artifactName}</code></dd>
+                            </div>
+                        </dl>
+                        <h4 class="h6"><f:translate domain="agent_nexus.a2a" key="skills.examples" /></h4>
+                        <ul class="anx-a2a__examples">
+                            <f:for each="{skill.examples}" as="example"><li>{example}</li></f:for>
+                        </ul>
+                        <f:if condition="{skill.inputPrompt}">
+                            <p class="callout callout-warning anx-a2a__asks">
+                                <strong><f:translate domain="agent_nexus.a2a" key="skills.asks" /></strong>
+                                {skill.inputPrompt}
+                            </p>
+                        </f:if>
+                    </div>
+                </article>
+            </f:for>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-endpoints">
+        <h2 id="anx-a2a-endpoints"><f:translate domain="agent_nexus.a2a" key="endpoints.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="endpoints.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2a" key="endpoints.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="endpoints.method" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="endpoints.path" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="endpoints.binding" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="endpoints.purpose" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{endpoints}" as="endpoint">
+                        <tr>
+                            <td><code>{endpoint.methods}</code></td>
+                            <td><code class="anx-a2a__url">{endpoint.path}</code></td>
+                            <td>{endpoint.binding}</td>
+                            <td>{endpoint.description}</td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-methods">
+        <h2 id="anx-a2a-methods"><f:translate domain="agent_nexus.a2a" key="methods.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="methods.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2a" key="methods.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="methods.v10" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="methods.v03" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="methods.rest" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="methods.streams" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{operations}" as="operation">
+                        <tr>
+                            <td><code>{operation.name}</code></td>
+                            <td>
+                                <f:if condition="{operation.legacy}">
+                                    <f:then><code>{operation.legacy}</code></f:then>
+                                    <f:else><span class="text-variant"><f:translate domain="agent_nexus.a2a" key="methods.new" /></span></f:else>
+                                </f:if>
+                            </td>
+                            <td><code>{operation.rest}</code></td>
+                            <td>
+                                <f:if condition="{operation.streaming}">
+                                    <f:then><f:translate domain="agent_nexus.a2a" key="methods.stream" /></f:then>
+                                    <f:else><f:translate domain="agent_nexus.a2a" key="methods.json" /></f:else>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-states">
+        <h2 id="anx-a2a-states"><f:translate domain="agent_nexus.a2a" key="states.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="states.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2a" key="states.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="states.value" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="states.legacy" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="states.kind" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="states.meaning" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{states}" as="state">
+                        <tr>
+                            <td><span class="badge badge-{state.badge}"><f:translate domain="agent_nexus.a2a" key="state.{state.value}" /></span> <code>{state.value}</code></td>
+                            <td><code>{state.legacy}</code></td>
+                            <td><f:translate domain="agent_nexus.a2a" key="stateKind.{state.kind}" /></td>
+                            <td><f:translate domain="agent_nexus.a2a" key="stateInfo.{state.value}" /></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-errors">
+        <h2 id="anx-a2a-errors"><f:translate domain="agent_nexus.a2a" key="errors.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="errors.lede" /></p>
+        <div class="table-fit">
+            <table class="table table-striped table-hover">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.a2a" key="errors.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="errors.name" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="errors.code" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="errors.http" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="errors.status" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.a2a" key="errors.reason" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{errors}" as="error">
+                        <tr>
+                            <td><code>{error.name}</code></td>
+                            <td><code>{error.code}</code></td>
+                            <td>{error.httpStatus}</td>
+                            <td><code>{error.rpcStatus}</code></td>
+                            <td>
+                                <f:if condition="{error.reason}">
+                                    <f:then><code>{error.reason}</code></f:then>
+                                    <f:else><span class="text-variant">—</span></f:else>
+                                </f:if>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section aria-labelledby="anx-a2a-json">
+        <h2 id="anx-a2a-json"><f:translate domain="agent_nexus.a2a" key="json.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.a2a" key="json.lede" arguments="{0: cardUrl}" /></p>
+        <pre class="anx-code" tabindex="0"><code>{cardJson}</code></pre>
+    </section>
+</div>
+</f:section>
+
+</html>

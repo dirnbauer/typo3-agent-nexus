@@ -1,8 +1,989 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>A2A Console</source><target>A2A Console</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>A2A Console</source><target>A2A Console</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>Publish an Agent Card, delegate tasks over JSON-RPC and inspect the task lifecycle.</source><target>Agent Card veröffentlichen, Aufgaben über JSON-RPC delegieren und den Task-Lebenszyklus prüfen.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="a2a">
+    <unit id="console.heading">
+      <segment state="final">
+        <source>Task console</source>
+        <target>Task-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="console.lede">
+      <segment state="final">
+        <source>Play a client agent: read the Agent Card, send a message to this site’s agent and follow the task it starts.</source>
+        <target>Spielen Sie einen Client-Agenten: Lesen Sie die Agent Card, schicken Sie dem Agenten dieser Website eine Nachricht und verfolgen Sie die Aufgabe, die er startet.</target>
+      </segment>
+    </unit>
+    <unit id="console.note.title">
+      <segment state="final">
+        <source>A client like any other</source>
+        <target>Ein Client wie jeder andere</target>
+      </segment>
+    </unit>
+    <unit id="console.note">
+      <segment state="final">
+        <source>The console calls the public JSON-RPC endpoint from your browser, exactly as another agent would. It gets the scripted skills: only the concierge on the website may use a model.</source>
+        <target>Die Konsole ruft den öffentlichen JSON-RPC-Endpunkt aus Ihrem Browser auf, genau wie ein anderer Agent. Sie bekommt die vorbereiteten Skills: Nur der Concierge auf der Website darf ein Modell verwenden.</target>
+      </segment>
+    </unit>
+    <unit id="console.demo">
+      <segment state="final">
+        <source>Open the demo</source>
+        <target>Demo öffnen</target>
+      </segment>
+    </unit>
+    <unit id="compose.heading">
+      <segment state="final">
+        <source>Send a message</source>
+        <target>Nachricht senden</target>
+      </segment>
+    </unit>
+    <unit id="compose.skill">
+      <segment state="final">
+        <source>Skill</source>
+        <target>Skill</target>
+      </segment>
+    </unit>
+    <unit id="compose.skill.auto">
+      <segment state="final">
+        <source>Let the agent choose</source>
+        <target>Den Agenten wählen lassen</target>
+      </segment>
+    </unit>
+    <unit id="compose.skill.auto.hint">
+      <segment state="final">
+        <source>The agent routes the message by its words.</source>
+        <target>Der Agent ordnet die Nachricht anhand ihrer Wörter zu.</target>
+      </segment>
+    </unit>
+    <unit id="compose.skill.hint">
+      <segment state="final">
+        <source>A chosen skill travels in the message metadata as “skill”.</source>
+        <target>Ein gewählter Skill reist in den Metadaten der Nachricht als „skill“ mit.</target>
+      </segment>
+    </unit>
+    <unit id="compose.message">
+      <segment state="final">
+        <source>Message</source>
+        <target>Nachricht</target>
+      </segment>
+    </unit>
+    <unit id="compose.message.hint">
+      <segment state="final">
+        <source>Sent as one text part.</source>
+        <target>Wird als ein Text-Part gesendet.</target>
+      </segment>
+    </unit>
+    <unit id="compose.method">
+      <segment state="final">
+        <source>Method</source>
+        <target>Methode</target>
+      </segment>
+    </unit>
+    <unit id="compose.method.stream">
+      <segment state="final">
+        <source>SendStreamingMessage: follow the task live</source>
+        <target>SendStreamingMessage: Aufgabe live verfolgen</target>
+      </segment>
+    </unit>
+    <unit id="compose.method.send">
+      <segment state="final">
+        <source>SendMessage: wait for the result</source>
+        <target>SendMessage: auf das Ergebnis warten</target>
+      </segment>
+    </unit>
+    <unit id="compose.version">
+      <segment state="final">
+        <source>Protocol version</source>
+        <target>Protokollversion</target>
+      </segment>
+    </unit>
+    <unit id="compose.version.v10">
+      <segment state="final">
+        <source>A2A 1.0 (header A2A-Version: 1.0)</source>
+        <target>A2A 1.0 (Header A2A-Version: 1.0)</target>
+      </segment>
+    </unit>
+    <unit id="compose.version.v03">
+      <segment state="final">
+        <source>A2A 0.3 (no header)</source>
+        <target>A2A 0.3 (ohne Header)</target>
+      </segment>
+    </unit>
+    <unit id="compose.send">
+      <segment state="final">
+        <source>Send message</source>
+        <target>Nachricht senden</target>
+      </segment>
+    </unit>
+    <unit id="card.heading">
+      <segment state="final">
+        <source>Agent Card</source>
+        <target>Agent Card</target>
+      </segment>
+    </unit>
+    <unit id="card.loading">
+      <segment state="final">
+        <source>Reading the Agent Card…</source>
+        <target>Die Agent Card wird gelesen…</target>
+      </segment>
+    </unit>
+    <unit id="card.view">
+      <segment state="final">
+        <source>View the card</source>
+        <target>Karte ansehen</target>
+      </segment>
+    </unit>
+    <unit id="card.publishedAt">
+      <segment state="final">
+        <source>Published at</source>
+        <target>Veröffentlicht unter</target>
+      </segment>
+    </unit>
+    <unit id="task.heading">
+      <segment state="final">
+        <source>Task</source>
+        <target>Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="task.none">
+      <segment state="final">
+        <source>No task yet</source>
+        <target>Noch keine Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="task.empty">
+      <segment state="final">
+        <source>Send a message to start a task.</source>
+        <target>Senden Sie eine Nachricht, um eine Aufgabe zu starten.</target>
+      </segment>
+    </unit>
+    <unit id="task.id">
+      <segment state="final">
+        <source>Task ID</source>
+        <target>Task-ID</target>
+      </segment>
+    </unit>
+    <unit id="task.context">
+      <segment state="final">
+        <source>Context ID</source>
+        <target>Kontext-ID</target>
+      </segment>
+    </unit>
+    <unit id="task.skill">
+      <segment state="final">
+        <source>Skill</source>
+        <target>Skill</target>
+      </segment>
+    </unit>
+    <unit id="task.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="task.answer">
+      <segment state="final">
+        <source>Your answer</source>
+        <target>Ihre Antwort</target>
+      </segment>
+    </unit>
+    <unit id="task.answer.send">
+      <segment state="final">
+        <source>Send answer</source>
+        <target>Antwort senden</target>
+      </segment>
+    </unit>
+    <unit id="task.artifact">
+      <segment state="final">
+        <source>Artifact</source>
+        <target>Artefakt</target>
+      </segment>
+    </unit>
+    <unit id="task.get">
+      <segment state="final">
+        <source>Get task</source>
+        <target>Aufgabe abrufen</target>
+      </segment>
+    </unit>
+    <unit id="task.cancel">
+      <segment state="final">
+        <source>Cancel task</source>
+        <target>Aufgabe abbrechen</target>
+      </segment>
+    </unit>
+    <unit id="task.inspect">
+      <segment state="final">
+        <source>Open in the inspector</source>
+        <target>Im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="frames.heading">
+      <segment state="final">
+        <source>Wire frames</source>
+        <target>Frames auf der Leitung</target>
+      </segment>
+    </unit>
+    <unit id="frames.empty">
+      <segment state="final">
+        <source>Send a message to see every request and frame as it crosses the wire.</source>
+        <target>Senden Sie eine Nachricht, um jede Anfrage und jeden Frame auf der Leitung zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="frames.clear">
+      <segment state="final">
+        <source>Clear frames</source>
+        <target>Frames leeren</target>
+      </segment>
+    </unit>
+    <unit id="recent.heading">
+      <segment state="final">
+        <source>Recent tasks</source>
+        <target>Letzte Aufgaben</target>
+      </segment>
+    </unit>
+    <unit id="recent.lede">
+      <segment state="final">
+        <source>The newest tasks of every caller, read from the object store.</source>
+        <target>Die neuesten Aufgaben aller Aufrufer, gelesen aus dem Objektspeicher.</target>
+      </segment>
+    </unit>
+    <unit id="recent.caption">
+      <segment state="final">
+        <source>Recent A2A tasks</source>
+        <target>Letzte A2A-Aufgaben</target>
+      </segment>
+    </unit>
+    <unit id="recent.task">
+      <segment state="final">
+        <source>Task</source>
+        <target>Aufgabe</target>
+      </segment>
+    </unit>
+    <unit id="recent.skill">
+      <segment state="final">
+        <source>Skill</source>
+        <target>Skill</target>
+      </segment>
+    </unit>
+    <unit id="recent.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="recent.source">
+      <segment state="final">
+        <source>Caller</source>
+        <target>Aufrufer</target>
+      </segment>
+    </unit>
+    <unit id="recent.updated">
+      <segment state="final">
+        <source>Updated</source>
+        <target>Aktualisiert</target>
+      </segment>
+    </unit>
+    <unit id="recent.open">
+      <segment state="final">
+        <source>Open task %s in the inspector</source>
+        <target>Aufgabe %s im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="recent.all">
+      <segment state="final">
+        <source>Show all tasks</source>
+        <target>Alle Aufgaben zeigen</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.title">
+      <segment state="final">
+        <source>No tasks yet</source>
+        <target>Noch keine Aufgaben</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.text">
+      <segment state="final">
+        <source>A task appears here as soon as someone sends the agent a message.</source>
+        <target>Eine Aufgabe erscheint hier, sobald jemand dem Agenten eine Nachricht schickt.</target>
+      </segment>
+    </unit>
+    <unit id="recent.empty.action">
+      <segment state="final">
+        <source>Send a message</source>
+        <target>Nachricht senden</target>
+      </segment>
+    </unit>
+    <unit id="js.card.error">
+      <segment state="final">
+        <source>The Agent Card could not be read: {error}</source>
+        <target>Die Agent Card konnte nicht gelesen werden: {error}</target>
+      </segment>
+    </unit>
+    <unit id="js.card.version">
+      <segment state="final">
+        <source>Version {version}</source>
+        <target>Version {version}</target>
+      </segment>
+    </unit>
+    <unit id="js.card.interfaces">
+      <segment state="final">
+        <source>Interfaces</source>
+        <target>Schnittstellen</target>
+      </segment>
+    </unit>
+    <unit id="js.card.skills">
+      <segment state="final">
+        <source>Skills</source>
+        <target>Skills</target>
+      </segment>
+    </unit>
+    <unit id="js.card.capabilities">
+      <segment state="final">
+        <source>Capabilities</source>
+        <target>Fähigkeiten</target>
+      </segment>
+    </unit>
+    <unit id="js.card.streaming">
+      <segment state="final">
+        <source>Streaming</source>
+        <target>Streaming</target>
+      </segment>
+    </unit>
+    <unit id="js.card.push">
+      <segment state="final">
+        <source>Push notifications</source>
+        <target>Push-Benachrichtigungen</target>
+      </segment>
+    </unit>
+    <unit id="js.card.extended">
+      <segment state="final">
+        <source>Extended card</source>
+        <target>Erweiterte Karte</target>
+      </segment>
+    </unit>
+    <unit id="js.card.yes">
+      <segment state="final">
+        <source>yes</source>
+        <target>ja</target>
+      </segment>
+    </unit>
+    <unit id="js.card.no">
+      <segment state="final">
+        <source>no</source>
+        <target>nein</target>
+      </segment>
+    </unit>
+    <unit id="js.frames.count">
+      <segment state="final">
+        <source>Frames: {count}</source>
+        <target>Frames: {count}</target>
+      </segment>
+    </unit>
+    <unit id="js.frame.request">
+      <segment state="final">
+        <source>request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="js.frame.response">
+      <segment state="final">
+        <source>response</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="js.frame.error">
+      <segment state="final">
+        <source>error</source>
+        <target>Fehler</target>
+      </segment>
+    </unit>
+    <unit id="js.frame.offset">
+      <segment state="final">
+        <source>+{ms} ms</source>
+        <target>+{ms} ms</target>
+      </segment>
+    </unit>
+    <unit id="js.message.required">
+      <segment state="final">
+        <source>Type a message first.</source>
+        <target>Geben Sie zuerst eine Nachricht ein.</target>
+      </segment>
+    </unit>
+    <unit id="js.answer.required">
+      <segment state="final">
+        <source>Type an answer first.</source>
+        <target>Geben Sie zuerst eine Antwort ein.</target>
+      </segment>
+    </unit>
+    <unit id="js.request.failed">
+      <segment state="final">
+        <source>The request failed</source>
+        <target>Die Anfrage ist fehlgeschlagen</target>
+      </segment>
+    </unit>
+    <unit id="js.rpc.error">
+      <segment state="final">
+        <source>Error {code}: {message}</source>
+        <target>Fehler {code}: {message}</target>
+      </segment>
+    </unit>
+    <unit id="js.stream.closed">
+      <segment state="final">
+        <source>The stream closed. The task is {state}.</source>
+        <target>Der Stream ist geschlossen. Die Aufgabe ist: {state}.</target>
+      </segment>
+    </unit>
+    <unit id="js.task.announce">
+      <segment state="final">
+        <source>Task {state}.</source>
+        <target>Aufgabe: {state}.</target>
+      </segment>
+    </unit>
+    <unit id="js.artifact.model">
+      <segment state="final">
+        <source>Written by a live model: {model}</source>
+        <target>Von einem Live-Modell geschrieben: {model}</target>
+      </segment>
+    </unit>
+    <unit id="js.artifact.script">
+      <segment state="final">
+        <source>Scripted demo</source>
+        <target>Vorbereitete Demo</target>
+      </segment>
+    </unit>
+    <unit id="js.skill.auto">
+      <segment state="final">
+        <source>chosen by the agent</source>
+        <target>vom Agenten gewählt</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_SUBMITTED">
+      <segment state="final">
+        <source>Submitted</source>
+        <target>Eingereicht</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_WORKING">
+      <segment state="final">
+        <source>Working</source>
+        <target>In Arbeit</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_COMPLETED">
+      <segment state="final">
+        <source>Completed</source>
+        <target>Abgeschlossen</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_FAILED">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Fehlgeschlagen</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_CANCELED">
+      <segment state="final">
+        <source>Cancelled</source>
+        <target>Abgebrochen</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_INPUT_REQUIRED">
+      <segment state="final">
+        <source>Input required</source>
+        <target>Eingabe nötig</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_REJECTED">
+      <segment state="final">
+        <source>Rejected</source>
+        <target>Abgelehnt</target>
+      </segment>
+    </unit>
+    <unit id="state.TASK_STATE_AUTH_REQUIRED">
+      <segment state="final">
+        <source>Sign-in required</source>
+        <target>Anmeldung nötig</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_SUBMITTED">
+      <segment state="final">
+        <source>The agent has the message and has not started.</source>
+        <target>Der Agent hat die Nachricht und hat noch nicht begonnen.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_WORKING">
+      <segment state="final">
+        <source>The agent is working on the task.</source>
+        <target>Der Agent arbeitet an der Aufgabe.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_COMPLETED">
+      <segment state="final">
+        <source>Finished; the result is in the artifacts.</source>
+        <target>Fertig; das Ergebnis steht in den Artefakten.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_FAILED">
+      <segment state="final">
+        <source>Ended with an error.</source>
+        <target>Mit einem Fehler beendet.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_CANCELED">
+      <segment state="final">
+        <source>Cancelled by the client before it finished.</source>
+        <target>Vom Client abgebrochen, bevor sie fertig war.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_INPUT_REQUIRED">
+      <segment state="final">
+        <source>Paused: the agent asked a question. A message with the task ID answers it.</source>
+        <target>Pausiert: Der Agent hat eine Frage gestellt. Eine Nachricht mit der Task-ID beantwortet sie.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_REJECTED">
+      <segment state="final">
+        <source>The agent decided not to do the task. This agent never does.</source>
+        <target>Der Agent hat die Aufgabe abgelehnt. Dieser Agent tut das nie.</target>
+      </segment>
+    </unit>
+    <unit id="stateInfo.TASK_STATE_AUTH_REQUIRED">
+      <segment state="final">
+        <source>Paused until the client signs in. This public agent never asks.</source>
+        <target>Pausiert, bis sich der Client anmeldet. Dieser öffentliche Agent fragt nie danach.</target>
+      </segment>
+    </unit>
+    <unit id="stateKind.active">
+      <segment state="final">
+        <source>Active</source>
+        <target>Aktiv</target>
+      </segment>
+    </unit>
+    <unit id="stateKind.interrupted">
+      <segment state="final">
+        <source>Interrupted</source>
+        <target>Unterbrochen</target>
+      </segment>
+    </unit>
+    <unit id="stateKind.terminal">
+      <segment state="final">
+        <source>Terminal</source>
+        <target>Endzustand</target>
+      </segment>
+    </unit>
+    <unit id="cardScreen.heading">
+      <segment state="final">
+        <source>Agent Card</source>
+        <target>Agent Card</target>
+      </segment>
+    </unit>
+    <unit id="cardScreen.lede">
+      <segment state="final">
+        <source>The card this site publishes, and the tables a client needs next to it. Everything here is read from the code that serves it.</source>
+        <target>Die Karte, die diese Website veröffentlicht, und die Tabellen, die ein Client dazu braucht. Alles hier wird aus dem Code gelesen, der es ausliefert.</target>
+      </segment>
+    </unit>
+    <unit id="cardScreen.open">
+      <segment state="final">
+        <source>Open the card</source>
+        <target>Karte öffnen</target>
+      </segment>
+    </unit>
+    <unit id="cardScreen.console">
+      <segment state="final">
+        <source>Try it in the console</source>
+        <target>In der Konsole testen</target>
+      </segment>
+    </unit>
+    <unit id="identity.heading">
+      <segment state="final">
+        <source>Identity</source>
+        <target>Identität</target>
+      </segment>
+    </unit>
+    <unit id="identity.name">
+      <segment state="final">
+        <source>Name</source>
+        <target>Name</target>
+      </segment>
+    </unit>
+    <unit id="identity.version">
+      <segment state="final">
+        <source>Agent version</source>
+        <target>Agent-Version</target>
+      </segment>
+    </unit>
+    <unit id="identity.provider">
+      <segment state="final">
+        <source>Provider</source>
+        <target>Anbieter</target>
+      </segment>
+    </unit>
+    <unit id="identity.documentation">
+      <segment state="final">
+        <source>Documentation</source>
+        <target>Dokumentation</target>
+      </segment>
+    </unit>
+    <unit id="identity.description">
+      <segment state="final">
+        <source>Description</source>
+        <target>Beschreibung</target>
+      </segment>
+    </unit>
+    <unit id="identity.inputModes">
+      <segment state="final">
+        <source>Reads</source>
+        <target>Liest</target>
+      </segment>
+    </unit>
+    <unit id="identity.outputModes">
+      <segment state="final">
+        <source>Writes</source>
+        <target>Schreibt</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.heading">
+      <segment state="final">
+        <source>Interfaces</source>
+        <target>Schnittstellen</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.lede">
+      <segment state="final">
+        <source>In order of preference: a client takes the first binding and version it speaks.</source>
+        <target>In der Reihenfolge der Präferenz: Ein Client nimmt die erste Bindung und Version, die er spricht.</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.caption">
+      <segment state="final">
+        <source>Interfaces of the Agent Card</source>
+        <target>Schnittstellen der Agent Card</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.url">
+      <segment state="final">
+        <source>URL</source>
+        <target>URL</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.binding">
+      <segment state="final">
+        <source>Binding</source>
+        <target>Bindung</target>
+      </segment>
+    </unit>
+    <unit id="interfaces.version">
+      <segment state="final">
+        <source>Version</source>
+        <target>Version</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.heading">
+      <segment state="final">
+        <source>Capabilities</source>
+        <target>Fähigkeiten</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.streaming">
+      <segment state="final">
+        <source>Streaming</source>
+        <target>Streaming</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.streaming.info">
+      <segment state="final">
+        <source>SendStreamingMessage and SubscribeToTask answer with Server-Sent Events.</source>
+        <target>SendStreamingMessage und SubscribeToTask antworten mit Server-Sent Events.</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.pushNotifications">
+      <segment state="final">
+        <source>Push notifications</source>
+        <target>Push-Benachrichtigungen</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.pushNotifications.info">
+      <segment state="final">
+        <source>Not offered: the four push methods answer with PushNotificationNotSupportedError.</source>
+        <target>Nicht angeboten: Die vier Push-Methoden antworten mit PushNotificationNotSupportedError.</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.extendedAgentCard">
+      <segment state="final">
+        <source>Extended Agent Card</source>
+        <target>Erweiterte Agent Card</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.extendedAgentCard.info">
+      <segment state="final">
+        <source>Not offered: GetExtendedAgentCard answers with UnsupportedOperationError.</source>
+        <target>Nicht angeboten: GetExtendedAgentCard antwortet mit UnsupportedOperationError.</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.on">
+      <segment state="final">
+        <source>Offered</source>
+        <target>Angeboten</target>
+      </segment>
+    </unit>
+    <unit id="capabilities.off">
+      <segment state="final">
+        <source>Not offered</source>
+        <target>Nicht angeboten</target>
+      </segment>
+    </unit>
+    <unit id="skills.heading">
+      <segment state="final">
+        <source>Skills</source>
+        <target>Skills</target>
+      </segment>
+    </unit>
+    <unit id="skills.tags">
+      <segment state="final">
+        <source>Tags</source>
+        <target>Tags</target>
+      </segment>
+    </unit>
+    <unit id="skills.examples">
+      <segment state="final">
+        <source>Examples</source>
+        <target>Beispiele</target>
+      </segment>
+    </unit>
+    <unit id="skills.asks">
+      <segment state="final">
+        <source>Asks for more detail first:</source>
+        <target>Fragt zuerst nach mehr Details:</target>
+      </segment>
+    </unit>
+    <unit id="skills.artifact">
+      <segment state="final">
+        <source>Returns</source>
+        <target>Liefert</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.heading">
+      <segment state="final">
+        <source>Endpoints</source>
+        <target>Endpunkte</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.lede">
+      <segment state="final">
+        <source>Every address the agent answers on. The same list appears in the “Protocol info” content element.</source>
+        <target>Jede Adresse, unter der der Agent antwortet. Dieselbe Liste zeigt das Inhaltselement „Protocol info“.</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.caption">
+      <segment state="final">
+        <source>A2A endpoints</source>
+        <target>A2A-Endpunkte</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.method">
+      <segment state="final">
+        <source>Method</source>
+        <target>Methode</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.path">
+      <segment state="final">
+        <source>Path</source>
+        <target>Pfad</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.binding">
+      <segment state="final">
+        <source>Binding</source>
+        <target>Bindung</target>
+      </segment>
+    </unit>
+    <unit id="endpoints.purpose">
+      <segment state="final">
+        <source>Purpose</source>
+        <target>Zweck</target>
+      </segment>
+    </unit>
+    <unit id="methods.heading">
+      <segment state="final">
+        <source>Methods</source>
+        <target>Methoden</target>
+      </segment>
+    </unit>
+    <unit id="methods.lede">
+      <segment state="final">
+        <source>The eleven A2A operations: their 1.0 names, their names in 0.3 and their HTTP+JSON endpoints.</source>
+        <target>Die elf A2A-Operationen: ihre Namen in 1.0, ihre Namen in 0.3 und ihre HTTP+JSON-Endpunkte.</target>
+      </segment>
+    </unit>
+    <unit id="methods.caption">
+      <segment state="final">
+        <source>A2A methods</source>
+        <target>A2A-Methoden</target>
+      </segment>
+    </unit>
+    <unit id="methods.v10">
+      <segment state="final">
+        <source>A2A 1.0</source>
+        <target>A2A 1.0</target>
+      </segment>
+    </unit>
+    <unit id="methods.v03">
+      <segment state="final">
+        <source>A2A 0.3</source>
+        <target>A2A 0.3</target>
+      </segment>
+    </unit>
+    <unit id="methods.rest">
+      <segment state="final">
+        <source>HTTP+JSON</source>
+        <target>HTTP+JSON</target>
+      </segment>
+    </unit>
+    <unit id="methods.streams">
+      <segment state="final">
+        <source>Answer</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="methods.stream">
+      <segment state="final">
+        <source>Stream</source>
+        <target>Stream</target>
+      </segment>
+    </unit>
+    <unit id="methods.json">
+      <segment state="final">
+        <source>JSON</source>
+        <target>JSON</target>
+      </segment>
+    </unit>
+    <unit id="methods.new">
+      <segment state="final">
+        <source>New in 1.0</source>
+        <target>Neu in 1.0</target>
+      </segment>
+    </unit>
+    <unit id="states.heading">
+      <segment state="final">
+        <source>Task states</source>
+        <target>Task-Status</target>
+      </segment>
+    </unit>
+    <unit id="states.lede">
+      <segment state="final">
+        <source>A stream closes after a terminal or an interrupted state.</source>
+        <target>Ein Stream schließt nach einem End- oder Unterbrechungszustand.</target>
+      </segment>
+    </unit>
+    <unit id="states.caption">
+      <segment state="final">
+        <source>A2A task states</source>
+        <target>A2A-Task-Status</target>
+      </segment>
+    </unit>
+    <unit id="states.value">
+      <segment state="final">
+        <source>State</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="states.legacy">
+      <segment state="final">
+        <source>0.3 name</source>
+        <target>Name in 0.3</target>
+      </segment>
+    </unit>
+    <unit id="states.kind">
+      <segment state="final">
+        <source>Kind</source>
+        <target>Art</target>
+      </segment>
+    </unit>
+    <unit id="states.meaning">
+      <segment state="final">
+        <source>Meaning</source>
+        <target>Bedeutung</target>
+      </segment>
+    </unit>
+    <unit id="errors.heading">
+      <segment state="final">
+        <source>Error codes</source>
+        <target>Fehlercodes</target>
+      </segment>
+    </unit>
+    <unit id="errors.lede">
+      <segment state="final">
+        <source>JSON-RPC sends the code in an error object with HTTP 200; HTTP+JSON sends the HTTP status with a google.rpc.Status body. A2A’s own errors carry a google.rpc.ErrorInfo with the reason.</source>
+        <target>JSON-RPC sendet den Code in einem Fehlerobjekt mit HTTP 200; HTTP+JSON sendet den HTTP-Status mit einem google.rpc.Status-Body. Die eigenen Fehler von A2A tragen ein google.rpc.ErrorInfo mit dem Grund.</target>
+      </segment>
+    </unit>
+    <unit id="errors.caption">
+      <segment state="final">
+        <source>A2A error codes</source>
+        <target>A2A-Fehlercodes</target>
+      </segment>
+    </unit>
+    <unit id="errors.name">
+      <segment state="final">
+        <source>Error</source>
+        <target>Fehler</target>
+      </segment>
+    </unit>
+    <unit id="errors.code">
+      <segment state="final">
+        <source>JSON-RPC</source>
+        <target>JSON-RPC</target>
+      </segment>
+    </unit>
+    <unit id="errors.http">
+      <segment state="final">
+        <source>HTTP</source>
+        <target>HTTP</target>
+      </segment>
+    </unit>
+    <unit id="errors.status">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="errors.reason">
+      <segment state="final">
+        <source>Reason</source>
+        <target>Grund</target>
+      </segment>
+    </unit>
+    <unit id="errors.a2a">
+      <segment state="final">
+        <source>A2A</source>
+        <target>A2A</target>
+      </segment>
+    </unit>
+    <unit id="errors.standard">
+      <segment state="final">
+        <source>JSON-RPC 2.0</source>
+        <target>JSON-RPC 2.0</target>
+      </segment>
+    </unit>
+    <unit id="errors.own">
+      <segment state="final">
+        <source>This installation</source>
+        <target>Diese Installation</target>
+      </segment>
+    </unit>
+    <unit id="json.heading">
+      <segment state="final">
+        <source>The card as published</source>
+        <target>Die Karte, wie sie veröffentlicht ist</target>
+      </segment>
+    </unit>
+    <unit id="json.lede">
+      <segment state="final">
+        <source>Exactly what GET %s returns on this host.</source>
+        <target>Genau das, was GET %s auf diesem Host liefert.</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>
