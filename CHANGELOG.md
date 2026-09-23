@@ -4,6 +4,66 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.1] — 2026-09-23
+
+### Fixed
+
+*   **A2UI forms are no longer cut off.** Every protocol has an output budget
+    of its own (`a2uiLlmMaxOutputTokens`, `aguiLlmMaxOutputTokens`,
+    `a2aLlmMaxOutputTokens`, `ucpLlmMaxOutputTokens`,
+    `ap2LlmMaxOutputTokens`). A2UI gets 1600 tokens: measured on real prompts
+    (GPT-5.6 Terra, reasoning included) a generated form takes 532 to 897,
+    more than the old shared ceiling of 700 allowed. The other defaults keep
+    what each protocol asked for before (AG-UI 700, A2A 400, UCP and AP2 160).
+*   **A cut-off answer is a clear fallback.** When a model stops at its budget
+    (finish reason `length`), the half answer is thrown away: A2UI's built-in
+    generator answers, the A2A artifact, the UCP rationale and the AP2
+    explanation fall back to their scripts, and the provenance says why
+    (`"reason": "the model answer was cut off at 1600 output tokens"`; for A2A
+    `fallback` in the artifact metadata and `routingFallback` in the task
+    metadata). The spent tokens still go into the usage ledger. A streamed
+    AG-UI answer that stops mid-sentence is closed with a scripted sentence and
+    marked in its provenance.
+*   **The traffic log and the inspector lists page again.** A list longer than
+    one page crashed on `paginator.totalAmountOfItems`, a protected method; the
+    total is now counted and passed on. Functional tests render both lists with
+    more than one page of rows.
+*   **The overview speaks German in a German backend.** The protocol cards
+    showed English descriptions and an English reason for the scripted mode;
+    both come from the label files now.
+*   Two German FlexForm labels translated an older English text; one FlexForm
+    description still spoke of eID endpoints.
+
+### Added
+
+*   **MCP in the overview.** Agent Nexus does not implement MCP; when
+    hn/typo3-mcp-server is installed, the specification table says "Provided
+    by typo3-mcp-server 0.9.1", lists the protocol versions it declares
+    (2025-11-25, 2026-07-28) and links to its backend module, otherwise "Not
+    installed". The package stays optional: Agent Nexus reads its Composer
+    version and its capability manifest and never references its classes.
+*   **Known spec conflicts.** UCP 2026-08-25 constrains `ap2.checkout_mandate`
+    with a pattern that rejects every AP2 v0.2.0 mandate, AP2's own examples
+    included. A local schema overlay
+    (`Resources/Private/Schemas/Overlays/ucp/2026-08-25/common/payment_ap2_mandate.json`)
+    accepts both forms without touching the vendored official schema;
+    `Documentation/Protocols/KnownSpecConflicts.rst` documents the patterns,
+    an example token and how to use the overlay in your own validator, and
+    conformance tests prove that upstream tokens and AP2 chains pass while
+    malformed ones still fail.
+*   Tests that every English label has a current German translation and that
+    backend templates take their text from the label files.
+
+### Changed
+
+*   `llmMaxOutputTokens` is the fallback budget of a protocol whose own budget
+    is `0`, no longer a ceiling above every protocol. An installation that
+    lowered it to save cost sets the per-protocol budgets instead.
+*   `LlmGuard::maxOutputTokens()` takes the protocol:
+    `maxOutputTokens(Protocol $protocol, ?int $requested = null)`.
+    `LlmGuard::allows()` also returns a `code` for screens that translate the
+    reason.
+
 ## [4.0.0] — 2026-09-23
 
 Every protocol now speaks the current published version of its specification,

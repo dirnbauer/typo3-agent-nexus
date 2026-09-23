@@ -42,13 +42,13 @@ Checked against each specification's primary source on 23 September 2026.
 | A2UI | v0.9.1 (v1.0 candidate on request) | v0.9.1, 29 May 2026 | [a2ui.org](https://a2ui.org) |
 | UCP | 2026-08-25 | 2026-08-25 | [ucp.dev](https://ucp.dev/2026-08-25/specification/overview/) |
 | AP2 | v0.2.0 | v0.2.0, 28 April 2026 | [ap2-protocol.org](https://ap2-protocol.org) |
-| MCP | not implemented | 2026-07-28 | [modelcontextprotocol.io](https://modelcontextprotocol.io/specification/2026-07-28) |
+| MCP | not implemented here; the overview names [hn/typo3-mcp-server](https://github.com/dirnbauer/typo3-mcp-server) and its protocol versions when it is installed | 2026-07-28 | [modelcontextprotocol.io](https://modelcontextprotocol.io/specification/2026-07-28) |
 
 What changed since 3.1, protocol by protocol, is in
 [Documentation/Protocols/SpecVersions.rst](Documentation/Protocols/SpecVersions.rst).
 Every payload the extension emits is tested against the official JSON Schema of
 its specification, vendored under `Tests/Conformance/Schemas` with its licence
-and source.
+and source. Where two specifications disagree (UCP's `checkout_mandate` pattern rejects AP2's own mandate format), a local schema overlay resolves it: [Documentation/Protocols/KnownSpecConflicts.rst](Documentation/Protocols/KnownSpecConflicts.rst).
 
 ## Requirements
 
@@ -114,7 +114,8 @@ protocol with its method, path and binding.
 | `objectRetentionDays` | `90` | `agentnexus:cleanup` deletes older protocol objects |
 | `llmFrontendEnabled` | `1` | Master switch for every frontend model call |
 | `llmDailyBudget` | `2.00` | Calls stop once today's spend reaches this (USD); `0` = no cap |
-| `llmMaxOutputTokens` | `700` | Hard ceiling per call |
+| `<protocol>LlmMaxOutputTokens` | A2UI `1600`, AG-UI `700`, A2A `400`, UCP `160`, AP2 `160` | Output budget of one model call; a cut-off answer falls back to the script and says why |
+| `llmMaxOutputTokens` | `700` | Budget of a protocol whose own budget is `0` |
 | `<protocol>LlmEnabled` | varies | One toggle per protocol |
 | `aguiReallyApply` | `0` | Keep off: approved writes are simulated |
 | `ucpReallyApply` | `0` | Keep off: every checkout is simulated |

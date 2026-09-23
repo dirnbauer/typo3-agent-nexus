@@ -14,7 +14,7 @@ Agent Nexus
     webconsulting/agent-nexus
 
 :Version:
-    4.0.0
+    4.0.1
 
 :Language:
     en
