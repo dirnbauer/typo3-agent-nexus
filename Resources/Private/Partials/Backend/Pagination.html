@@ -3,7 +3,8 @@
       data-namespace-typo3-fluid="true">
 <f:comment>
     Core pagination markup for a list screen. Arguments: paginator, pagination
-    (SimplePagination), route (module route id), arguments (the list filter to
+    (SimplePagination), total (number of items in the whole list: a paginator
+    does not expose it), route (module route id), arguments (the list filter to
     keep), domain (label domain with pagination.* keys).
 </f:comment>
 <f:if condition="{paginator.numberOfPages} > 1">
@@ -28,7 +29,7 @@
             </f:if>
             <li class="page-item">
                 <span class="page-link">
-                    <f:translate domain="{domain}" key="pagination.range" arguments="{0: pagination.startRecordNumber, 1: pagination.endRecordNumber, 2: paginator.totalAmountOfItems}" />
+                    <f:translate domain="{domain}" key="pagination.range" arguments="{0: pagination.startRecordNumber, 1: pagination.endRecordNumber, 2: total}" />
                 </span>
             </li>
             <f:if condition="{pagination.nextPageNumber}">

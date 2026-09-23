@@ -129,7 +129,7 @@
                     </tbody>
                 </table>
             </div>
-            <f:render partial="Backend/Pagination" arguments="{paginator: paginator, pagination: pagination, route: 'agentnexus_traffic', arguments: filterArguments, domain: 'agent_nexus.traffic'}" />
+            <f:render partial="Backend/Pagination" arguments="{paginator: paginator, pagination: pagination, total: total, route: 'agentnexus_traffic', arguments: filterArguments, domain: 'agent_nexus.traffic'}" />
         </f:then>
         <f:else>
             <div class="anx-empty" data-traffic-empty>

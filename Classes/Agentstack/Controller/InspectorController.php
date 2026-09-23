@@ -78,6 +78,8 @@ final readonly class InspectorController
             'sources' => array_map(static fn(Channel $channel): string => $channel->value, Channel::cases()),
             'paginator' => $paginator,
             'pagination' => new SimplePagination($paginator),
+            // The paginator keeps its total to itself (protected), so the range label gets its own count.
+            'total' => $paginator->getNumberOfPages() > 1 ? $this->objectStore->count($filter) : count($rows),
             'route' => $kind->inspectorModule(),
             'listUri' => $listUri,
             'listHiddenFields' => $this->moduleFrame->hiddenFieldsOf($listUri),

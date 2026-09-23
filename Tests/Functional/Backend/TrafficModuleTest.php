@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Tests\Functional\Backend;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Webconsulting\AgentNexus\Agentstack\Controller\TrafficController;
 use Webconsulting\AgentNexus\Shared\Traffic\TrafficRepository;
@@ -33,6 +34,46 @@ final class TrafficModuleTest extends AbstractBackendModuleTestCase
         $html = self::body($this->get(TrafficController::class)->listAction($this->moduleRequest('agentnexus_traffic')));
 
         self::assertLessThan(strpos($html, 'SendMessage'), strpos($html, 'create_checkout'), 'Newest first.');
+    }
+
+    /**
+     * @return array<string, array{0: array<string, string>, 1: string}>
+     */
+    public static function longLogProvider(): array
+    {
+        return [
+            'the first page links the next' => [[], 'Entries 1 to 50 of 53'],
+            'the last page counts the rest' => [['page' => '2'], 'Entries 51 to 53 of 53'],
+        ];
+    }
+
+    /**
+     * One screen per test: the core's button bar outlives a module template,
+     * so a second rendering in the same test would see the first one's buttons.
+     *
+     * @param array<string, string> $query
+     */
+    #[Test]
+    #[DataProvider('longLogProvider')]
+    public function aLongLogIsPagedWithItsTotal(array $query, string $range): void
+    {
+        $this->addEntries(53);
+
+        $html = self::body($this->get(TrafficController::class)->listAction($this->moduleRequest('agentnexus_traffic', $query)));
+
+        self::assertStringContainsString($range, $html);
+        self::assertStringContainsString('page=', $html, 'The other page is linked.');
+    }
+
+    #[Test]
+    public function aFilteredLogThatFitsOnOnePageHasNoPager(): void
+    {
+        $this->addEntries(53);
+
+        $html = self::body($this->get(TrafficController::class)->listAction($this->moduleRequest('agentnexus_traffic', ['protocol' => 'ucp'])));
+
+        self::assertStringContainsString('Operation53', $html);
+        self::assertStringNotContainsString('Entries 1 to', $html, 'The 27 UCP entries fit on one page.');
     }
 
     #[Test]
@@ -98,6 +139,14 @@ final class TrafficModuleTest extends AbstractBackendModuleTestCase
         ));
 
         self::assertStringContainsString('no longer exists', $html);
+    }
+
+    private function addEntries(int $count): void
+    {
+        $repository = $this->get(TrafficRepository::class);
+        for ($i = 1; $i <= $count; $i++) {
+            $repository->add($this->row($i % 2 === 0 ? 'a2a' : 'ucp', 'Operation' . $i, 'corr-' . $i));
+        }
     }
 
     /**

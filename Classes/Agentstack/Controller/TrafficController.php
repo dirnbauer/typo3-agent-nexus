@@ -75,6 +75,8 @@ final readonly class TrafficController
             'filterArguments' => $filter->toArray(),
             'paginator' => $paginator,
             'pagination' => new SimplePagination($paginator),
+            // The paginator keeps its total to itself (protected), so the range label gets its own count.
+            'total' => $paginator->getNumberOfPages() > 1 ? $this->repository->count($filter) : count($rows),
             'protocols' => array_map(static fn(Protocol $p): array => ['value' => $p->value, 'label' => $p->label()], Protocol::cases()),
             'channels' => array_map(static fn(Channel $c): string => $c->value, Channel::cases()),
             'periods' => array_keys(TrafficFilter::PERIODS),
