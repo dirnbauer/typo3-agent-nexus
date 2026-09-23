@@ -1,8 +1,383 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" trgLang="de" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment state="final"><source>Overview</source><target>Übersicht</target></segment></unit>
-        <unit id="mlang_tabs_tab"><segment state="final"><source>Overview</source><target>Übersicht</target></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment state="final"><source>What each agent protocol is, what it does and how to use it.</source><target>Was die Agent-Protokolle sind, was sie tun und wie sie genutzt werden.</target></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="overview">
+    <unit id="heading">
+      <segment state="final">
+        <source>Agent Nexus</source>
+        <target>Agent Nexus</target>
+      </segment>
+    </unit>
+    <unit id="lede">
+      <segment state="final">
+        <source>Five agent protocols running against this installation. Each card says whether its protocol works here, which specification version it implements and what it did in the last 24 hours.</source>
+        <target>Fünf Agenten-Protokolle, die auf dieser Installation laufen. Jede Karte zeigt, ob ihr Protokoll hier funktioniert, welche Spezifikationsversion es umsetzt und was es in den letzten 24 Stunden getan hat.</target>
+      </segment>
+    </unit>
+    <unit id="version">
+      <segment state="final">
+        <source>Version %s</source>
+        <target>Version %s</target>
+      </segment>
+    </unit>
+    <unit id="model.available">
+      <segment state="final">
+        <source>Model: %1$s · %2$s</source>
+        <target>Modell: %1$s · %2$s</target>
+      </segment>
+    </unit>
+    <unit id="model.missing">
+      <segment state="final">
+        <source>No model. Every protocol runs its scripted demo.</source>
+        <target>Kein Modell. Jedes Protokoll läuft als Skript-Demo.</target>
+      </segment>
+    </unit>
+    <unit id="budget.label">
+      <segment state="final">
+        <source>Model spend today</source>
+        <target>Modellkosten heute</target>
+      </segment>
+    </unit>
+    <unit id="budget.value">
+      <segment state="final">
+        <source>$%1$s of $%2$s</source>
+        <target>%1$s $ von %2$s $</target>
+      </segment>
+    </unit>
+    <unit id="budget.none">
+      <segment state="final">
+        <source>No daily budget set</source>
+        <target>Kein Tagesbudget festgelegt</target>
+      </segment>
+    </unit>
+    <unit id="budget.meter">
+      <segment state="final">
+        <source>%d percent of today's budget used</source>
+        <target>%d Prozent des heutigen Budgets verbraucht</target>
+      </segment>
+    </unit>
+    <unit id="protocols.heading">
+      <segment state="final">
+        <source>Protocols</source>
+        <target>Protokolle</target>
+      </segment>
+    </unit>
+    <unit id="card.spec">
+      <segment state="final">
+        <source>Specification %s</source>
+        <target>Spezifikation %s</target>
+      </segment>
+    </unit>
+    <unit id="card.health.ok">
+      <segment state="final">
+        <source>Ready</source>
+        <target>Bereit</target>
+      </segment>
+    </unit>
+    <unit id="card.health.warn">
+      <segment state="final">
+        <source>No storage folder</source>
+        <target>Kein Speicherordner</target>
+      </segment>
+    </unit>
+    <unit id="card.health.danger">
+      <segment state="final">
+        <source>Endpoints missing</source>
+        <target>Endpunkte fehlen</target>
+      </segment>
+    </unit>
+    <unit id="card.endpoints">
+      <segment state="final">
+        <source>Endpoints</source>
+        <target>Endpunkte</target>
+      </segment>
+    </unit>
+    <unit id="card.endpointCount">
+      <segment state="final">
+        <source>%d routes</source>
+        <target>%d Routen</target>
+      </segment>
+    </unit>
+    <unit id="card.mode">
+      <segment state="final">
+        <source>Mode</source>
+        <target>Modus</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.llm">
+      <segment state="final">
+        <source>Live model</source>
+        <target>Live-Modell</target>
+      </segment>
+    </unit>
+    <unit id="card.mode.scripted">
+      <segment state="final">
+        <source>Scripted demo</source>
+        <target>Skript-Demo</target>
+      </segment>
+    </unit>
+    <unit id="card.last24h">
+      <segment state="final">
+        <source>Last 24 hours</source>
+        <target>Letzte 24 Stunden</target>
+      </segment>
+    </unit>
+    <unit id="card.objects">
+      <segment state="final">
+        <source>%d objects</source>
+        <target>%d Objekte</target>
+      </segment>
+    </unit>
+    <unit id="card.exchanges">
+      <segment state="final">
+        <source>%d exchanges</source>
+        <target>%d Anfragen</target>
+      </segment>
+    </unit>
+    <unit id="card.lastRun">
+      <segment state="final">
+        <source>Last activity</source>
+        <target>Letzte Aktivität</target>
+      </segment>
+    </unit>
+    <unit id="card.never">
+      <segment state="final">
+        <source>Never</source>
+        <target>Nie</target>
+      </segment>
+    </unit>
+    <unit id="card.console">
+      <segment state="final">
+        <source>Open console</source>
+        <target>Konsole öffnen</target>
+      </segment>
+    </unit>
+    <unit id="card.demo">
+      <segment state="final">
+        <source>Open demo page</source>
+        <target>Demoseite öffnen</target>
+      </segment>
+    </unit>
+    <unit id="card.noDemo">
+      <segment state="final">
+        <source>No demo page. Run agentnexus:seed-site to create one.</source>
+        <target>Keine Demoseite. Führen Sie agentnexus:seed-site aus, um eine anzulegen.</target>
+      </segment>
+    </unit>
+    <unit id="card.objectsLink">
+      <segment state="final">
+        <source>Show objects</source>
+        <target>Objekte anzeigen</target>
+      </segment>
+    </unit>
+    <unit id="spec.heading">
+      <segment state="final">
+        <source>Specification versions</source>
+        <target>Spezifikationsversionen</target>
+      </segment>
+    </unit>
+    <unit id="spec.lede">
+      <segment state="final">
+        <source>Checked against each specification's own site and repository on %s.</source>
+        <target>Geprüft an der Website und dem Repository jeder Spezifikation am %s.</target>
+      </segment>
+    </unit>
+    <unit id="spec.caption">
+      <segment state="final">
+        <source>Implemented and latest published specification versions</source>
+        <target>Umgesetzte und zuletzt veröffentlichte Spezifikationsversionen</target>
+      </segment>
+    </unit>
+    <unit id="spec.protocol">
+      <segment state="final">
+        <source>Protocol</source>
+        <target>Protokoll</target>
+      </segment>
+    </unit>
+    <unit id="spec.implemented">
+      <segment state="final">
+        <source>Implemented here</source>
+        <target>Hier umgesetzt</target>
+      </segment>
+    </unit>
+    <unit id="spec.latest">
+      <segment state="final">
+        <source>Latest published</source>
+        <target>Zuletzt veröffentlicht</target>
+      </segment>
+    </unit>
+    <unit id="spec.status">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="spec.source">
+      <segment state="final">
+        <source>Source</source>
+        <target>Quelle</target>
+      </segment>
+    </unit>
+    <unit id="spec.current">
+      <segment state="final">
+        <source>Current</source>
+        <target>Aktuell</target>
+      </segment>
+    </unit>
+    <unit id="spec.behind">
+      <segment state="final">
+        <source>Behind</source>
+        <target>Veraltet</target>
+      </segment>
+    </unit>
+    <unit id="spec.notImplemented">
+      <segment state="final">
+        <source>Not implemented</source>
+        <target>Nicht umgesetzt</target>
+      </segment>
+    </unit>
+    <unit id="spec.candidate">
+      <segment state="final">
+        <source>Release candidate %s available on request</source>
+        <target>Release Candidate %s auf Anfrage verfügbar</target>
+      </segment>
+    </unit>
+    <unit id="spec.released">
+      <segment state="final">
+        <source>released %s</source>
+        <target>veröffentlicht am %s</target>
+      </segment>
+    </unit>
+    <unit id="spec.read">
+      <segment state="final">
+        <source>Read the %s specification</source>
+        <target>%s-Spezifikation lesen</target>
+      </segment>
+    </unit>
+    <unit id="discovery.heading">
+      <segment state="final">
+        <source>Discovery</source>
+        <target>Auffindbarkeit</target>
+      </segment>
+    </unit>
+    <unit id="discovery.lede">
+      <segment state="final">
+        <source>What another agent reads first. The protocol endpoints live under %s.</source>
+        <target>Was ein anderer Agent zuerst liest. Die Protokoll-Endpunkte liegen unter %s.</target>
+      </segment>
+    </unit>
+    <unit id="discovery.none">
+      <segment state="final">
+        <source>The well-known documents are switched off in the extension configuration.</source>
+        <target>Die Well-known-Dokumente sind in der Extension-Konfiguration ausgeschaltet.</target>
+      </segment>
+    </unit>
+    <unit id="activity.heading">
+      <segment state="final">
+        <source>Recent activity</source>
+        <target>Letzte Aktivität</target>
+      </segment>
+    </unit>
+    <unit id="activity.empty">
+      <segment state="final">
+        <source>Nothing has run yet. Open a console or one of the demo pages, then come back.</source>
+        <target>Noch nichts gelaufen. Öffnen Sie eine Konsole oder eine der Demoseiten und kommen Sie dann zurück.</target>
+      </segment>
+    </unit>
+    <unit id="activity.inspector">
+      <segment state="final">
+        <source>Open the inspector</source>
+        <target>Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="activity.traffic">
+      <segment state="final">
+        <source>Open the traffic log</source>
+        <target>Datenverkehr öffnen</target>
+      </segment>
+    </unit>
+    <unit id="setup.heading">
+      <segment state="final">
+        <source>Setup</source>
+        <target>Einrichtung</target>
+      </segment>
+    </unit>
+    <unit id="setup.site.done">
+      <segment state="final">
+        <source>Demo site "%1$s" on page %2$s.</source>
+        <target>Demo-Site „%1$s“ auf Seite %2$s.</target>
+      </segment>
+    </unit>
+    <unit id="setup.site.todo">
+      <segment state="final">
+        <source>No demo site yet. Run the seed command below.</source>
+        <target>Noch keine Demo-Site. Führen Sie den Seed-Befehl unten aus.</target>
+      </segment>
+    </unit>
+    <unit id="setup.storage.done">
+      <segment state="final">
+        <source>Widget records are stored on page %s.</source>
+        <target>Widget-Datensätze werden auf Seite %s gespeichert.</target>
+      </segment>
+    </unit>
+    <unit id="setup.storage.todo">
+      <segment state="final">
+        <source>No storage folder. Widget records are stored on the page that created them.</source>
+        <target>Kein Speicherordner. Widget-Datensätze werden auf der Seite gespeichert, die sie erzeugt hat.</target>
+      </segment>
+    </unit>
+    <unit id="setup.endpoints.done">
+      <segment state="final">
+        <source>All protocol endpoints are routed under %s.</source>
+        <target>Alle Protokoll-Endpunkte sind unter %s erreichbar.</target>
+      </segment>
+    </unit>
+    <unit id="setup.endpoints.todo">
+      <segment state="final">
+        <source>Some protocol endpoints are missing. Flush all caches and check the extension setup.</source>
+        <target>Einige Protokoll-Endpunkte fehlen. Leeren Sie alle Caches und prüfen Sie die Einrichtung der Extension.</target>
+      </segment>
+    </unit>
+    <unit id="setup.model.done">
+      <segment state="final">
+        <source>netresearch/nr-llm is installed. The protocol settings decide where a model is used.</source>
+        <target>netresearch/nr-llm ist installiert. Die Protokoll-Einstellungen legen fest, wo ein Modell verwendet wird.</target>
+      </segment>
+    </unit>
+    <unit id="setup.model.todo">
+      <segment state="final">
+        <source>No language model installed. Every protocol runs its scripted demo.</source>
+        <target>Kein Sprachmodell installiert. Jedes Protokoll läuft als Skript-Demo.</target>
+      </segment>
+    </unit>
+    <unit id="setup.traffic.done">
+      <segment state="final">
+        <source>The traffic log is recorded and kept for %s days. Schedule agentnexus:cleanup to apply the retention.</source>
+        <target>Der Datenverkehr wird aufgezeichnet und %s Tage aufbewahrt. Planen Sie agentnexus:cleanup ein, damit die Aufbewahrung greift.</target>
+      </segment>
+    </unit>
+    <unit id="setup.traffic.todo">
+      <segment state="final">
+        <source>The traffic log is switched off.</source>
+        <target>Die Aufzeichnung des Datenverkehrs ist ausgeschaltet.</target>
+      </segment>
+    </unit>
+    <unit id="setup.done">
+      <segment state="final">
+        <source>Done</source>
+        <target>Erledigt</target>
+      </segment>
+    </unit>
+    <unit id="setup.todo">
+      <segment state="final">
+        <source>To do</source>
+        <target>Offen</target>
+      </segment>
+    </unit>
+    <unit id="setup.command">
+      <segment state="final">
+        <source>Create or refresh the demo site</source>
+        <target>Demo-Site anlegen oder aktualisieren</target>
+      </segment>
+    </unit>
+  </file>
 </xliff>

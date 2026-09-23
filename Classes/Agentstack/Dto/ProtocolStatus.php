@@ -38,16 +38,17 @@ final readonly class ProtocolStatus
      * @param string $name                Spelled-out name (Agent-to-UI)
      * @param string $tagline             One line: what this protocol is for
      * @param string $icon                Icon identifier for the card
-     * @param bool   $endpointsRegistered Every eID endpoint this protocol needs is registered
-     * @param int    $endpointCount       How many endpoints it expects
+     * @param bool   $endpointsRegistered The protocol's API routes are registered
+     * @param int    $endpointCount       How many routes it serves
      * @param bool   $llmEnabled          A real model may be used (otherwise the deterministic demo runs)
      * @param string $llmReason           Why not, when $llmEnabled is false
      * @param bool   $storageReady        A storage folder is configured and exists
-     * @param int|null $lastRun           Timestamp of the most recent logged activity
-     * @param int    $runsLast24h         Logged activity in the last 24 hours
+     * @param int|null $lastRun           When the protocol last changed one of its objects
+     * @param int    $runsLast24h         Objects it created or changed in the last 24 hours
      * @param string $moduleIdentifier    Backend module to open from the card
      * @param string $playgroundUri       Resolved backend URI of that module ('' when unroutable)
      * @param string|null $frontendUrl    Seeded demo page, when one is reachable
+     * @param string $specVersion         Specification version implemented here ('' when none)
      */
     public function __construct(
         public string $key,
@@ -65,6 +66,7 @@ final readonly class ProtocolStatus
         public string $moduleIdentifier,
         public string $playgroundUri,
         public ?string $frontendUrl,
+        public string $specVersion = '',
     ) {
         // A missing endpoint is the only thing that actually breaks the
         // protocol; everything else is a degraded but working demo.

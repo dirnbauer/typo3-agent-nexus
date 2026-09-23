@@ -2,152 +2,213 @@
       xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
       data-namespace-typo3-fluid="true">
 
-<div class="anx anx--backend" data-anx-overview>
+<f:layout name="Module" />
 
-    <header class="anx-hub__head anx-reveal" data-anx-hero>
-        <div class="anx-hub__title">
-            <core:icon identifier="agentnexus-module" size="medium" />
-            <div>
-                <h1 class="anx-h1">Agent Nexus</h1>
-                <p class="anx-hub__sub">
-                    Five agent protocols running against this installation.
-                    <f:if condition="{version}"><span class="anx-hub__version">v{version}</span></f:if>
-                </p>
-            </div>
-        </div>
+<f:section name="Content">
+<div class="anx anx--backend anx-overview">
 
-        <div class="anx-hub__chips">
-            <div class="anx-chip anx-chip--{f:if(condition: llm.available, then: 'ok', else: 'muted')}">
-                <core:icon identifier="agentnexus-status-{f:if(condition: llm.available, then: 'ok', else: 'warn')}" size="small" />
-                <span class="anx-chip__label">
-                    <f:if condition="{llm.available}">
-                        <f:then>{llm.model}<f:if condition="{llm.provider}"> &middot; {llm.provider}</f:if></f:then>
-                        <f:else>No model &mdash; deterministic demos</f:else>
-                    </f:if>
+    <h1>
+        <f:translate domain="agent_nexus.overview" key="heading" />
+        <f:if condition="{version}"><span class="badge badge-default"><f:translate domain="agent_nexus.overview" key="version" arguments="{0: version}" /></span></f:if>
+    </h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.overview" key="lede" /></p>
+
+    <div class="anx-overview__meta">
+        <f:if condition="{llm.available}">
+            <f:then>
+                <span class="badge badge-success"><f:translate domain="agent_nexus.overview" key="model.available" arguments="{0: llm.model, 1: llm.provider}" /></span>
+            </f:then>
+            <f:else>
+                <span class="badge badge-default"><f:translate domain="agent_nexus.overview" key="model.missing" /></span>
+            </f:else>
+        </f:if>
+        <span class="text-variant"><f:translate domain="agent_nexus.overview" key="budget.label" />:</span>
+        <f:if condition="{llm.hasBudget}">
+            <f:then>
+                <strong><f:translate domain="agent_nexus.overview" key="budget.value" arguments="{0: llm.spentToday, 1: llm.budget}" /></strong>
+                <span class="anx-meter{f:if(condition: llm.overBudget, then: ' anx-meter--over')}" role="img"
+                      aria-label="{f:translate(domain: 'agent_nexus.overview', key: 'budget.meter', arguments: '{0: llm.budgetPercent}')}">
+                    <span class="anx-meter__fill" style="width: {llm.budgetPercent}%"></span>
                 </span>
-            </div>
+            </f:then>
+            <f:else><span><f:translate domain="agent_nexus.overview" key="budget.none" /></span></f:else>
+        </f:if>
+    </div>
 
-            <f:if condition="{llm.budget} > 0">
-                <div class="anx-chip anx-chip--{f:if(condition: llm.overBudget, then: 'danger', else: 'muted')}">
-                    <span class="anx-chip__label">
-                        Today
-                        <strong data-anx-count="{llm.spentToday}" data-anx-prefix="$">${llm.spentToday}</strong>
-                        of ${llm.budget}
-                    </span>
-                    <span class="anx-meter" role="img" aria-label="{llm.budgetPercent}% of today's budget used">
-                        <span class="anx-meter__fill" style="width: {llm.budgetPercent}%"></span>
-                    </span>
-                </div>
-            </f:if>
+    <section aria-labelledby="anx-overview-protocols">
+        <h2 id="anx-overview-protocols"><f:translate domain="agent_nexus.overview" key="protocols.heading" /></h2>
+        <div class="card-container anx-overview__cards">
+            <f:for each="{cards}" as="card">
+                <f:variable name="protocol" value="{card.protocol}" />
+                <article class="card card-size-medium anx-accent--{protocol.key}" aria-labelledby="anx-card-{protocol.key}">
+                    <div class="card-header">
+                        <div class="card-icon"><core:icon identifier="{protocol.icon}" size="medium" /></div>
+                        <div class="card-header-body">
+                            <h3 class="card-title" id="anx-card-{protocol.key}">{protocol.label}</h3>
+                            <span class="card-subtitle">{protocol.name}</span>
+                        </div>
+                        <span class="anx-overview__health badge badge-{card.healthBadge}">
+                            <f:translate domain="agent_nexus.overview" key="card.health.{protocol.health}" />
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{protocol.tagline}</p>
+                        <dl class="anx-dl">
+                            <f:if condition="{protocol.specVersion}">
+                                <div>
+                                    <dt><f:translate domain="agent_nexus.overview" key="spec.implemented" /></dt>
+                                    <dd><f:translate domain="agent_nexus.overview" key="card.spec" arguments="{0: protocol.specVersion}" /></dd>
+                                </div>
+                            </f:if>
+                            <div>
+                                <dt><f:translate domain="agent_nexus.overview" key="card.endpoints" /></dt>
+                                <dd><f:translate domain="agent_nexus.overview" key="card.endpointCount" arguments="{0: protocol.endpointCount}" /></dd>
+                            </div>
+                            <div>
+                                <dt><f:translate domain="agent_nexus.overview" key="card.mode" /></dt>
+                                <dd title="{protocol.llmReason}">
+                                    <f:if condition="{protocol.llmEnabled}">
+                                        <f:then><f:translate domain="agent_nexus.overview" key="card.mode.llm" /></f:then>
+                                        <f:else><f:translate domain="agent_nexus.overview" key="card.mode.scripted" /></f:else>
+                                    </f:if>
+                                </dd>
+                            </div>
+                            <div>
+                                <dt><f:translate domain="agent_nexus.overview" key="card.last24h" /></dt>
+                                <dd>
+                                    <f:translate domain="agent_nexus.overview" key="card.objects" arguments="{0: protocol.runsLast24h}" />
+                                    · <f:translate domain="agent_nexus.overview" key="card.exchanges" arguments="{0: card.exchanges}" />
+                                </dd>
+                            </div>
+                            <div>
+                                <dt><f:translate domain="agent_nexus.overview" key="card.lastRun" /></dt>
+                                <dd>
+                                    <f:if condition="{protocol.hasActivity}">
+                                        <f:then><time datetime="{f:format.date(date: '@{protocol.lastRun}', format: 'c')}"><f:format.date format="Y-m-d H:i">@{protocol.lastRun}</f:format.date></time></f:then>
+                                        <f:else><f:translate domain="agent_nexus.overview" key="card.never" /></f:else>
+                                    </f:if>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="card-footer anx-overview__actions">
+                        <f:if condition="{protocol.playgroundUri}">
+                            <a class="btn btn-default" href="{protocol.playgroundUri}"><f:translate domain="agent_nexus.overview" key="card.console" /></a>
+                        </f:if>
+                        <f:if condition="{protocol.frontendUrl}">
+                            <f:then>
+                                <a class="btn btn-default" href="{protocol.frontendUrl}" target="_blank" rel="noopener noreferrer">
+                                    <f:translate domain="agent_nexus.overview" key="card.demo" />
+                                    <core:icon identifier="actions-window-open" size="small" />
+                                </a>
+                            </f:then>
+                            <f:else><span class="text-variant"><f:translate domain="agent_nexus.overview" key="card.noDemo" /></span></f:else>
+                        </f:if>
+                    </div>
+                </article>
+            </f:for>
         </div>
-    </header>
-
-    <section class="anx-hub__grid" aria-label="Protocols">
-        <f:for each="{protocols}" as="protocol">
-            <article class="anx-reveal anx-card anx-pcard anx-accent--{protocol.key}">
-                <div class="anx-pcard__head">
-                    <span class="anx-pcard__icon"><core:icon identifier="{protocol.icon}" size="small" /></span>
-                    <div class="anx-pcard__id">
-                        <h2 class="anx-pcard__label">{protocol.label}</h2>
-                        <span class="anx-pcard__name">{protocol.name}</span>
-                    </div>
-                    <span class="anx-pcard__health anx-pcard__health--{protocol.health}" title="{protocol.healthLabel}">
-                        <core:icon identifier="{protocol.healthIcon}" size="small" />
-                        <span class="anx-visually-hidden">{protocol.healthLabel}</span>
-                    </span>
-                </div>
-
-                <p class="anx-pcard__tagline">{protocol.tagline}</p>
-
-                <dl class="anx-pcard__facts">
-                    <div>
-                        <dt>Endpoints</dt>
-                        <dd>
-                            <f:if condition="{protocol.endpointsRegistered}">
-                                <f:then>{protocol.endpointCount} registered</f:then>
-                                <f:else><span class="anx-pcard__bad">missing</span></f:else>
-                            </f:if>
-                        </dd>
-                    </div>
-                    <div>
-                        <dt>Mode</dt>
-                        <dd title="{protocol.llmReason}">{protocol.modeLabel}</dd>
-                    </div>
-                    <div>
-                        <dt>Last 24 h</dt>
-                        <dd><strong data-anx-count="{protocol.runsLast24h}">{protocol.runsLast24h}</strong></dd>
-                    </div>
-                    <div>
-                        <dt>Last run</dt>
-                        <dd>
-                            <f:if condition="{protocol.hasActivity}">
-                                <f:then><f:format.date format="d M, H:i">@{protocol.lastRun}</f:format.date></f:then>
-                                <f:else>never</f:else>
-                            </f:if>
-                        </dd>
-                    </div>
-                </dl>
-
-                <div class="anx-pcard__actions">
-                    <f:if condition="{protocol.playgroundUri}">
-                        <a class="anx-btn anx-btn--primary anx-btn--sm" href="{protocol.playgroundUri}">Playground</a>
-                    </f:if>
-                    <f:if condition="{protocol.frontendUrl}">
-                        <f:then>
-                            <a class="anx-btn anx-btn--outline anx-btn--sm" href="{protocol.frontendUrl}" target="_blank" rel="noopener noreferrer">
-                                Live page <span aria-hidden="true">&#8599;</span>
-                            </a>
-                        </f:then>
-                        <f:else>
-                            <span class="anx-pcard__hint">No demo page &mdash; seed the site</span>
-                        </f:else>
-                    </f:if>
-                </div>
-            </article>
-        </f:for>
     </section>
 
-    <div class="anx-hub__bottom">
-        <section class="anx-reveal anx-card anx-hub__activity" aria-label="Recent activity">
-            <h2 class="anx-h2">Recent activity</h2>
+    <section class="anx-section" aria-labelledby="anx-overview-spec">
+        <h2 id="anx-overview-spec"><f:translate domain="agent_nexus.overview" key="spec.heading" /></h2>
+        <p class="text-variant"><f:translate domain="agent_nexus.overview" key="spec.lede" arguments="{0: checked}" /></p>
+        <div class="table-fit">
+            <table class="table table-striped anx-overview__spec">
+                <caption class="visually-hidden"><f:translate domain="agent_nexus.overview" key="spec.caption" /></caption>
+                <thead>
+                    <tr>
+                        <th scope="col"><f:translate domain="agent_nexus.overview" key="spec.protocol" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.overview" key="spec.implemented" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.overview" key="spec.latest" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.overview" key="spec.status" /></th>
+                        <th scope="col"><f:translate domain="agent_nexus.overview" key="spec.source" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <f:for each="{specifications}" as="spec">
+                        <tr>
+                            <th scope="row"><span class="anx-proto-chip anx-accent--{spec.key}">{spec.label}</span></th>
+                            <td>{spec.implemented -> f:or(alternative: '–')}</td>
+                            <td>{spec.latest} <span class="text-variant">(<f:translate domain="agent_nexus.overview" key="spec.released" arguments="{0: spec.released}" />)</span></td>
+                            <td>
+                                <f:if condition="{spec.implemented}">
+                                    <f:then>
+                                        <f:if condition="{spec.current}">
+                                            <f:then><span class="badge badge-success"><f:translate domain="agent_nexus.overview" key="spec.current" /></span></f:then>
+                                            <f:else><span class="badge badge-warning"><f:translate domain="agent_nexus.overview" key="spec.behind" /></span></f:else>
+                                        </f:if>
+                                        <f:if condition="{spec.candidate}"><br /><span class="text-variant"><f:translate domain="agent_nexus.overview" key="spec.candidate" arguments="{0: spec.candidate}" /></span></f:if>
+                                    </f:then>
+                                    <f:else><span class="badge badge-default"><f:translate domain="agent_nexus.overview" key="spec.notImplemented" /></span></f:else>
+                                </f:if>
+                            </td>
+                            <td>
+                                <a href="{spec.url}" target="_blank" rel="noopener noreferrer"
+                                   title="{f:translate(domain: 'agent_nexus.overview', key: 'spec.read', arguments: '{0: spec.label}')}">{spec.url}</a>
+                            </td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="anx-overview__columns">
+        <section class="anx-section" aria-labelledby="anx-overview-activity">
+            <h2 id="anx-overview-activity"><f:translate domain="agent_nexus.overview" key="activity.heading" /></h2>
             <f:if condition="{activity}">
                 <f:then>
-                    <ol class="anx-feed">
+                    <ul class="anx-overview__activity">
                         <f:for each="{activity}" as="entry">
-                            <li class="anx-feed__item anx-accent--{entry.protocol}">
-                                <span class="anx-feed__dot" aria-hidden="true"></span>
-                                <span class="anx-feed__proto">{entry.label}</span>
-                                <span class="anx-feed__what">{entry.what}</span>
-                                <time class="anx-feed__when"><f:format.date format="d M Y, H:i">@{entry.time}</f:format.date></time>
+                            <li>
+                                <span class="anx-proto-chip anx-accent--{entry.protocol}">{entry.label}</span>
+                                <span><a href="{entry.uri}">{entry.object}</a> <span class="badge badge-default">{entry.state}</span></span>
+                                <time datetime="{f:format.date(date: '@{entry.time}', format: 'c')}"><f:format.date format="d M, H:i">@{entry.time}</f:format.date></time>
                             </li>
                         </f:for>
-                    </ol>
+                    </ul>
                 </f:then>
-                <f:else>
-                    <p class="anx-muted">Nothing has run yet. Open a playground or the seeded demo site and come back.</p>
-                </f:else>
+                <f:else><p class="text-variant"><f:translate domain="agent_nexus.overview" key="activity.empty" /></p></f:else>
             </f:if>
+            <p class="anx-overview__actions">
+                <a class="btn btn-default" href="{inspectorUri}"><core:icon identifier="agentnexus-module-inspector" size="small" /> <f:translate domain="agent_nexus.overview" key="activity.inspector" /></a>
+                <a class="btn btn-default" href="{trafficUri}"><core:icon identifier="agentnexus-module-traffic" size="small" /> <f:translate domain="agent_nexus.overview" key="activity.traffic" /></a>
+            </p>
         </section>
 
-        <section class="anx-reveal anx-card anx-hub__setup" aria-label="Setup">
-            <h2 class="anx-h2">Setup</h2>
-            <ul class="anx-checks">
-                <f:for each="{setup.items}" as="item">
-                    <li class="anx-check anx-check--{f:if(condition: item.done, then: 'ok', else: 'todo')}">
-                        <core:icon identifier="agentnexus-status-{f:if(condition: item.done, then: 'ok', else: 'warn')}" size="small" />
-                        <span class="anx-check__body">
-                            <strong>{item.label}</strong>
-                            <span>{item.detail}</span>
-                        </span>
+        <section class="anx-section" aria-labelledby="anx-overview-discovery">
+            <h2 id="anx-overview-discovery"><f:translate domain="agent_nexus.overview" key="discovery.heading" /></h2>
+            <p class="text-variant"><f:translate domain="agent_nexus.overview" key="discovery.lede" arguments="{0: apiBase}" /></p>
+            <f:if condition="{discovery}">
+                <f:then>
+                    <ul class="anx-overview__discovery">
+                        <f:for each="{discovery}" as="document">
+                            <li><span class="anx-proto-chip anx-accent--{document.protocol}">{document.label}</span> <a href="{document.url}" target="_blank" rel="noopener noreferrer"><code>{document.url}</code></a></li>
+                        </f:for>
+                    </ul>
+                </f:then>
+                <f:else><p><f:translate domain="agent_nexus.overview" key="discovery.none" /></p></f:else>
+            </f:if>
+
+            <h2 class="anx-section"><f:translate domain="agent_nexus.overview" key="setup.heading" /></h2>
+            <ul class="anx-overview__checks">
+                <f:for each="{setup}" as="item">
+                    <li>
+                        <f:if condition="{item.done}">
+                            <f:then><core:icon identifier="agentnexus-status-ok" size="small" /><span class="visually-hidden"><f:translate domain="agent_nexus.overview" key="setup.done" />:</span></f:then>
+                            <f:else><core:icon identifier="agentnexus-status-warn" size="small" /><span class="visually-hidden"><f:translate domain="agent_nexus.overview" key="setup.todo" />:</span></f:else>
+                        </f:if>
+                        <span><f:translate domain="agent_nexus.overview" key="setup.{item.key}" arguments="{item.arguments}" /></span>
                     </li>
                 </f:for>
             </ul>
-
-            <p class="anx-hub__cmd-label">Create or refresh the demo site</p>
-            <pre class="anx-hub__cmd"><code>{setup.seedCommand}</code></pre>
+            <p class="anx-overview__command-label"><f:translate domain="agent_nexus.overview" key="setup.command" /></p>
+            <pre class="anx-code"><code>vendor/bin/typo3 agentnexus:seed-site --base=https://example.org/</code></pre>
         </section>
     </div>
 
 </div>
+</f:section>
 
 </html>

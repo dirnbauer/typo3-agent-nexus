@@ -5,77 +5,81 @@ declare(strict_types=1);
 namespace Webconsulting\AgentNexus\Agentstack\Controller;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Attribute\AsController;
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Package\PackageManager;
-use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use Webconsulting\AgentNexus\Agentstack\Dto\ProtocolStatus;
 use Webconsulting\AgentNexus\Agentstack\Service\ProtocolStatusService;
 use Webconsulting\AgentNexus\Agentstack\Service\SiteLocator;
+use Webconsulting\AgentNexus\Agentstack\Service\SpecificationVersions;
+use Webconsulting\AgentNexus\Shared\Backend\ModuleFrame;
+use Webconsulting\AgentNexus\Shared\Configuration\ExtensionSettings;
+use Webconsulting\AgentNexus\Shared\Http\Api\RouteRegistry;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Traffic\TrafficRepository;
 
 /**
- * Agent Nexus — the hub.
+ * Agent Nexus — the overview.
  *
- * This module used to be a field guide: theory cards, a protocol map, a
- * comparison table, a glossary. All of that was explanation, and explanation now
- * lives where a reader actually needs it — in the frontend "Protocol info"
- * element and in the documentation. What an operator could never answer from the
- * backend was the practical question: *is this working here, right now?*
- *
- * So the hub answers exactly that. A header with the installed version, whether
- * a model is reachable and what today's spend is against the budget. One card
- * per protocol with its health (endpoints registered, storage folder present,
- * model on or off), when it last ran, how often in the last 24 hours, and the
- * three things you would want to do next: open the playground, open the live
- * page, or seed the site. Then the ten most recent events across all protocols,
- * and a setup panel that names what is still missing.
+ * It answers what an operator opens the backend for: is each protocol working
+ * here, which version of its specification does it implement, and what ran
+ * recently. One card per protocol (health, specification version, activity,
+ * the way into its console, its demo page and its objects), the specification
+ * table with the newest published versions, the discovery documents this
+ * installation publishes, the most recent protocol objects and a setup list
+ * that names what is still missing.
  */
 #[AsController]
-final class OverviewController extends ActionController
+final readonly class OverviewController
 {
-    /** Design-system CSS, loaded in this exact order. */
-    private const CSS_FILES = [
-        'EXT:agent_nexus/Resources/Public/Css/nexus-tokens.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-ui.css',
-        'EXT:agent_nexus/Resources/Public/Css/nexus-backend.css',
-    ];
-
-    private const JS_OVERVIEW = '@webconsulting/agent-nexus/nexus-overview.js';
+    private const int DAY = 86400;
 
     public function __construct(
-        private readonly ModuleTemplateFactory $moduleTemplateFactory,
-        private readonly PageRenderer $pageRenderer,
-        private readonly ProtocolStatusService $protocolStatusService,
-        private readonly SiteLocator $siteLocator,
-        private readonly LanguageModel $llmClient,
-        private readonly UsageLedger $usageTracker,
-        private readonly ExtensionConfiguration $extensionConfiguration,
-        private readonly PackageManager $packageManager,
+        private ModuleFrame $moduleFrame,
+        private ProtocolStatusService $protocolStatusService,
+        private SpecificationVersions $specificationVersions,
+        private SiteLocator $siteLocator,
+        private RouteRegistry $routeRegistry,
+        private TrafficRepository $trafficRepository,
+        private LanguageModel $languageModel,
+        private UsageLedger $usageLedger,
+        private ExtensionSettings $settings,
+        private PackageManager $packageManager,
+        private UriBuilder $uriBuilder,
     ) {}
 
-    public function indexAction(): ResponseInterface
+    public function indexAction(ServerRequestInterface $request): ResponseInterface
     {
-        foreach (self::CSS_FILES as $file) {
-            $this->pageRenderer->addCssFile($file);
-        }
-        $this->pageRenderer->loadJavaScriptModule(self::JS_OVERVIEW);
-
         $protocols = $this->protocolStatusService->all();
+        $origin = $request->getUri()->getScheme() . '://' . $request->getUri()->getAuthority();
+        $exchanges = $this->safely(fn(): array => $this->trafficRepository->countByProtocolSince(time() - self::DAY), []);
 
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        $moduleTemplate->setTitle('Agent Nexus');
-        $moduleTemplate->assignMultiple([
+        $view = $this->moduleFrame->create($request);
+        $view->assignMultiple([
             'version' => $this->version(),
             'llm' => $this->llmSummary(),
-            'protocols' => $protocols,
+            'cards' => array_map(static fn(ProtocolStatus $protocol): array => [
+                'protocol' => $protocol,
+                'exchanges' => $exchanges[$protocol->key] ?? 0,
+                'healthBadge' => match ($protocol->health) {
+                    ProtocolStatus::HEALTH_OK => 'success',
+                    ProtocolStatus::HEALTH_WARN => 'warning',
+                    default => 'danger',
+                },
+            ], $protocols),
+            'specifications' => $this->specificationVersions->all(),
+            'checked' => SpecificationVersions::CHECKED,
+            'discovery' => $this->discovery($origin),
+            'apiBase' => $origin . $this->routeRegistry->apiBasePath(),
             'activity' => $this->protocolStatusService->recentActivity(),
             'setup' => $this->setup($protocols),
+            'inspectorUri' => (string)$this->uriBuilder->buildUriFromRoute('agentnexus_inspector'),
+            'trafficUri' => (string)$this->uriBuilder->buildUriFromRoute('agentnexus_traffic'),
         ]);
 
-        return $moduleTemplate->renderResponse('Overview/Index');
+        return $view->renderResponse('Overview/Index');
     }
 
     private function version(): string
@@ -88,98 +92,104 @@ final class OverviewController extends ActionController
     }
 
     /**
-     * The header chip: is a model reachable at all, which one, and how much of
-     * today's budget is gone.
+     * Whether a model is reachable, which one, and how much of today's budget
+     * is spent.
      *
-     * @return array{available: bool, model: string, provider: string, spentToday: float, budget: float, budgetPercent: int, overBudget: bool}
+     * @return array{available: bool, model: string, provider: string, spentToday: string, budget: string, budgetPercent: int, overBudget: bool, hasBudget: bool}
      */
     private function llmSummary(): array
     {
-        $connection = $this->llmClient->getConnectionInfo();
-        $budget = (float)($this->configuration()['llmDailyBudget'] ?? 0);
-        $spent = $this->usageTracker->getCostToday();
+        $connection = $this->languageModel->getConnectionInfo();
+        $budget = $this->settings->float('llmDailyBudget', 2.0);
+        $spent = $this->safely(fn(): float => $this->usageLedger->getCostToday(), 0.0);
 
         return [
             'available' => $connection !== null,
             'model' => $connection['model'] ?? '',
             'provider' => $connection['provider'] ?? '',
-            'spentToday' => $spent,
-            'budget' => $budget,
+            'spentToday' => number_format($spent, 2),
+            'budget' => number_format($budget, 2),
             'budgetPercent' => $budget > 0 ? (int)min(100, round($spent / $budget * 100)) : 0,
             'overBudget' => $budget > 0 && $spent >= $budget,
+            'hasBudget' => $budget > 0,
         ];
     }
 
     /**
-     * What still needs doing before the demos are fully usable. Each entry is a
-     * plain statement plus whether it is satisfied — no scoring, no badges.
+     * The documents another agent reads first, when this installation
+     * publishes them.
      *
-     * @param list<\Webconsulting\AgentNexus\Agentstack\Dto\ProtocolStatus> $protocols
-     * @return array{
-     *     items: list<array{label: string, done: bool, detail: string}>,
-     *     storagePid: int,
-     *     siteIdentifier: string,
-     *     seedCommand: string
-     * }
+     * @return list<array{protocol: string, label: string, url: string}>
+     */
+    private function discovery(string $origin): array
+    {
+        $documents = [];
+        foreach ($this->routeRegistry->all() as $route) {
+            if ($route->wellKnown) {
+                $documents[] = [
+                    'protocol' => $route->protocol->value,
+                    'label' => $route->protocol->label(),
+                    'url' => $this->routeRegistry->url($route->id, $origin),
+                ];
+            }
+        }
+        return $documents;
+    }
+
+    /**
+     * What still needs doing before the demos are fully usable: each entry a
+     * key into the label file plus whether it is done and its detail values.
+     *
+     * @param list<ProtocolStatus> $protocols
+     * @return list<array{key: string, done: bool, arguments: list<string>}>
      */
     private function setup(array $protocols): array
     {
         $site = $this->siteLocator->site();
         $storagePid = $this->siteLocator->storagePid();
-        $storageReady = $this->siteLocator->storageReady();
-        $endpointsOk = array_reduce(
-            $protocols,
-            static fn(bool $carry, $protocol): bool => $carry && $protocol->endpointsRegistered,
-            true,
-        );
+        $routed = array_all($protocols, static fn(ProtocolStatus $protocol): bool => $protocol->endpointsRegistered);
 
         return [
-            'items' => [
-                [
-                    'label' => 'Demo site',
-                    'done' => $site !== null,
-                    'detail' => $site !== null
-                        ? sprintf('Site "%s" on page %d', $site->getIdentifier(), $site->getRootPageId())
-                        : 'No seeded site yet — run the seed command below.',
-                ],
-                [
-                    'label' => 'Storage folder',
-                    'done' => $storageReady,
-                    'detail' => $storageReady
-                        ? sprintf('Records are written to page %d.', $storagePid)
-                        : 'Inquiries, leads and orders land on the page that triggered them.',
-                ],
-                [
-                    'label' => 'Frontend endpoints',
-                    'done' => $endpointsOk,
-                    'detail' => $endpointsOk
-                        ? 'All nine eID endpoints are registered.'
-                        : 'Some eID endpoints are missing — flush caches and check ext_localconf.php.',
-                ],
-                [
-                    'label' => 'Language model',
-                    'done' => $this->llmClient->isAvailable(),
-                    'detail' => $this->llmClient->isAvailable()
-                        ? 'netresearch/nr-llm is installed; per-protocol toggles decide where it is used.'
-                        : 'Not installed — every protocol runs its deterministic demo.',
-                ],
+            [
+                'key' => $site !== null ? 'site.done' : 'site.todo',
+                'done' => $site !== null,
+                'arguments' => $site !== null ? [$site->getIdentifier(), (string)$site->getRootPageId()] : [],
             ],
-            'storagePid' => $storagePid,
-            'siteIdentifier' => $site?->getIdentifier() ?? 'agent-nexus',
-            'seedCommand' => 'vendor/bin/typo3 agentnexus:seed-site --base=https://example.org/',
+            [
+                'key' => $this->siteLocator->storageReady() ? 'storage.done' : 'storage.todo',
+                'done' => $this->siteLocator->storageReady(),
+                'arguments' => [(string)$storagePid],
+            ],
+            [
+                'key' => $routed ? 'endpoints.done' : 'endpoints.todo',
+                'done' => $routed,
+                'arguments' => [$this->routeRegistry->apiBasePath()],
+            ],
+            [
+                'key' => $this->languageModel->isAvailable() ? 'model.done' : 'model.todo',
+                'done' => $this->languageModel->isAvailable(),
+                'arguments' => [],
+            ],
+            [
+                'key' => $this->settings->trafficEnabled() ? 'traffic.done' : 'traffic.todo',
+                'done' => $this->settings->trafficEnabled(),
+                'arguments' => [(string)$this->settings->trafficRetentionDays()],
+            ],
         ];
     }
 
     /**
-     * @return array<string, mixed>
+     * @template T
+     * @param \Closure(): T $query
+     * @param T $fallback
+     * @return T
      */
-    private function configuration(): array
+    private function safely(\Closure $query, mixed $fallback): mixed
     {
         try {
-            $configuration = $this->extensionConfiguration->get('agent_nexus');
-            return is_array($configuration) ? $configuration : [];
+            return $query();
         } catch (\Throwable) {
-            return [];
+            return $fallback;
         }
     }
 }

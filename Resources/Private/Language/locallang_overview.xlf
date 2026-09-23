@@ -1,8 +1,320 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xliff version="2.0" srcLang="en" xmlns="urn:oasis:names:tc:xliff:document:2.0">
-    <file id="messages" original="messages">
-        <unit id="mlang_labels_tablabel"><segment><source>Overview</source></segment></unit>
-        <unit id="mlang_tabs_tab"><segment><source>Overview</source></segment></unit>
-        <unit id="mlang_labels_tabdescr"><segment><source>What each agent protocol is, what it does and how to use it.</source></segment></unit>
-    </file>
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="overview">
+    <unit id="heading">
+      <segment>
+        <source>Agent Nexus</source>
+      </segment>
+    </unit>
+    <unit id="lede">
+      <segment>
+        <source>Five agent protocols running against this installation. Each card says whether its protocol works here, which specification version it implements and what it did in the last 24 hours.</source>
+      </segment>
+    </unit>
+    <unit id="version">
+      <segment>
+        <source>Version %s</source>
+      </segment>
+    </unit>
+    <unit id="model.available">
+      <segment>
+        <source>Model: %1$s · %2$s</source>
+      </segment>
+    </unit>
+    <unit id="model.missing">
+      <segment>
+        <source>No model. Every protocol runs its scripted demo.</source>
+      </segment>
+    </unit>
+    <unit id="budget.label">
+      <segment>
+        <source>Model spend today</source>
+      </segment>
+    </unit>
+    <unit id="budget.value">
+      <segment>
+        <source>$%1$s of $%2$s</source>
+      </segment>
+    </unit>
+    <unit id="budget.none">
+      <segment>
+        <source>No daily budget set</source>
+      </segment>
+    </unit>
+    <unit id="budget.meter">
+      <segment>
+        <source>%d percent of today's budget used</source>
+      </segment>
+    </unit>
+    <unit id="protocols.heading">
+      <segment>
+        <source>Protocols</source>
+      </segment>
+    </unit>
+    <unit id="card.spec">
+      <segment>
+        <source>Specification %s</source>
+      </segment>
+    </unit>
+    <unit id="card.health.ok">
+      <segment>
+        <source>Ready</source>
+      </segment>
+    </unit>
+    <unit id="card.health.warn">
+      <segment>
+        <source>No storage folder</source>
+      </segment>
+    </unit>
+    <unit id="card.health.danger">
+      <segment>
+        <source>Endpoints missing</source>
+      </segment>
+    </unit>
+    <unit id="card.endpoints">
+      <segment>
+        <source>Endpoints</source>
+      </segment>
+    </unit>
+    <unit id="card.endpointCount">
+      <segment>
+        <source>%d routes</source>
+      </segment>
+    </unit>
+    <unit id="card.mode">
+      <segment>
+        <source>Mode</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.llm">
+      <segment>
+        <source>Live model</source>
+      </segment>
+    </unit>
+    <unit id="card.mode.scripted">
+      <segment>
+        <source>Scripted demo</source>
+      </segment>
+    </unit>
+    <unit id="card.last24h">
+      <segment>
+        <source>Last 24 hours</source>
+      </segment>
+    </unit>
+    <unit id="card.objects">
+      <segment>
+        <source>%d objects</source>
+      </segment>
+    </unit>
+    <unit id="card.exchanges">
+      <segment>
+        <source>%d exchanges</source>
+      </segment>
+    </unit>
+    <unit id="card.lastRun">
+      <segment>
+        <source>Last activity</source>
+      </segment>
+    </unit>
+    <unit id="card.never">
+      <segment>
+        <source>Never</source>
+      </segment>
+    </unit>
+    <unit id="card.console">
+      <segment>
+        <source>Open console</source>
+      </segment>
+    </unit>
+    <unit id="card.demo">
+      <segment>
+        <source>Open demo page</source>
+      </segment>
+    </unit>
+    <unit id="card.noDemo">
+      <segment>
+        <source>No demo page. Run agentnexus:seed-site to create one.</source>
+      </segment>
+    </unit>
+    <unit id="card.objectsLink">
+      <segment>
+        <source>Show objects</source>
+      </segment>
+    </unit>
+    <unit id="spec.heading">
+      <segment>
+        <source>Specification versions</source>
+      </segment>
+    </unit>
+    <unit id="spec.lede">
+      <segment>
+        <source>Checked against each specification's own site and repository on %s.</source>
+      </segment>
+    </unit>
+    <unit id="spec.caption">
+      <segment>
+        <source>Implemented and latest published specification versions</source>
+      </segment>
+    </unit>
+    <unit id="spec.protocol">
+      <segment>
+        <source>Protocol</source>
+      </segment>
+    </unit>
+    <unit id="spec.implemented">
+      <segment>
+        <source>Implemented here</source>
+      </segment>
+    </unit>
+    <unit id="spec.latest">
+      <segment>
+        <source>Latest published</source>
+      </segment>
+    </unit>
+    <unit id="spec.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="spec.source">
+      <segment>
+        <source>Source</source>
+      </segment>
+    </unit>
+    <unit id="spec.current">
+      <segment>
+        <source>Current</source>
+      </segment>
+    </unit>
+    <unit id="spec.behind">
+      <segment>
+        <source>Behind</source>
+      </segment>
+    </unit>
+    <unit id="spec.notImplemented">
+      <segment>
+        <source>Not implemented</source>
+      </segment>
+    </unit>
+    <unit id="spec.candidate">
+      <segment>
+        <source>Release candidate %s available on request</source>
+      </segment>
+    </unit>
+    <unit id="spec.released">
+      <segment>
+        <source>released %s</source>
+      </segment>
+    </unit>
+    <unit id="spec.read">
+      <segment>
+        <source>Read the %s specification</source>
+      </segment>
+    </unit>
+    <unit id="discovery.heading">
+      <segment>
+        <source>Discovery</source>
+      </segment>
+    </unit>
+    <unit id="discovery.lede">
+      <segment>
+        <source>What another agent reads first. The protocol endpoints live under %s.</source>
+      </segment>
+    </unit>
+    <unit id="discovery.none">
+      <segment>
+        <source>The well-known documents are switched off in the extension configuration.</source>
+      </segment>
+    </unit>
+    <unit id="activity.heading">
+      <segment>
+        <source>Recent activity</source>
+      </segment>
+    </unit>
+    <unit id="activity.empty">
+      <segment>
+        <source>Nothing has run yet. Open a console or one of the demo pages, then come back.</source>
+      </segment>
+    </unit>
+    <unit id="activity.inspector">
+      <segment>
+        <source>Open the inspector</source>
+      </segment>
+    </unit>
+    <unit id="activity.traffic">
+      <segment>
+        <source>Open the traffic log</source>
+      </segment>
+    </unit>
+    <unit id="setup.heading">
+      <segment>
+        <source>Setup</source>
+      </segment>
+    </unit>
+    <unit id="setup.site.done">
+      <segment>
+        <source>Demo site "%1$s" on page %2$s.</source>
+      </segment>
+    </unit>
+    <unit id="setup.site.todo">
+      <segment>
+        <source>No demo site yet. Run the seed command below.</source>
+      </segment>
+    </unit>
+    <unit id="setup.storage.done">
+      <segment>
+        <source>Widget records are stored on page %s.</source>
+      </segment>
+    </unit>
+    <unit id="setup.storage.todo">
+      <segment>
+        <source>No storage folder. Widget records are stored on the page that created them.</source>
+      </segment>
+    </unit>
+    <unit id="setup.endpoints.done">
+      <segment>
+        <source>All protocol endpoints are routed under %s.</source>
+      </segment>
+    </unit>
+    <unit id="setup.endpoints.todo">
+      <segment>
+        <source>Some protocol endpoints are missing. Flush all caches and check the extension setup.</source>
+      </segment>
+    </unit>
+    <unit id="setup.model.done">
+      <segment>
+        <source>netresearch/nr-llm is installed. The protocol settings decide where a model is used.</source>
+      </segment>
+    </unit>
+    <unit id="setup.model.todo">
+      <segment>
+        <source>No language model installed. Every protocol runs its scripted demo.</source>
+      </segment>
+    </unit>
+    <unit id="setup.traffic.done">
+      <segment>
+        <source>The traffic log is recorded and kept for %s days. Schedule agentnexus:cleanup to apply the retention.</source>
+      </segment>
+    </unit>
+    <unit id="setup.traffic.todo">
+      <segment>
+        <source>The traffic log is switched off.</source>
+      </segment>
+    </unit>
+    <unit id="setup.done">
+      <segment>
+        <source>Done</source>
+      </segment>
+    </unit>
+    <unit id="setup.todo">
+      <segment>
+        <source>To do</source>
+      </segment>
+    </unit>
+    <unit id="setup.command">
+      <segment>
+        <source>Create or refresh the demo site</source>
+      </segment>
+    </unit>
+  </file>
 </xliff>
