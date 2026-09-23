@@ -47,6 +47,33 @@ final class RateLimiterTest extends UnitTestCase
     }
 
     #[Test]
+    public function countingARequestDoesNotExtendTheWindow(): void
+    {
+        $now = 1_000;
+        $subject = new RateLimiter($this->cacheManager($this->countingCache()), static function () use (&$now): int {
+            return $now;
+        });
+        $request = $this->requestFrom('203.0.113.10');
+
+        self::assertTrue($subject->passes($request, 'a2ui', 2, 60));
+        $now = 1_050;
+        self::assertTrue($subject->passes($request, 'a2ui', 2, 60));
+        self::assertFalse($subject->passes($request, 'a2ui', 2, 60), 'The window that started at 1000 is full.');
+        $now = 1_060;
+        self::assertTrue($subject->passes($request, 'a2ui', 2, 60), 'The window ends 60 seconds after its first request, not after its last.');
+    }
+
+    #[Test]
+    public function anEntryFromBeforeThisVersionStartsAFreshWindow(): void
+    {
+        $cache = $this->countingCache();
+        $cache->set('rl_a2ui_' . sha1('203.0.113.10'), 99);
+        $subject = new RateLimiter($this->cacheManager($cache));
+
+        self::assertTrue($subject->passes($this->requestFrom('203.0.113.10'), 'a2ui', 1, 60));
+    }
+
+    #[Test]
     public function aBrokenCacheFailsOpenSoADemoPageStaysUp(): void
     {
         $cacheManager = self::createStub(CacheManager::class);
