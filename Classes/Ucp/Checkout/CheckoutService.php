@@ -167,6 +167,7 @@ final readonly class CheckoutService
         ];
         $completed['messages'] = [
             Messages::info('Sandbox order: no payment was taken and nothing will be delivered.', 'sandbox'),
+            ...$this->billingNotes($checkout),
         ];
         unset($completed['continue_url']);
 
@@ -190,7 +191,7 @@ final readonly class CheckoutService
         }
         $canceled = $checkout;
         $canceled['status'] = Spec::STATUS_CANCELED;
-        $canceled['messages'] = [Messages::info('Checkout canceled. Nothing was ordered.', 'canceled')];
+        $canceled['messages'] = [Messages::info('Checkout canceled. Nothing was ordered.', 'canceled'), ...$this->billingNotes($checkout)];
         unset($canceled['continue_url']);
 
         return new CheckoutResult(200, $canceled, $canceled, [['state' => Spec::STATUS_CANCELED, 'note' => 'Canceled by the platform.']]);
@@ -547,6 +548,24 @@ final readonly class CheckoutService
         }
         $checkout['messages'] = Messages::ordered([...$messages, ...$existing]);
         return $checkout;
+    }
+
+    /**
+     * The notes on how lines are billed, which stay true after the session
+     * is over.
+     *
+     * @param array<string, mixed> $checkout
+     * @return list<array<string, mixed>>
+     */
+    private function billingNotes(array $checkout): array
+    {
+        $notes = [];
+        foreach (is_array($checkout['messages'] ?? null) ? $checkout['messages'] : [] as $message) {
+            if (is_array($message) && ($message['code'] ?? null) === 'billing_period') {
+                $notes[] = $this->stringKeys($message);
+            }
+        }
+        return $notes;
     }
 
     /**

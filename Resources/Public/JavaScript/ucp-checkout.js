@@ -307,6 +307,9 @@ function initCheckout(root) {
       eventsList.append(chip);
       calls++;
       eventCount.textContent = String(calls);
+    } else if (call.result !== null && chip !== eventsList.lastElementChild) {
+      // A call proposed earlier and sent after the approval moves to where it happened.
+      eventsList.append(chip);
     }
     const request = parseJson(call.args);
     const result = call.result === null ? null : parseJson(call.result);

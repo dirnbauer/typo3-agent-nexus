@@ -1,14 +1,20 @@
 sequenceDiagram
     autonumber
     actor V as Visitor
-    participant A as Shopping agent
-    participant M as Merchant manifest<br/>ucp_manifest
-    participant C as Checkout<br/>ucp_checkout
-    A->>M: discover capabilities + catalog
-    M-->>A: products, currency, policies
-    A->>C: open checkout session (intent)
-    C-->>A: proposed cart + total
-    Note over V,C: nothing is bought yet
-    C-->>V: authorization_required
-    V->>C: approve (or reject)
-    C-->>A: order confirmed + receipt
+    participant A as Shopping agent<br/>/api/agent-nexus/ucp/agent
+    participant P as Business profile<br/>/.well-known/ucp
+    participant B as Checkout API<br/>/api/agent-nexus/ucp/checkout-sessions
+    V->>A: RunAgentInput (AG-UI 1.0): the wish
+    A->>P: GET the profile
+    P-->>A: services, checkout capability, sandbox_pay
+    A->>B: create_checkout (UCP-Agent, Idempotency-Key)
+    B-->>A: 201 incomplete, priced from the catalogue
+    A-->>V: tool calls, reasoning, the priced checkout
+    Note over A,B: complete_checkout is proposed, not sent
+    A-->>V: RUN_FINISHED: interrupt "Approve this order"
+    V->>A: resume: approved, email
+    A->>B: update_checkout (buyer.email)
+    B-->>A: ready_for_complete
+    A->>B: complete_checkout, exactly as approved
+    B-->>A: completed, order (sandbox, no payment)
+    A-->>V: tool result, RUN_FINISHED: success
