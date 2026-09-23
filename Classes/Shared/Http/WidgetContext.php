@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Webconsulting\AgentNexus\Shared\Http;
 
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Site\SiteFinder;
 
 /**
  * Where a frontend widget's request came from: its content element, the page
