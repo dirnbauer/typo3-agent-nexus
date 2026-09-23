@@ -1,14 +1,23 @@
 sequenceDiagram
     autonumber
     participant C as Client agent
-    participant D as Discovery<br/>/.well-known/agent.json
-    participant S as TYPO3 A2A server<br/>a2a_rpc
-    participant X as Specialist skill
-    C->>D: GET agent card
-    D-->>C: skills, transport, auth
-    C->>S: JSON-RPC message/send
-    S-->>C: task: submitted
-    S->>X: route by skill
-    S-->>C: status: working
-    X-->>S: artifact chunks
-    S-->>C: artifact + status: completed
+    participant D as Agent Card<br/>/.well-known/agent-card.json
+    participant S as TYPO3 A2A server<br/>/api/agent-nexus/a2a/jsonrpc
+    participant T as Task store
+    C->>D: GET the Agent Card
+    D-->>C: supportedInterfaces, skills (A2A 1.0)
+    C->>S: SendStreamingMessage (A2A-Version: 1.0)
+    S->>T: save task: SUBMITTED
+    S-->>C: task
+    S->>T: save: WORKING
+    S-->>C: statusUpdate: WORKING
+    S->>T: save: INPUT_REQUIRED
+    S-->>C: statusUpdate: INPUT_REQUIRED (stream closes)
+    C->>S: SendStreamingMessage with taskId (the answer)
+    S-->>C: task, statusUpdate: WORKING
+    S-->>C: artifactUpdate chunks (append, lastChunk)
+    S->>T: save: artifact, COMPLETED
+    S-->>C: statusUpdate: COMPLETED (stream closes)
+    C->>S: GetTask / ListTasks
+    S->>T: read
+    S-->>C: the stored Task
