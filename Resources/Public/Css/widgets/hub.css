@@ -71,7 +71,7 @@
   letter-spacing: 0.04em;
   padding: 0.2rem 0.5rem;
   border-radius: var(--anx-radius-full);
-  color: var(--accent);
+  color: var(--accent-ink);
   background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
 .anx-hub__edge {
@@ -174,7 +174,7 @@
   gap: 0.35rem;
   font-size: var(--anx-text-sm);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--accent-ink);
   text-decoration: none;
 }
 .anx-hub__go:hover { text-decoration: underline; }

@@ -56,8 +56,6 @@
 
   /* default accent until a scope narrows it */
   --accent: var(--anx-accent-mcp);
-  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
-  --accent-strong: color-mix(in srgb, var(--accent) 85%, var(--anx-fg));
 
   color: var(--anx-fg);
   font-size: var(--anx-text-base);
@@ -114,6 +112,21 @@
     --anx-surface-2: var(--muted, #3f3f46);
     --anx-hover: var(--secondary, #27272a);
   }
+}
+
+/* ---- derived accent tokens ---------------------------------------------- */
+/* A custom property is computed where it is declared, so the tokens derived
+   from --accent are declared again on every element that sets an accent;
+   otherwise a protocol chip inside another protocol's scope would inherit the
+   outer tint. --accent-ink is the accent for text: mixed with the foreground
+   it keeps at least 4.5:1 on the surface in both schemes, which the raw amber
+   and green accents do not reach on white. */
+
+.anx,
+[class*="anx-accent--"] {
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --accent-ink: color-mix(in srgb, var(--accent) 70%, var(--anx-fg));
+  --accent-strong: var(--accent-ink);
 }
 
 /* ---- protocol accent scopes -------------------------------------------- */
