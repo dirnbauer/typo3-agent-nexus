@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Upgrades\UpgradeWizardInterface;
 final class LegacyCTypeUpgradeWizard implements UpgradeWizardInterface, ChattyInterface
 {
     /** Legacy CType => the 3.0 CType that replaces it. */
-    public const MIGRATIONS = [
+    public const array MIGRATIONS = [
         'a2uiintegration_inquiry' => 'agentnexus_inquiry',
         'aguiintegration_assistant' => 'agentnexus_assistant',
         'a2aintegration_concierge' => 'agentnexus_concierge',

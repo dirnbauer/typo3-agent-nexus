@@ -16,12 +16,12 @@ use TYPO3\CMS\Core\SingletonInterface;
  * usage middleware entirely, so this ledger is the *only* record of their
  * spend and the source the daily frontend budget guard counts against.
  */
-final class LlmUsageTracker implements UsageLedger, SingletonInterface
+final readonly class LlmUsageTracker implements UsageLedger, SingletonInterface
 {
     private const string TABLE = 'tx_agentnexus_llm_usage';
 
     public function __construct(
-        private readonly ConnectionPool $connectionPool,
+        private ConnectionPool $connectionPool,
     ) {}
 
     #[\Override]

@@ -16,12 +16,12 @@ use TYPO3\CMS\Core\SingletonInterface;
  * that reach a real model. Fails OPEN when the cache is unavailable — these are
  * demo endpoints, and a broken cache must not take the page down with them.
  */
-final class RateLimiter implements SingletonInterface
+final readonly class RateLimiter implements SingletonInterface
 {
     public const string CACHE = 'agentnexus';
 
     public function __construct(
-        private readonly CacheManager $cacheManager,
+        private CacheManager $cacheManager,
     ) {}
 
     public function passes(ServerRequestInterface $request, string $bucket, int $limit, int $windowSeconds): bool

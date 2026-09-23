@@ -24,9 +24,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * via {@see LlmUsageTracker} — {@see LlmGuard} is the only budget brake on
  * that path.
  */
-final class LlmClient implements LanguageModel, SingletonInterface
+final readonly class LlmClient implements LanguageModel, SingletonInterface
 {
-    private const COMPLETION_INTERFACE = CompletionServiceInterface::class;
+    private const string COMPLETION_INTERFACE = CompletionServiceInterface::class;
 
     #[\Override]
     public function isAvailable(): bool

@@ -16,12 +16,12 @@ use TYPO3\CMS\Core\SingletonInterface;
  * get a deny fall back to their deterministic script and surface the reason
  * as provenance ("Scripted demo — daily LLM budget reached").
  */
-final class LlmGuard implements SingletonInterface
+final readonly class LlmGuard implements SingletonInterface
 {
     public function __construct(
-        private readonly ExtensionConfiguration $extensionConfiguration,
-        private readonly LanguageModel $llmClient,
-        private readonly UsageLedger $usageTracker,
+        private ExtensionConfiguration $extensionConfiguration,
+        private LanguageModel $llmClient,
+        private UsageLedger $usageTracker,
     ) {}
 
     /**
