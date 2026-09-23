@@ -13,6 +13,9 @@ the site — put a :guilabel:`Agent Nexus: Protocol info` element next to a demo
 and it renders the sequence diagram, the endpoints and the steps from the live
 services.
 
+Which version of each specification is implemented, and what changed since
+3.1, is on its own page: :ref:`spec-versions`.
+
 ..  card-grid::
     :columns: 1
     :columns-md: 2
@@ -63,6 +66,7 @@ services.
     :hidden:
     :titlesonly:
 
+    SpecVersions
     A2UI
     AGUI
     A2A
