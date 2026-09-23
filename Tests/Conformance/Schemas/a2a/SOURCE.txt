@@ -1,4 +1,4 @@
-A2A (Agent2Agent) protocol 1.0 - schema vendored for the Agent Nexus conformance tests.
+A2A (Agent2Agent) protocol 1.0 and 0.3 - schemas vendored for the Agent Nexus conformance tests.
 
 Upstream   https://github.com/a2aproject/A2A
 License    Apache License 2.0 (see LICENSE in this directory)
@@ -16,8 +16,15 @@ Retrieved  2026-09-23
     and asserted separately by the tests.
 1.0/examples/agent-card.sample.json
     The sample Agent Card of specification section 8.5 (main 43e0c874d3baba68ed84b98678d7f2268438e69f).
+0.3/a2a.json
+    The JSON Schema (draft-07) of A2A 0.3.0, for the tests of the 0.3 dialect of the JSON-RPC
+    endpoint, from tag v0.3.0 (tag object 210f03d426e2f2fa92000e14ef0de3b7ba15aee5):
+    https://raw.githubusercontent.com/a2aproject/A2A/v0.3.0/specification/json/a2a.json
+    Unlike the 1.0 bundle it carries `required` lists, and it has no `$id`; the test registers it as
+    https://a2a-protocol.org/v0.3.0/specification/json/a2a.json
 
 SHA-256 of every vendored file:
+97d6e2435336836cd1d41dffacf83a1a97902b62b826ef14ec5704db85c95f17  0.3/a2a.json
 1ead11c093cd0ea18d5a88f19a74107c887cffce2b6ca6988056066e7d933753  1.0/a2a.json
 e195bf96ab630c69797851970203e1b2b6b19528f2e9803b7d904b91a5104016  1.0/a2a.proto
 ad15d5482dccb7bc96211bcfb61b2ebd123f749b5fdfc8b910aae0825963959c  1.0/examples/agent-card.sample.json

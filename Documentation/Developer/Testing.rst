@@ -54,10 +54,11 @@ the SHA-256 of every file:
     *   -   Protocol
         -   Schema
         -   Licence
-    *   -   A2A 1.0
+    *   -   A2A 1.0 and 0.3
         -   JSON Schema generated from :file:`a2a.proto` (the proto is vendored
             too; the generated schema carries no ``required`` lists, so the
-            tests assert required fields from the proto separately)
+            tests assert required fields from the proto separately), and the
+            0.3.0 schema for the 0.3 dialect
         -   Apache-2.0
     *   -   AG-UI 1.0
         -   :file:`spec/1.0/schema.json`

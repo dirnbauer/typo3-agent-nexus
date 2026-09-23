@@ -130,7 +130,7 @@ final class LegacyConformanceTest extends A2aConformanceTestCase
         if (self::$validator === null) {
             $validator = new Validator();
             $validator->setMaxErrors(20);
-            $validator->resolver()?->registerFile(self::SCHEMA_ID, __DIR__ . '/Schemas/0.3/a2a.json');
+            $validator->resolver()?->registerFile(self::SCHEMA_ID, __DIR__ . '/../Schemas/a2a/0.3/a2a.json');
             self::$validator = $validator;
         }
         return self::$validator;
