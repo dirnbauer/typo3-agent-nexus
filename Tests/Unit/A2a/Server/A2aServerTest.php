@@ -9,13 +9,20 @@ use Psr\Log\NullLogger;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use Webconsulting\AgentNexus\A2a\Protocol\A2aError;
 use Webconsulting\AgentNexus\A2a\Protocol\A2aException;
+use Webconsulting\AgentNexus\A2a\Protocol\Artifact;
 use Webconsulting\AgentNexus\A2a\Protocol\ListTasksParams;
+use Webconsulting\AgentNexus\A2a\Protocol\Message;
+use Webconsulting\AgentNexus\A2a\Protocol\Part;
+use Webconsulting\AgentNexus\A2a\Protocol\Role;
 use Webconsulting\AgentNexus\A2a\Protocol\SendMessageParams;
 use Webconsulting\AgentNexus\A2a\Protocol\StreamResponse;
+use Webconsulting\AgentNexus\A2a\Protocol\Task;
 use Webconsulting\AgentNexus\A2a\Protocol\TaskIdParams;
 use Webconsulting\AgentNexus\A2a\Protocol\TaskState;
+use Webconsulting\AgentNexus\A2a\Protocol\TaskStatus;
 use Webconsulting\AgentNexus\A2a\Server\A2aServer;
 use Webconsulting\AgentNexus\A2a\Server\CallContext;
+use Webconsulting\AgentNexus\A2a\Server\StoredTask;
 use Webconsulting\AgentNexus\A2a\Service\SkillCatalog;
 use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
@@ -290,6 +297,53 @@ final class A2aServerTest extends UnitTestCase
 
         self::assertSame('task', StreamResponse::memberOf($frames[0]));
         self::assertSame([TaskState::Working->value, TaskState::Completed->value], $this->states($frames));
+    }
+
+    #[Test]
+    public function aSubscriberFollowsATaskAnotherRequestIsWorkingOn(): void
+    {
+        $user = new Message('m-1', Role::User, [Part::text('Summarise the pricing page')], 'c-w', 't-w');
+        $working = Message::fromAgent('Reading the page…', 'c-w', 't-w');
+        $this->store->save(new StoredTask(new Task('t-w', 'c-w', TaskStatus::now(TaskState::Working, $working), [], [$user, $working])));
+        $server = new A2aServer(
+            $this->store,
+            new TaskRunner(new SkillCatalog(), self::createStub(LanguageModel::class), self::createStub(UsageLedger::class)),
+            $this->lock,
+            new NullLogger(),
+            2,
+        );
+        $finds = 0;
+        $this->store->beforeFind = function (string $taskId) use (&$finds): void {
+            // The third read sees what the other request did meanwhile.
+            if (++$finds === 3) {
+                $stored = $this->store->tasks[$taskId];
+                $done = Message::fromAgent('Summary ready.', 'c-w', 't-w');
+                $this->store->save($stored->withTask($stored->task
+                    ->withArtifact(new Artifact('a-w', [Part::text('Three plans.')], 'summary.md'))
+                    ->withStatus(TaskStatus::now(TaskState::Completed, $done))
+                    ->withMessage($done)));
+            }
+        };
+
+        $frames = iterator_to_array($server->subscribeToTask(new TaskIdParams('t-w'), new CallContext()), false);
+
+        self::assertSame(['task', 'artifactUpdate', 'statusUpdate'], array_map(static fn(array $frame): string => (string)array_key_first($frame), $frames));
+        self::assertSame(TaskState::Working->value, $frames[0]['task']['status']['state']);
+        self::assertSame('Three plans.', $frames[1]['artifactUpdate']['artifact']['parts'][0]['text']);
+        self::assertTrue($frames[1]['artifactUpdate']['lastChunk'], 'A finished artifact arrives whole.');
+        self::assertSame(TaskState::Completed->value, $frames[2]['statusUpdate']['status']['state']);
+    }
+
+    #[Test]
+    public function aSubscriberGivesUpAfterItsTimeBudget(): void
+    {
+        $user = new Message('m-1', Role::User, [Part::text('Hello')], 'c-s', 't-s');
+        $working = Message::fromAgent('Working…', 'c-s', 't-s');
+        $this->store->save(new StoredTask(new Task('t-s', 'c-s', TaskStatus::now(TaskState::Working, $working), [], [$user, $working])));
+
+        $frames = iterator_to_array($this->server->subscribeToTask(new TaskIdParams('t-s'), new CallContext()), false);
+
+        self::assertCount(1, $frames, 'With no time budget the subscriber sends the task and closes.');
     }
 
     #[Test]

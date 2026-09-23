@@ -157,6 +157,9 @@ A client names its version in the ``A2A-Version`` header, or in an
     ``metadata.supportedVersions``.
 *   The HTTP+JSON binding speaks 1.0 only: without the header a request is a
     0.3 request and is refused with ``VersionNotSupportedError``.
+*   The card declares no extensions. An ``A2A-Extensions`` header is accepted,
+    nothing is activated, so none is echoed, and
+    ``ExtensionSupportRequiredError`` (``-32008``) cannot occur.
 
 Tasks
 =====
@@ -191,7 +194,8 @@ inspector reads the same rows.
 *   **Subscribing.** ``SubscribeToTask`` sends the task as it is now, then its
     updates until it finishes or asks for input. A finished task gets
     ``UnsupportedOperationError``; a task that asks for input gets just the
-    Task.
+    Task. A task another request is working on is followed by reading it back
+    from the store, for up to 30 seconds.
 *   **Listing.** ``ListTasks`` returns the most recently updated tasks first,
     50 per page by default (1 to 100). Pages are keyset pages, so tasks that
     change while you page do not shift them; ``nextPageToken`` is empty on

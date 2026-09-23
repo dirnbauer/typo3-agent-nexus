@@ -8,7 +8,9 @@ use PHPUnit\Framework\Attributes\Test;
 use Webconsulting\AgentNexus\A2a\Protocol\A2aError;
 use Webconsulting\AgentNexus\A2a\Protocol\A2aException;
 use Webconsulting\AgentNexus\A2a\Protocol\ListTasksParams;
+use Webconsulting\AgentNexus\A2a\Protocol\Message;
 use Webconsulting\AgentNexus\A2a\Protocol\ProtocolVersion;
+use Webconsulting\AgentNexus\A2a\Protocol\StreamResponse;
 use Webconsulting\AgentNexus\A2a\Protocol\TaskIdParams;
 use Webconsulting\AgentNexus\A2a\Server\CallContext;
 
@@ -45,6 +47,17 @@ final class TaskConformanceTest extends A2aConformanceTestCase
         foreach ([...$first, ...$second] as $frame) {
             self::assertStreamResponse($frame);
         }
+    }
+
+    #[Test]
+    public function theMessageVariantConformsToo(): void
+    {
+        // The agent answers with tasks, but the frame factory covers all four
+        // members of the StreamResponse oneof.
+        $frame = StreamResponse::message(Message::fromAgent('Hello from the agent.', 'ctx-1', ''));
+
+        self::assertStreamResponse($frame);
+        self::assertArrayNotHasKey('taskId', self::map($frame['message']), 'An agent message names a task only once one exists.');
     }
 
     #[Test]

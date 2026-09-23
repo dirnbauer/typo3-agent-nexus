@@ -63,7 +63,8 @@ final class A2aServer
         private readonly TaskRunner $runner,
         private readonly TaskLock $lock,
         private readonly LoggerInterface $logger,
-        private readonly int $watchSeconds = 60,
+        /** How long a subscriber follows a task another request is working on. */
+        private readonly int $watchSeconds = 30,
     ) {}
 
     /**

@@ -24,6 +24,14 @@ final class InMemoryTaskStore implements TaskStore
     /** @var list<array{taskId: string, state: string, note: string}> */
     public array $saves = [];
 
+    /**
+     * Called before every find(), so a test can play another request that
+     * changes the task while a subscriber watches it.
+     *
+     * @var (\Closure(string): void)|null
+     */
+    public ?\Closure $beforeFind = null;
+
     /** @var array<string, int> task id => sequence number of its last save */
     private array $changed = [];
 
@@ -32,6 +40,9 @@ final class InMemoryTaskStore implements TaskStore
     #[\Override]
     public function find(string $taskId): ?StoredTask
     {
+        if ($this->beforeFind !== null) {
+            ($this->beforeFind)($taskId);
+        }
         return $this->tasks[$taskId] ?? null;
     }
 
