@@ -10,6 +10,7 @@ use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Protocol;
 
 /**
  * The guard is the only cost brake on streamed calls, because nr-llm's own
@@ -99,14 +100,68 @@ final class LlmGuardTest extends UnitTestCase
     }
 
     #[Test]
-    public function theTokenCeilingCapsWhatAPluginMayAskFor(): void
+    public function everyProtocolHasItsOwnOutputBudgetByDefault(): void
     {
-        $guard = $this->guard(['llmMaxOutputTokens' => 500]);
+        $guard = $this->guard([]);
 
-        self::assertSame(500, $guard->maxOutputTokens(null), 'No request means the ceiling.');
-        self::assertSame(300, $guard->maxOutputTokens(300), 'A plugin may ask for less.');
-        self::assertSame(500, $guard->maxOutputTokens(5000), 'A plugin may never ask for more.');
-        self::assertSame(500, $guard->maxOutputTokens(0), 'A nonsense request means the ceiling.');
+        self::assertSame(1600, $guard->maxOutputTokens(Protocol::A2ui), 'A generated form needs 500 to 900 tokens.');
+        self::assertSame(700, $guard->maxOutputTokens(Protocol::Agui));
+        self::assertSame(400, $guard->maxOutputTokens(Protocol::A2a));
+        self::assertSame(160, $guard->maxOutputTokens(Protocol::Ucp));
+        self::assertSame(160, $guard->maxOutputTokens(Protocol::Ap2));
+    }
+
+    #[Test]
+    public function theStoredGlobalValueNoLongerCutsA2uiFormsShort(): void
+    {
+        // What every installation that ran extension:setup on 4.0.0 has stored.
+        $guard = $this->guard(['llmMaxOutputTokens' => '700']);
+
+        self::assertSame(1600, $guard->maxOutputTokens(Protocol::A2ui));
+    }
+
+    #[Test]
+    public function aConfiguredProtocolBudgetWins(): void
+    {
+        $guard = $this->guard(['a2uiLlmMaxOutputTokens' => '2400', 'ucpLlmMaxOutputTokens' => 90, 'llmMaxOutputTokens' => '700']);
+
+        self::assertSame(2400, $guard->maxOutputTokens(Protocol::A2ui));
+        self::assertSame(90, $guard->maxOutputTokens(Protocol::Ucp));
+        self::assertSame(400, $guard->maxOutputTokens(Protocol::A2a), 'An unset protocol keeps its default.');
+    }
+
+    #[Test]
+    public function aProtocolBudgetOfZeroFallsBackToTheGlobalSetting(): void
+    {
+        self::assertSame(900, $this->guard(['a2uiLlmMaxOutputTokens' => '0', 'llmMaxOutputTokens' => '900'])->maxOutputTokens(Protocol::A2ui));
+        self::assertSame(700, $this->guard(['a2uiLlmMaxOutputTokens' => '0'])->maxOutputTokens(Protocol::A2ui), 'Without a global value, its default.');
+        self::assertSame(700, $this->guard(['a2uiLlmMaxOutputTokens' => '0', 'llmMaxOutputTokens' => '0'])->maxOutputTokens(Protocol::A2ui), 'Never an unlimited call.');
+    }
+
+    #[Test]
+    public function aPluginMayAskForLessThanTheBudgetButNeverForMore(): void
+    {
+        $guard = $this->guard(['aguiLlmMaxOutputTokens' => 500]);
+
+        self::assertSame(500, $guard->maxOutputTokens(Protocol::Agui, null), 'No request means the budget.');
+        self::assertSame(300, $guard->maxOutputTokens(Protocol::Agui, 300), 'A plugin may ask for less.');
+        self::assertSame(500, $guard->maxOutputTokens(Protocol::Agui, 5000), 'A plugin may never ask for more.');
+        self::assertSame(500, $guard->maxOutputTokens(Protocol::Agui, 0), 'A nonsense request means the budget.');
+    }
+
+    #[Test]
+    public function theDefaultsMatchTheExtensionConfigurationTemplate(): void
+    {
+        $template = (string)file_get_contents(dirname(__DIR__, 4) . '/ext_conf_template.txt');
+
+        foreach (Protocol::cases() as $protocol) {
+            self::assertMatchesRegularExpression(
+                sprintf('/^%sLlmMaxOutputTokens = %d$/m', $protocol->value, LlmGuard::DEFAULT_OUTPUT_BUDGETS[$protocol->value]),
+                $template,
+                sprintf('ext_conf_template.txt and LlmGuard disagree about the %s budget.', $protocol->label()),
+            );
+        }
+        self::assertMatchesRegularExpression(sprintf('/^llmMaxOutputTokens = %d$/m', LlmGuard::DEFAULT_FALLBACK_BUDGET), $template);
     }
 
     /**

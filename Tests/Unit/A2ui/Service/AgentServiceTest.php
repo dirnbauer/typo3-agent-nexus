@@ -18,6 +18,7 @@ use Webconsulting\AgentNexus\A2ui\Service\SurfaceGenerator;
 use Webconsulting\AgentNexus\A2ui\Service\SurfaceSanitizer;
 use Webconsulting\AgentNexus\Shared\Configuration\ExtensionSettings;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 use Webconsulting\AgentNexus\Tests\Unit\A2ui\Fixtures\RecordingUsageLedger;
 use Webconsulting\AgentNexus\Tests\Unit\A2ui\Fixtures\ScriptedLanguageModel;
@@ -134,6 +135,50 @@ final class AgentServiceTest extends UnitTestCase
     }
 
     #[Test]
+    public function publicRequestsGetTheA2uiOutputBudgetNotTheGlobalFallback(): void
+    {
+        $model = new ScriptedLanguageModel(['components' => [['id' => 'root', 'component' => 'Text', 'text' => 'Hi']]]);
+        $this->agent(model: $model, config: ['llmFrontendEnabled' => true, 'a2uiLlmEnabled' => true, 'llmMaxOutputTokens' => '700'])
+            ->generate(new GenerationRequest('a contact form', public: true));
+
+        self::assertSame([1600], $model->maxTokens, 'A form needs 500 to 900 output tokens; the fallback of 700 cut long ones off.');
+    }
+
+    #[Test]
+    public function aConfiguredA2uiBudgetIsPassedOn(): void
+    {
+        $model = new ScriptedLanguageModel(['components' => []]);
+        $this->agent(model: $model, config: ['llmFrontendEnabled' => true, 'a2uiLlmEnabled' => true, 'a2uiLlmMaxOutputTokens' => '2400'])
+            ->generate(new GenerationRequest('a contact form', public: true));
+
+        self::assertSame([2400], $model->maxTokens);
+    }
+
+    #[Test]
+    public function anAnswerCutOffAtTheOutputLimitFallsBackToTheGeneratorAndSaysWhy(): void
+    {
+        $cutOff = new TruncatedAnswer(1600, 1750, 1600, 0.02, '');
+
+        $result = $this->agent(model: $cutOff, config: ['llmFrontendEnabled' => true, 'a2uiLlmEnabled' => true])
+            ->generate(new GenerationRequest('a contact form', public: true));
+
+        self::assertSame(GenerationResult::MODE_BUILTIN, $result->mode);
+        self::assertNotNull($result->surface->component('root'), 'The visitor gets a whole surface, never half of one.');
+        self::assertContains('The model answer was cut off at the output limit of 1600 tokens (a2uiLlmMaxOutputTokens); the built-in generator answered.', $result->notes);
+        self::assertSame(
+            ['mode' => 'builtin', 'label' => 'Scripted demo', 'reason' => 'the model answer was cut off at 1600 output tokens'],
+            $result->provenance(),
+        );
+        self::assertSame([['protocol' => 'a2ui', 'source' => UsageLedger::SOURCE_FRONTEND, 'model' => 'test-model']], $this->ledger->records, 'The spent tokens still count.');
+    }
+
+    #[Test]
+    public function aBuiltInAnswerWithoutAFailedModelCarriesNoReason(): void
+    {
+        self::assertSame(['mode' => 'builtin', 'label' => 'Scripted demo'], $this->agent(model: null)->generate(new GenerationRequest('a quote'))->provenance());
+    }
+
+    #[Test]
     public function publicRequestsPassTheFrontendGuard(): void
     {
         $result = $this->agent(model: ['components' => []], config: ['llmFrontendEnabled' => false, 'a2uiLlmEnabled' => true])
@@ -170,14 +215,14 @@ final class AgentServiceTest extends UnitTestCase
     }
 
     /**
-     * @param array<array-key, mixed>|\Throwable|null $model the model's answer, an error it throws, or null for no model
+     * @param array<array-key, mixed>|\Throwable|ScriptedLanguageModel|null $model the model's answer, an error it throws, the model itself, or null for no model
      * @param array<string, mixed> $config
      */
-    private function agent(array|\Throwable|null $model, array $config = ['a2uiLlmEnabled' => true]): AgentService
+    private function agent(array|\Throwable|ScriptedLanguageModel|null $model, array $config = ['a2uiLlmEnabled' => true]): AgentService
     {
         $extensionConfiguration = self::createStub(ExtensionConfiguration::class);
         $extensionConfiguration->method('get')->willReturn($config);
-        $languageModel = new ScriptedLanguageModel($model);
+        $languageModel = $model instanceof ScriptedLanguageModel ? $model : new ScriptedLanguageModel($model);
         $registry = new ComponentRegistry();
 
         return new AgentService(

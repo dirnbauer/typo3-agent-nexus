@@ -9,7 +9,9 @@ use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
 use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Protocol;
 
 /**
  * An optional two-sentence explanation of a verified purchase, written by a
@@ -25,7 +27,6 @@ final readonly class MandateExplainer
 {
     private const int RATE_LIMIT = 10;
     private const int RATE_WINDOW = 600;
-    private const int MAX_TOKENS = 160;
 
     public function __construct(
         private PluginSettings $pluginSettings,
@@ -63,8 +64,12 @@ final readonly class MandateExplainer
                 . 'Amounts are in cents. Data: ' . json_encode($facts, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE),
                 'Explain the result.',
                 null,
-                $this->guard->maxOutputTokens(self::MAX_TOKENS),
+                $this->guard->maxOutputTokens(Protocol::Ap2),
             );
+        } catch (TruncatedAnswer $truncated) {
+            // No explanation beats half of one; the spend still counts.
+            $this->ledger->record('ap2', UsageLedger::SOURCE_FRONTEND, $truncated->model, $truncated->promptTokens, $truncated->completionTokens, $truncated->cost);
+            return null;
         } catch (\Throwable) {
             return null;
         }

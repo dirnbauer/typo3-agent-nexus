@@ -9,7 +9,9 @@ use Psr\Log\LoggerInterface;
 use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Protocol;
 
 /**
  * Why the agent picked these products: two sentences for the visitor.
@@ -42,7 +44,7 @@ final readonly class Rationale
 
     /**
      * @param list<array{title: string, price: string, billing: string, description: string}> $products
-     * @return array{text: string, mode: string, label: string, model: string, usage: list<array<string, int|string>>}
+     * @return array{text: string, mode: string, label: string, model: string, usage: list<array<string, int|string>>, reason?: string}
      */
     public function explain(Intent $intent, array $products, string $total, string $wish, bool $modelAllowed, ?ServerRequestInterface $request): array
     {
@@ -63,8 +65,12 @@ final readonly class Rationale
                 self::SYSTEM_PROMPT . $facts,
                 $wish !== '' ? $wish : $intent->label(),
                 null,
-                $this->guard->maxOutputTokens(160),
+                $this->guard->maxOutputTokens(Protocol::Ucp),
             );
+        } catch (TruncatedAnswer $truncated) {
+            // Half a sentence would read as a broken agent: the script answers, and says why.
+            $this->ledger->record('ucp', UsageLedger::SOURCE_FRONTEND, $truncated->model, $truncated->promptTokens, $truncated->completionTokens, $truncated->cost);
+            return $scripted + ['reason' => $truncated->reason()];
         } catch (\Throwable $e) {
             $this->logger->warning('The UCP rationale model call failed; using the scripted text.', ['exception' => $e]);
             return $scripted;

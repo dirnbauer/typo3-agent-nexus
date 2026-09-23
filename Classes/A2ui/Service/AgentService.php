@@ -16,7 +16,9 @@ use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
 use Webconsulting\AgentNexus\Shared\Configuration\ExtensionSettings;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Protocol;
 
 /**
  * The agent: turns a one-line request into an A2UI surface.
@@ -51,10 +53,11 @@ final readonly class AgentService
     {
         $intent = trim($request->intent);
         $notes = [];
+        $reason = '';
 
         $maxTokens = $this->modelBudget($request, $notes);
         if ($maxTokens !== false && $intent !== '') {
-            $result = $this->fromModel($request, $intent, $maxTokens, $notes);
+            $result = $this->fromModel($request, $intent, $maxTokens, $notes, $reason);
             if ($result !== null) {
                 return $result;
             }
@@ -66,7 +69,7 @@ final readonly class AgentService
             ->withSurfaceId($this->surfaceId($example->surfaceId))
             ->withContent($clean->components, $clean->dataModel);
 
-        return new GenerationResult($surface, GenerationResult::MODE_BUILTIN, null, $notes);
+        return new GenerationResult($surface, GenerationResult::MODE_BUILTIN, null, $notes, $reason);
     }
 
     /** Whether the playground can use a model at all. */
@@ -188,7 +191,7 @@ final readonly class AgentService
                 $notes[] = sprintf('No model call (%s); the built-in generator answered.', $verdict['reason']);
                 return false;
             }
-            return $this->guard->maxOutputTokens();
+            return $this->guard->maxOutputTokens(Protocol::A2ui);
         }
         if (!$this->model->isAvailable()) {
             $notes[] = 'No model is configured (netresearch/nr-llm); the built-in generator answered.';
@@ -199,8 +202,9 @@ final readonly class AgentService
 
     /**
      * @param list<string> $notes
+     * @param string $reason set to why the built-in generator answers instead, when the model's answer was unusable
      */
-    private function fromModel(GenerationRequest $request, string $intent, ?int $maxTokens, array &$notes): ?GenerationResult
+    private function fromModel(GenerationRequest $request, string $intent, ?int $maxTokens, array &$notes, string &$reason): ?GenerationResult
     {
         $configured = $this->settings->string('a2uiLlmModel', '');
         try {
@@ -210,6 +214,22 @@ final readonly class AgentService
                 $configured !== '' ? $configured : null,
                 $maxTokens,
             );
+        } catch (TruncatedAnswer $truncated) {
+            // The tokens are spent even though the half surface is thrown away.
+            $this->ledger->record(
+                'a2ui',
+                $request->public ? UsageLedger::SOURCE_FRONTEND : UsageLedger::SOURCE_BACKEND,
+                $this->modelName($configured),
+                $truncated->promptTokens,
+                $truncated->completionTokens,
+                $truncated->cost,
+                $request->beUser,
+            );
+            $notes[] = $truncated->maxTokens !== null
+                ? sprintf('The model answer was cut off at the output limit of %d tokens (a2uiLlmMaxOutputTokens); the built-in generator answered.', $truncated->maxTokens)
+                : 'The model answer was cut off at the output limit; the built-in generator answered.';
+            $reason = $truncated->reason();
+            return null;
         } catch (\JsonException) {
             $notes[] = 'The model answer was not valid JSON (it may have been cut off); the built-in generator answered.';
             return null;
@@ -221,8 +241,7 @@ final readonly class AgentService
             return null;
         }
 
-        $connection = $this->model->getConnectionInfo();
-        $model = $configured !== '' ? $configured : ($connection !== null && $connection['model'] !== '' ? $connection['model'] : 'default');
+        $model = $this->modelName($configured);
         $this->ledger->record(
             'a2ui',
             $request->public ? UsageLedger::SOURCE_FRONTEND : UsageLedger::SOURCE_BACKEND,
@@ -249,6 +268,19 @@ final readonly class AgentService
         $title = $title !== '' ? $title : mb_substr($intent, 0, 80);
         $surface = new Surface($this->surfaceId($title), $clean->components, $clean->dataModel, true, $title);
         return new GenerationResult($surface, GenerationResult::MODE_LLM, $model, $notes);
+    }
+
+    /**
+     * The configured model, or the provider's default model, for the ledger
+     * and the provenance label.
+     */
+    private function modelName(string $configured): string
+    {
+        if ($configured !== '') {
+            return $configured;
+        }
+        $connection = $this->model->getConnectionInfo();
+        return $connection !== null && $connection['model'] !== '' ? $connection['model'] : 'default';
     }
 
     /**

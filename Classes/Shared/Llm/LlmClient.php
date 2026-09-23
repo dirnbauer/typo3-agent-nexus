@@ -77,6 +77,7 @@ final readonly class LlmClient implements LanguageModel, SingletonInterface
      *
      * @return array{data: array<string, mixed>, promptTokens: int, completionTokens: int, cost: ?float, model: string}
      * @throws \RuntimeException when nr-llm is not installed
+     * @throws TruncatedAnswer when the model reached its output budget before it finished
      * @throws \JsonException when the model response is not valid JSON
      */
     #[\Override]
@@ -92,19 +93,24 @@ final readonly class LlmClient implements LanguageModel, SingletonInterface
 
         $response = $this->completionService()->complete($userPrompt, $options);
 
+        $promptTokens = $response->usage->promptTokens;
+        $completionTokens = $response->usage->completionTokens;
+        $cost = $response->usage->getCost() ?? $this->estimateCost($promptTokens, $completionTokens);
+        $truncated = TruncatedAnswer::fromFinishReason($response->finishReason, $maxTokens, $promptTokens, $completionTokens, $cost, $model ?? '');
+        if ($truncated !== null) {
+            throw $truncated;
+        }
+
         $decoded = json_decode($response->getText(), true, 512, JSON_THROW_ON_ERROR);
         if (!is_array($decoded)) {
             throw new \JsonException('Model response was not a JSON object.');
         }
 
-        $promptTokens = $response->usage->promptTokens;
-        $completionTokens = $response->usage->completionTokens;
-
         return [
             'data' => $decoded,
             'promptTokens' => $promptTokens,
             'completionTokens' => $completionTokens,
-            'cost' => $response->usage->getCost() ?? $this->estimateCost($promptTokens, $completionTokens),
+            'cost' => $cost,
             'model' => $model ?? '',
         ];
     }
@@ -114,6 +120,7 @@ final readonly class LlmClient implements LanguageModel, SingletonInterface
      *
      * @return array{text: string, promptTokens: int, completionTokens: int, cost: ?float, model: string}
      * @throws \RuntimeException when nr-llm is not installed
+     * @throws TruncatedAnswer when the model reached its output budget before it finished
      */
     #[\Override]
     public function completeText(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array
@@ -130,12 +137,17 @@ final readonly class LlmClient implements LanguageModel, SingletonInterface
 
         $promptTokens = $response->usage->promptTokens;
         $completionTokens = $response->usage->completionTokens;
+        $cost = $response->usage->getCost() ?? $this->estimateCost($promptTokens, $completionTokens);
+        $truncated = TruncatedAnswer::fromFinishReason($response->finishReason, $maxTokens, $promptTokens, $completionTokens, $cost, $model ?? '');
+        if ($truncated !== null) {
+            throw $truncated;
+        }
 
         return [
             'text' => trim($response->getText()),
             'promptTokens' => $promptTokens,
             'completionTokens' => $completionTokens,
-            'cost' => $response->usage->getCost() ?? $this->estimateCost($promptTokens, $completionTokens),
+            'cost' => $cost,
             'model' => $model ?? '',
         ];
     }

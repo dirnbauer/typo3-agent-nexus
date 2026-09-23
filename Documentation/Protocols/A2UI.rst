@@ -126,7 +126,8 @@ Endpoints
     *   -   POST
         -   ``/api/agent-nexus/a2ui/surfaces``
         -   Turns a request into a surface: ``{"messages": [...], "surfaceId",
-            "version", "provenance": {"mode": "llm"|"builtin", "label"},
+            "version", "provenance": {"mode": "llm"|"builtin", "label",
+            "reason" when a model's answer could not be used},
             "notes": [...]}``. The messages validate as a server-to-client
             list (v0.9.1) or an agent-to-renderer list (v1.0).
     *   -   POST
@@ -285,9 +286,11 @@ What is simulated
     the frontend guard says no (``llmFrontendEnabled``, the daily budget) or
     when one address has used its eight model requests in 10 minutes. The
     answer says which it was in ``provenance`` and why in ``notes``.
-*   Public requests pass ``llmMaxOutputTokens`` to the model. A surface needs
-    about 1,000 to 1,500 output tokens; with a lower ceiling a model's answer
-    is cut off and the built-in generator answers instead.
+*   Public requests pass ``a2uiLlmMaxOutputTokens`` (default 1600) to the
+    model; a generated form needs about 500 to 900 output tokens. An answer
+    the model cuts off at that limit is thrown away: the built-in generator
+    answers, ``provenance.reason`` says "the model answer was cut off at 1600
+    output tokens" and ``notes`` names the setting.
 
 Try it with curl
 ================

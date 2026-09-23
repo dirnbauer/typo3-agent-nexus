@@ -10,6 +10,7 @@ use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
 use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
 use Webconsulting\AgentNexus\Shared\Http\WidgetContext;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Protocol;
 use Webconsulting\AgentNexus\Shared\Traffic\Channel;
 use Webconsulting\AgentNexus\Shared\Traffic\TrafficCapture;
 
@@ -63,7 +64,7 @@ final readonly class CallContextFactory
             $this->widgetContext->storagePid($widget['page']),
             $useModel,
             $this->flag($settings, 'show_rationale'),
-            $this->llmGuard->maxOutputTokens(400),
+            $this->llmGuard->maxOutputTokens(Protocol::A2a),
             $capture,
         );
     }

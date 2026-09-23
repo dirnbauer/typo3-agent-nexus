@@ -83,6 +83,7 @@ class Playground {
       this.surfaceId = result.surfaceId;
       this.data.textContent = JSON.stringify(this.renderer.dataModel(result.surfaceId) || {}, null, 2);
       this.provenance.textContent = result.provenance.label;
+      this.provenance.title = result.provenance.reason || '';
       this.provenance.parentElement.hidden = false;
       this.showNotes(result.notes || []);
       this.say(labels.get('js.status.generated', [result.surfaceId, String(result.messages.length), result.provenance.label]));

@@ -118,13 +118,56 @@ are off.
     :type: int
     :Default: 700
 
-    A hard ceiling per frontend call. A plugin's own setting may ask for fewer
-    tokens, never more.
+    The output budget of every protocol whose own budget below is ``0``. Up to
+    4.0.0 this was a ceiling for every protocol, which cut A2UI forms off: a
+    form is a JSON document of 500 to 900 output tokens.
 
 Then one toggle per protocol — :typoscript:`a2uiLlmEnabled`,
 :typoscript:`aguiLlmEnabled`, :typoscript:`a2aLlmEnabled`,
-:typoscript:`ucpLlmEnabled`, :typoscript:`ap2LlmEnabled` — plus two switches
-that keep the demos harmless:
+:typoscript:`ucpLlmEnabled`, :typoscript:`ap2LlmEnabled` — and one output
+budget per protocol. The defaults come from real prompts (GPT-5.6 Terra,
+23 September 2026, reasoning tokens included):
+
+..  list-table::
+    :header-rows: 1
+    :widths: 30 12 58
+
+    *   -   Setting
+        -   Default
+        -   Measured need
+    *   -   ``a2uiLlmMaxOutputTokens``
+        -   1600
+        -   532 to 897 tokens per generated form; longer forms and other
+            languages need more.
+    *   -   ``aguiLlmMaxOutputTokens``
+        -   700
+        -   About 80 for a streamed answer of two to four sentences. The
+            assistant element's *Max answer tokens* may lower it.
+    *   -   ``a2aLlmMaxOutputTokens``
+        -   400
+        -   About 30 for the routing answer (which asks for at most 160) and
+            about 100 for a deliverable.
+    *   -   ``ucpLlmMaxOutputTokens``
+        -   160
+        -   Under 50 for the two-sentence rationale.
+    *   -   ``ap2LlmMaxOutputTokens``
+        -   160
+        -   Two sentences, like UCP.
+
+``0`` hands a protocol over to :confval:`llmMaxOutputTokens`. A plugin setting
+may ask for fewer tokens than the budget, never for more.
+
+When a model stops at its budget (finish reason ``length``), the half answer is
+never shown: the protocol falls back to its deterministic script and says why
+in its provenance — ``{"mode": "builtin", "label": "Scripted demo", "reason":
+"the model answer was cut off at 1600 output tokens"}`` for A2UI, the same
+``reason`` on the AG-UI and UCP provenance events, ``fallback`` in the metadata
+of an A2A artifact. The tokens were spent all the same and count against the
+daily budget. Streamed AG-UI answers carry no finish reason; one that stops in
+the middle of a sentence is closed with a scripted sentence and marked in its
+provenance.
+
+Two more switches keep the demos harmless:
 
 ..  confval:: aguiReallyApply
     :type: bool

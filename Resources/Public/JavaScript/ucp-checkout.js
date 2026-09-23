@@ -179,6 +179,7 @@ function initCheckout(root) {
       case 'CUSTOM':
         if (event.name === 'agentnexus.provenance' && event.value && event.value.label) {
           provenance.textContent = event.value.label;
+          provenance.title = event.value.reason || '';
           provenance.hidden = false;
         }
         break;

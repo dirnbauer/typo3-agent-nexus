@@ -151,7 +151,10 @@ final readonly class ShoppingAgent
             $session->request,
         );
         yield from AgUi::reasoning($explanation['text']);
-        yield AgUi::custom(self::PROVENANCE_EVENT, ['mode' => $explanation['mode'], 'label' => $explanation['label']]);
+        yield AgUi::custom(
+            self::PROVENANCE_EVENT,
+            ['mode' => $explanation['mode'], 'label' => $explanation['label']] + (isset($explanation['reason']) ? ['reason' => $explanation['reason']] : []),
+        );
 
         $approval = new PendingApproval(
             AgUi::id('int'),

@@ -149,6 +149,7 @@ function initWidget(root) {
       renderer.processAll(data.messages);
       if (data.provenance && data.provenance.label) {
         provenance.textContent = data.provenance.label;
+        provenance.title = data.provenance.reason || '';
         provenance.hidden = false;
       }
       say(TEXT.ready);

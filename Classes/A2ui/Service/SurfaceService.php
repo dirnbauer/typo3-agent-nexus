@@ -51,7 +51,7 @@ final readonly class SurfaceService
      * Generate a surface for `{"intent", "version"?, capabilities?, "locale"?, "agentNexus"?}`.
      *
      * @param array<string, mixed> $body
-     * @return array{messages: list<array<string, mixed>>, surfaceId: string, version: string, provenance: array{mode: string, label: string}, notes: list<string>}
+     * @return array{messages: list<array<string, mixed>>, surfaceId: string, version: string, provenance: array{mode: string, label: string, reason?: string}, notes: list<string>}
      * @throws A2uiProblem
      */
     public function create(array $body, bool $public, bool $modelAllowed = true, int $beUser = 0): array

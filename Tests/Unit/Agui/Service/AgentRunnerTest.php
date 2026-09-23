@@ -14,6 +14,7 @@ use Webconsulting\AgentNexus\Agui\Service\AgentRunner;
 use Webconsulting\AgentNexus\Agui\Service\LlmPlan;
 use Webconsulting\AgentNexus\Agui\Service\ThreadState;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 use Webconsulting\AgentNexus\Tests\Unit\Agui\RunsAgents;
 
@@ -160,6 +161,68 @@ final class AgentRunnerTest extends UnitTestCase
         $provenance = array_column(array_filter($events, static fn(array $event): bool => $event['type'] === 'CUSTOM'), 'value');
         self::assertCount(2, $provenance, 'The label is corrected once the model has failed.');
         self::assertSame('scripted', $provenance[array_key_last($provenance)]['mode'] ?? null);
+    }
+
+    #[Test]
+    public function anAnswerThatStopsMidSentenceIsClosedAndMarkedAsCutOff(): void
+    {
+        $model = self::createStub(LanguageModel::class);
+        $model->method('getConnectionInfo')->willReturn(self::connection());
+        $model->method('streamText')->willReturnCallback(static function (): \Generator {
+            yield 'The Team plan fits five people and ';
+            yield 'includes the onboarding call with';
+        });
+        $model->method('estimateTokens')->willReturn(10);
+        $ledger = $this->createMock(UsageLedger::class);
+        $ledger->expects($this->once())->method('record')->with('agui', UsageLedger::SOURCE_FRONTEND, 'gpt-test');
+        $scenario = (new Scenarios())->resolve('plan', Audience::Site);
+
+        $events = iterator_to_array($this->runner($model, ledger: $ledger)->propose(self::input('t', 'r'), $scenario, new LlmPlan('', 300)), false);
+
+        EventVerifier::verify($events, 't', 'r');
+        $deltas = array_values(array_column(array_filter($events, static fn(array $event): bool => $event['type'] === 'TEXT_MESSAGE_CONTENT'), 'delta'));
+        self::assertSame('… I could not finish this answer. The details below are correct.', $deltas[2] ?? null);
+        $provenance = array_column(array_filter($events, static fn(array $event): bool => $event['type'] === 'CUSTOM'), 'value');
+        self::assertSame(
+            ['mode' => 'llm', 'model' => 'GPT test', 'label' => 'Live model · GPT test', 'reason' => 'the answer stopped mid-sentence, most likely at the output limit of 300 tokens'],
+            end($provenance),
+        );
+    }
+
+    #[Test]
+    public function aFinishedAnswerIsNotTouched(): void
+    {
+        foreach (['It fits.', 'Does it fit?', 'It fits!', 'It fits…', 'It said “fits.”', 'It fits (really).  '] as $text) {
+            self::assertTrue(AgentRunner::endsASentence($text), $text);
+        }
+        foreach (['It fits', 'It fits and', 'It fits,', ''] as $text) {
+            self::assertFalse(AgentRunner::endsASentence($text), $text);
+        }
+    }
+
+    #[Test]
+    public function aNonStreamedAnswerCutOffAtItsLimitIsReplacedByTheScript(): void
+    {
+        $model = self::createStub(LanguageModel::class);
+        $model->method('getConnectionInfo')->willReturn(self::connection());
+        $model->method('streamText')->willReturnCallback(static function (): \Generator {
+            yield from [];
+            throw new TruncatedAnswer(300, 400, 300, 0.002, '');
+        });
+        $ledger = $this->createMock(UsageLedger::class);
+        $ledger->expects($this->once())->method('record')->with('agui', UsageLedger::SOURCE_FRONTEND, 'gpt-test', 400, 300, 0.002);
+        $scenario = (new Scenarios())->resolve('plan', Audience::Site);
+
+        $events = iterator_to_array($this->runner($model, ledger: $ledger)->propose(self::input('t', 'r'), $scenario, new LlmPlan('', 300)), false);
+
+        EventVerifier::verify($events, 't', 'r');
+        self::assertSame('For ', self::first($events, 'TEXT_MESSAGE_CONTENT')['delta']);
+        $provenance = array_column(array_filter($events, static fn(array $event): bool => $event['type'] === 'CUSTOM'), 'value');
+        self::assertSame(
+            ['mode' => 'scripted', 'label' => 'Scripted demo', 'reason' => 'the model answer was cut off at 300 output tokens'],
+            end($provenance),
+        );
+        self::assertArrayNotHasKey('usage', self::first($events, 'RUN_FINISHED'));
     }
 
     #[Test]

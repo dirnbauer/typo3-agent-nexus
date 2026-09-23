@@ -12,6 +12,7 @@ use Webconsulting\AgentNexus\Agui\Event\EventFactory;
 use Webconsulting\AgentNexus\Agui\Protocol\Json;
 use Webconsulting\AgentNexus\Agui\Protocol\RunInput;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
@@ -47,6 +48,9 @@ final readonly class AgentRunner
 
     /** A visitor's question beyond this is cut before it reaches a model. */
     private const int MAX_QUESTION_LENGTH = 600;
+
+    /** The sentence that closes a model answer which broke off. */
+    private const string UNFINISHED = ' I could not finish this answer. The details below are correct.';
 
     public function __construct(
         private LanguageModel $model,
@@ -89,13 +93,14 @@ final readonly class AgentRunner
         yield EventFactory::stepStarted('answer');
         $answerId = EventFactory::mintId('msg');
         yield EventFactory::textMessageStart($answerId);
-        $streamed = $connection !== null && $llm !== null
-            ? yield from $this->streamAnswer($answerId, $scenario, $question, $llm, $connection['modelId'])
-            : false;
+        $fallback = $connection !== null && $llm !== null
+            ? yield from $this->streamAnswer($answerId, $scenario, $question, $llm, $connection)
+            : '';
+        $streamed = $connection !== null && $fallback === '';
         if (!$streamed) {
             if ($connection !== null) {
                 // The label said "Live model"; say what really answers.
-                yield EventFactory::custom(self::PROVENANCE, ['mode' => 'scripted', 'label' => 'Scripted demo', 'reason' => 'the model did not answer']);
+                yield EventFactory::custom(self::PROVENANCE, ['mode' => 'scripted', 'label' => 'Scripted demo', 'reason' => $fallback]);
             }
             foreach (self::words($scenario->answer) as $word) {
                 yield EventFactory::textMessageContent($answerId, $word);
@@ -168,16 +173,23 @@ final readonly class AgentRunner
     }
 
     /**
-     * Stream the answer from the model. Returns false when nothing arrived,
-     * so the caller streams the scripted answer instead; a failure after the
-     * first chunk keeps what arrived and closes with one scripted sentence.
+     * Stream the answer from the model. Returns why the script has to answer
+     * instead when nothing usable arrived, or an empty string when the model
+     * answered. A failure after the first chunk keeps what arrived and closes
+     * with one scripted sentence.
      *
-     * @return \Generator<int, array<string, mixed>, mixed, bool>
+     * Streams report no finish reason, so an answer that stops without
+     * finishing its sentence is taken as cut off at the output budget: it is
+     * closed the same way and the provenance says so.
+     *
+     * @param array{provider: string, adapter: string, endpoint: string, model: string, modelId: string, priceInput: string, priceOutput: string, hasPricing: bool} $connection
+     * @return \Generator<int, array<string, mixed>, mixed, string>
      */
-    private function streamAnswer(string $messageId, Scenario $scenario, string $question, LlmPlan $llm, string $modelId): \Generator
+    private function streamAnswer(string $messageId, Scenario $scenario, string $question, LlmPlan $llm, array $connection): \Generator
     {
         $systemPrompt = $llm->systemPrompt !== '' ? $llm->systemPrompt : $this->systemPrompt($scenario);
         $text = '';
+        $closed = false;
         try {
             foreach ($this->model->streamText($systemPrompt, $question, $llm->maxTokens) as $chunk) {
                 if ($chunk === '') {
@@ -187,16 +199,32 @@ final readonly class AgentRunner
                 $text .= $chunk;
                 yield EventFactory::textMessageContent($messageId, $chunk);
             }
+        } catch (TruncatedAnswer $truncated) {
+            // Only the non-streaming fallback knows its finish reason; its text was never sent.
+            $this->ledger->record('agui', UsageLedger::SOURCE_FRONTEND, $connection['modelId'], $truncated->promptTokens, $truncated->completionTokens, $truncated->cost);
+            $this->logger->warning('AG-UI: {message} The script takes over.', ['message' => $truncated->getMessage()]);
+            return $truncated->reason();
         } catch (\Throwable $e) {
             $this->logger->warning('AG-UI: the model stopped answering ({message}); the script takes over.', ['message' => $e->getMessage(), 'exception' => $e]);
             if ($text === '') {
-                return false;
+                return 'the model did not answer';
             }
-            yield EventFactory::textMessageContent($messageId, ' I could not finish this answer. The details below are correct.');
+            yield EventFactory::textMessageContent($messageId, self::UNFINISHED);
+            $closed = true;
         }
         if ($text === '') {
             $this->logger->warning('AG-UI: the model returned no text within {tokens} output tokens; the script takes over.', ['tokens' => $llm->maxTokens]);
-            return false;
+            return 'the model did not answer';
+        }
+        if (!$closed && !self::endsASentence($text)) {
+            $this->logger->notice('AG-UI: the answer stopped mid-sentence, most likely at the output budget of {tokens} tokens.', ['tokens' => $llm->maxTokens]);
+            yield EventFactory::textMessageContent($messageId, '…' . self::UNFINISHED);
+            yield EventFactory::custom(self::PROVENANCE, [
+                'mode' => 'llm',
+                'model' => $connection['model'],
+                'label' => 'Live model · ' . $connection['model'],
+                'reason' => sprintf('the answer stopped mid-sentence, most likely at the output limit of %d tokens', $llm->maxTokens),
+            ]);
         }
 
         $promptTokens = $this->model->estimateTokens($systemPrompt . ' ' . $question);
@@ -204,12 +232,22 @@ final readonly class AgentRunner
         $this->ledger->record(
             'agui',
             UsageLedger::SOURCE_FRONTEND,
-            $modelId,
+            $connection['modelId'],
             $promptTokens,
             $completionTokens,
             $this->model->estimateCost($promptTokens, $completionTokens),
         );
-        return true;
+        return '';
+    }
+
+    /**
+     * Whether a streamed answer ends like a finished sentence: a full stop,
+     * question or exclamation mark or ellipsis, optionally followed by a
+     * closing quote or bracket.
+     */
+    public static function endsASentence(string $text): bool
+    {
+        return preg_match('/[.!?…。！？]["\'”’»)\]]*\s*$/u', $text) === 1;
     }
 
     /**

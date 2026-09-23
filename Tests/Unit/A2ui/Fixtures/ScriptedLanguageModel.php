@@ -8,15 +8,19 @@ use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 
 /**
  * A language model that answers every JSON request with the same data, or
- * throws what it was given; null means "no model installed".
+ * throws what it was given; null means "no model installed". It remembers the
+ * output budget of every request.
  */
-final readonly class ScriptedLanguageModel implements LanguageModel
+final class ScriptedLanguageModel implements LanguageModel
 {
+    /** @var list<int|null> */
+    public private(set) array $maxTokens = [];
+
     /**
      * @param array<array-key, mixed>|\Throwable|null $answer
      */
     public function __construct(
-        private array|\Throwable|null $answer,
+        private readonly array|\Throwable|null $answer,
     ) {}
 
     public function isAvailable(): bool
@@ -40,6 +44,7 @@ final readonly class ScriptedLanguageModel implements LanguageModel
 
     public function completeJson(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array
     {
+        $this->maxTokens[] = $maxTokens;
         if ($this->answer instanceof \Throwable) {
             throw $this->answer;
         }

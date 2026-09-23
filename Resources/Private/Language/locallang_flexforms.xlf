@@ -42,7 +42,7 @@
         <unit id="assistant.systemPrompt.label"><segment><source>System prompt override</source></segment></unit>
         <unit id="assistant.systemPrompt.description"><segment><source>Optional. Replaces the built-in scenario prompt for model answers. Loaded server-side — visitors cannot see or change it.</source></segment></unit>
         <unit id="assistant.maxTokens.label"><segment><source>Max answer tokens</source></segment></unit>
-        <unit id="assistant.maxTokens.description"><segment><source>Upper bound for one model answer. The extension-wide ceiling always wins. 0 = use the ceiling.</source></segment></unit>
+        <unit id="assistant.maxTokens.description"><segment><source>Upper bound for one model answer. The AG-UI output budget of the extension configuration (aguiLlmMaxOutputTokens) always wins. 0 = use that budget.</source></segment></unit>
 
         <!-- A2A: Expert Router -->
         <unit id="concierge.sheet"><segment><source>A2A Expert Router</source></segment></unit>
@@ -94,6 +94,6 @@
         <unit id="hub.showHealth.label"><segment><source>Show the health chip</source></segment></unit>
         <unit id="hub.showHealth.description"><segment><source>Whether each card reports the live state of its protocol &#8212; endpoints registered, storage folder present, model on or off.</source></segment></unit>
         <unit id="hub.showEndpoints.label"><segment><source>Show the endpoints</source></segment></unit>
-        <unit id="hub.showEndpoints.description"><segment><source>Lists the eID endpoints each protocol exposes on this installation.</source></segment></unit>
+        <unit id="hub.showEndpoints.description"><segment><source>Lists the API endpoints each protocol serves on this installation.</source></segment></unit>
     </file>
 </xliff>

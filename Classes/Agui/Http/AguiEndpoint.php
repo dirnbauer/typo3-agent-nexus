@@ -20,6 +20,7 @@ use Webconsulting\AgentNexus\Shared\Http\PluginSettings;
 use Webconsulting\AgentNexus\Shared\Http\RateLimiter;
 use Webconsulting\AgentNexus\Shared\Http\WidgetContext;
 use Webconsulting\AgentNexus\Shared\Llm\LlmGuard;
+use Webconsulting\AgentNexus\Shared\Protocol;
 use Webconsulting\AgentNexus\Shared\Traffic\Channel;
 use Webconsulting\AgentNexus\Shared\Traffic\TrafficCapture;
 
@@ -140,6 +141,6 @@ final readonly class AguiEndpoint
         }
         $prompt = is_string($settings['llm_system_prompt'] ?? null) ? trim($settings['llm_system_prompt']) : '';
         $maxTokens = is_numeric($settings['llm_max_tokens'] ?? null) ? (int)$settings['llm_max_tokens'] : null;
-        return [new LlmPlan($prompt, $this->llmGuard->maxOutputTokens($maxTokens)), ''];
+        return [new LlmPlan($prompt, $this->llmGuard->maxOutputTokens(Protocol::Agui, $maxTokens)), ''];
     }
 }

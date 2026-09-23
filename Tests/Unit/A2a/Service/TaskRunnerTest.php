@@ -18,6 +18,7 @@ use Webconsulting\AgentNexus\A2a\Service\PlanStep;
 use Webconsulting\AgentNexus\A2a\Service\SkillCatalog;
 use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 use Webconsulting\AgentNexus\Shared\Traffic\Channel;
 
@@ -182,6 +183,44 @@ final class TaskRunnerTest extends UnitTestCase
 
         self::assertSame("## Summary\n\nShort.", $artifact->text());
         self::assertSame(['writtenBy' => 'model', 'model' => 'test-model'], $artifact->metadata);
+    }
+
+    #[Test]
+    public function aCutOffAnswerIsThrownAwayItsTokensCountedAndTheReasonKept(): void
+    {
+        $model = self::createStub(LanguageModel::class);
+        $model->method('completeJson')->willThrowException(new TruncatedAnswer(160, 300, 160, 0.001, 'test-model'));
+        $model->method('completeText')->willThrowException(new TruncatedAnswer(400, 500, 400, 0.004, 'test-model'));
+        $ledger = $this->createMock(UsageLedger::class);
+        $ledger->expects($this->exactly(2))->method('record')->willReturnCallback(
+            static function (string $protocol, string $source, string $model, int $promptTokens, int $completionTokens, ?float $cost): void {
+                self::assertSame(['a2a', UsageLedger::SOURCE_FRONTEND, 'test-model'], [$protocol, $source, $model]);
+                self::assertContains([$promptTokens, $completionTokens, $cost], [[300, 160, 0.001], [500, 400, 0.004]]);
+            },
+        );
+
+        $plan = (new TaskRunner(new SkillCatalog(), $model, $ledger))
+            ->plan($this->task(), $this->message('Summarise the pricing page'), false, new CallContext(Channel::Widget, 0, true));
+        $artifact = $plan->steps[1]->produceArtifact();
+
+        self::assertSame('keywords', $plan->taskMetadata['routedBy']);
+        self::assertSame('the model answer was cut off at 160 output tokens', $plan->taskMetadata['routingFallback'] ?? null);
+        self::assertSame((new SkillCatalog())->get('summarize_page')['artifactText'], $artifact->text(), 'Half a deliverable is none.');
+        self::assertSame(['writtenBy' => 'script', 'fallback' => 'the model answer was cut off at 400 output tokens'], $artifact->metadata);
+    }
+
+    #[Test]
+    public function theArtifactGetsTheA2aBudgetOfTheCallContext(): void
+    {
+        $model = $this->createMock(LanguageModel::class);
+        $model->method('completeJson')->willThrowException(new \RuntimeException('no routing today'));
+        $model->expects($this->once())->method('completeText')
+            ->with(self::isString(), 'Summarise the pricing page', null, 750)
+            ->willReturn(['text' => 'Short.', 'promptTokens' => 1, 'completionTokens' => 1, 'cost' => null, 'model' => 'test-model']);
+
+        (new TaskRunner(new SkillCatalog(), $model, self::createStub(UsageLedger::class)))
+            ->plan($this->task(), $this->message('Summarise the pricing page'), false, new CallContext(Channel::Widget, 0, true, true, 750))
+            ->steps[1]->produceArtifact();
     }
 
     private function runner(): TaskRunner

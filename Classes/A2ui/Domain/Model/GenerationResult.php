@@ -15,12 +15,14 @@ final readonly class GenerationResult
 
     /**
      * @param list<string> $notes plain-English remarks: why the model was skipped, what was repaired
+     * @param string $reason why the built-in generator answered although a model was asked, e.g. "the model answer was cut off at 1600 output tokens"
      */
     public function __construct(
         public Surface $surface,
         public string $mode,
         public ?string $model = null,
         public array $notes = [],
+        public string $reason = '',
     ) {}
 
     public function isLlm(): bool
@@ -38,10 +40,17 @@ final readonly class GenerationResult
     }
 
     /**
-     * @return array{mode: string, label: string}
+     * The provenance every widget shows; `reason` only when a model was asked
+     * and its answer could not be used.
+     *
+     * @return array{mode: string, label: string, reason?: string}
      */
     public function provenance(): array
     {
-        return ['mode' => $this->mode, 'label' => $this->label()];
+        $provenance = ['mode' => $this->mode, 'label' => $this->label()];
+        if ($this->reason !== '') {
+            $provenance['reason'] = $this->reason;
+        }
+        return $provenance;
     }
 }

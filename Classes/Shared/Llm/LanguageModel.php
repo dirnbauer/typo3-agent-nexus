@@ -28,6 +28,7 @@ interface LanguageModel
     /**
      * @return array{data: array<string, mixed>, promptTokens: int, completionTokens: int, cost: ?float, model: string}
      * @throws \RuntimeException when no model is available
+     * @throws TruncatedAnswer when the answer stopped at the output budget (finish reason "length")
      * @throws \JsonException when the answer is not a JSON object
      */
     public function completeJson(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array;
@@ -35,12 +36,14 @@ interface LanguageModel
     /**
      * @return array{text: string, promptTokens: int, completionTokens: int, cost: ?float, model: string}
      * @throws \RuntimeException when no model is available
+     * @throws TruncatedAnswer when the answer stopped at the output budget (finish reason "length")
      */
     public function completeText(string $systemPrompt, string $userPrompt, ?string $model = null, ?int $maxTokens = null): array;
 
     /**
-     * Stream an answer chunk by chunk. Streamed answers carry no usage figures,
-     * so the caller records them through {@see UsageLedger}.
+     * Stream an answer chunk by chunk. Streamed answers carry no usage figures
+     * and no finish reason, so the caller records their usage through
+     * {@see UsageLedger} and judges for itself whether the answer is complete.
      *
      * @return \Generator<int, string>
      * @throws \RuntimeException when no model is available

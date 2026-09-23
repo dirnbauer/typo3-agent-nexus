@@ -12,6 +12,7 @@ use Webconsulting\AgentNexus\A2a\Protocol\Task;
 use Webconsulting\AgentNexus\A2a\Protocol\TaskState;
 use Webconsulting\AgentNexus\A2a\Server\CallContext;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 use Webconsulting\AgentNexus\Shared\Traffic\Channel;
 
@@ -47,13 +48,16 @@ final readonly class TaskRunner
         }
 
         $request = mb_substr($incoming->text(), 0, 600);
-        [$skillId, $routedBy, $rationale] = $this->route($incoming, $request, $context);
+        [$skillId, $routedBy, $rationale, $fallback] = $this->route($incoming, $request, $context);
         $skill = $this->skills->get($skillId);
 
         $workingText = $routedBy === 'model' && $context->showRationale && $rationale !== ''
             ? sprintf('Routed to “%s” — %s', $skill['name'], $rationale)
             : $skill['workingText'];
         $metadata = ['skillId' => $skill['id'], 'routedBy' => $routedBy];
+        if ($fallback !== '') {
+            $metadata['routingFallback'] = $fallback;
+        }
 
         $steps = [PlanStep::status(TaskState::Working, $workingText, $metadata)];
         if ($skill['inputPrompt'] !== null && $skill['inputPrompt'] !== '') {
@@ -88,21 +92,23 @@ final readonly class TaskRunner
     }
 
     /**
-     * @return array{0: string, 1: 'request'|'model'|'keywords', 2: string} skill id, how it was chosen, rationale
+     * @return array{0: string, 1: 'request'|'model'|'keywords', 2: string, 3: string} skill id, how it was chosen, rationale, why the model's choice was not used
      */
     private function route(Message $incoming, string $request, CallContext $context): array
     {
         $pinned = $incoming->metadata[self::SKILL_METADATA_KEY] ?? null;
         if (is_string($pinned) && $this->skills->has($pinned)) {
-            return [$pinned, 'request', ''];
+            return [$pinned, 'request', '', ''];
         }
+        $fallback = '';
         if ($context->useModel && $request !== '') {
             $routing = $this->routeWithModel($request, $context);
-            if ($routing !== null) {
-                return [$routing['skill'], 'model', $routing['rationale']];
+            if (isset($routing['skill'])) {
+                return [$routing['skill'], 'model', $routing['rationale'], ''];
             }
+            $fallback = $routing['fallback'] ?? '';
         }
-        return [$this->routeByKeywords($request), 'keywords', ''];
+        return [$this->routeByKeywords($request), 'keywords', '', $fallback];
     }
 
     public function routeByKeywords(string $request): string
@@ -119,9 +125,10 @@ final readonly class TaskRunner
 
     /**
      * Ask the model which catalogue skill fits. Any malformed or failed
-     * answer returns null and keyword routing takes over.
+     * answer returns null and keyword routing takes over; an answer cut off at
+     * the output budget says so in `fallback`.
      *
-     * @return array{skill: string, rationale: string}|null
+     * @return array{skill: string, rationale: string}|array{fallback: string}|null
      */
     private function routeWithModel(string $request, CallContext $context): ?array
     {
@@ -139,6 +146,9 @@ final readonly class TaskRunner
                 null,
                 min(160, $context->maxOutputTokens),
             );
+        } catch (TruncatedAnswer $truncated) {
+            $this->recordTruncated($truncated, $context);
+            return ['fallback' => $truncated->reason()];
         } catch (\Throwable) {
             return null;
         }
@@ -166,6 +176,7 @@ final readonly class TaskRunner
         $skill = $this->skills->get($skillId);
         $text = null;
         $model = '';
+        $fallback = '';
         if ($context->useModel && ($request !== '' || $answer !== '')) {
             try {
                 $completion = $this->languageModel->completeText(
@@ -181,18 +192,39 @@ final readonly class TaskRunner
                     $text = trim($completion['text']);
                     $model = $completion['model'];
                 }
+            } catch (TruncatedAnswer $truncated) {
+                // Half a deliverable is no deliverable: the script answers, and says why.
+                $this->recordTruncated($truncated, $context);
+                $fallback = $truncated->reason();
             } catch (\Throwable) {
                 $text = null;
             }
         }
 
+        $metadata = $text !== null ? ['writtenBy' => 'model', 'model' => $model] : ['writtenBy' => 'script'];
+        if ($text === null && $fallback !== '') {
+            $metadata['fallback'] = $fallback;
+        }
         return new Artifact(
             Ids::uuid(),
             [Part::text($text ?? $skill['artifactText'], 'text/markdown')],
             $skill['artifactName'],
             $skill['description'],
-            $text !== null ? ['writtenBy' => 'model', 'model' => $model] : ['writtenBy' => 'script'],
+            $metadata,
         );
+    }
+
+    /**
+     * A cut-off answer is thrown away, but its tokens were spent.
+     */
+    private function recordTruncated(TruncatedAnswer $truncated, CallContext $context): void
+    {
+        $this->recordUsage([
+            'promptTokens' => $truncated->promptTokens,
+            'completionTokens' => $truncated->completionTokens,
+            'cost' => $truncated->cost,
+            'model' => $truncated->model,
+        ], $context);
     }
 
     /**

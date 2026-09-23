@@ -42,7 +42,7 @@
         <unit id="assistant.systemPrompt.label"><segment state="final"><source>System prompt override</source><target>System-Prompt überschreiben</target></segment></unit>
         <unit id="assistant.systemPrompt.description"><segment state="final"><source>Optional. Replaces the built-in scenario prompt for model answers. Loaded server-side — visitors cannot see or change it.</source><target>Optional. Ersetzt den eingebauten Szenario-Prompt für Modellantworten. Serverseitig geladen — für Besucher weder sichtbar noch änderbar.</target></segment></unit>
         <unit id="assistant.maxTokens.label"><segment state="final"><source>Max answer tokens</source><target>Maximale Antwort-Tokens</target></segment></unit>
-        <unit id="assistant.maxTokens.description"><segment state="final"><source>Upper bound for one model answer. The extension-wide ceiling always wins. 0 = use the ceiling.</source><target>Obergrenze für eine Modellantwort. Das erweiterungsweite Limit hat immer Vorrang. 0 = Limit verwenden.</target></segment></unit>
+        <unit id="assistant.maxTokens.description"><segment state="final"><source>Upper bound for one model answer. The AG-UI output budget of the extension configuration (aguiLlmMaxOutputTokens) always wins. 0 = use that budget.</source><target>Obergrenze für eine Modellantwort. Das AG-UI-Ausgabebudget der Erweiterungskonfiguration (aguiLlmMaxOutputTokens) hat immer Vorrang. 0 = dieses Budget verwenden.</target></segment></unit>
 
         <!-- A2A: Expert Router -->
         <unit id="concierge.sheet"><segment state="final"><source>A2A Expert Router</source><target>A2A Expert Router</target></segment></unit>
@@ -90,10 +90,10 @@
         <!-- Agent Nexus: Protokoll-Hub -->
         <unit id="hub.sheet"><segment><source>Protocol hub</source><target>Protokoll-Hub</target></segment></unit>
         <unit id="hub.intro.label"><segment><source>Intro text</source><target>Einleitungstext</target></segment></unit>
-        <unit id="hub.intro.description"><segment><source>One or two sentences above the cards.</source><target>Ein bis zwei S&#228;tze &#252;ber den Karten. Leer lassen, wenn die &#220;berschrift des Elements gen&#252;gt.</target></segment></unit>
+        <unit id="hub.intro.description"><segment state="final"><source>One or two sentences above the cards. Leave empty to let the element&#8217;s header stand alone.</source><target>Ein bis zwei S&#228;tze &#252;ber den Karten. Leer lassen, wenn die &#220;berschrift des Elements gen&#252;gt.</target></segment></unit>
         <unit id="hub.showHealth.label"><segment><source>Show the health chip</source><target>Status-Chip anzeigen</target></segment></unit>
-        <unit id="hub.showHealth.description"><segment><source>Whether each card reports the live state of its protocol.</source><target>Ob jede Karte den aktuellen Zustand ihres Protokolls meldet &#8212; registrierte Endpunkte, vorhandener Ablageordner, Modell an oder aus.</target></segment></unit>
+        <unit id="hub.showHealth.description"><segment state="final"><source>Whether each card reports the live state of its protocol &#8212; endpoints registered, storage folder present, model on or off.</source><target>Ob jede Karte den aktuellen Zustand ihres Protokolls meldet &#8212; registrierte Endpunkte, vorhandener Ablageordner, Modell an oder aus.</target></segment></unit>
         <unit id="hub.showEndpoints.label"><segment><source>Show the endpoints</source><target>Endpunkte anzeigen</target></segment></unit>
-        <unit id="hub.showEndpoints.description"><segment><source>Lists the eID endpoints each protocol exposes on this installation.</source><target>Listet die eID-Endpunkte auf, die jedes Protokoll in dieser Installation bereitstellt.</target></segment></unit>
+        <unit id="hub.showEndpoints.description"><segment><source>Lists the API endpoints each protocol serves on this installation.</source><target>Listet die API-Endpunkte auf, die jedes Protokoll in dieser Installation bereitstellt.</target></segment></unit>
     </file>
 </xliff>

@@ -6,6 +6,7 @@ namespace Webconsulting\AgentNexus\Tests\Unit\Ucp\Agent;
 
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
+use Webconsulting\AgentNexus\Shared\Llm\TruncatedAnswer;
 use Webconsulting\AgentNexus\Shared\Store\ProtocolObject;
 use Webconsulting\AgentNexus\Shared\Traffic\TrafficRedactor;
 use Webconsulting\AgentNexus\Tests\Unit\Ucp\Fixtures\ScriptedLanguageModel;
@@ -336,6 +337,23 @@ final class ShoppingAgentTest extends UnitTestCase
         self::assertSame(1, $honest->model->calls);
         self::assertCount(1, $honest->ledger->records, 'Spent tokens are recorded.');
         self::assertCount(1, $inventive->ledger->records, 'even when the answer is thrown away.');
+    }
+
+    #[Test]
+    public function aRationaleCutOffAtTheOutputLimitIsScriptedAndSaysWhy(): void
+    {
+        $configuration = ['llmFrontendEnabled' => '1', 'ucpLlmEnabled' => '1', 'llmMaxOutputTokens' => '700'];
+        $stack = new UcpStack(configuration: $configuration, model: new ScriptedLanguageModel(true, '', new TruncatedAnswer(160, 120, 160, null, 'test-model')));
+
+        $events = $stack->runAgent($this->input('t-1', 'r-1'), modelAllowed: true);
+
+        self::assertSame([160], $stack->model->maxTokens, 'The UCP budget, not the global fallback.');
+        self::assertSame(
+            ['mode' => 'scripted', 'label' => 'Scripted demo', 'reason' => 'the model answer was cut off at 160 output tokens'],
+            $this->ofType($events, 'CUSTOM')[0]['value'] ?? null,
+        );
+        self::assertCount(1, $stack->ledger->records, 'The cut-off answer still cost tokens.');
+        self::assertArrayNotHasKey('usage', $this->last($events), 'No live answer, no usage to report.');
     }
 
     /**

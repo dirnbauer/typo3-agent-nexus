@@ -7,15 +7,20 @@ namespace Webconsulting\AgentNexus\Tests\Unit\Ucp\Fixtures;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 
 /**
- * A language model that answers with a fixed text — or is not there at all.
+ * A language model that answers with a fixed text, fails the way it was told
+ * to — or is not there at all. It remembers the output budget it was given.
  */
 final class ScriptedLanguageModel implements LanguageModel
 {
     public int $calls = 0;
 
+    /** @var list<int|null> */
+    public private(set) array $maxTokens = [];
+
     public function __construct(
         private readonly bool $available = false,
         private readonly string $answer = '',
+        private readonly ?\Throwable $failure = null,
     ) {}
 
     public function isAvailable(): bool
@@ -41,6 +46,10 @@ final class ScriptedLanguageModel implements LanguageModel
             throw new \RuntimeException('No model.', 1758709002);
         }
         $this->calls++;
+        $this->maxTokens[] = $maxTokens;
+        if ($this->failure !== null) {
+            throw $this->failure;
+        }
         return ['text' => $this->answer, 'promptTokens' => 120, 'completionTokens' => 30, 'cost' => null, 'model' => 'test-model'];
     }
 
