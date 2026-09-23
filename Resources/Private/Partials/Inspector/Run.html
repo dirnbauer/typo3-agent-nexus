@@ -1,0 +1,58 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<section aria-labelledby="anx-run-outcome">
+    <h2 id="anx-run-outcome"><f:translate domain="agent_nexus.inspector" key="run.outcome" /></h2>
+    <dl class="anx-dl">
+        <div><dt><f:translate domain="agent_nexus.inspector" key="run.outcome" /></dt><dd><code>{view.outcome -> f:or(alternative: '–')}</code></dd></div>
+        <f:if condition="{view.threadId}"><div><dt><f:translate domain="agent_nexus.inspector" key="run.thread" /></dt><dd><code>{view.threadId}</code></dd></div></f:if>
+        <f:if condition="{view.protocolVersion}"><div><dt><f:translate domain="agent_nexus.inspector" key="run.version" /></dt><dd>{view.protocolVersion}</dd></div></f:if>
+        <f:if condition="{view.eventCount}"><div><dt><f:translate domain="agent_nexus.inspector" key="run.events" /></dt><dd>{view.eventCount}</dd></div></f:if>
+    </dl>
+</section>
+
+<f:if condition="{view.messages}">
+    <section class="anx-section" aria-labelledby="anx-run-messages">
+        <h2 id="anx-run-messages"><f:translate domain="agent_nexus.inspector" key="run.messages" /></h2>
+        <ol class="anx-inspector__messages">
+            <f:for each="{view.messages}" as="message">
+                <li class="anx-inspector__message">
+                    <span class="anx-inspector__role">{message.role}</span>
+                    <p class="anx-inspector__text">{message.text -> f:format.nl2br()}</p>
+                </li>
+            </f:for>
+        </ol>
+    </section>
+</f:if>
+
+<f:if condition="{view.interrupts}">
+    <section class="anx-section" aria-labelledby="anx-run-interrupts">
+        <h2 id="anx-run-interrupts"><f:translate domain="agent_nexus.inspector" key="run.interrupts" /></h2>
+        <div class="table-fit">
+            <table class="table table-striped">
+                <thead><tr>
+                    <th scope="col">id</th>
+                    <th scope="col"><f:translate domain="agent_nexus.inspector" key="run.interruptReason" /></th>
+                    <th scope="col">toolCallId</th>
+                </tr></thead>
+                <tbody>
+                    <f:for each="{view.interrupts}" as="interrupt">
+                        <tr>
+                            <td><code>{interrupt.id}</code></td>
+                            <td><code>{interrupt.reason}</code><f:if condition="{interrupt.message}"><br /><span class="text-variant">{interrupt.message}</span></f:if></td>
+                            <td><code>{interrupt.toolCallId}</code></td>
+                        </tr>
+                    </f:for>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</f:if>
+
+<f:for each="{resume: view.resume, result: view.result, state: view.state}" as="json" key="part">
+    <f:if condition="{json}">
+        <section class="anx-section" aria-labelledby="anx-run-{part}">
+            <h2 id="anx-run-{part}"><f:translate domain="agent_nexus.inspector" key="run.{part}" /></h2>
+            <pre class="anx-code" tabindex="0"><code>{json}</code></pre>
+        </section>
+    </f:if>
+</f:for>
+</html>

@@ -1,0 +1,61 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<section aria-labelledby="anx-mandate-summary">
+    <h2 id="anx-mandate-summary"><f:translate domain="agent_nexus.inspector" key="mandate.verification" /></h2>
+    <dl class="anx-dl">
+        <div><dt><f:translate domain="agent_nexus.inspector" key="mandate.type" /></dt><dd><code>{view.vct}</code></dd></div>
+        <f:if condition="{view.role}"><div><dt><f:translate domain="agent_nexus.inspector" key="mandate.role" /></dt><dd>{view.role}</dd></div></f:if>
+        <f:if condition="{view.valid} !== null">
+            <div>
+                <dt><f:translate domain="agent_nexus.inspector" key="mandate.verification" /></dt>
+                <dd>
+                    <f:if condition="{view.valid}">
+                        <f:then><span class="badge badge-success"><f:translate domain="agent_nexus.inspector" key="mandate.verified" /></span></f:then>
+                        <f:else><span class="badge badge-danger"><f:translate domain="agent_nexus.inspector" key="mandate.rejected" /></span></f:else>
+                    </f:if>
+                </dd>
+            </div>
+        </f:if>
+    </dl>
+    <f:if condition="{view.checks}">
+        <h3 class="h4"><f:translate domain="agent_nexus.inspector" key="mandate.checks" /></h3>
+        <ul class="anx-inspector__checks">
+            <f:for each="{view.checks}" as="check">
+                <li>
+                    <f:if condition="{check.pass}">
+                        <f:then><core:icon identifier="agentnexus-status-ok" size="small" /><span class="visually-hidden"><f:translate domain="agent_nexus.inspector" key="mandate.pass" />:</span></f:then>
+                        <f:else><core:icon identifier="agentnexus-status-danger" size="small" /><span class="visually-hidden"><f:translate domain="agent_nexus.inspector" key="mandate.fail" />:</span></f:else>
+                    </f:if>
+                    <span><strong>{check.label}</strong><f:if condition="{check.detail}"> <span class="text-variant">{check.detail}</span></f:if></span>
+                </li>
+            </f:for>
+        </ul>
+    </f:if>
+</section>
+
+<f:for each="{header: view.header, claims: view.claims}" as="json" key="part">
+    <f:if condition="{json}">
+        <section class="anx-section" aria-labelledby="anx-mandate-{part}">
+            <h2 id="anx-mandate-{part}"><f:translate domain="agent_nexus.inspector" key="mandate.{part}" /></h2>
+            <pre class="anx-code" tabindex="0"><code>{json}</code></pre>
+        </section>
+    </f:if>
+</f:for>
+
+<f:if condition="{view.disclosures}">
+    <section class="anx-section" aria-labelledby="anx-mandate-disclosures">
+        <h2 id="anx-mandate-disclosures"><f:translate domain="agent_nexus.inspector" key="mandate.disclosures" /></h2>
+        <ol class="anx-inspector__disclosures">
+            <f:for each="{view.disclosures}" as="disclosure"><li><code>{disclosure}</code></li></f:for>
+        </ol>
+    </section>
+</f:if>
+
+<f:if condition="{view.token}">
+    <section class="anx-section" aria-labelledby="anx-mandate-token">
+        <h2 id="anx-mandate-token"><f:translate domain="agent_nexus.inspector" key="mandate.token" /></h2>
+        <pre class="anx-code anx-code--wrap" tabindex="0"><code>{view.token}</code></pre>
+    </section>
+</f:if>
+</html>

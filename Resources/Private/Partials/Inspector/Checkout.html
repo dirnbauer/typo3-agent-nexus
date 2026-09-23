@@ -1,0 +1,82 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<section aria-labelledby="anx-checkout-lines">
+    <h2 id="anx-checkout-lines"><f:translate domain="agent_nexus.inspector" key="checkout.lines" /></h2>
+    <dl class="anx-dl">
+        <div><dt><f:translate domain="agent_nexus.inspector" key="checkout.status" /></dt><dd><code>{view.status}</code></dd></div>
+        <f:if condition="{view.version}"><div><dt><f:translate domain="agent_nexus.inspector" key="checkout.version" /></dt><dd>{view.version}</dd></div></f:if>
+        <f:if condition="{view.expiresAt}"><div><dt><f:translate domain="agent_nexus.inspector" key="checkout.expires" /></dt><dd><time datetime="{view.expiresAt}">{view.expiresAt}</time></dd></div></f:if>
+    </dl>
+    <div class="table-fit">
+        <table class="table table-striped">
+            <thead><tr>
+                <th scope="col"><f:translate domain="agent_nexus.inspector" key="checkout.item" /></th>
+                <th scope="col" class="text-end"><f:translate domain="agent_nexus.inspector" key="checkout.quantity" /></th>
+                <th scope="col" class="text-end"><f:translate domain="agent_nexus.inspector" key="checkout.price" /></th>
+                <th scope="col" class="text-end"><f:translate domain="agent_nexus.inspector" key="checkout.total" /></th>
+            </tr></thead>
+            <tbody>
+                <f:for each="{view.lines}" as="line">
+                    <tr>
+                        <td>{line.title}<br /><code class="text-variant">{line.id}</code></td>
+                        <td class="text-end">{line.quantity}</td>
+                        <td class="text-end">{line.price}</td>
+                        <td class="text-end">{line.total}</td>
+                    </tr>
+                </f:for>
+            </tbody>
+            <f:if condition="{view.totals}">
+                <tfoot>
+                    <f:for each="{view.totals}" as="total">
+                        <tr class="{f:if(condition: total.isTotal, then: 'anx-inspector__grand-total')}">
+                            <th scope="row" colspan="3" class="text-end">{total.label}</th>
+                            <td class="text-end">{total.amount}</td>
+                        </tr>
+                    </f:for>
+                </tfoot>
+            </f:if>
+        </table>
+    </div>
+</section>
+
+<f:if condition="{view.messages}">
+    <section class="anx-section" aria-labelledby="anx-checkout-messages">
+        <h2 id="anx-checkout-messages"><f:translate domain="agent_nexus.inspector" key="checkout.messages" /></h2>
+        <ul class="anx-inspector__notes">
+            <f:for each="{view.messages}" as="message">
+                <li>
+                    <span class="badge badge-{message.badge}">{message.type}</span>
+                    <f:if condition="{message.code}"><code>{message.code}</code></f:if>
+                    <f:if condition="{message.severity}"><span class="text-variant">({message.severity})</span></f:if>
+                    {message.content}
+                </li>
+            </f:for>
+        </ul>
+    </section>
+</f:if>
+
+<f:if condition="{view.order}">
+    <section class="anx-section" aria-labelledby="anx-checkout-order">
+        <h2 id="anx-checkout-order"><f:translate domain="agent_nexus.inspector" key="checkout.order" /></h2>
+        <dl class="anx-dl">
+            <div><dt>id</dt><dd><code>{view.order.id}</code></dd></div>
+            <f:if condition="{view.order.label}"><div><dt>label</dt><dd>{view.order.label}</dd></div></f:if>
+            <f:if condition="{view.order.permalink}"><div><dt>permalink_url</dt><dd><code>{view.order.permalink}</code></dd></div></f:if>
+        </dl>
+    </section>
+</f:if>
+
+<f:if condition="{view.links}">
+    <section class="anx-section" aria-labelledby="anx-checkout-links">
+        <h2 id="anx-checkout-links"><f:translate domain="agent_nexus.inspector" key="checkout.links" /></h2>
+        <ul>
+            <f:for each="{view.links}" as="link">
+                <li><code>{link.type}</code> <a href="{link.url}" target="_blank" rel="noopener noreferrer">{link.title -> f:or(alternative: link.url)}</a></li>
+            </f:for>
+        </ul>
+    </section>
+</f:if>
+
+<f:if condition="{view.continueUrl}">
+    <p><strong><f:translate domain="agent_nexus.inspector" key="checkout.continue" /></strong>: <code>{view.continueUrl}</code></p>
+</f:if>
+</html>

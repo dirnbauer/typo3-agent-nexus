@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="inspector">
+    <unit id="list.heading.task">
+      <segment>
+        <source>A2A tasks</source>
+      </segment>
+    </unit>
+    <unit id="list.heading.run">
+      <segment>
+        <source>AG-UI runs</source>
+      </segment>
+    </unit>
+    <unit id="list.heading.checkout">
+      <segment>
+        <source>UCP checkout sessions</source>
+      </segment>
+    </unit>
+    <unit id="list.heading.mandate">
+      <segment>
+        <source>AP2 mandates and receipts</source>
+      </segment>
+    </unit>
+    <unit id="list.heading.surface">
+      <segment>
+        <source>A2UI surfaces</source>
+      </segment>
+    </unit>
+    <unit id="list.lede.task">
+      <segment>
+        <source>Every task the A2A agent accepted and the state it reached. Open one to see its messages, artifacts and history.</source>
+      </segment>
+    </unit>
+    <unit id="list.lede.run">
+      <segment>
+        <source>Every AG-UI run, how it ended and the approvals it asked for.</source>
+      </segment>
+    </unit>
+    <unit id="list.lede.checkout">
+      <segment>
+        <source>Every checkout session the UCP merchant created, with its status and total.</source>
+      </segment>
+    </unit>
+    <unit id="list.lede.mandate">
+      <segment>
+        <source>Every AP2 mandate and receipt the sandbox signed, and whether it verified.</source>
+      </segment>
+    </unit>
+    <unit id="list.lede.surface">
+      <segment>
+        <source>Every A2UI surface an agent built, and the data a person sent back.</source>
+      </segment>
+    </unit>
+    <unit id="filter.label">
+      <segment>
+        <source>Filter the list</source>
+      </segment>
+    </unit>
+    <unit id="filter.state">
+      <segment>
+        <source>State</source>
+      </segment>
+    </unit>
+    <unit id="filter.source">
+      <segment>
+        <source>Created by</source>
+      </segment>
+    </unit>
+    <unit id="filter.context">
+      <segment>
+        <source>Context</source>
+      </segment>
+    </unit>
+    <unit id="filter.search">
+      <segment>
+        <source>Search</source>
+      </segment>
+    </unit>
+    <unit id="filter.search.placeholder">
+      <segment>
+        <source>Id, context or summary</source>
+      </segment>
+    </unit>
+    <unit id="filter.any">
+      <segment>
+        <source>All</source>
+      </segment>
+    </unit>
+    <unit id="filter.apply">
+      <segment>
+        <source>Apply filter</source>
+      </segment>
+    </unit>
+    <unit id="filter.reset">
+      <segment>
+        <source>Reset filter</source>
+      </segment>
+    </unit>
+    <unit id="source.api">
+      <segment>
+        <source>Agent (API)</source>
+      </segment>
+    </unit>
+    <unit id="source.widget">
+      <segment>
+        <source>Frontend widget</source>
+      </segment>
+    </unit>
+    <unit id="source.backend">
+      <segment>
+        <source>Backend console</source>
+      </segment>
+    </unit>
+    <unit id="source.agent">
+      <segment>
+        <source>Demo agent</source>
+      </segment>
+    </unit>
+    <unit id="table.caption">
+      <segment>
+        <source>Stored objects, most recent change first</source>
+      </segment>
+    </unit>
+    <unit id="table.object">
+      <segment>
+        <source>Object</source>
+      </segment>
+    </unit>
+    <unit id="table.label">
+      <segment>
+        <source>Summary</source>
+      </segment>
+    </unit>
+    <unit id="table.state">
+      <segment>
+        <source>State</source>
+      </segment>
+    </unit>
+    <unit id="table.source">
+      <segment>
+        <source>Created by</source>
+      </segment>
+    </unit>
+    <unit id="table.updated">
+      <segment>
+        <source>Last change</source>
+      </segment>
+    </unit>
+    <unit id="table.context">
+      <segment>
+        <source>Context</source>
+      </segment>
+    </unit>
+    <unit id="table.open">
+      <segment>
+        <source>Open %s</source>
+      </segment>
+    </unit>
+    <unit id="empty.title">
+      <segment>
+        <source>Nothing here yet</source>
+      </segment>
+    </unit>
+    <unit id="empty.filtered">
+      <segment>
+        <source>No object matches this filter.</source>
+      </segment>
+    </unit>
+    <unit id="empty.message.task">
+      <segment>
+        <source>Delegate a task in the A2A console or on the demo page, and it appears here.</source>
+      </segment>
+    </unit>
+    <unit id="empty.message.run">
+      <segment>
+        <source>Start a run in the AG-UI console or ask the assistant on the demo page, and it appears here.</source>
+      </segment>
+    </unit>
+    <unit id="empty.message.checkout">
+      <segment>
+        <source>Run a checkout in the UCP console or on the demo page, and the session appears here.</source>
+      </segment>
+    </unit>
+    <unit id="empty.message.mandate">
+      <segment>
+        <source>Sign a mandate in the AP2 studio or approve a purchase on the demo page, and it appears here.</source>
+      </segment>
+    </unit>
+    <unit id="empty.message.surface">
+      <segment>
+        <source>Generate a surface in the A2UI playground or on the demo page, and it appears here.</source>
+      </segment>
+    </unit>
+    <unit id="detail.back">
+      <segment>
+        <source>Back to the list</source>
+      </segment>
+    </unit>
+    <unit id="detail.notFound">
+      <segment>
+        <source>This object no longer exists. The retention cleanup may have deleted it.</source>
+      </segment>
+    </unit>
+    <unit id="detail.summary">
+      <segment>
+        <source>Summary</source>
+      </segment>
+    </unit>
+    <unit id="detail.objectId">
+      <segment>
+        <source>Id</source>
+      </segment>
+    </unit>
+    <unit id="detail.created">
+      <segment>
+        <source>Created</source>
+      </segment>
+    </unit>
+    <unit id="detail.history">
+      <segment>
+        <source>State history</source>
+      </segment>
+    </unit>
+    <unit id="detail.noHistory">
+      <segment>
+        <source>No state changes were recorded.</source>
+      </segment>
+    </unit>
+    <unit id="detail.traffic">
+      <segment>
+        <source>Traffic</source>
+      </segment>
+    </unit>
+    <unit id="detail.trafficIntro">
+      <segment>
+        <source>The exchanges in the traffic log that touched this object.</source>
+      </segment>
+    </unit>
+    <unit id="detail.noTraffic">
+      <segment>
+        <source>No recorded exchange touched this object. Traffic entries are deleted after the retention period.</source>
+      </segment>
+    </unit>
+    <unit id="detail.allTraffic">
+      <segment>
+        <source>Search the traffic log</source>
+      </segment>
+    </unit>
+    <unit id="detail.related">
+      <segment>
+        <source>Same context</source>
+      </segment>
+    </unit>
+    <unit id="detail.json">
+      <segment>
+        <source>Stored object</source>
+      </segment>
+    </unit>
+    <unit id="detail.jsonIntro">
+      <segment>
+        <source>The object exactly as the protocol describes it.</source>
+      </segment>
+    </unit>
+    <unit id="detail.showJson">
+      <segment>
+        <source>Show JSON</source>
+      </segment>
+    </unit>
+    <unit id="task.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="task.statusMessage">
+      <segment>
+        <source>Status message</source>
+      </segment>
+    </unit>
+    <unit id="task.messages">
+      <segment>
+        <source>Messages</source>
+      </segment>
+    </unit>
+    <unit id="task.noMessages">
+      <segment>
+        <source>No messages are stored for this task.</source>
+      </segment>
+    </unit>
+    <unit id="task.role.user">
+      <segment>
+        <source>Client</source>
+      </segment>
+    </unit>
+    <unit id="task.role.agent">
+      <segment>
+        <source>Agent</source>
+      </segment>
+    </unit>
+    <unit id="task.artifacts">
+      <segment>
+        <source>Artifacts</source>
+      </segment>
+    </unit>
+    <unit id="task.noArtifacts">
+      <segment>
+        <source>The task has not produced an artifact.</source>
+      </segment>
+    </unit>
+    <unit id="task.metadata">
+      <segment>
+        <source>Metadata</source>
+      </segment>
+    </unit>
+    <unit id="run.thread">
+      <segment>
+        <source>Thread</source>
+      </segment>
+    </unit>
+    <unit id="run.version">
+      <segment>
+        <source>Protocol version</source>
+      </segment>
+    </unit>
+    <unit id="run.messages">
+      <segment>
+        <source>Input messages</source>
+      </segment>
+    </unit>
+    <unit id="run.outcome">
+      <segment>
+        <source>Outcome</source>
+      </segment>
+    </unit>
+    <unit id="run.interrupts">
+      <segment>
+        <source>Interrupts</source>
+      </segment>
+    </unit>
+    <unit id="run.interruptReason">
+      <segment>
+        <source>Reason</source>
+      </segment>
+    </unit>
+    <unit id="run.resume">
+      <segment>
+        <source>Resume</source>
+      </segment>
+    </unit>
+    <unit id="run.result">
+      <segment>
+        <source>Result</source>
+      </segment>
+    </unit>
+    <unit id="run.state">
+      <segment>
+        <source>Shared state</source>
+      </segment>
+    </unit>
+    <unit id="run.events">
+      <segment>
+        <source>Events streamed</source>
+      </segment>
+    </unit>
+    <unit id="checkout.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="checkout.version">
+      <segment>
+        <source>UCP version</source>
+      </segment>
+    </unit>
+    <unit id="checkout.lines">
+      <segment>
+        <source>Line items</source>
+      </segment>
+    </unit>
+    <unit id="checkout.item">
+      <segment>
+        <source>Item</source>
+      </segment>
+    </unit>
+    <unit id="checkout.quantity">
+      <segment>
+        <source>Quantity</source>
+      </segment>
+    </unit>
+    <unit id="checkout.price">
+      <segment>
+        <source>Price</source>
+      </segment>
+    </unit>
+    <unit id="checkout.total">
+      <segment>
+        <source>Total</source>
+      </segment>
+    </unit>
+    <unit id="checkout.totals">
+      <segment>
+        <source>Totals</source>
+      </segment>
+    </unit>
+    <unit id="checkout.messages">
+      <segment>
+        <source>Messages from the merchant</source>
+      </segment>
+    </unit>
+    <unit id="checkout.links">
+      <segment>
+        <source>Links</source>
+      </segment>
+    </unit>
+    <unit id="checkout.order">
+      <segment>
+        <source>Order</source>
+      </segment>
+    </unit>
+    <unit id="checkout.continue">
+      <segment>
+        <source>Continue URL</source>
+      </segment>
+    </unit>
+    <unit id="checkout.expires">
+      <segment>
+        <source>Expires</source>
+      </segment>
+    </unit>
+    <unit id="mandate.type">
+      <segment>
+        <source>Type</source>
+      </segment>
+    </unit>
+    <unit id="mandate.role">
+      <segment>
+        <source>Signed by</source>
+      </segment>
+    </unit>
+    <unit id="mandate.verification">
+      <segment>
+        <source>Verification</source>
+      </segment>
+    </unit>
+    <unit id="mandate.verified">
+      <segment>
+        <source>Verified</source>
+      </segment>
+    </unit>
+    <unit id="mandate.rejected">
+      <segment>
+        <source>Rejected</source>
+      </segment>
+    </unit>
+    <unit id="mandate.checks">
+      <segment>
+        <source>Checks</source>
+      </segment>
+    </unit>
+    <unit id="mandate.pass">
+      <segment>
+        <source>Passed</source>
+      </segment>
+    </unit>
+    <unit id="mandate.fail">
+      <segment>
+        <source>Failed</source>
+      </segment>
+    </unit>
+    <unit id="mandate.header">
+      <segment>
+        <source>Header</source>
+      </segment>
+    </unit>
+    <unit id="mandate.claims">
+      <segment>
+        <source>Claims</source>
+      </segment>
+    </unit>
+    <unit id="mandate.disclosures">
+      <segment>
+        <source>Disclosures</source>
+      </segment>
+    </unit>
+    <unit id="mandate.token">
+      <segment>
+        <source>Token</source>
+      </segment>
+    </unit>
+    <unit id="surface.version">
+      <segment>
+        <source>A2UI version</source>
+      </segment>
+    </unit>
+    <unit id="surface.messages">
+      <segment>
+        <source>Messages sent to the renderer</source>
+      </segment>
+    </unit>
+    <unit id="surface.dataModel">
+      <segment>
+        <source>Data model</source>
+      </segment>
+    </unit>
+    <unit id="surface.actions">
+      <segment>
+        <source>Actions received</source>
+      </segment>
+    </unit>
+    <unit id="surface.noActions">
+      <segment>
+        <source>Nobody has submitted this surface yet.</source>
+      </segment>
+    </unit>
+    <unit id="pagination.label">
+      <segment>
+        <source>Pages</source>
+      </segment>
+    </unit>
+    <unit id="pagination.first">
+      <segment>
+        <source>First page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.previous">
+      <segment>
+        <source>Previous page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.next">
+      <segment>
+        <source>Next page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.last">
+      <segment>
+        <source>Last page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.range">
+      <segment>
+        <source>Objects %1$d to %2$d of %3$d</source>
+      </segment>
+    </unit>
+  </file>
+</xliff>

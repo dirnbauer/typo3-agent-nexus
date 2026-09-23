@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en">
+  <file id="traffic">
+    <unit id="list.heading">
+      <segment>
+        <source>Traffic</source>
+      </segment>
+    </unit>
+    <unit id="list.lede">
+      <segment>
+        <source>Every request, response and streamed event of the protocol endpoints on this installation, newest first.</source>
+      </segment>
+    </unit>
+    <unit id="list.recordingOff.title">
+      <segment>
+        <source>Recording is off</source>
+      </segment>
+    </unit>
+    <unit id="list.recordingOff.message">
+      <segment>
+        <source>Turn on "Record the traffic log" in the extension configuration to see new exchanges here.</source>
+      </segment>
+    </unit>
+    <unit id="list.bodiesOn">
+      <segment>
+        <source>Request and response bodies are recorded.</source>
+      </segment>
+    </unit>
+    <unit id="list.bodiesOff">
+      <segment>
+        <source>Only method, path, status, timing and headers are recorded.</source>
+      </segment>
+    </unit>
+    <unit id="list.redactOn">
+      <segment>
+        <source>Names, email addresses, phone numbers and addresses are masked before they are stored.</source>
+      </segment>
+    </unit>
+    <unit id="list.redactOff">
+      <segment>
+        <source>Personal data is stored as it was sent.</source>
+      </segment>
+    </unit>
+    <unit id="list.retention">
+      <segment>
+        <source>The agentnexus:cleanup command deletes entries older than %d days.</source>
+      </segment>
+    </unit>
+    <unit id="list.retentionForever">
+      <segment>
+        <source>Entries are kept until you delete them.</source>
+      </segment>
+    </unit>
+    <unit id="filter.label">
+      <segment>
+        <source>Filter the traffic log</source>
+      </segment>
+    </unit>
+    <unit id="filter.protocol">
+      <segment>
+        <source>Protocol</source>
+      </segment>
+    </unit>
+    <unit id="filter.channel">
+      <segment>
+        <source>Caller</source>
+      </segment>
+    </unit>
+    <unit id="filter.outcome">
+      <segment>
+        <source>Outcome</source>
+      </segment>
+    </unit>
+    <unit id="filter.period">
+      <segment>
+        <source>Time</source>
+      </segment>
+    </unit>
+    <unit id="filter.search">
+      <segment>
+        <source>Search</source>
+      </segment>
+    </unit>
+    <unit id="filter.search.placeholder">
+      <segment>
+        <source>Operation, object id or path</source>
+      </segment>
+    </unit>
+    <unit id="filter.any">
+      <segment>
+        <source>All</source>
+      </segment>
+    </unit>
+    <unit id="filter.apply">
+      <segment>
+        <source>Apply filter</source>
+      </segment>
+    </unit>
+    <unit id="filter.reset">
+      <segment>
+        <source>Reset filter</source>
+      </segment>
+    </unit>
+    <unit id="outcome.ok">
+      <segment>
+        <source>Successful</source>
+      </segment>
+    </unit>
+    <unit id="outcome.error">
+      <segment>
+        <source>Failed</source>
+      </segment>
+    </unit>
+    <unit id="period.1h">
+      <segment>
+        <source>Last hour</source>
+      </segment>
+    </unit>
+    <unit id="period.24h">
+      <segment>
+        <source>Last 24 hours</source>
+      </segment>
+    </unit>
+    <unit id="period.7d">
+      <segment>
+        <source>Last 7 days</source>
+      </segment>
+    </unit>
+    <unit id="channel.api">
+      <segment>
+        <source>Agent (API)</source>
+      </segment>
+    </unit>
+    <unit id="channel.widget">
+      <segment>
+        <source>Frontend widget</source>
+      </segment>
+    </unit>
+    <unit id="channel.backend">
+      <segment>
+        <source>Backend console</source>
+      </segment>
+    </unit>
+    <unit id="channel.agent">
+      <segment>
+        <source>Demo agent</source>
+      </segment>
+    </unit>
+    <unit id="live.follow">
+      <segment>
+        <source>Follow live</source>
+      </segment>
+    </unit>
+    <unit id="live.stop">
+      <segment>
+        <source>Stop following</source>
+      </segment>
+    </unit>
+    <unit id="live.status.on">
+      <segment>
+        <source>Following live. New exchanges appear at the top.</source>
+      </segment>
+    </unit>
+    <unit id="live.status.off">
+      <segment>
+        <source>Live following is off.</source>
+      </segment>
+    </unit>
+    <unit id="live.new">
+      <segment>
+        <source>New exchanges: %d</source>
+      </segment>
+    </unit>
+    <unit id="live.error">
+      <segment>
+        <source>The traffic log could not be updated. Live following has stopped.</source>
+      </segment>
+    </unit>
+    <unit id="table.caption">
+      <segment>
+        <source>Protocol exchanges, newest first</source>
+      </segment>
+    </unit>
+    <unit id="table.time">
+      <segment>
+        <source>Time</source>
+      </segment>
+    </unit>
+    <unit id="table.protocol">
+      <segment>
+        <source>Protocol</source>
+      </segment>
+    </unit>
+    <unit id="table.channel">
+      <segment>
+        <source>Caller</source>
+      </segment>
+    </unit>
+    <unit id="table.request">
+      <segment>
+        <source>Request</source>
+      </segment>
+    </unit>
+    <unit id="table.operation">
+      <segment>
+        <source>Operation</source>
+      </segment>
+    </unit>
+    <unit id="table.status">
+      <segment>
+        <source>Status</source>
+      </segment>
+    </unit>
+    <unit id="table.duration">
+      <segment>
+        <source>Duration</source>
+      </segment>
+    </unit>
+    <unit id="table.events">
+      <segment>
+        <source>Events</source>
+      </segment>
+    </unit>
+    <unit id="table.object">
+      <segment>
+        <source>Object</source>
+      </segment>
+    </unit>
+    <unit id="table.stream">
+      <segment>
+        <source>Stream</source>
+      </segment>
+    </unit>
+    <unit id="table.open">
+      <segment>
+        <source>Open exchange %d</source>
+      </segment>
+    </unit>
+    <unit id="empty.title">
+      <segment>
+        <source>Nothing recorded yet</source>
+      </segment>
+    </unit>
+    <unit id="empty.message">
+      <segment>
+        <source>Call an endpoint and the exchange appears here: open a protocol console or one of the demo pages.</source>
+      </segment>
+    </unit>
+    <unit id="empty.filtered">
+      <segment>
+        <source>No exchange matches this filter.</source>
+      </segment>
+    </unit>
+    <unit id="detail.title">
+      <segment>
+        <source>Exchange</source>
+      </segment>
+    </unit>
+    <unit id="detail.heading">
+      <segment>
+        <source>Exchange %d</source>
+      </segment>
+    </unit>
+    <unit id="detail.back">
+      <segment>
+        <source>Back to the traffic log</source>
+      </segment>
+    </unit>
+    <unit id="detail.notFound">
+      <segment>
+        <source>This entry no longer exists. The retention cleanup may have deleted it.</source>
+      </segment>
+    </unit>
+    <unit id="detail.summary">
+      <segment>
+        <source>Summary</source>
+      </segment>
+    </unit>
+    <unit id="detail.request">
+      <segment>
+        <source>Request</source>
+      </segment>
+    </unit>
+    <unit id="detail.response">
+      <segment>
+        <source>Response</source>
+      </segment>
+    </unit>
+    <unit id="detail.events">
+      <segment>
+        <source>Streamed events</source>
+      </segment>
+    </unit>
+    <unit id="detail.eventsIntro">
+      <segment>
+        <source>%d events over Server-Sent Events, with the time each one left the server.</source>
+      </segment>
+    </unit>
+    <unit id="detail.eventsCapped">
+      <segment>
+        <source>Only the first 600 events are stored.</source>
+      </segment>
+    </unit>
+    <unit id="detail.headers">
+      <segment>
+        <source>Headers</source>
+      </segment>
+    </unit>
+    <unit id="detail.body">
+      <segment>
+        <source>Body</source>
+      </segment>
+    </unit>
+    <unit id="detail.noHeaders">
+      <segment>
+        <source>No recorded headers.</source>
+      </segment>
+    </unit>
+    <unit id="detail.noBody">
+      <segment>
+        <source>No body recorded.</source>
+      </segment>
+    </unit>
+    <unit id="detail.object">
+      <segment>
+        <source>Protocol object</source>
+      </segment>
+    </unit>
+    <unit id="detail.openObject">
+      <segment>
+        <source>Open in the inspector</source>
+      </segment>
+    </unit>
+    <unit id="detail.noObject">
+      <segment>
+        <source>No stored object matches this exchange.</source>
+      </segment>
+    </unit>
+    <unit id="detail.error">
+      <segment>
+        <source>Error</source>
+      </segment>
+    </unit>
+    <unit id="detail.correlation">
+      <segment>
+        <source>Object id</source>
+      </segment>
+    </unit>
+    <unit id="detail.showJson">
+      <segment>
+        <source>Show JSON</source>
+      </segment>
+    </unit>
+    <unit id="detail.offset">
+      <segment>
+        <source>+%d ms</source>
+      </segment>
+    </unit>
+    <unit id="pagination.label">
+      <segment>
+        <source>Pages</source>
+      </segment>
+    </unit>
+    <unit id="pagination.first">
+      <segment>
+        <source>First page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.previous">
+      <segment>
+        <source>Previous page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.next">
+      <segment>
+        <source>Next page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.last">
+      <segment>
+        <source>Last page</source>
+      </segment>
+    </unit>
+    <unit id="pagination.range">
+      <segment>
+        <source>Entries %1$d to %2$d of %3$d</source>
+      </segment>
+    </unit>
+  </file>
+</xliff>

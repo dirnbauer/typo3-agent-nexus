@@ -1,0 +1,653 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="inspector">
+    <unit id="list.heading.task">
+      <segment state="final">
+        <source>A2A tasks</source>
+        <target>A2A-Tasks</target>
+      </segment>
+    </unit>
+    <unit id="list.heading.run">
+      <segment state="final">
+        <source>AG-UI runs</source>
+        <target>AG-UI-Läufe</target>
+      </segment>
+    </unit>
+    <unit id="list.heading.checkout">
+      <segment state="final">
+        <source>UCP checkout sessions</source>
+        <target>UCP-Checkout-Sessions</target>
+      </segment>
+    </unit>
+    <unit id="list.heading.mandate">
+      <segment state="final">
+        <source>AP2 mandates and receipts</source>
+        <target>AP2-Mandate und Belege</target>
+      </segment>
+    </unit>
+    <unit id="list.heading.surface">
+      <segment state="final">
+        <source>A2UI surfaces</source>
+        <target>A2UI-Oberflächen</target>
+      </segment>
+    </unit>
+    <unit id="list.lede.task">
+      <segment state="final">
+        <source>Every task the A2A agent accepted and the state it reached. Open one to see its messages, artifacts and history.</source>
+        <target>Alle Tasks, die der A2A-Agent angenommen hat, und der Zustand, den sie erreicht haben. Öffnen Sie einen Task, um Nachrichten, Artefakte und Verlauf zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="list.lede.run">
+      <segment state="final">
+        <source>Every AG-UI run, how it ended and the approvals it asked for.</source>
+        <target>Alle AG-UI-Läufe, wie sie geendet haben und welche Freigaben sie angefragt haben.</target>
+      </segment>
+    </unit>
+    <unit id="list.lede.checkout">
+      <segment state="final">
+        <source>Every checkout session the UCP merchant created, with its status and total.</source>
+        <target>Alle Checkout-Sessions, die der UCP-Händler angelegt hat, mit Status und Summe.</target>
+      </segment>
+    </unit>
+    <unit id="list.lede.mandate">
+      <segment state="final">
+        <source>Every AP2 mandate and receipt the sandbox signed, and whether it verified.</source>
+        <target>Alle AP2-Mandate und Belege, die die Sandbox signiert hat, und ob sie geprüft wurden.</target>
+      </segment>
+    </unit>
+    <unit id="list.lede.surface">
+      <segment state="final">
+        <source>Every A2UI surface an agent built, and the data a person sent back.</source>
+        <target>Alle A2UI-Oberflächen, die ein Agent gebaut hat, und die Daten, die ein Mensch zurückgeschickt hat.</target>
+      </segment>
+    </unit>
+    <unit id="filter.label">
+      <segment state="final">
+        <source>Filter the list</source>
+        <target>Liste filtern</target>
+      </segment>
+    </unit>
+    <unit id="filter.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Zustand</target>
+      </segment>
+    </unit>
+    <unit id="filter.source">
+      <segment state="final">
+        <source>Created by</source>
+        <target>Erzeugt von</target>
+      </segment>
+    </unit>
+    <unit id="filter.context">
+      <segment state="final">
+        <source>Context</source>
+        <target>Kontext</target>
+      </segment>
+    </unit>
+    <unit id="filter.search">
+      <segment state="final">
+        <source>Search</source>
+        <target>Suche</target>
+      </segment>
+    </unit>
+    <unit id="filter.search.placeholder">
+      <segment state="final">
+        <source>Id, context or summary</source>
+        <target>ID, Kontext oder Zusammenfassung</target>
+      </segment>
+    </unit>
+    <unit id="filter.any">
+      <segment state="final">
+        <source>All</source>
+        <target>Alle</target>
+      </segment>
+    </unit>
+    <unit id="filter.apply">
+      <segment state="final">
+        <source>Apply filter</source>
+        <target>Filter anwenden</target>
+      </segment>
+    </unit>
+    <unit id="filter.reset">
+      <segment state="final">
+        <source>Reset filter</source>
+        <target>Filter zurücksetzen</target>
+      </segment>
+    </unit>
+    <unit id="source.api">
+      <segment state="final">
+        <source>Agent (API)</source>
+        <target>Agent (API)</target>
+      </segment>
+    </unit>
+    <unit id="source.widget">
+      <segment state="final">
+        <source>Frontend widget</source>
+        <target>Frontend-Widget</target>
+      </segment>
+    </unit>
+    <unit id="source.backend">
+      <segment state="final">
+        <source>Backend console</source>
+        <target>Backend-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="source.agent">
+      <segment state="final">
+        <source>Demo agent</source>
+        <target>Demo-Agent</target>
+      </segment>
+    </unit>
+    <unit id="table.caption">
+      <segment state="final">
+        <source>Stored objects, most recent change first</source>
+        <target>Gespeicherte Objekte, die zuletzt geänderten zuerst</target>
+      </segment>
+    </unit>
+    <unit id="table.object">
+      <segment state="final">
+        <source>Object</source>
+        <target>Objekt</target>
+      </segment>
+    </unit>
+    <unit id="table.label">
+      <segment state="final">
+        <source>Summary</source>
+        <target>Zusammenfassung</target>
+      </segment>
+    </unit>
+    <unit id="table.state">
+      <segment state="final">
+        <source>State</source>
+        <target>Zustand</target>
+      </segment>
+    </unit>
+    <unit id="table.source">
+      <segment state="final">
+        <source>Created by</source>
+        <target>Erzeugt von</target>
+      </segment>
+    </unit>
+    <unit id="table.updated">
+      <segment state="final">
+        <source>Last change</source>
+        <target>Letzte Änderung</target>
+      </segment>
+    </unit>
+    <unit id="table.context">
+      <segment state="final">
+        <source>Context</source>
+        <target>Kontext</target>
+      </segment>
+    </unit>
+    <unit id="table.open">
+      <segment state="final">
+        <source>Open %s</source>
+        <target>%s öffnen</target>
+      </segment>
+    </unit>
+    <unit id="empty.title">
+      <segment state="final">
+        <source>Nothing here yet</source>
+        <target>Noch nichts vorhanden</target>
+      </segment>
+    </unit>
+    <unit id="empty.filtered">
+      <segment state="final">
+        <source>No object matches this filter.</source>
+        <target>Kein Objekt passt zu diesem Filter.</target>
+      </segment>
+    </unit>
+    <unit id="empty.message.task">
+      <segment state="final">
+        <source>Delegate a task in the A2A console or on the demo page, and it appears here.</source>
+        <target>Delegieren Sie einen Task in der A2A-Konsole oder auf der Demoseite, dann erscheint er hier.</target>
+      </segment>
+    </unit>
+    <unit id="empty.message.run">
+      <segment state="final">
+        <source>Start a run in the AG-UI console or ask the assistant on the demo page, and it appears here.</source>
+        <target>Starten Sie einen Lauf in der AG-UI-Konsole oder fragen Sie den Assistenten auf der Demoseite, dann erscheint er hier.</target>
+      </segment>
+    </unit>
+    <unit id="empty.message.checkout">
+      <segment state="final">
+        <source>Run a checkout in the UCP console or on the demo page, and the session appears here.</source>
+        <target>Führen Sie einen Checkout in der UCP-Konsole oder auf der Demoseite aus, dann erscheint die Session hier.</target>
+      </segment>
+    </unit>
+    <unit id="empty.message.mandate">
+      <segment state="final">
+        <source>Sign a mandate in the AP2 studio or approve a purchase on the demo page, and it appears here.</source>
+        <target>Signieren Sie ein Mandat im AP2-Studio oder geben Sie auf der Demoseite einen Kauf frei, dann erscheint es hier.</target>
+      </segment>
+    </unit>
+    <unit id="empty.message.surface">
+      <segment state="final">
+        <source>Generate a surface in the A2UI playground or on the demo page, and it appears here.</source>
+        <target>Erzeugen Sie eine Oberfläche im A2UI-Playground oder auf der Demoseite, dann erscheint sie hier.</target>
+      </segment>
+    </unit>
+    <unit id="detail.back">
+      <segment state="final">
+        <source>Back to the list</source>
+        <target>Zurück zur Liste</target>
+      </segment>
+    </unit>
+    <unit id="detail.notFound">
+      <segment state="final">
+        <source>This object no longer exists. The retention cleanup may have deleted it.</source>
+        <target>Dieses Objekt existiert nicht mehr. Die Aufbewahrungsbereinigung hat es vermutlich gelöscht.</target>
+      </segment>
+    </unit>
+    <unit id="detail.summary">
+      <segment state="final">
+        <source>Summary</source>
+        <target>Übersicht</target>
+      </segment>
+    </unit>
+    <unit id="detail.objectId">
+      <segment state="final">
+        <source>Id</source>
+        <target>ID</target>
+      </segment>
+    </unit>
+    <unit id="detail.created">
+      <segment state="final">
+        <source>Created</source>
+        <target>Erstellt</target>
+      </segment>
+    </unit>
+    <unit id="detail.history">
+      <segment state="final">
+        <source>State history</source>
+        <target>Zustandsverlauf</target>
+      </segment>
+    </unit>
+    <unit id="detail.noHistory">
+      <segment state="final">
+        <source>No state changes were recorded.</source>
+        <target>Es wurden keine Zustandsänderungen aufgezeichnet.</target>
+      </segment>
+    </unit>
+    <unit id="detail.traffic">
+      <segment state="final">
+        <source>Traffic</source>
+        <target>Datenverkehr</target>
+      </segment>
+    </unit>
+    <unit id="detail.trafficIntro">
+      <segment state="final">
+        <source>The exchanges in the traffic log that touched this object.</source>
+        <target>Die Anfragen im Datenverkehr, die dieses Objekt betroffen haben.</target>
+      </segment>
+    </unit>
+    <unit id="detail.noTraffic">
+      <segment state="final">
+        <source>No recorded exchange touched this object. Traffic entries are deleted after the retention period.</source>
+        <target>Keine aufgezeichnete Anfrage hat dieses Objekt betroffen. Einträge im Datenverkehr werden nach der Aufbewahrungsfrist gelöscht.</target>
+      </segment>
+    </unit>
+    <unit id="detail.allTraffic">
+      <segment state="final">
+        <source>Search the traffic log</source>
+        <target>Im Datenverkehr suchen</target>
+      </segment>
+    </unit>
+    <unit id="detail.related">
+      <segment state="final">
+        <source>Same context</source>
+        <target>Gleicher Kontext</target>
+      </segment>
+    </unit>
+    <unit id="detail.json">
+      <segment state="final">
+        <source>Stored object</source>
+        <target>Gespeichertes Objekt</target>
+      </segment>
+    </unit>
+    <unit id="detail.jsonIntro">
+      <segment state="final">
+        <source>The object exactly as the protocol describes it.</source>
+        <target>Das Objekt genau so, wie das Protokoll es beschreibt.</target>
+      </segment>
+    </unit>
+    <unit id="detail.showJson">
+      <segment state="final">
+        <source>Show JSON</source>
+        <target>JSON anzeigen</target>
+      </segment>
+    </unit>
+    <unit id="task.status">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="task.statusMessage">
+      <segment state="final">
+        <source>Status message</source>
+        <target>Statusmeldung</target>
+      </segment>
+    </unit>
+    <unit id="task.messages">
+      <segment state="final">
+        <source>Messages</source>
+        <target>Nachrichten</target>
+      </segment>
+    </unit>
+    <unit id="task.noMessages">
+      <segment state="final">
+        <source>No messages are stored for this task.</source>
+        <target>Für diesen Task sind keine Nachrichten gespeichert.</target>
+      </segment>
+    </unit>
+    <unit id="task.role.user">
+      <segment state="final">
+        <source>Client</source>
+        <target>Client</target>
+      </segment>
+    </unit>
+    <unit id="task.role.agent">
+      <segment state="final">
+        <source>Agent</source>
+        <target>Agent</target>
+      </segment>
+    </unit>
+    <unit id="task.artifacts">
+      <segment state="final">
+        <source>Artifacts</source>
+        <target>Artefakte</target>
+      </segment>
+    </unit>
+    <unit id="task.noArtifacts">
+      <segment state="final">
+        <source>The task has not produced an artifact.</source>
+        <target>Der Task hat noch kein Artefakt erzeugt.</target>
+      </segment>
+    </unit>
+    <unit id="task.metadata">
+      <segment state="final">
+        <source>Metadata</source>
+        <target>Metadaten</target>
+      </segment>
+    </unit>
+    <unit id="run.thread">
+      <segment state="final">
+        <source>Thread</source>
+        <target>Thread</target>
+      </segment>
+    </unit>
+    <unit id="run.version">
+      <segment state="final">
+        <source>Protocol version</source>
+        <target>Protokollversion</target>
+      </segment>
+    </unit>
+    <unit id="run.messages">
+      <segment state="final">
+        <source>Input messages</source>
+        <target>Eingabe-Nachrichten</target>
+      </segment>
+    </unit>
+    <unit id="run.outcome">
+      <segment state="final">
+        <source>Outcome</source>
+        <target>Ergebnis</target>
+      </segment>
+    </unit>
+    <unit id="run.interrupts">
+      <segment state="final">
+        <source>Interrupts</source>
+        <target>Unterbrechungen</target>
+      </segment>
+    </unit>
+    <unit id="run.interruptReason">
+      <segment state="final">
+        <source>Reason</source>
+        <target>Grund</target>
+      </segment>
+    </unit>
+    <unit id="run.resume">
+      <segment state="final">
+        <source>Resume</source>
+        <target>Fortsetzung</target>
+      </segment>
+    </unit>
+    <unit id="run.result">
+      <segment state="final">
+        <source>Result</source>
+        <target>Resultat</target>
+      </segment>
+    </unit>
+    <unit id="run.state">
+      <segment state="final">
+        <source>Shared state</source>
+        <target>Gemeinsamer Zustand</target>
+      </segment>
+    </unit>
+    <unit id="run.events">
+      <segment state="final">
+        <source>Events streamed</source>
+        <target>Gestreamte Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="checkout.status">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="checkout.version">
+      <segment state="final">
+        <source>UCP version</source>
+        <target>UCP-Version</target>
+      </segment>
+    </unit>
+    <unit id="checkout.lines">
+      <segment state="final">
+        <source>Line items</source>
+        <target>Positionen</target>
+      </segment>
+    </unit>
+    <unit id="checkout.item">
+      <segment state="final">
+        <source>Item</source>
+        <target>Artikel</target>
+      </segment>
+    </unit>
+    <unit id="checkout.quantity">
+      <segment state="final">
+        <source>Quantity</source>
+        <target>Menge</target>
+      </segment>
+    </unit>
+    <unit id="checkout.price">
+      <segment state="final">
+        <source>Price</source>
+        <target>Preis</target>
+      </segment>
+    </unit>
+    <unit id="checkout.total">
+      <segment state="final">
+        <source>Total</source>
+        <target>Summe</target>
+      </segment>
+    </unit>
+    <unit id="checkout.totals">
+      <segment state="final">
+        <source>Totals</source>
+        <target>Summen</target>
+      </segment>
+    </unit>
+    <unit id="checkout.messages">
+      <segment state="final">
+        <source>Messages from the merchant</source>
+        <target>Nachrichten des Händlers</target>
+      </segment>
+    </unit>
+    <unit id="checkout.links">
+      <segment state="final">
+        <source>Links</source>
+        <target>Links</target>
+      </segment>
+    </unit>
+    <unit id="checkout.order">
+      <segment state="final">
+        <source>Order</source>
+        <target>Bestellung</target>
+      </segment>
+    </unit>
+    <unit id="checkout.continue">
+      <segment state="final">
+        <source>Continue URL</source>
+        <target>Fortsetzungs-URL</target>
+      </segment>
+    </unit>
+    <unit id="checkout.expires">
+      <segment state="final">
+        <source>Expires</source>
+        <target>Läuft ab</target>
+      </segment>
+    </unit>
+    <unit id="mandate.type">
+      <segment state="final">
+        <source>Type</source>
+        <target>Typ</target>
+      </segment>
+    </unit>
+    <unit id="mandate.role">
+      <segment state="final">
+        <source>Signed by</source>
+        <target>Signiert von</target>
+      </segment>
+    </unit>
+    <unit id="mandate.verification">
+      <segment state="final">
+        <source>Verification</source>
+        <target>Prüfung</target>
+      </segment>
+    </unit>
+    <unit id="mandate.verified">
+      <segment state="final">
+        <source>Verified</source>
+        <target>Geprüft</target>
+      </segment>
+    </unit>
+    <unit id="mandate.rejected">
+      <segment state="final">
+        <source>Rejected</source>
+        <target>Abgelehnt</target>
+      </segment>
+    </unit>
+    <unit id="mandate.checks">
+      <segment state="final">
+        <source>Checks</source>
+        <target>Prüfungen</target>
+      </segment>
+    </unit>
+    <unit id="mandate.pass">
+      <segment state="final">
+        <source>Passed</source>
+        <target>Bestanden</target>
+      </segment>
+    </unit>
+    <unit id="mandate.fail">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Nicht bestanden</target>
+      </segment>
+    </unit>
+    <unit id="mandate.header">
+      <segment state="final">
+        <source>Header</source>
+        <target>Header</target>
+      </segment>
+    </unit>
+    <unit id="mandate.claims">
+      <segment state="final">
+        <source>Claims</source>
+        <target>Claims</target>
+      </segment>
+    </unit>
+    <unit id="mandate.disclosures">
+      <segment state="final">
+        <source>Disclosures</source>
+        <target>Offenlegungen</target>
+      </segment>
+    </unit>
+    <unit id="mandate.token">
+      <segment state="final">
+        <source>Token</source>
+        <target>Token</target>
+      </segment>
+    </unit>
+    <unit id="surface.version">
+      <segment state="final">
+        <source>A2UI version</source>
+        <target>A2UI-Version</target>
+      </segment>
+    </unit>
+    <unit id="surface.messages">
+      <segment state="final">
+        <source>Messages sent to the renderer</source>
+        <target>An den Renderer gesendete Nachrichten</target>
+      </segment>
+    </unit>
+    <unit id="surface.dataModel">
+      <segment state="final">
+        <source>Data model</source>
+        <target>Datenmodell</target>
+      </segment>
+    </unit>
+    <unit id="surface.actions">
+      <segment state="final">
+        <source>Actions received</source>
+        <target>Empfangene Aktionen</target>
+      </segment>
+    </unit>
+    <unit id="surface.noActions">
+      <segment state="final">
+        <source>Nobody has submitted this surface yet.</source>
+        <target>Diese Oberfläche wurde noch nicht abgeschickt.</target>
+      </segment>
+    </unit>
+    <unit id="pagination.label">
+      <segment state="final">
+        <source>Pages</source>
+        <target>Seiten</target>
+      </segment>
+    </unit>
+    <unit id="pagination.first">
+      <segment state="final">
+        <source>First page</source>
+        <target>Erste Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.previous">
+      <segment state="final">
+        <source>Previous page</source>
+        <target>Vorherige Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.next">
+      <segment state="final">
+        <source>Next page</source>
+        <target>Nächste Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.last">
+      <segment state="final">
+        <source>Last page</source>
+        <target>Letzte Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.range">
+      <segment state="final">
+        <source>Objects %1$d to %2$d of %3$d</source>
+        <target>Objekte %1$d bis %2$d von %3$d</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

@@ -1,0 +1,14 @@
+/* Agent Nexus — traffic log. Loads after the base layers. */
+
+.anx-traffic__policy { max-width: 70rem; }
+.anx-traffic__filter .form-row { align-items: flex-end; }
+.anx-traffic__filter-actions { display: flex; gap: 0.5rem; }
+.anx-traffic__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin: 0.5rem 0 1rem; }
+.anx-traffic__toolbar [aria-pressed="true"] { border-color: var(--typo3-state-primary-border-color, var(--accent)); }
+.anx-traffic__live-status { margin: 0; }
+.anx-traffic__time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.anx-traffic__request code { overflow-wrap: anywhere; }
+.anx-traffic__object { font-family: var(--anx-font-mono); font-size: var(--anx-text-xs); overflow-wrap: anywhere; }
+.anx-traffic__row.is-error td:first-child { box-shadow: inset 3px 0 0 var(--anx-danger); }
+.anx-traffic__io { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 32rem), 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+.anx-traffic__io > section { min-width: 0; }

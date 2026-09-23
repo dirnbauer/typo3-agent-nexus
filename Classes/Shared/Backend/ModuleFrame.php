@@ -85,6 +85,25 @@ final readonly class ModuleFrame
         return $moduleTemplate;
     }
 
+    /**
+     * The query of a module URL as hidden form fields. A GET filter form
+     * replaces the query string of its action, so the route token has to
+     * travel as a field.
+     *
+     * @return array<string, string>
+     */
+    public function hiddenFieldsOf(string $uri): array
+    {
+        parse_str((string)parse_url($uri, PHP_URL_QUERY), $query);
+        $fields = [];
+        foreach ($query as $name => $value) {
+            if (is_string($value)) {
+                $fields[(string)$name] = $value;
+            }
+        }
+        return $fields;
+    }
+
     /** A label from this extension's module label file. */
     public function label(string $key): string
     {

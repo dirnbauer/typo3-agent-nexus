@@ -128,6 +128,31 @@ final class ObjectStore implements SingletonInterface
     }
 
     /**
+     * The list query, newest change first, for core's QueryBuilderPaginator;
+     * turn its rows into objects with {@see hydrateRows()}.
+     */
+    public function listQuery(ObjectFilter $filter): QueryBuilder
+    {
+        return $this->filtered($filter)
+            ->select('*')
+            ->orderBy('tstamp', 'DESC')
+            ->addOrderBy('uid', 'DESC');
+    }
+
+    /**
+     * @param iterable<array<string, mixed>> $rows
+     * @return list<ProtocolObject>
+     */
+    public function hydrateRows(iterable $rows): array
+    {
+        $objects = [];
+        foreach ($rows as $row) {
+            $objects[] = $this->hydrate($row);
+        }
+        return $objects;
+    }
+
+    /**
      * Distinct states of one kind, for the inspector's state filter.
      *
      * @return list<string>

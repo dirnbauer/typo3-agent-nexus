@@ -33,6 +33,18 @@ enum ObjectKind: string
         };
     }
 
+    /** The inspector module that lists this kind. */
+    public function inspectorModule(): string
+    {
+        return 'agentnexus_inspector_' . match ($this) {
+            self::Surface => 'surfaces',
+            self::Run => 'runs',
+            self::Task => 'tasks',
+            self::Checkout => 'checkouts',
+            self::Mandate => 'mandates',
+        };
+    }
+
     public static function forProtocol(Protocol $protocol): self
     {
         return match ($protocol) {

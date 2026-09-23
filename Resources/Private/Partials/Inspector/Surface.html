@@ -1,0 +1,54 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:if condition="{view.version}">
+    <dl class="anx-dl">
+        <div><dt><f:translate domain="agent_nexus.inspector" key="surface.version" /></dt><dd><code>{view.version}</code></dd></div>
+    </dl>
+</f:if>
+
+<section aria-labelledby="anx-surface-messages">
+    <h2 id="anx-surface-messages"><f:translate domain="agent_nexus.inspector" key="surface.messages" /></h2>
+    <ol class="anx-events">
+        <f:for each="{view.messages}" as="message">
+            <li class="anx-events__item">
+                <details>
+                    <summary>
+                        <span class="anx-events__index">{message.index}</span>
+                        <code class="anx-events__name">{message.name}</code>
+                    </summary>
+                    <pre class="anx-code" tabindex="0"><code>{message.json}</code></pre>
+                </details>
+            </li>
+        </f:for>
+    </ol>
+</section>
+
+<f:if condition="{view.dataModel}">
+    <section class="anx-section" aria-labelledby="anx-surface-data">
+        <h2 id="anx-surface-data"><f:translate domain="agent_nexus.inspector" key="surface.dataModel" /></h2>
+        <pre class="anx-code" tabindex="0"><code>{view.dataModel}</code></pre>
+    </section>
+</f:if>
+
+<section class="anx-section" aria-labelledby="anx-surface-actions">
+    <h2 id="anx-surface-actions"><f:translate domain="agent_nexus.inspector" key="surface.actions" /></h2>
+    <f:if condition="{view.actions}">
+        <f:then>
+            <ol class="anx-events">
+                <f:for each="{view.actions}" as="action">
+                    <li class="anx-events__item">
+                        <details>
+                            <summary>
+                                <code class="anx-events__name">{action.name}</code>
+                                <span class="text-variant">{action.component}</span>
+                                <span class="anx-events__offset text-variant">{action.timestamp}</span>
+                            </summary>
+                            <pre class="anx-code" tabindex="0"><code>{action.json}</code></pre>
+                        </details>
+                    </li>
+                </f:for>
+            </ol>
+        </f:then>
+        <f:else><p class="text-variant"><f:translate domain="agent_nexus.inspector" key="surface.noActions" /></p></f:else>
+    </f:if>
+</section>
+</html>

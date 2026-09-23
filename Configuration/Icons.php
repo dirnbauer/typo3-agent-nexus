@@ -22,8 +22,7 @@ use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
  *
  * Extension.svg is the same drawing as agentnexus-module: it is the brand mark.
  *
- * The pre-3.0 identifiers are kept as aliases so third-party TCA, TSconfig and
- * templates keep working. They are deprecated and will be removed in 4.0.
+ * The pre-3.0 aliases (a2ui-module, agentnexus-overview …) were removed in 4.0.
  */
 $icons = [
     // ---- module tree + one per protocol ---------------------------------
@@ -33,6 +32,8 @@ $icons = [
     'agentnexus-module-a2a' => 'agentnexus-module-a2a.svg',
     'agentnexus-module-ucp' => 'agentnexus-module-ucp.svg',
     'agentnexus-module-ap2' => 'agentnexus-module-ap2.svg',
+    'agentnexus-module-inspector' => 'agentnexus-module-inspector.svg',
+    'agentnexus-module-traffic' => 'agentnexus-module-traffic.svg',
 
     // ---- frontend plugins -------------------------------------------------
     'agentnexus-plugin-inquiry' => 'agentnexus-plugin-inquiry.svg',
@@ -47,19 +48,6 @@ $icons = [
     'agentnexus-status-ok' => 'agentnexus-status-ok.svg',
     'agentnexus-status-warn' => 'agentnexus-status-warn.svg',
     'agentnexus-status-danger' => 'agentnexus-status-danger.svg',
-
-    // ---- deprecated since 3.0, removed in 4.0 -----------------------------
-    'agentnexus-overview' => 'agentnexus-module.svg',
-    'a2ui-module' => 'agentnexus-module-a2ui.svg',
-    'agui-module' => 'agentnexus-module-agui.svg',
-    'a2a-module' => 'agentnexus-module-a2a.svg',
-    'ucp-module' => 'agentnexus-module-ucp.svg',
-    'ap2-module' => 'agentnexus-module-ap2.svg',
-    'a2ui-plugin-inquiry' => 'agentnexus-plugin-inquiry.svg',
-    'agui-plugin-assistant' => 'agentnexus-plugin-assistant.svg',
-    'a2a-plugin-concierge' => 'agentnexus-plugin-concierge.svg',
-    'ucp-plugin-checkout' => 'agentnexus-plugin-checkout.svg',
-    'ap2-plugin-trusted' => 'agentnexus-plugin-trustedsurface.svg',
 ];
 
 $registry = [];

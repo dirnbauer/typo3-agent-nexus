@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:2.0" version="2.0" srcLang="en" trgLang="de">
+  <file id="traffic">
+    <unit id="list.heading">
+      <segment state="final">
+        <source>Traffic</source>
+        <target>Datenverkehr</target>
+      </segment>
+    </unit>
+    <unit id="list.lede">
+      <segment state="final">
+        <source>Every request, response and streamed event of the protocol endpoints on this installation, newest first.</source>
+        <target>Jede Anfrage, Antwort und jedes gestreamte Ereignis der Protokoll-Endpunkte dieser Installation, das neueste zuerst.</target>
+      </segment>
+    </unit>
+    <unit id="list.recordingOff.title">
+      <segment state="final">
+        <source>Recording is off</source>
+        <target>Die Aufzeichnung ist ausgeschaltet</target>
+      </segment>
+    </unit>
+    <unit id="list.recordingOff.message">
+      <segment state="final">
+        <source>Turn on "Record the traffic log" in the extension configuration to see new exchanges here.</source>
+        <target>Schalten Sie „Record the traffic log“ in der Extension-Konfiguration ein, um neue Anfragen hier zu sehen.</target>
+      </segment>
+    </unit>
+    <unit id="list.bodiesOn">
+      <segment state="final">
+        <source>Request and response bodies are recorded.</source>
+        <target>Anfrage- und Antwortinhalte werden aufgezeichnet.</target>
+      </segment>
+    </unit>
+    <unit id="list.bodiesOff">
+      <segment state="final">
+        <source>Only method, path, status, timing and headers are recorded.</source>
+        <target>Nur Methode, Pfad, Status, Dauer und Header werden aufgezeichnet.</target>
+      </segment>
+    </unit>
+    <unit id="list.redactOn">
+      <segment state="final">
+        <source>Names, email addresses, phone numbers and addresses are masked before they are stored.</source>
+        <target>Namen, E-Mail-Adressen, Telefonnummern und Anschriften werden vor dem Speichern maskiert.</target>
+      </segment>
+    </unit>
+    <unit id="list.redactOff">
+      <segment state="final">
+        <source>Personal data is stored as it was sent.</source>
+        <target>Personenbezogene Daten werden so gespeichert, wie sie gesendet wurden.</target>
+      </segment>
+    </unit>
+    <unit id="list.retention">
+      <segment state="final">
+        <source>The agentnexus:cleanup command deletes entries older than %d days.</source>
+        <target>Der Befehl agentnexus:cleanup löscht Einträge, die älter als %d Tage sind.</target>
+      </segment>
+    </unit>
+    <unit id="list.retentionForever">
+      <segment state="final">
+        <source>Entries are kept until you delete them.</source>
+        <target>Einträge bleiben erhalten, bis Sie sie löschen.</target>
+      </segment>
+    </unit>
+    <unit id="filter.label">
+      <segment state="final">
+        <source>Filter the traffic log</source>
+        <target>Datenverkehr filtern</target>
+      </segment>
+    </unit>
+    <unit id="filter.protocol">
+      <segment state="final">
+        <source>Protocol</source>
+        <target>Protokoll</target>
+      </segment>
+    </unit>
+    <unit id="filter.channel">
+      <segment state="final">
+        <source>Caller</source>
+        <target>Aufrufer</target>
+      </segment>
+    </unit>
+    <unit id="filter.outcome">
+      <segment state="final">
+        <source>Outcome</source>
+        <target>Ergebnis</target>
+      </segment>
+    </unit>
+    <unit id="filter.period">
+      <segment state="final">
+        <source>Time</source>
+        <target>Zeitraum</target>
+      </segment>
+    </unit>
+    <unit id="filter.search">
+      <segment state="final">
+        <source>Search</source>
+        <target>Suche</target>
+      </segment>
+    </unit>
+    <unit id="filter.search.placeholder">
+      <segment state="final">
+        <source>Operation, object id or path</source>
+        <target>Operation, Objekt-ID oder Pfad</target>
+      </segment>
+    </unit>
+    <unit id="filter.any">
+      <segment state="final">
+        <source>All</source>
+        <target>Alle</target>
+      </segment>
+    </unit>
+    <unit id="filter.apply">
+      <segment state="final">
+        <source>Apply filter</source>
+        <target>Filter anwenden</target>
+      </segment>
+    </unit>
+    <unit id="filter.reset">
+      <segment state="final">
+        <source>Reset filter</source>
+        <target>Filter zurücksetzen</target>
+      </segment>
+    </unit>
+    <unit id="outcome.ok">
+      <segment state="final">
+        <source>Successful</source>
+        <target>Erfolgreich</target>
+      </segment>
+    </unit>
+    <unit id="outcome.error">
+      <segment state="final">
+        <source>Failed</source>
+        <target>Fehlgeschlagen</target>
+      </segment>
+    </unit>
+    <unit id="period.1h">
+      <segment state="final">
+        <source>Last hour</source>
+        <target>Letzte Stunde</target>
+      </segment>
+    </unit>
+    <unit id="period.24h">
+      <segment state="final">
+        <source>Last 24 hours</source>
+        <target>Letzte 24 Stunden</target>
+      </segment>
+    </unit>
+    <unit id="period.7d">
+      <segment state="final">
+        <source>Last 7 days</source>
+        <target>Letzte 7 Tage</target>
+      </segment>
+    </unit>
+    <unit id="channel.api">
+      <segment state="final">
+        <source>Agent (API)</source>
+        <target>Agent (API)</target>
+      </segment>
+    </unit>
+    <unit id="channel.widget">
+      <segment state="final">
+        <source>Frontend widget</source>
+        <target>Frontend-Widget</target>
+      </segment>
+    </unit>
+    <unit id="channel.backend">
+      <segment state="final">
+        <source>Backend console</source>
+        <target>Backend-Konsole</target>
+      </segment>
+    </unit>
+    <unit id="channel.agent">
+      <segment state="final">
+        <source>Demo agent</source>
+        <target>Demo-Agent</target>
+      </segment>
+    </unit>
+    <unit id="live.follow">
+      <segment state="final">
+        <source>Follow live</source>
+        <target>Live verfolgen</target>
+      </segment>
+    </unit>
+    <unit id="live.stop">
+      <segment state="final">
+        <source>Stop following</source>
+        <target>Nicht mehr verfolgen</target>
+      </segment>
+    </unit>
+    <unit id="live.status.on">
+      <segment state="final">
+        <source>Following live. New exchanges appear at the top.</source>
+        <target>Live-Verfolgung aktiv. Neue Anfragen erscheinen oben.</target>
+      </segment>
+    </unit>
+    <unit id="live.status.off">
+      <segment state="final">
+        <source>Live following is off.</source>
+        <target>Live-Verfolgung ist aus.</target>
+      </segment>
+    </unit>
+    <unit id="live.new">
+      <segment state="final">
+        <source>New exchanges: %d</source>
+        <target>Neue Anfragen: %d</target>
+      </segment>
+    </unit>
+    <unit id="live.error">
+      <segment state="final">
+        <source>The traffic log could not be updated. Live following has stopped.</source>
+        <target>Der Datenverkehr konnte nicht aktualisiert werden. Die Live-Verfolgung wurde beendet.</target>
+      </segment>
+    </unit>
+    <unit id="table.caption">
+      <segment state="final">
+        <source>Protocol exchanges, newest first</source>
+        <target>Protokoll-Anfragen, die neueste zuerst</target>
+      </segment>
+    </unit>
+    <unit id="table.time">
+      <segment state="final">
+        <source>Time</source>
+        <target>Zeit</target>
+      </segment>
+    </unit>
+    <unit id="table.protocol">
+      <segment state="final">
+        <source>Protocol</source>
+        <target>Protokoll</target>
+      </segment>
+    </unit>
+    <unit id="table.channel">
+      <segment state="final">
+        <source>Caller</source>
+        <target>Aufrufer</target>
+      </segment>
+    </unit>
+    <unit id="table.request">
+      <segment state="final">
+        <source>Request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="table.operation">
+      <segment state="final">
+        <source>Operation</source>
+        <target>Operation</target>
+      </segment>
+    </unit>
+    <unit id="table.status">
+      <segment state="final">
+        <source>Status</source>
+        <target>Status</target>
+      </segment>
+    </unit>
+    <unit id="table.duration">
+      <segment state="final">
+        <source>Duration</source>
+        <target>Dauer</target>
+      </segment>
+    </unit>
+    <unit id="table.events">
+      <segment state="final">
+        <source>Events</source>
+        <target>Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="table.object">
+      <segment state="final">
+        <source>Object</source>
+        <target>Objekt</target>
+      </segment>
+    </unit>
+    <unit id="table.stream">
+      <segment state="final">
+        <source>Stream</source>
+        <target>Stream</target>
+      </segment>
+    </unit>
+    <unit id="table.open">
+      <segment state="final">
+        <source>Open exchange %d</source>
+        <target>Anfrage %d öffnen</target>
+      </segment>
+    </unit>
+    <unit id="empty.title">
+      <segment state="final">
+        <source>Nothing recorded yet</source>
+        <target>Noch nichts aufgezeichnet</target>
+      </segment>
+    </unit>
+    <unit id="empty.message">
+      <segment state="final">
+        <source>Call an endpoint and the exchange appears here: open a protocol console or one of the demo pages.</source>
+        <target>Rufen Sie einen Endpunkt auf, dann erscheint die Anfrage hier: Öffnen Sie eine Protokoll-Konsole oder eine der Demoseiten.</target>
+      </segment>
+    </unit>
+    <unit id="empty.filtered">
+      <segment state="final">
+        <source>No exchange matches this filter.</source>
+        <target>Keine Anfrage passt zu diesem Filter.</target>
+      </segment>
+    </unit>
+    <unit id="detail.title">
+      <segment state="final">
+        <source>Exchange</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="detail.heading">
+      <segment state="final">
+        <source>Exchange %d</source>
+        <target>Anfrage %d</target>
+      </segment>
+    </unit>
+    <unit id="detail.back">
+      <segment state="final">
+        <source>Back to the traffic log</source>
+        <target>Zurück zum Datenverkehr</target>
+      </segment>
+    </unit>
+    <unit id="detail.notFound">
+      <segment state="final">
+        <source>This entry no longer exists. The retention cleanup may have deleted it.</source>
+        <target>Dieser Eintrag existiert nicht mehr. Die Aufbewahrungsbereinigung hat ihn vermutlich gelöscht.</target>
+      </segment>
+    </unit>
+    <unit id="detail.summary">
+      <segment state="final">
+        <source>Summary</source>
+        <target>Übersicht</target>
+      </segment>
+    </unit>
+    <unit id="detail.request">
+      <segment state="final">
+        <source>Request</source>
+        <target>Anfrage</target>
+      </segment>
+    </unit>
+    <unit id="detail.response">
+      <segment state="final">
+        <source>Response</source>
+        <target>Antwort</target>
+      </segment>
+    </unit>
+    <unit id="detail.events">
+      <segment state="final">
+        <source>Streamed events</source>
+        <target>Gestreamte Ereignisse</target>
+      </segment>
+    </unit>
+    <unit id="detail.eventsIntro">
+      <segment state="final">
+        <source>%d events over Server-Sent Events, with the time each one left the server.</source>
+        <target>%d Ereignisse per Server-Sent Events, mit dem Zeitpunkt, zu dem jedes den Server verließ.</target>
+      </segment>
+    </unit>
+    <unit id="detail.eventsCapped">
+      <segment state="final">
+        <source>Only the first 600 events are stored.</source>
+        <target>Nur die ersten 600 Ereignisse werden gespeichert.</target>
+      </segment>
+    </unit>
+    <unit id="detail.headers">
+      <segment state="final">
+        <source>Headers</source>
+        <target>Header</target>
+      </segment>
+    </unit>
+    <unit id="detail.body">
+      <segment state="final">
+        <source>Body</source>
+        <target>Inhalt</target>
+      </segment>
+    </unit>
+    <unit id="detail.noHeaders">
+      <segment state="final">
+        <source>No recorded headers.</source>
+        <target>Keine aufgezeichneten Header.</target>
+      </segment>
+    </unit>
+    <unit id="detail.noBody">
+      <segment state="final">
+        <source>No body recorded.</source>
+        <target>Kein Inhalt aufgezeichnet.</target>
+      </segment>
+    </unit>
+    <unit id="detail.object">
+      <segment state="final">
+        <source>Protocol object</source>
+        <target>Protokoll-Objekt</target>
+      </segment>
+    </unit>
+    <unit id="detail.openObject">
+      <segment state="final">
+        <source>Open in the inspector</source>
+        <target>Im Inspektor öffnen</target>
+      </segment>
+    </unit>
+    <unit id="detail.noObject">
+      <segment state="final">
+        <source>No stored object matches this exchange.</source>
+        <target>Kein gespeichertes Objekt gehört zu dieser Anfrage.</target>
+      </segment>
+    </unit>
+    <unit id="detail.error">
+      <segment state="final">
+        <source>Error</source>
+        <target>Fehler</target>
+      </segment>
+    </unit>
+    <unit id="detail.correlation">
+      <segment state="final">
+        <source>Object id</source>
+        <target>Objekt-ID</target>
+      </segment>
+    </unit>
+    <unit id="detail.showJson">
+      <segment state="final">
+        <source>Show JSON</source>
+        <target>JSON anzeigen</target>
+      </segment>
+    </unit>
+    <unit id="detail.offset">
+      <segment state="final">
+        <source>+%d ms</source>
+        <target>+%d ms</target>
+      </segment>
+    </unit>
+    <unit id="pagination.label">
+      <segment state="final">
+        <source>Pages</source>
+        <target>Seiten</target>
+      </segment>
+    </unit>
+    <unit id="pagination.first">
+      <segment state="final">
+        <source>First page</source>
+        <target>Erste Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.previous">
+      <segment state="final">
+        <source>Previous page</source>
+        <target>Vorherige Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.next">
+      <segment state="final">
+        <source>Next page</source>
+        <target>Nächste Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.last">
+      <segment state="final">
+        <source>Last page</source>
+        <target>Letzte Seite</target>
+      </segment>
+    </unit>
+    <unit id="pagination.range">
+      <segment state="final">
+        <source>Entries %1$d to %2$d of %3$d</source>
+        <target>Einträge %1$d bis %2$d von %3$d</target>
+      </segment>
+    </unit>
+  </file>
+</xliff>

@@ -1,0 +1,58 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<section aria-labelledby="anx-task-status">
+    <h2 id="anx-task-status"><f:translate domain="agent_nexus.inspector" key="task.status" /></h2>
+    <dl class="anx-dl">
+        <div><dt><f:translate domain="agent_nexus.inspector" key="task.status" /></dt><dd><code>{view.status}</code></dd></div>
+        <f:if condition="{view.statusTimestamp}">
+            <div><dt><f:translate domain="agent_nexus.inspector" key="table.updated" /></dt><dd><time datetime="{view.statusTimestamp}">{view.statusTimestamp}</time></dd></div>
+        </f:if>
+        <f:if condition="{view.statusText}">
+            <div><dt><f:translate domain="agent_nexus.inspector" key="task.statusMessage" /></dt><dd>{view.statusText}</dd></div>
+        </f:if>
+    </dl>
+</section>
+
+<section class="anx-section" aria-labelledby="anx-task-messages">
+    <h2 id="anx-task-messages"><f:translate domain="agent_nexus.inspector" key="task.messages" /></h2>
+    <f:if condition="{view.messages}">
+        <f:then>
+            <ol class="anx-inspector__messages">
+                <f:for each="{view.messages}" as="message">
+                    <li class="anx-inspector__message anx-inspector__message--{message.role}">
+                        <span class="anx-inspector__role"><f:translate domain="agent_nexus.inspector" key="task.role.{message.role}" default="{message.role}" /></span>
+                        <f:if condition="{message.text}"><p class="anx-inspector__text">{message.text -> f:format.nl2br()}</p></f:if>
+                        <f:if condition="{message.data}"><pre class="anx-code" tabindex="0"><code>{message.data}</code></pre></f:if>
+                    </li>
+                </f:for>
+            </ol>
+        </f:then>
+        <f:else><p class="text-variant"><f:translate domain="agent_nexus.inspector" key="task.noMessages" /></p></f:else>
+    </f:if>
+</section>
+
+<section class="anx-section" aria-labelledby="anx-task-artifacts">
+    <h2 id="anx-task-artifacts"><f:translate domain="agent_nexus.inspector" key="task.artifacts" /></h2>
+    <f:if condition="{view.artifacts}">
+        <f:then>
+            <f:for each="{view.artifacts}" as="artifact">
+                <article class="card">
+                    <div class="card-header"><h3 class="card-title h5"><code>{artifact.name}</code></h3></div>
+                    <div class="card-body">
+                        <f:if condition="{artifact.description}"><p class="text-variant">{artifact.description}</p></f:if>
+                        <f:if condition="{artifact.text}"><pre class="anx-code anx-code--wrap" tabindex="0"><code>{artifact.text}</code></pre></f:if>
+                        <f:if condition="{artifact.data}"><pre class="anx-code" tabindex="0"><code>{artifact.data}</code></pre></f:if>
+                    </div>
+                </article>
+            </f:for>
+        </f:then>
+        <f:else><p class="text-variant"><f:translate domain="agent_nexus.inspector" key="task.noArtifacts" /></p></f:else>
+    </f:if>
+</section>
+
+<f:if condition="{view.metadata}">
+    <section class="anx-section" aria-labelledby="anx-task-metadata">
+        <h2 id="anx-task-metadata"><f:translate domain="agent_nexus.inspector" key="task.metadata" /></h2>
+        <pre class="anx-code" tabindex="0"><code>{view.metadata}</code></pre>
+    </section>
+</f:if>
+</html>

@@ -1,0 +1,169 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-traffic"
+     data-traffic
+     data-latest-uid="{latestUid}"
+     data-filter="{filterArguments -> f:format.json()}">
+
+    <h1><f:translate domain="agent_nexus.traffic" key="list.heading" /></h1>
+    <p class="anx-lede"><f:translate domain="agent_nexus.traffic" key="list.lede" /></p>
+
+    <f:if condition="!{recording}">
+        <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::WARNING')}"
+                      title="{f:translate(domain: 'agent_nexus.traffic', key: 'list.recordingOff.title')}">
+            <p><f:translate domain="agent_nexus.traffic" key="list.recordingOff.message" /></p>
+        </f:be.infobox>
+    </f:if>
+
+    <p class="anx-traffic__policy text-variant">
+        <f:if condition="{capturesBodies}">
+            <f:then><f:translate domain="agent_nexus.traffic" key="list.bodiesOn" /></f:then>
+            <f:else><f:translate domain="agent_nexus.traffic" key="list.bodiesOff" /></f:else>
+        </f:if>
+        <f:if condition="{capturesBodies}">
+            <f:if condition="{redacts}">
+                <f:then><f:translate domain="agent_nexus.traffic" key="list.redactOn" /></f:then>
+                <f:else><f:translate domain="agent_nexus.traffic" key="list.redactOff" /></f:else>
+            </f:if>
+        </f:if>
+        <f:if condition="{retentionDays} > 0">
+            <f:then><f:translate domain="agent_nexus.traffic" key="list.retention" arguments="{0: retentionDays}" /></f:then>
+            <f:else><f:translate domain="agent_nexus.traffic" key="list.retentionForever" /></f:else>
+        </f:if>
+    </p>
+
+    <form method="get" action="{listUri}" class="anx-traffic__filter" role="search"
+          aria-label="{f:translate(domain: 'agent_nexus.traffic', key: 'filter.label')}">
+        <f:for each="{listHiddenFields}" as="value" key="name">
+            <input type="hidden" name="{name}" value="{value}" />
+        </f:for>
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="anx-traffic-protocol"><f:translate domain="agent_nexus.traffic" key="filter.protocol" /></label>
+                <select class="form-select" id="anx-traffic-protocol" name="protocol">
+                    <option value=""><f:translate domain="agent_nexus.traffic" key="filter.any" /></option>
+                    <f:for each="{protocols}" as="protocol">
+                        <option value="{protocol.value}" {f:if(condition: '{filter.protocol.value} == {protocol.value}', then: 'selected')}>{protocol.label}</option>
+                    </f:for>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="anx-traffic-channel"><f:translate domain="agent_nexus.traffic" key="filter.channel" /></label>
+                <select class="form-select" id="anx-traffic-channel" name="channel">
+                    <option value=""><f:translate domain="agent_nexus.traffic" key="filter.any" /></option>
+                    <f:for each="{channels}" as="channel">
+                        <option value="{channel}" {f:if(condition: '{filter.channel.value} == {channel}', then: 'selected')}><f:translate domain="agent_nexus.traffic" key="channel.{channel}" /></option>
+                    </f:for>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="anx-traffic-outcome"><f:translate domain="agent_nexus.traffic" key="filter.outcome" /></label>
+                <select class="form-select" id="anx-traffic-outcome" name="outcome">
+                    <option value=""><f:translate domain="agent_nexus.traffic" key="filter.any" /></option>
+                    <option value="ok" {f:if(condition: '{filter.outcome} == "ok"', then: 'selected')}><f:translate domain="agent_nexus.traffic" key="outcome.ok" /></option>
+                    <option value="error" {f:if(condition: '{filter.outcome} == "error"', then: 'selected')}><f:translate domain="agent_nexus.traffic" key="outcome.error" /></option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="anx-traffic-period"><f:translate domain="agent_nexus.traffic" key="filter.period" /></label>
+                <select class="form-select" id="anx-traffic-period" name="period">
+                    <option value=""><f:translate domain="agent_nexus.traffic" key="filter.any" /></option>
+                    <f:for each="{periods}" as="period">
+                        <option value="{period}" {f:if(condition: '{filter.period} == {period}', then: 'selected')}><f:translate domain="agent_nexus.traffic" key="period.{period}" /></option>
+                    </f:for>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="anx-traffic-search"><f:translate domain="agent_nexus.traffic" key="filter.search" /></label>
+                <input class="form-control" type="search" id="anx-traffic-search" name="search" value="{filter.search}"
+                       placeholder="{f:translate(domain: 'agent_nexus.traffic', key: 'filter.search.placeholder')}" />
+            </div>
+            <div class="form-group anx-traffic__filter-actions">
+                <button type="submit" class="btn btn-default">
+                    <core:icon identifier="actions-filter" size="small" />
+                    <f:translate domain="agent_nexus.traffic" key="filter.apply" />
+                </button>
+                <f:if condition="{filter.active}">
+                    <a class="btn btn-link" href="{listUri}"><f:translate domain="agent_nexus.traffic" key="filter.reset" /></a>
+                </f:if>
+            </div>
+        </div>
+    </form>
+
+    <div class="anx-traffic__toolbar">
+        <button type="button" class="btn btn-default" aria-pressed="false" data-traffic-live
+                data-label-follow="{f:translate(domain: 'agent_nexus.traffic', key: 'live.follow')}"
+                data-label-stop="{f:translate(domain: 'agent_nexus.traffic', key: 'live.stop')}">
+            <core:icon identifier="actions-play" size="small" />
+            <span data-traffic-live-label><f:translate domain="agent_nexus.traffic" key="live.follow" /></span>
+        </button>
+        <p class="anx-traffic__live-status text-variant" role="status" aria-live="polite" data-traffic-status></p>
+    </div>
+
+    <f:if condition="{rows}">
+        <f:then>
+            <div class="table-fit">
+                <table class="table table-striped table-hover anx-traffic__table">
+                    <caption class="visually-hidden"><f:translate domain="agent_nexus.traffic" key="table.caption" /></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.time" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.protocol" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.channel" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.request" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.operation" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.status" /></th>
+                            <th scope="col" class="text-end"><f:translate domain="agent_nexus.traffic" key="table.duration" /></th>
+                            <th scope="col" class="text-end"><f:translate domain="agent_nexus.traffic" key="table.events" /></th>
+                        </tr>
+                    </thead>
+                    <tbody data-traffic-rows>
+                        <f:for each="{rows}" as="row">
+                            <f:render partial="Traffic/Row" arguments="{row: row}" />
+                        </f:for>
+                    </tbody>
+                </table>
+            </div>
+            <f:render partial="Backend/Pagination" arguments="{paginator: paginator, pagination: pagination, route: 'agentnexus_traffic', arguments: filterArguments, domain: 'agent_nexus.traffic'}" />
+        </f:then>
+        <f:else>
+            <div class="anx-empty" data-traffic-empty>
+                <core:icon identifier="agentnexus-module-traffic" size="large" />
+                <p class="anx-empty__title"><f:translate domain="agent_nexus.traffic" key="empty.title" /></p>
+                <p>
+                    <f:if condition="{filter.active}">
+                        <f:then><f:translate domain="agent_nexus.traffic" key="empty.filtered" /></f:then>
+                        <f:else><f:translate domain="agent_nexus.traffic" key="empty.message" /></f:else>
+                    </f:if>
+                </p>
+            </div>
+            <div class="table-fit" hidden data-traffic-table>
+                <table class="table table-striped table-hover anx-traffic__table">
+                    <caption class="visually-hidden"><f:translate domain="agent_nexus.traffic" key="table.caption" /></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.time" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.protocol" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.channel" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.request" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.operation" /></th>
+                            <th scope="col"><f:translate domain="agent_nexus.traffic" key="table.status" /></th>
+                            <th scope="col" class="text-end"><f:translate domain="agent_nexus.traffic" key="table.duration" /></th>
+                            <th scope="col" class="text-end"><f:translate domain="agent_nexus.traffic" key="table.events" /></th>
+                        </tr>
+                    </thead>
+                    <tbody data-traffic-rows></tbody>
+                </table>
+            </div>
+        </f:else>
+    </f:if>
+
+</div>
+</f:section>
+
+</html>

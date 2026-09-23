@@ -1,0 +1,120 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-traffic anx-traffic--detail">
+<f:if condition="{entry}">
+    <f:then>
+        <h1>
+            <f:translate domain="agent_nexus.traffic" key="detail.heading" arguments="{0: entry.uid}" />
+            <span class="anx-proto-chip anx-accent--{entry.protocol}">{entry.protocolLabel}</span>
+        </h1>
+
+        <section aria-labelledby="anx-traffic-summary">
+            <h2 id="anx-traffic-summary"><f:translate domain="agent_nexus.traffic" key="detail.summary" /></h2>
+            <dl class="anx-dl">
+                <div><dt><f:translate domain="agent_nexus.traffic" key="table.time" /></dt><dd><time datetime="{entry.timeIso}"><f:format.date format="Y-m-d H:i:s">@{entry.created}</f:format.date></time></dd></div>
+                <div><dt><f:translate domain="agent_nexus.traffic" key="table.channel" /></dt><dd>{entry.channelLabel}</dd></div>
+                <div><dt><f:translate domain="agent_nexus.traffic" key="table.request" /></dt><dd><code>{entry.endpoint}</code></dd></div>
+                <f:if condition="{entry.operation}">
+                    <div><dt><f:translate domain="agent_nexus.traffic" key="table.operation" /></dt><dd><code>{entry.operation}</code></dd></div>
+                </f:if>
+                <div><dt><f:translate domain="agent_nexus.traffic" key="table.status" /></dt><dd><span class="badge badge-{entry.statusBadge}">{entry.status}</span></dd></div>
+                <div><dt><f:translate domain="agent_nexus.traffic" key="table.duration" /></dt><dd>{entry.duration}</dd></div>
+                <f:if condition="{entry.correlationId}">
+                    <div><dt><f:translate domain="agent_nexus.traffic" key="detail.correlation" /></dt><dd><code>{entry.correlationId}</code></dd></div>
+                </f:if>
+                <f:if condition="{entry.error}">
+                    <div><dt><f:translate domain="agent_nexus.traffic" key="detail.error" /></dt><dd>{entry.error}</dd></div>
+                </f:if>
+            </dl>
+
+            <f:if condition="{entry.object}">
+                <f:then>
+                    <p>
+                        <a class="btn btn-default" href="{entry.object.uri}">
+                            <core:icon identifier="agentnexus-module-inspector" size="small" />
+                            <f:translate domain="agent_nexus.traffic" key="detail.openObject" />
+                        </a>
+                        <span class="text-variant">{entry.object.label} · {entry.object.state}</span>
+                    </p>
+                </f:then>
+                <f:else if="{entry.correlationId}">
+                    <p class="text-variant"><f:translate domain="agent_nexus.traffic" key="detail.noObject" /></p>
+                </f:else>
+            </f:if>
+        </section>
+
+        <div class="anx-traffic__io">
+            <section aria-labelledby="anx-traffic-request">
+                <h2 id="anx-traffic-request"><f:translate domain="agent_nexus.traffic" key="detail.request" /></h2>
+                <f:render section="Exchange" arguments="{headers: entry.requestHeaders, body: entry.requestBody, prefix: 'request'}" />
+            </section>
+            <section aria-labelledby="anx-traffic-response">
+                <h2 id="anx-traffic-response"><f:translate domain="agent_nexus.traffic" key="detail.response" /></h2>
+                <f:render section="Exchange" arguments="{headers: entry.responseHeaders, body: entry.responseBody, prefix: 'response', stream: entry.isStream}" />
+            </section>
+        </div>
+
+        <f:if condition="{entry.events}">
+            <section aria-labelledby="anx-traffic-events">
+                <h2 id="anx-traffic-events"><f:translate domain="agent_nexus.traffic" key="detail.events" /></h2>
+                <p class="text-variant">
+                    <f:translate domain="agent_nexus.traffic" key="detail.eventsIntro" arguments="{0: entry.eventCount}" />
+                    <f:if condition="{entry.eventCount} > 600"><f:translate domain="agent_nexus.traffic" key="detail.eventsCapped" /></f:if>
+                </p>
+                <ol class="anx-events">
+                    <f:for each="{entry.events}" as="event">
+                        <li class="anx-events__item">
+                            <details>
+                                <summary>
+                                    <span class="anx-events__index">{event.index}</span>
+                                    <code class="anx-events__name">{event.name}</code>
+                                    <span class="anx-events__offset text-variant"><f:translate domain="agent_nexus.traffic" key="detail.offset" arguments="{0: event.offset}" /></span>
+                                </summary>
+                                <pre class="anx-code"><code>{event.json}</code></pre>
+                            </details>
+                        </li>
+                    </f:for>
+                </ol>
+            </section>
+        </f:if>
+    </f:then>
+    <f:else>
+        <h1><f:translate domain="agent_nexus.traffic" key="detail.title" /></h1>
+        <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}">
+            <p><f:translate domain="agent_nexus.traffic" key="detail.notFound" /></p>
+        </f:be.infobox>
+        <p><a class="btn btn-default" href="{listUri}"><f:translate domain="agent_nexus.traffic" key="detail.back" /></a></p>
+    </f:else>
+</f:if>
+</div>
+</f:section>
+
+<f:section name="Exchange">
+    <h3 class="h4"><f:translate domain="agent_nexus.traffic" key="detail.headers" /></h3>
+    <f:if condition="{headers}">
+        <f:then>
+            <dl class="anx-dl anx-dl--compact">
+                <f:for each="{headers}" as="value" key="name">
+                    <div><dt><code>{name}</code></dt><dd><code>{value}</code></dd></div>
+                </f:for>
+            </dl>
+        </f:then>
+        <f:else><p class="text-variant"><f:translate domain="agent_nexus.traffic" key="detail.noHeaders" /></p></f:else>
+    </f:if>
+    <h3 class="h4"><f:translate domain="agent_nexus.traffic" key="detail.body" /></h3>
+    <f:if condition="{body}">
+        <f:then><pre class="anx-code" tabindex="0"><code>{body}</code></pre></f:then>
+        <f:else>
+            <f:if condition="!{stream}">
+                <p class="text-variant"><f:translate domain="agent_nexus.traffic" key="detail.noBody" /></p>
+            </f:if>
+        </f:else>
+    </f:if>
+</f:section>
+
+</html>

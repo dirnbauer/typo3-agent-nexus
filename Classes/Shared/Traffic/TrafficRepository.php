@@ -46,14 +46,21 @@ final class TrafficRepository implements SingletonInterface
      */
     public function findPage(TrafficFilter $filter, int $limit, int $offset): array
     {
-        $queryBuilder = $this->query($filter);
-        $queryBuilder
-            ->select(...self::LIST_COLUMNS)
-            ->orderBy('uid', 'DESC')
+        $queryBuilder = $this->listQuery($filter)
             ->setMaxResults($limit)
             ->setFirstResult($offset);
 
         return array_values($queryBuilder->executeQuery()->fetchAllAssociative());
+    }
+
+    /**
+     * The list query, newest first, for core's QueryBuilderPaginator.
+     */
+    public function listQuery(TrafficFilter $filter): QueryBuilder
+    {
+        return $this->query($filter)
+            ->select(...self::LIST_COLUMNS)
+            ->orderBy('uid', 'DESC');
     }
 
     public function count(TrafficFilter $filter): int

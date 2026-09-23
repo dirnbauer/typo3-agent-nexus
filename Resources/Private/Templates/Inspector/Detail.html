@@ -1,0 +1,112 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+
+<f:layout name="Module" />
+
+<f:section name="Content">
+<div class="anx anx--backend anx-inspector anx-accent--{protocol}">
+<f:if condition="{object}">
+    <f:then>
+        <h1>
+            <span>{f:if(condition: object.label, then: object.label, else: object.objectId)}</span>
+            <span class="badge badge-{object.stateBadge}">{object.state}</span>
+        </h1>
+
+        <section aria-labelledby="anx-inspector-summary">
+            <h2 id="anx-inspector-summary" class="visually-hidden"><f:translate domain="agent_nexus.inspector" key="detail.summary" /></h2>
+            <dl class="anx-dl">
+                <div><dt><f:translate domain="agent_nexus.inspector" key="detail.objectId" /></dt><dd><code>{object.objectId}</code></dd></div>
+                <f:if condition="{object.contextId}">
+                    <div><dt><f:translate domain="agent_nexus.inspector" key="table.context" /></dt><dd><code>{object.contextId}</code></dd></div>
+                </f:if>
+                <f:if condition="{object.source}">
+                    <div><dt><f:translate domain="agent_nexus.inspector" key="table.source" /></dt><dd><f:translate domain="agent_nexus.inspector" key="source.{object.source}" /></dd></div>
+                </f:if>
+                <div><dt><f:translate domain="agent_nexus.inspector" key="detail.created" /></dt><dd><f:format.date format="Y-m-d H:i:s">@{object.created}</f:format.date></dd></div>
+                <div><dt><f:translate domain="agent_nexus.inspector" key="table.updated" /></dt><dd><f:format.date format="Y-m-d H:i:s">@{object.updated}</f:format.date></dd></div>
+            </dl>
+        </section>
+
+        <div class="anx-inspector__body">
+            <div class="anx-inspector__main">
+                <f:render partial="Inspector/{object.kind -> f:format.case(mode: 'capital')}" arguments="{view: object.view, object: object}" />
+
+                <section class="anx-section" aria-labelledby="anx-inspector-json">
+                    <h2 id="anx-inspector-json"><f:translate domain="agent_nexus.inspector" key="detail.json" /></h2>
+                    <p class="text-variant"><f:translate domain="agent_nexus.inspector" key="detail.jsonIntro" /></p>
+                    <details class="anx-inspector__json">
+                        <summary><f:translate domain="agent_nexus.inspector" key="detail.showJson" /></summary>
+                        <pre class="anx-code" tabindex="0"><code>{object.json}</code></pre>
+                    </details>
+                </section>
+            </div>
+
+            <aside class="anx-inspector__aside">
+                <section aria-labelledby="anx-inspector-history">
+                    <h2 id="anx-inspector-history"><f:translate domain="agent_nexus.inspector" key="detail.history" /></h2>
+                    <f:if condition="{object.history}">
+                        <f:then>
+                            <ol class="anx-timeline">
+                                <f:for each="{object.history}" as="step">
+                                    <li class="anx-timeline__item">
+                                        <span class="anx-timeline__state">{step.state}</span>
+                                        <time class="anx-timeline__when" datetime="{f:format.date(date: '@{step.at}', format: 'c')}"><f:format.date format="H:i:s">@{step.at}</f:format.date></time>
+                                        <f:if condition="{step.note}"><span class="anx-timeline__note">{step.note}</span></f:if>
+                                    </li>
+                                </f:for>
+                            </ol>
+                        </f:then>
+                        <f:else><p class="text-variant"><f:translate domain="agent_nexus.inspector" key="detail.noHistory" /></p></f:else>
+                    </f:if>
+                </section>
+
+                <section class="anx-section" aria-labelledby="anx-inspector-traffic">
+                    <h2 id="anx-inspector-traffic"><f:translate domain="agent_nexus.inspector" key="detail.traffic" /></h2>
+                    <f:if condition="{object.traffic}">
+                        <f:then>
+                            <p class="text-variant"><f:translate domain="agent_nexus.inspector" key="detail.trafficIntro" /></p>
+                            <ul class="anx-inspector__traffic">
+                                <f:for each="{object.traffic}" as="exchange">
+                                    <li>
+                                        <a href="{exchange.detailUri}"><code>{exchange.operation -> f:or(alternative: exchange.endpoint)}</code></a>
+                                        <span class="badge badge-{exchange.statusBadge}">{exchange.status}</span>
+                                        <span class="text-variant"><time datetime="{exchange.timeIso}">{exchange.time}</time> · {exchange.channelLabel}</span>
+                                    </li>
+                                </f:for>
+                            </ul>
+                        </f:then>
+                        <f:else><p class="text-variant"><f:translate domain="agent_nexus.inspector" key="detail.noTraffic" /></p></f:else>
+                    </f:if>
+                    <p><a class="btn btn-default btn-sm" href="{trafficUri}"><core:icon identifier="agentnexus-module-traffic" size="small" /> <f:translate domain="agent_nexus.inspector" key="detail.allTraffic" /></a></p>
+                </section>
+
+                <f:if condition="{object.related}">
+                    <section class="anx-section" aria-labelledby="anx-inspector-related">
+                        <h2 id="anx-inspector-related"><f:translate domain="agent_nexus.inspector" key="detail.related" /></h2>
+                        <ul class="anx-inspector__related">
+                            <f:for each="{object.related}" as="related">
+                                <li>
+                                    <a href="{related.detailUri}"><code>{related.objectId}</code></a>
+                                    <span class="badge badge-{related.stateBadge}">{related.state}</span>
+                                    <f:if condition="{related.label}"><span class="text-variant">{related.label}</span></f:if>
+                                </li>
+                            </f:for>
+                        </ul>
+                    </section>
+                </f:if>
+            </aside>
+        </div>
+    </f:then>
+    <f:else>
+        <h1><f:translate domain="agent_nexus.inspector" key="list.heading.{kind}" /></h1>
+        <f:be.infobox state="{f:constant(name: 'TYPO3\CMS\Core\Type\ContextualFeedbackSeverity::INFO')}">
+            <p><f:translate domain="agent_nexus.inspector" key="detail.notFound" /></p>
+        </f:be.infobox>
+        <p><a class="btn btn-default" href="{listUri}"><f:translate domain="agent_nexus.inspector" key="detail.back" /></a></p>
+    </f:else>
+</f:if>
+</div>
+</f:section>
+
+</html>

@@ -1,0 +1,53 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<f:comment>
+    Core pagination markup for a list screen. Arguments: paginator, pagination
+    (SimplePagination), route (module route id), arguments (the list filter to
+    keep), domain (label domain with pagination.* keys).
+</f:comment>
+<f:if condition="{paginator.numberOfPages} > 1">
+    <nav class="pagination-wrap" aria-label="{f:translate(domain: domain, key: 'pagination.label')}">
+        <f:variable name="base" value="{f:be.uri(route: route, parameters: arguments)}" />
+        <ul class="pagination">
+            <f:if condition="{pagination.previousPageNumber}">
+                <f:then>
+                    <li class="page-item">
+                        <a class="page-link" href="{base}&amp;page=1" title="{f:translate(domain: domain, key: 'pagination.first')}">
+                            <core:icon identifier="actions-view-paging-first" />
+                            <span class="visually-hidden"><f:translate domain="{domain}" key="pagination.first" /></span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{base}&amp;page={pagination.previousPageNumber}" title="{f:translate(domain: domain, key: 'pagination.previous')}">
+                            <core:icon identifier="actions-view-paging-previous" />
+                            <span class="visually-hidden"><f:translate domain="{domain}" key="pagination.previous" /></span>
+                        </a>
+                    </li>
+                </f:then>
+            </f:if>
+            <li class="page-item">
+                <span class="page-link">
+                    <f:translate domain="{domain}" key="pagination.range" arguments="{0: pagination.startRecordNumber, 1: pagination.endRecordNumber, 2: paginator.totalAmountOfItems}" />
+                </span>
+            </li>
+            <f:if condition="{pagination.nextPageNumber}">
+                <f:then>
+                    <li class="page-item">
+                        <a class="page-link" href="{base}&amp;page={pagination.nextPageNumber}" title="{f:translate(domain: domain, key: 'pagination.next')}">
+                            <core:icon identifier="actions-view-paging-next" />
+                            <span class="visually-hidden"><f:translate domain="{domain}" key="pagination.next" /></span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="{base}&amp;page={pagination.lastPageNumber}" title="{f:translate(domain: domain, key: 'pagination.last')}">
+                            <core:icon identifier="actions-view-paging-last" />
+                            <span class="visually-hidden"><f:translate domain="{domain}" key="pagination.last" /></span>
+                        </a>
+                    </li>
+                </f:then>
+            </f:if>
+        </ul>
+    </nav>
+</f:if>
+</html>
