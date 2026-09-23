@@ -96,7 +96,7 @@ final class OverviewStatusTest extends AbstractAgentNexusTestCase
     {
         foreach ($this->byKey() as $key => $status) {
             self::assertFalse($status->llmEnabled);
-            self::assertSame('Deterministic demo', $status->modeLabel);
+            self::assertSame('Scripted demo', $status->modeLabel);
             self::assertSame('nr-llm not installed', $status->llmReason, $key);
         }
     }

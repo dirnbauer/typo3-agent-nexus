@@ -111,8 +111,8 @@ final class MandateService implements SingletonInterface
         $checks = [
             ['label' => 'Intent Mandate signature', 'pass' => (bool)$intent['valid'], 'detail' => (string)$intent['reason']],
             ['label' => 'Cart Mandate signature', 'pass' => (bool)$cart['valid'], 'detail' => (string)$cart['reason']],
-            ['label' => 'Cart references the Intent', 'pass' => ($cc['intentRef'] ?? null) === ($ic['jti'] ?? '·'), 'detail' => (string)($cc['intentRef'] ?? '—') . ' = ' . (string)($ic['jti'] ?? '—')],
-            ['label' => 'Same authorized merchant', 'pass' => ($cc['aud'] ?? '·') === ($ic['aud'] ?? '··') && in_array((string)($cc['aud'] ?? ''), $merchants, true), 'detail' => (string)($cc['aud'] ?? '—')],
+            ['label' => 'Cart links to the Intent', 'pass' => ($cc['intentRef'] ?? null) === ($ic['jti'] ?? '·'), 'detail' => (string)($cc['intentRef'] ?? '—') . ' = ' . (string)($ic['jti'] ?? '—')],
+            ['label' => 'Same approved merchant', 'pass' => ($cc['aud'] ?? '·') === ($ic['aud'] ?? '··') && in_array((string)($cc['aud'] ?? ''), $merchants, true), 'detail' => (string)($cc['aud'] ?? '—')],
             ['label' => 'Within the spending cap', 'pass' => $total > 0 && $total <= $cap, 'detail' => $this->money($total) . ' ≤ ' . $this->money($cap)],
         ];
         $authorized = array_reduce($checks, static fn(bool $c, array $x): bool => $c && $x['pass'], true);

@@ -31,7 +31,7 @@ function initAssistant(root) {
   const scenario = root.dataset.scenario || 'plan';
   const page = root.dataset.page || '0';
   const ce = Number(root.dataset.ce || '0');
-  const success = root.dataset.success || 'Thank you — we have received your request.';
+  const success = root.dataset.success || 'Thank you. We have received your request.';
   const showEvents = root.dataset.showEvents === '1';
 
   const form = root.querySelector('[data-agui-form]');
@@ -111,12 +111,12 @@ function initAssistant(root) {
 
     host.innerHTML =
       '<div class="agui-asst__confirm">' +
-      '<div class="agui-asst__confirm-head"><span class="agui-asst__confirm-badge">⏸ Your approval</span>' +
-      '<span class="agui-asst__confirm-name">' + esc(isBooking ? 'Confirm & send' : name) + '</span></div>' +
+      '<div class="agui-asst__confirm-head"><span class="agui-asst__confirm-badge">⏸ Needs your approval</span>' +
+      '<span class="agui-asst__confirm-name">' + esc(isBooking ? 'Confirm and send' : name) + '</span></div>' +
       '<div class="agui-asst__confirm-summary">' + summary + '</div>' +
       '<form class="agui-asst__confirm-form" data-confirm-form>' + fields +
       '<div class="agui-asst__confirm-actions">' +
-      '<button type="submit" class="agui-asst__approve">Confirm &amp; send</button>' +
+      '<button type="submit" class="agui-asst__approve">Confirm and send</button>' +
       '<button type="button" class="agui-asst__reject" data-reject>Not now</button>' +
       '</div></form></div>';
     scrollDown();
@@ -222,7 +222,7 @@ function initAssistant(root) {
       ui.appendChild(ok); scrollDown();
     } else if (ev.result && ev.result.decision === 'rejected') {
       const no = document.createElement('div'); no.className = 'agui-asst__note';
-      no.textContent = 'No problem — nothing was sent.';
+      no.textContent = 'Nothing was sent.';
       ui.appendChild(no); scrollDown();
     }
   }

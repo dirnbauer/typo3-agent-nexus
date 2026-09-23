@@ -80,7 +80,7 @@ final readonly class ProtocolStatus
             default => 'Ready',
         };
         // The demos run without a model; say which mode a visitor would get.
-        $this->modeLabel = $llmEnabled ? 'Model-backed' : 'Deterministic demo';
+        $this->modeLabel = $llmEnabled ? 'Live model' : 'Scripted demo';
         $this->hasActivity = $lastRun !== null;
     }
 }

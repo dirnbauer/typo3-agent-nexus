@@ -507,7 +507,7 @@ export class A2UIClient {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = `btn btn-${c.variant || 'primary'}`;
-    btn.textContent = c.text || c.label || 'Submit';
+    btn.textContent = c.text || c.label || 'Send';
     if (c.disabled) btn.disabled = true;
     if (c.action) btn.addEventListener('click', () => this._emitAction(c.action, scope));
     wrap.appendChild(btn);
@@ -593,7 +593,7 @@ export class A2UIClient {
         }
         case 'regex':
           try {
-            if (value && ck.pattern && !new RegExp(ck.pattern).test(String(value))) return ck.error || 'Invalid format.';
+            if (value && ck.pattern && !new RegExp(ck.pattern).test(String(value))) return ck.error || 'Please check the format.';
           } catch (e) { /* ignore bad pattern */ }
           break;
       }

@@ -35,7 +35,7 @@ function initSurface(root) {
 
   async function authorize() {
     runBtn.disabled = true; runBtn.classList.add('is-busy');
-    resultEl.innerHTML = '<div class="ap2-ts__working">Issuing mandates and verifying the chain…</div>';
+    resultEl.innerHTML = '<div class="ap2-ts__working">Signing the mandates and checking the chain…</div>';
     mandatesEl.hidden = true; mandatesEl.innerHTML = '';
     const capCents = Math.max(1, Math.round(parseFloat(capEl.value || '500') * 100));
     try {
@@ -49,18 +49,18 @@ function initSurface(root) {
       resultEl.innerHTML =
         '<div class="ap2-ts__checks">' + checks + '</div>' +
         '<div class="ap2-ts__verdict ' + (r.authorized ? 'is-ok' : 'is-no') + '">' +
-        (r.authorized ? '✓ Payment authorized' : '✕ Authorization refused') +
-        '<small>' + (r.authorized ? 'The mandate chain verified. Simulated — nothing was charged.' : 'A check failed — no payment would be made.') + '</small></div>' +
+        (r.authorized ? '✓ Payment authorised' : '✕ Payment refused') +
+        '<small>' + (r.authorized ? 'The mandate chain is valid. Simulated: nothing was charged.' : 'A check failed, so no payment would be made.') + '</small></div>' +
         (r.explanation ? '<div class="ap2-ts__explain">🛈 ' + esc(r.explanation) + '</div>' : '');
 
       if (showEvents && r.intentJwt) {
         mandatesEl.hidden = false;
-        mandatesEl.innerHTML = '<div class="ap2-ts__mandates-h">Issued mandates (signed JWS)</div>' +
+        mandatesEl.innerHTML = '<div class="ap2-ts__mandates-h">Signed mandates (JWS)</div>' +
           renderMandate('Intent Mandate', r.intentJwt, r.intentClaims || {}) +
           renderMandate('Cart Mandate', r.cartJwt, r.cartClaims || {});
       }
     } catch (e) {
-      resultEl.innerHTML = '<div class="ap2-ts__verdict is-no">⛔ ' + esc(e.message || 'Authorization failed') + '</div>';
+      resultEl.innerHTML = '<div class="ap2-ts__verdict is-no">⛔ ' + esc(e.message || 'Authorisation failed') + '</div>';
     } finally {
       runBtn.disabled = false; runBtn.classList.remove('is-busy');
     }

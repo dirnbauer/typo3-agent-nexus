@@ -79,8 +79,8 @@
             <ul class="ap2-checklist">
                 <li><b>Intent Mandate signature</b> — the token is intact and signed (HS256, sandbox key).</li>
                 <li><b>Cart Mandate signature</b> — likewise; tampering breaks it.</li>
-                <li><b>Cart references the Intent</b> — the cart's <code class="anx-code">intentRef</code> equals the intent's <code class="anx-code">jti</code>.</li>
-                <li><b>Same authorized merchant</b> — the cart's audience is one the intent allows.</li>
+                <li><b>Cart links to the Intent</b> — the cart's <code class="anx-code">intentRef</code> equals the intent's <code class="anx-code">jti</code>.</li>
+                <li><b>Same approved merchant</b> — the cart's audience is one the intent allows.</li>
                 <li><b>Within the spending cap</b> — the cart total ≤ the intent's <code class="anx-code">maxAmountCents</code>.</li>
                 <li><b>Not expired</b> — both <code class="anx-code">exp</code> timestamps are in the future.</li>
             </ul>

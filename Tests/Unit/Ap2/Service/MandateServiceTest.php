@@ -52,7 +52,7 @@ final class MandateServiceTest extends UnitTestCase
         $chain = $this->chain(merchant: 'some-other-store');
 
         self::assertFalse($chain['authorized']);
-        self::assertFalse($this->check($chain, 'Same authorized merchant'));
+        self::assertFalse($this->check($chain, 'Same approved merchant'));
     }
 
     #[Test]
@@ -67,7 +67,7 @@ final class MandateServiceTest extends UnitTestCase
         $chain = $this->subject->verifyChain($intent['jwt'], $cart['jwt']);
 
         self::assertFalse($chain['authorized']);
-        self::assertFalse($this->check($chain, 'Cart references the Intent'));
+        self::assertFalse($this->check($chain, 'Cart links to the Intent'));
     }
 
     #[Test]

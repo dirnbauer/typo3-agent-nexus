@@ -17,18 +17,18 @@
             </span>
             <f:if condition="{data.header}"><h2 class="ucp-cc__title">{data.header}</h2></f:if>
             <f:if condition="{settings.intro}"><p class="ucp-cc__intro">{settings.intro}</p></f:if>
-            <p class="ucp-cc__sim">Demo store — every order is <strong>simulated</strong>. No payment is taken.</p>
+            <p class="ucp-cc__sim">Demo store: every order is <strong>simulated</strong> and no payment is taken.</p>
         </div>
 
-        <div class="ucp-cc__intents" data-ucp-intents role="group" aria-label="What the agent should shop for">
-            <button type="button" class="ucp-cc__intent is-active" data-intent="pro">Set me up with Pro</button>
-            <button type="button" class="ucp-cc__intent" data-intent="agency">Full agency kit</button>
-            <button type="button" class="ucp-cc__intent" data-intent="support">Add priority support</button>
+        <div class="ucp-cc__intents" data-ucp-intents role="group" aria-label="What the agent should buy">
+            <button type="button" class="ucp-cc__intent is-active" data-intent="pro">Pro licence</button>
+            <button type="button" class="ucp-cc__intent" data-intent="agency">Agency and onboarding</button>
+            <button type="button" class="ucp-cc__intent" data-intent="support">Priority support</button>
         </div>
 
         <div class="ucp-cc__run">
             <button type="button" class="ucp-cc__go" data-ucp-run>
-                <span>Let the agent shop</span>
+                <span>Start the agent</span>
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
             </button>
         </div>
@@ -36,13 +36,13 @@
         <div class="ucp-cc__stage" data-ucp-stage></div>
 
         <div class="ucp-cc__events" data-ucp-events hidden role="region" aria-label="Protocol frames">
-            <div class="ucp-cc__events-head"><span class="ucp-cc__events-dot" aria-hidden="true"></span> Under the hood — UCP events <span data-ucp-eventcount>0</span></div>
+            <div class="ucp-cc__events-head"><span class="ucp-cc__events-dot" aria-hidden="true"></span> UCP events: <span data-ucp-eventcount>0</span></div>
             <div class="ucp-cc__events-list" data-ucp-events-list></div>
         </div>
     </div>
 
     <noscript>
-        <p class="ucp-cc__intro">This agent checkout needs JavaScript. Please contact us to place an order.</p>
+        <p class="ucp-cc__intro">This checkout needs JavaScript. Please contact us to order.</p>
     </noscript>
 </section>
 

@@ -23,7 +23,7 @@ function initWidget(root) {
   const submitUrl = root.dataset.submitUrl;
   const businessContext = root.dataset.businessContext || '';
   const page = root.dataset.page || '0';
-  const successMessage = root.dataset.success || 'Thank you — we have received your request.';
+  const successMessage = root.dataset.success || 'Thank you. We have received your request.';
 
   const form = root.querySelector('[data-a2ui-inquiry-form]');
   const input = root.querySelector('[data-a2ui-intent]');
@@ -82,8 +82,8 @@ function initWidget(root) {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body,
       });
-      if (res.status === 429) throw new Error('Too many requests — please wait a moment and try again.');
-      if (!res.ok) throw new Error('Sorry, something went wrong. Please try again.');
+      if (res.status === 429) throw new Error('Too many requests. Please wait a moment and try again.');
+      if (!res.ok) throw new Error('Something went wrong. Please try again.');
       const data = await res.json();
       lastPayload = data.payload;
       setBusy(false);

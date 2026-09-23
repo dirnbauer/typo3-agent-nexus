@@ -65,7 +65,9 @@ function initCheckout(root) {
     };
   }
 
-  function setStatus(state) { stage.status.innerHTML = '<span class="ucp-cc__state ucp-cc__state--' + state + '">' + esc(state.replace(/_/g, ' ')) + '</span>'; }
+  // Display text for the checkout states; the state itself stays the CSS modifier.
+  const STATE_LABELS = { authorization_required: 'awaiting approval', authorizing: 'approving', placing_simulated: 'placing (simulated)' };
+  function setStatus(state) { stage.status.innerHTML = '<span class="ucp-cc__state ucp-cc__state--' + state + '">' + esc(STATE_LABELS[state] || state.replace(/_/g, ' ')) + '</span>'; }
 
   function renderCart(items, total) {
     stage.cart.innerHTML = '<div class="ucp-cc__cart-list">' + items.map((i) =>
@@ -77,9 +79,9 @@ function initCheckout(root) {
     setStatus('authorization_required');
     stage.auth.hidden = false;
     stage.auth.innerHTML =
-      '<div class="ucp-cc__auth-badge">⏸ Authorize this order</div>' +
-      '<div class="ucp-cc__auth-line">Total <b>' + money(order.totalCents, order.currency) + '</b> — simulated, no payment is taken.</div>' +
-      '<div class="ucp-cc__auth-actions"><button type="button" class="ucp-cc__approve" data-decision="approved">Authorize</button>' +
+      '<div class="ucp-cc__auth-badge">⏸ Approve this order</div>' +
+      '<div class="ucp-cc__auth-line">Total <b>' + money(order.totalCents, order.currency) + '</b>. Simulated: no payment is taken.</div>' +
+      '<div class="ucp-cc__auth-actions"><button type="button" class="ucp-cc__approve" data-decision="approved">Approve</button>' +
       '<button type="button" class="ucp-cc__decline" data-decision="declined">Not now</button></div>';
     stage.auth.querySelectorAll('[data-decision]').forEach((b) => {
       b.addEventListener('click', () => { stage.auth.classList.add('is-done'); run({ orderId, authorization: { decision: b.dataset.decision } }); });
@@ -93,7 +95,7 @@ function initCheckout(root) {
       '<div class="ucp-cc__receipt-head">✓ Order confirmed</div>' +
       '<div class="ucp-cc__receipt-row"><span>Order</span><b>' + esc(order.orderId) + '</b></div>' +
       '<div class="ucp-cc__receipt-row"><span>Total</span><b>' + money(order.totalCents, order.currency) + '</b></div>' +
-      (simulated ? '<div class="ucp-cc__receipt-sim">Simulated — no payment was taken and no order was placed with any real system.</div>' : '');
+      (simulated ? '<div class="ucp-cc__receipt-sim">Simulated. No payment was taken and no real order was placed.</div>' : '');
   }
 
   function handle(ev) {
@@ -105,7 +107,7 @@ function initCheckout(root) {
       case 'checkout.step': setStatus(ev.state); break;
       case 'authorization.required': renderAuth(ev.order || {}); break;
       case 'order.confirmed': setStatus('confirmed'); renderReceipt(ev.order || {}, !!ev.simulated); break;
-      case 'order.declined': setStatus('declined'); stage.receipt.hidden = false; stage.receipt.innerHTML = '<div class="ucp-cc__note">No problem — nothing was ordered.</div>'; break;
+      case 'order.declined': setStatus('declined'); stage.receipt.hidden = false; stage.receipt.innerHTML = '<div class="ucp-cc__note">Nothing was ordered.</div>'; break;
       case 'checkout.error': stage.cart.innerHTML = '<span class="ucp-cc__err">⛔ ' + esc(ev.message) + '</span>'; break;
       default: break;
     }
