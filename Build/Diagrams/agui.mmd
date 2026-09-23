@@ -1,16 +1,21 @@
 sequenceDiagram
     autonumber
     actor V as Visitor
-    participant W as Assistant widget
-    participant E as TYPO3 eID<br/>agui_assistant
-    participant A as Agent (nr-llm)
+    participant W as Assistant widget<br/>AG-UI 1.0 client
+    participant E as TYPO3<br/>POST /api/agent-nexus/ag-ui
+    participant M as Model (nr-llm, optional)
     V->>W: asks a question
-    W->>E: POST RunAgentInput (SSE)
-    E-->>W: RUN_STARTED
-    E->>A: stream answer
-    A-->>W: TEXT_MESSAGE_CONTENT (chunks)
-    E-->>W: TOOL_CALL confirm_booking
-    Note over V,W: human-in-the-loop gate
-    V->>W: approves
-    W->>E: approval + lead
-    E-->>W: STATE_DELTA + RUN_FINISHED
+    W->>E: RunAgentInput (threadId, runId, messages)
+    E-->>W: RUN_STARTED (protocolVersion 1.0)
+    E-->>W: REASONING_START … REASONING_END
+    E->>M: stream the answer
+    M-->>E: text chunks
+    E-->>W: TEXT_MESSAGE_CONTENT …
+    E-->>W: ACTIVITY_SNAPSHOT (plan comparison)
+    E-->>W: TOOL_CALL_START / ARGS / END
+    E-->>W: RUN_FINISHED (outcome: interrupt)
+    Note over V,W: approval form from responseSchema
+    V->>W: confirms and sends
+    W->>E: RunAgentInput (same thread, resume)
+    E-->>W: TOOL_CALL_RESULT (same tool call)
+    E-->>W: RUN_FINISHED (outcome: success, result)
