@@ -62,7 +62,12 @@ class RunConsole {
       event.preventDefault();
       this.start();
     });
-    root.querySelector('[data-agui-clear]').addEventListener('click', () => this.clear());
+    this.clearButton = root.querySelector('[data-agui-clear]');
+    this.clearButton.addEventListener('click', () => {
+      if (!this.busy) {
+        this.clear();
+      }
+    });
     this.interruptForm.addEventListener('submit', (event) => {
       event.preventDefault();
       this.answerInterrupt(true);
@@ -143,6 +148,7 @@ class RunConsole {
     });
     this.busy = true;
     this.startButton.disabled = true;
+    this.clearButton.disabled = true;
     this.interrupt.hidden = true;
     this.answer.textContent = '';
     this.result.hidden = true;
@@ -154,7 +160,7 @@ class RunConsole {
         if (event.type === 'RUN_FINISHED' || event.type === 'RUN_ERROR') {
           finished = true;
         }
-        this.handle(event, input.runId);
+        this.handle(thread, event, input.runId);
       });
       if (!finished) {
         this.setStatus(labels.get('js.status.truncated'));
@@ -168,12 +174,13 @@ class RunConsole {
     } finally {
       this.busy = false;
       this.startButton.disabled = false;
+      this.clearButton.disabled = false;
     }
   }
 
-  handle(event, runId) {
+  handle(thread, event, runId) {
     this.addEvent(event);
-    this.thread.conversation.apply(event);
+    thread.conversation.apply(event);
     switch (event.type) {
       case 'CUSTOM':
         if (event.name === 'at.webconsulting.agentnexus.provenance' && event.value) {
@@ -190,13 +197,13 @@ class RunConsole {
         this.answer.textContent += event.delta;
         break;
       case 'STATE_SNAPSHOT':
-        this.thread.state = event.snapshot;
-        this.showState();
+        thread.state = event.snapshot;
+        this.showState(thread);
         break;
       case 'STATE_DELTA': {
-        const { value, error } = applyPatch(this.thread.state, event.delta);
-        this.thread.state = value;
-        this.showState();
+        const { value, error } = applyPatch(thread.state, event.delta);
+        thread.state = value;
+        this.showState(thread);
         this.addDelta(event.delta, error);
         break;
       }
@@ -205,7 +212,7 @@ class RunConsole {
         this.activity.textContent = JSON.stringify({ activityType: event.activityType, content: event.content }, null, 2);
         break;
       case 'RUN_FINISHED':
-        this.finished(event, runId);
+        this.finished(thread, event, runId);
         break;
       case 'RUN_ERROR':
         this.setStatus(labels.get('js.status.error', [runId, event.message]));
@@ -215,11 +222,11 @@ class RunConsole {
     }
   }
 
-  finished(event, runId) {
+  finished(thread, event, runId) {
     const outcome = event.outcome || { type: 'success' };
     if (outcome.type === 'interrupt' && Array.isArray(outcome.interrupts) && outcome.interrupts.length > 0) {
-      this.thread.pending = { interrupt: outcome.interrupts[0], url: this.thread.url };
-      this.showInterrupt(outcome.interrupts[0]);
+      thread.pending = { interrupt: outcome.interrupts[0] };
+      this.showInterrupt(thread, outcome.interrupts[0]);
       this.setStatus(labels.get('js.status.interrupted', [runId]));
       return;
     }
@@ -235,11 +242,11 @@ class RunConsole {
     }
   }
 
-  showInterrupt(interrupt) {
+  showInterrupt(thread, interrupt) {
     this.interrupt.hidden = false;
     this.interruptMessage.textContent = interrupt.message || '';
-    const proposal = this.thread.conversation.toolArguments(interrupt.toolCallId);
-    const call = this.thread.conversation.toolOwners.get(interrupt.toolCallId)?.toolCalls.find((item) => item.id === interrupt.toolCallId);
+    const proposal = thread.conversation.toolArguments(interrupt.toolCallId);
+    const call = thread.conversation.toolOwners.get(interrupt.toolCallId)?.toolCalls.find((item) => item.id === interrupt.toolCallId);
     this.interruptFacts.replaceChildren(
       fact(labels.get('js.interrupt.reason'), interrupt.reason),
       fact(labels.get('js.interrupt.tool'), call ? call.function.name : interrupt.toolCallId || ''),
@@ -374,8 +381,8 @@ class RunConsole {
     this.deltas.append(item);
   }
 
-  showState() {
-    this.state.textContent = JSON.stringify(this.thread.state, null, 2);
+  showState(thread) {
+    this.state.textContent = JSON.stringify(thread.state, null, 2);
   }
 
   setStatus(text) {

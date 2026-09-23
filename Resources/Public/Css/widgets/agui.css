@@ -1,5 +1,8 @@
 /* Agent Nexus — AG-UI live assistant widget. Loads after nexus-tokens.css and nexus-frontend.css. */
 
+/* Parts the script shows and hides keep their display value otherwise. */
+.agui-asst [hidden] { display: none !important; }
+
 .agui-asst__input:disabled { opacity: .6; }
 
 /* The inquiry widget shares the preset row. */

@@ -1,6 +1,8 @@
 /* AG-UI screens: run console and event reference. Layout only; colours come
  * from --anx-* and --typo3-* tokens, so light and dark mode follow the backend. */
 
+.agui-console [hidden] { display: none !important; }
+
 .agui-console__fields {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
