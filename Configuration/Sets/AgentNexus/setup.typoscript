@@ -6,9 +6,9 @@
 # and the plugin output is the cObj "20".
 #
 # This set is deliberately design-system agnostic — it only needs
-# fluid_styled_content. For the Desiderio look, add the
-# "webconsulting/agent-nexus-desiderio" set instead; it depends on this one and
-# only swaps the plugin template root.
+# fluid_styled_content. The widgets take their neutrals from the host theme's
+# shadcn variables (see Resources/Public/Css/nexus-tokens.css), so a Desiderio
+# site needs nothing extra.
 
 lib.contentElement.templateRootPaths.1750 = EXT:agent_nexus/Resources/Private/ContentElements/Templates/
 
@@ -32,9 +32,9 @@ plugin.tx_agentnexus {
 # would read better and does not work: TypoScript resolves "=<" at render time,
 # and a reference pointing at another reference resolves to nothing — every
 # plugin rendered an empty content frame. A copy ("<") would resolve, but it
-# would be taken here, before the Desiderio set (which depends on this one) has
-# finished configuring lib.contentElement, so the plugins would silently stop
-# following the site's own content frame.
+# would be taken here, before the sets that depend on this one have finished
+# configuring lib.contentElement, so the plugins would silently stop following
+# the site's own content frame.
 
 tt_content.agentnexus_hub =< lib.contentElement
 tt_content.agentnexus_hub {
@@ -105,12 +105,3 @@ tt_content.agentnexus_protocolinfo {
         pluginName = ProtocolInfo
     }
 }
-
-# Legacy CTypes from the five per-protocol packages Agent Nexus replaced.
-# Deprecated since 3.0 and removed in 4.0 — run the "Agent Nexus: migrate legacy
-# content element types" upgrade wizard to rewrite existing records.
-tt_content.a2uiintegration_inquiry =< tt_content.agentnexus_inquiry
-tt_content.aguiintegration_assistant =< tt_content.agentnexus_assistant
-tt_content.a2aintegration_concierge =< tt_content.agentnexus_concierge
-tt_content.ucpintegration_checkout =< tt_content.agentnexus_checkout
-tt_content.ap2integration_trustedsurface =< tt_content.agentnexus_trustedsurface

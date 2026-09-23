@@ -48,9 +48,8 @@
         "typo3/testing-framework": "^9.7"
     },
     "suggest": {
-        "friendsoftypo3/content-blocks": "Can be used to expose the frontend protocol plugins as richer content blocks.",
-        "netresearch/nr-llm": "Enables real LLM-backed behavior across the frontend plugins (A2UI generation, AG-UI streamed answers, A2A routing, UCP rationale) where configured; otherwise Agent Nexus uses deterministic demos.",
-        "webconsulting/desiderio": "^4.1 enables the \"Agent Nexus: Desiderio rendering\" site set, which renders the frontend plugins through the Desiderio component collection."
+        "netresearch/nr-llm": "Lets the frontend widgets use a real language model (A2UI surfaces, AG-UI answers, A2A routing, UCP rationale). Without it every protocol runs its deterministic demo.",
+        "typo3/cms-scheduler": "Runs agentnexus:cleanup on a schedule through the \"Execute console commands\" task, which applies the traffic and object retention settings."
     },
     "autoload": {
         "psr-4": {
