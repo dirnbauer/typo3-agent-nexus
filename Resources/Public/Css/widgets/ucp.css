@@ -1,0 +1,76 @@
+/* Agent Nexus — UCP agent checkout widget. Loads after nexus-tokens.css and nexus-frontend.css. */
+
+.ucp-cc__sim { margin: .4rem 0 0; font-size: .78rem; color: var(--anx-warn); }
+
+.ucp-cc__intents { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .8rem; }
+.ucp-cc__run { margin-bottom: .8rem; }
+
+.ucp-cc__card { border: 1px solid var(--anx-border); border-radius: var(--anx-radius); background: var(--anx-surface-2); padding: 1rem; }
+.ucp-cc__card:empty { display: none; }
+.ucp-cc__status { margin-bottom: .6rem; }
+.ucp-cc__state {
+  font-size: .64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: var(--anx-fg);
+  background: var(--anx-card);
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-full);
+  padding: .12rem .5rem;
+}
+/* checkout states: info = agui blue */
+.ucp-cc__state--discovering,
+.ucp-cc__state--building_cart { border-color: var(--anx-accent-agui); color: var(--anx-accent-agui); }
+.ucp-cc__state--review { border-color: var(--accent); color: var(--accent); }
+.ucp-cc__state--authorization_required { border-color: var(--anx-warn); color: var(--anx-warn); }
+.ucp-cc__state--confirmed { border-color: var(--anx-ok); color: var(--anx-ok); }
+.ucp-cc__state--declined { border-color: var(--anx-danger); color: var(--anx-danger); }
+.ucp-cc__reasoning { font-size: .85rem; color: var(--anx-muted-fg); font-style: italic; margin-bottom: .7rem; }
+.ucp-cc__cart-list { border: 1px solid var(--anx-border); border-radius: var(--anx-radius-sm); overflow: hidden; background: var(--anx-card); }
+.ucp-cc__cart-row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem .8rem; border-bottom: 1px solid var(--anx-border); }
+.ucp-cc__cart-price { font-family: var(--anx-font-mono); white-space: nowrap; }
+.ucp-cc__cart-price small { color: var(--anx-muted-fg); }
+.ucp-cc__cart-total { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem .8rem; font-weight: 800; }
+
+.ucp-cc__auth {
+  margin-top: .9rem;
+  border: 1px solid color-mix(in srgb, var(--anx-warn) 40%, var(--anx-border));
+  background: color-mix(in srgb, var(--anx-warn) 6%, var(--anx-card));
+}
+.ucp-cc__auth-badge { font-weight: 700; color: var(--anx-warn); margin-bottom: .35rem; }
+.ucp-cc__auth-line { color: var(--anx-muted-fg); font-size: .9rem; margin-bottom: .7rem; }
+.ucp-cc__auth-actions { display: flex; gap: .5rem; }
+.ucp-cc__decline {
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  background: transparent;
+  color: var(--anx-muted-fg);
+  font: inherit;
+  padding: .55rem .9rem;
+  cursor: pointer;
+}
+.ucp-cc__receipt {
+  margin-top: .9rem;
+  border: 1px solid color-mix(in srgb, var(--anx-ok) 35%, var(--anx-border));
+  border-radius: var(--anx-radius);
+  padding: .9rem 1rem;
+  background: color-mix(in srgb, var(--anx-ok) 6%, var(--anx-card));
+}
+.ucp-cc__receipt-head { display: flex; align-items: center; gap: .5rem; font-weight: 700; color: var(--anx-ok); margin-bottom: .4rem; }
+.ucp-cc__receipt-row { display: flex; justify-content: space-between; font-size: .88rem; padding: .1rem 0; }
+.ucp-cc__receipt-row span { color: var(--anx-muted-fg); }
+.ucp-cc__receipt-sim { font-size: .76rem; color: var(--anx-warn); margin-top: .4rem; }
+.ucp-cc__note { color: var(--anx-muted-fg); }
+
+@media (max-width: 560px) {
+  .ucp-cc__auth-actions { flex-wrap: wrap; }
+  .ucp-cc__go,
+  .ucp-cc__approve,
+  .ucp-cc__decline { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ucp-cc * { transition: none !important; }
+  .ucp-cc__evt { animation: none; }
+}

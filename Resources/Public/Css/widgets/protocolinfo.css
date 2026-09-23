@@ -1,0 +1,167 @@
+/* Agent Nexus — Protocol info element. Loads after nexus-tokens.css and nexus-frontend.css. */
+
+/*
+ * Server-rendered explainer that sits next to a demo: the build-rendered
+ * sequence diagram, the endpoints this installation exposes and the four steps
+ * a request walks through. No JavaScript, no live data — only tokens.
+ */
+
+.anx-info {
+  margin: 1.5rem 0;
+  font-size: 1rem;
+  border: 1px solid var(--anx-border);
+  border-radius: calc(var(--anx-radius) + 0.25rem);
+  background: var(--anx-card);
+  box-shadow: var(--anx-shadow-sm);
+  padding: clamp(1rem, 3vw, 1.6rem);
+  display: grid;
+  /* minmax(0, 1fr), not the implicit "auto": a grid item's min-width defaults
+     to min-content, so the diagram and the endpoint table — both of which carry
+     a min-width and scroll inside their own box — stretched this element past
+     the viewport instead, and the whole page scrolled sideways on a phone. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.anx-info__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.35rem;
+}
+.anx-info__badge {
+  font-size: var(--anx-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--anx-radius-full);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.anx-info__edge {
+  font-size: var(--anx-text-xs);
+  color: var(--anx-muted-fg);
+}
+.anx-info__title {
+  margin: 0 0 0.35rem;
+  font-size: var(--anx-text-xl);
+  line-height: 1.2;
+  color: var(--anx-fg);
+}
+.anx-info__tagline {
+  margin: 0;
+  color: var(--anx-muted-fg);
+  max-width: 62ch;
+}
+
+.anx-info__facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+.anx-info__fact {
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: 0.6rem 0.7rem;
+  background: var(--anx-surface-1);
+}
+.anx-info__fact dt {
+  font-size: var(--anx-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--anx-muted-fg);
+}
+.anx-info__fact dd {
+  margin: 0.2rem 0 0;
+  font-size: var(--anx-text-sm);
+  color: var(--anx-fg);
+}
+
+.anx-info__diagram {
+  margin: 0;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  background: var(--anx-surface-1);
+  padding: 0.8rem;
+  overflow-x: auto;
+}
+.anx-info__diagram .anx-mm {
+  display: block;
+  width: 100%;
+  min-width: 34rem;
+  height: auto;
+}
+.anx-info__diagram figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--anx-text-xs);
+  color: var(--anx-muted-fg);
+}
+
+.anx-info__h3 {
+  margin: 0 0 0.6rem;
+  font-size: var(--anx-text-lg);
+  color: var(--anx-fg);
+}
+.anx-info__steps {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.anx-info__step strong {
+  color: var(--anx-fg);
+}
+.anx-info__step span {
+  display: block;
+  color: var(--anx-muted-fg);
+  font-size: var(--anx-text-sm);
+}
+
+.anx-info__table-wrap { overflow-x: auto; }
+.anx-info__table {
+  width: 100%;
+  min-width: 32rem;
+  border-collapse: collapse;
+  font-size: var(--anx-text-sm);
+}
+.anx-info__table th,
+.anx-info__table td {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--anx-border);
+  vertical-align: top;
+}
+.anx-info__table th {
+  font-size: var(--anx-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--anx-muted-fg);
+}
+.anx-info__table td { color: var(--anx-muted-fg); }
+.anx-info__table code {
+  font-family: var(--anx-font-mono);
+  font-size: var(--anx-text-xs);
+  color: var(--anx-fg);
+  word-break: break-all;
+}
+.anx-info__method {
+  font-family: var(--anx-font-mono);
+  font-size: var(--anx-text-xs);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.anx-info__foot { margin: 0; }
+.anx-info__spec {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: var(--anx-text-sm);
+  color: var(--accent);
+}
+.anx-info__spec:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--anx-radius-sm);
+}

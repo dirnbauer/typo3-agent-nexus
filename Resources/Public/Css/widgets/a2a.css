@@ -1,0 +1,72 @@
+/* Agent Nexus — A2A concierge widget. Loads after nexus-tokens.css and nexus-frontend.css. */
+
+.a2a-cc__skills { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .7rem; }
+
+.a2a-cc__status { display: flex; align-items: baseline; gap: .5rem; font-size: .9rem; }
+.a2a-cc__state {
+  font-size: .64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+  color: var(--anx-fg);
+  background: var(--anx-surface-2);
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-full);
+  padding: .1rem .45rem;
+  flex: none;
+}
+/* task states: info = agui blue, paused = a2ui violet */
+.a2a-cc__status--submitted .a2a-cc__state { border-color: var(--anx-accent-agui); color: var(--anx-accent-agui); }
+.a2a-cc__status--working .a2a-cc__state { border-color: var(--anx-warn); color: var(--anx-warn); }
+.a2a-cc__status--input-required .a2a-cc__state { border-color: var(--anx-accent-a2ui); color: var(--anx-accent-a2ui); }
+.a2a-cc__status--completed .a2a-cc__state { border-color: var(--anx-ok); color: var(--anx-ok); }
+.a2a-cc__statustxt { color: var(--anx-muted-fg); }
+
+.a2a-cc__ui:not(:empty) { margin-top: .7rem; }
+.a2a-cc__confirm {
+  border: 1px solid color-mix(in srgb, var(--anx-accent-a2ui) 35%, var(--anx-border));
+  background: color-mix(in srgb, var(--anx-accent-a2ui) 6%, var(--anx-card));
+}
+.a2a-cc__confirm-badge { font-weight: 700; color: var(--anx-accent-a2ui); margin-bottom: .4rem; }
+.a2a-cc__confirm-q { margin-bottom: .6rem; }
+.a2a-cc__confirm-row { display: flex; gap: .5rem; }
+.a2a-cc__confirm-field {
+  flex: 1;
+  border: 1px solid var(--anx-border);
+  border-radius: var(--anx-radius-sm);
+  padding: .5rem .65rem;
+  font: inherit;
+  background: var(--anx-bg);
+  color: var(--anx-fg);
+}
+.a2a-cc__confirm-field:focus {
+  outline: 0;
+  border-color: var(--anx-accent-a2ui);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--anx-accent-a2ui) 14%, transparent);
+}
+
+.a2a-cc__artifact { margin-top: .7rem; border: 1px solid var(--anx-border); border-radius: var(--anx-radius); overflow: hidden; }
+.a2a-cc__artifact-head {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  padding: .5rem .8rem;
+  font-weight: 600;
+  font-size: .85rem;
+  border-bottom: 1px solid var(--anx-border);
+}
+.a2a-cc__artifact-name { font-family: var(--anx-font-mono); font-size: .78rem; color: var(--accent); }
+.a2a-cc__artifact-body { padding: .8rem 1rem; white-space: pre-wrap; line-height: 1.55; font-size: .9rem; max-height: 22rem; overflow: auto; }
+
+@media (max-width: 560px) {
+  .a2a-cc__bar,
+  .a2a-cc__confirm-row { flex-wrap: wrap; }
+  .a2a-cc__go,
+  .a2a-cc__approve { width: 100%; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a2a-cc * { transition: none !important; }
+  .a2a-cc__evt { animation: none; }
+}
