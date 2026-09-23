@@ -32,11 +32,11 @@ const SRC = join(ROOT, 'Build/Diagrams');
 const OUT = join(ROOT, 'Resources/Public/Diagrams');
 
 const LABELS = {
-  a2ui: 'A2UI sequence: visitor intent to generated form to stored inquiry',
-  agui: 'AG-UI sequence: streamed answer with a human approval gate',
-  a2a: 'A2A sequence: agent discovery, task delegation and artifact delivery',
-  ucp: 'UCP sequence: manifest discovery, cart proposal and authorized order',
-  ap2: 'AP2 sequence: chained signed mandates and verification',
+  a2ui: 'A2UI v0.9.1 sequence: visitor intent, generated surface, action and confirmation',
+  agui: 'AG-UI 1.0 sequence: streamed run, interrupt and resumed approval',
+  a2a: 'A2A 1.0 sequence: Agent Card discovery, streamed task and artifact delivery',
+  ucp: 'UCP sequence: profile discovery, checkout session and approved order',
+  ap2: 'AP2 v0.2.0 sequence: checkout and payment mandates, verified before the order',
 };
 
 /** Protocol accents — must stay in step with --anx-accent-* in nexus-tokens.css. */
