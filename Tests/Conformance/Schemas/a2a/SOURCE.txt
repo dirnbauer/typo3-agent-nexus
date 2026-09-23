@@ -1,0 +1,24 @@
+A2A (Agent2Agent) protocol 1.0 - schema vendored for the Agent Nexus conformance tests.
+
+Upstream   https://github.com/a2aproject/A2A
+License    Apache License 2.0 (see LICENSE in this directory)
+Retrieved  2026-09-23
+
+1.0/a2a.proto
+    The normative definition, from tag v1.0.1 (commit 3303592588e388e62e0f69f701af531d2f4e3991):
+    https://raw.githubusercontent.com/a2aproject/A2A/v1.0.1/specification/a2a.proto
+1.0/a2a.json
+    The non-normative JSON Schema (draft 2020-12) generated from that proto, as published at
+    https://a2a-protocol.org/dev/spec/a2a.json (built from main a9c7f4c20e990d13d3c3bf33b0fbf0443448c60c).
+    The v1.0.1 bundle at https://a2a-protocol.org/v1.0.1/spec/a2a.json has unresolvable $refs
+    (upstream issue #2073, fixed on main by #2074); this build is otherwise identical in content.
+    The generated schema carries no `required` lists - required fields are taken from the proto
+    and asserted separately by the tests.
+1.0/examples/agent-card.sample.json
+    The sample Agent Card of specification section 8.5 (main 43e0c874d3baba68ed84b98678d7f2268438e69f).
+
+SHA-256 of every vendored file:
+1ead11c093cd0ea18d5a88f19a74107c887cffce2b6ca6988056066e7d933753  1.0/a2a.json
+e195bf96ab630c69797851970203e1b2b6b19528f2e9803b7d904b91a5104016  1.0/a2a.proto
+ad15d5482dccb7bc96211bcfb61b2ebd123f749b5fdfc8b910aae0825963959c  1.0/examples/agent-card.sample.json
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  LICENSE

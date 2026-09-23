@@ -1,0 +1,89 @@
+UCP (Universal Commerce Protocol) 2026-08-25 - schemas vendored for the Agent Nexus conformance tests.
+
+Upstream   https://github.com/Universal-Commerce-Protocol/ucp
+License    Apache License 2.0 (see LICENSE in this directory)
+Retrieved  2026-09-23, tag v2026-08-25 (commit cd78fb38e819de77d9b527d110476eccb876f1bd)
+
+2026-08-25/schemas/    source/schemas/ - only the $ref closure of profile.json, shopping/checkout.json,
+                       shopping/fulfillment.json and common/payment_ap2_mandate.json, with the repository's
+                       relative paths kept so every $ref resolves. The $ids are the unversioned
+                       https://ucp.dev/schemas/... ones the repository uses.
+
+SHA-256 of every vendored file:
+2bbed66b5adbc3d77d3b5e0c9e87687da3d8bf159755ba95d89e88cd3420ef39  2026-08-25/schemas/capability.json
+538db950d4220033ae7af654654aa6f7f45af17718119ddb10af551b2461fccd  2026-08-25/schemas/common/payment_ap2_mandate.json
+7cf21d6c8652893b5d2865062a487f1818e81733fc030f6628479a257e3f8a82  2026-08-25/schemas/common/types/actions.json
+787b78fad4d3c7456b834b4d5d068676ab3c3110ea857b02b6ad5c8ef8a9f179  2026-08-25/schemas/common/types/amount.json
+d32ca30a463a647a53c806d8ee236be739741f015db9ba0ab13f4b67003f6507  2026-08-25/schemas/common/types/available_payment_instrument.json
+8c0fcbfabc3f8038c89a86b7f6b9fa32c2754eba727328c6d90062584855ade2  2026-08-25/schemas/common/types/constraint_expression.json
+ebb18d8833e1a1e9c24bd578999d5c8cd730c277f9f0b29495cc3ee34535d0b3  2026-08-25/schemas/common/types/context.json
+9c509e8ecc47ad408ee36b940cf836cd16525f773b3eb2b4a37d0ddcbaeb6380  2026-08-25/schemas/common/types/description.json
+9368a4ad6d9a2a448c05b97baf7aa4a73a04efcf40d624a5d373ecc3f67a530c  2026-08-25/schemas/common/types/error_code.json
+76a5b9a643132c33dc4bca947a7b0c26a8523ab6c8fd1a43141d5aeac0be2b94  2026-08-25/schemas/common/types/error_response.json
+6ed9aec01e8fc597dc676e38dbd240684d120c831a2398648c6bd5d6e73fe38c  2026-08-25/schemas/common/types/info_code.json
+a2bf68aa18f036c1b03b31ee77ddd2448f5ac2a4251b62a2e6db42daba62eaa8  2026-08-25/schemas/common/types/link.json
+f2062b6c3ca6991682000f4f4c5f40457c36056a19d5aafcd2de1d9a5daa74eb  2026-08-25/schemas/common/types/locality.json
+03fe88751f500d242fe50ecb80b1486b6bf466f39eead60ea22d04552aeb6425  2026-08-25/schemas/common/types/location_summary.json
+dfcbe1ada0d058ea95459e59a08056a1f613550023c15d5182beaba685f82a47  2026-08-25/schemas/common/types/measure.json
+d277e2c4f26a6d8f86d57066397b14cb9d78c9ff098b308ab2140f90c027c3fc  2026-08-25/schemas/common/types/media.json
+a66251758e5646743b0a3986434b277da6f52e181d21671bd3ad7fd75ab34339  2026-08-25/schemas/common/types/message.json
+de0a584b67405c3b608ec4426c0badfda7be97e0419a60b9100abf67d04c74eb  2026-08-25/schemas/common/types/message_error.json
+56894c75128861b2fc696757fb0193ee9cd4d9bfcdcdb18902c4cdb41e04796b  2026-08-25/schemas/common/types/message_info.json
+0a479161db91d35bc6c20b9db389188c3d7b298a643cb4f8e3079dc67c5aefbf  2026-08-25/schemas/common/types/message_warning.json
+8e86e9d65cce61b049ba5d32e674706e64eabc9e3658dd8ef101efadaba8a9a8  2026-08-25/schemas/common/types/pagination.json
+b6543bbdd4ecce91e1a5192fce4af1910570811901b755eebdcbf227dbdd0579  2026-08-25/schemas/common/types/payment.json
+47af578c9af0d585b2225c03037c116c880a1539826e77e6c9cdf741494392d3  2026-08-25/schemas/common/types/payment_credential.json
+d005c3ccb38afa7fab7e0d72e125fcf7f78b7b6b196d4096d6c558f6f3174222  2026-08-25/schemas/common/types/payment_instrument.json
+bd2ace0b58b81b25f3d98f527237e2de72412db65fb218a5f41c9fae748e8c71  2026-08-25/schemas/common/types/policy.json
+6ee3504a2a53a16df406e80c62d80b7353dff088dd3de5b770292c89bc5137ca  2026-08-25/schemas/common/types/postal_address.json
+a625ac12ece594ceb36009bb5bbdef4a57f7620c21a8df3f50fc1930f84906a1  2026-08-25/schemas/common/types/price.json
+f3add5694735f5845759767de30ea0f5a3876d5975f8e6f7f382f29c2eec5e81  2026-08-25/schemas/common/types/price_filter.json
+1b225321ebd52b9c206c03a80d256ce9dccffee727e542eb0c3da00b0d5a0db1  2026-08-25/schemas/common/types/price_range.json
+a314c84ebcf8b12b10cf3f15c067fe164a3eeb13a57b5769b5c50e69f20494da  2026-08-25/schemas/common/types/quantity_unit.json
+987eaa192930a0ea8d1c7b6a7cc947153e1d9da32b46d61aa49eaf782c166edf  2026-08-25/schemas/common/types/request_constraints.json
+a5d616402d47c602196e6e455053ee3683bc9a6e90192330297bb13abd3326eb  2026-08-25/schemas/common/types/reverse_domain_name.json
+47c8bbee51fcfbb9f029656881126dda036830206eb8d41f37be0c257e7a87d2  2026-08-25/schemas/common/types/signals.json
+b892a84dbefd07204d251c2546c638d5a376a8ca673f3e422b913ba22b3d64c9  2026-08-25/schemas/common/types/signed_amount.json
+2d8618d61f31ca03a9a59362bae9c56744906d9db447b73a6222909b0e1850e4  2026-08-25/schemas/common/types/total.json
+488a51268c0cf02de1b02e53219b542a695c7c1e239ca66db77c3916dfa0b449  2026-08-25/schemas/common/types/totals.json
+dc516d36c80edfb44347f4d5d6f39c40b1a14ebbba40ee5dc73ec3394397db82  2026-08-25/schemas/common/types/unit.json
+4246be713f15be3e8adfb0ffd9ebb984a216f1db2c1c9c059466e5b49ecb97d9  2026-08-25/schemas/common/types/warning_code.json
+5ea09bb44a6dd5a7696150e220eae2b3b4a8eacda176793fb816a9f8240a50a6  2026-08-25/schemas/payment_handler.json
+720a4e676bd4aaa5cbdcef2f89a4d0b776c4f0e141f1911da7514227ecb5c239  2026-08-25/schemas/profile.json
+4f8453ee67d82d53f05b06fb7ea03dec0e0600faea1098b3184b71cdf0fc2423  2026-08-25/schemas/service.json
+79c685132dcbf09b66e60535e372bb36acc75fede9a32c49aa0e1cc263a7f8df  2026-08-25/schemas/shopping/catalog_lookup.json
+3cf62e8d2330480400ea99d139bd4986f65743bc618247ab8e9d14da00a30e9d  2026-08-25/schemas/shopping/catalog_search.json
+1a856fabbe86e031baab0c35745cb0b44481da29a2075ee1e73f720e6337204d  2026-08-25/schemas/shopping/checkout.json
+d0306c8d47d4bee95889d2fc043de0d6086e34303a52ae00b9d42546a6d99a6f  2026-08-25/schemas/shopping/fulfillment.json
+c65756a97aef7b9c61b1ed4364c347f278a765242777bbf42515f83ac14db0ea  2026-08-25/schemas/shopping/types/attribution.json
+268f1e083ea2f933f61472985ced4cfa91265c9548f69fafc3a76d914906c4a6  2026-08-25/schemas/shopping/types/availability.json
+815d92809de00c90551a9d56bf755e6532aa04b6ca1698522272cbe015615fa0  2026-08-25/schemas/shopping/types/business_fulfillment_config.json
+24075ff053a9bc87f1b8b27fd2125df2035a7a22a35a784a58fe9b95a66d8cdb  2026-08-25/schemas/shopping/types/buyer.json
+13e7629270c910c77bfe328f158adc0899ad0636289ea9429805d7422112cdf8  2026-08-25/schemas/shopping/types/category.json
+cc2deac3ec8c8c18249241e1a37cb0791221759fdee582c68069a0424979e403  2026-08-25/schemas/shopping/types/detail_option_value.json
+bc27ac093d47902f2b884e59f1fd01ccf64e8bc4b0c4e48b4afebe7999325d49  2026-08-25/schemas/shopping/types/fulfillment.json
+1fd7eb09ea6a04a67fcd9cff091bf9c6cf5b3869f76a45c9c057314fd20003ce  2026-08-25/schemas/shopping/types/fulfillment_available_method.json
+f39d0b5269b52dda5ee04b3bda4b23f1ccb2259d6208df9c8b2ba543551e5df9  2026-08-25/schemas/shopping/types/fulfillment_destination.json
+3c217586884f9ff1aab26d1f0ccf33a662e4908ab257c7000d92dc02fb4185ce  2026-08-25/schemas/shopping/types/fulfillment_destination_filter.json
+23f74d66b15f7f43312c7c3bb09c5fbbaa7b6cd62d173bbbb1a27cc6c001a4fc  2026-08-25/schemas/shopping/types/fulfillment_group.json
+5cf7b01b56ab3ed584c54d9bcf995b7ae01e85de6b11ba9d4526a57a8f536927  2026-08-25/schemas/shopping/types/fulfillment_method.json
+e075730334e41549af1c7cd3846943ad1bd3f94cb4c40bba5bc5ad5aaff014df  2026-08-25/schemas/shopping/types/fulfillment_option.json
+6f9d8ae9d79cd3d5dc0ae20a1d75761f53054c3fab265527bedaececaded7cca  2026-08-25/schemas/shopping/types/fulfillment_option_base.json
+27a7da5dd86ce92b778591379bc8c9fc4376f123ea0b139cc55883221fb31b22  2026-08-25/schemas/shopping/types/input_correlation.json
+0c5ef0d419484ade4a07d4e4193754ee7ab46ffebe4cb6ccfb70ca4afc8c7dab  2026-08-25/schemas/shopping/types/item.json
+0c968bf0360f1c6b753e4ae45f4ae18bb6fd29aa24e50cfbb117151f18d0adbf  2026-08-25/schemas/shopping/types/line_item.json
+6ca78514d2258a7b4a62ba6403526177277467ccbe5625124f7d8e160eefd9cc  2026-08-25/schemas/shopping/types/location_destination.json
+8c128790c5604c1d38b10290e5fe29571018ce891476b9644c680dfff96634e0  2026-08-25/schemas/shopping/types/option_value.json
+6f030ce24e438760ae8db0decbfe7ddd9ce6c9b0254c6b81956151a5042f4027  2026-08-25/schemas/shopping/types/order_confirmation.json
+d5276726200e2fcebad60394cbd97314f59a335cd044fde3b1c981b52103edc3  2026-08-25/schemas/shopping/types/platform_fulfillment_config.json
+a3a4174515e050ed1ddf273c2fb4b1c72e36336c1bbcff05976f9245408c488c  2026-08-25/schemas/shopping/types/product.json
+30c7ebe59f9d49e8a259e2aecc4f6b814fdfbd755a8abdcc5524f4940aa85180  2026-08-25/schemas/shopping/types/product_option.json
+3d9ea28f3b90edefe7b3aa042ccf559643e88e0efe1843b78fa30dea174214af  2026-08-25/schemas/shopping/types/rating.json
+18d73e8c3ca57306ded19d425aae45cd38eff150e2abe5cd2ccaada32a5abba3  2026-08-25/schemas/shopping/types/search_filters.json
+6b677befedce83b4203800166536d842744267500b3425379267aad8111d298b  2026-08-25/schemas/shopping/types/selected_option.json
+c7907026ef03a1dca9ebbbb3d6161cb5048a6930c9e09988d1d980ed245d8a9a  2026-08-25/schemas/shopping/types/shipping_destination.json
+85a40131603889a5aa3807c67a252e556845a274283cd684e09e89dd5604a3b0  2026-08-25/schemas/shopping/types/unit_price.json
+7f742fcacae92a5ccbfb6c04e1ca22815d1864f7c32599f76d12bcd2ed26544c  2026-08-25/schemas/shopping/types/variant.json
+00381600d1d5b6ce832499c00712f6192b12674b3c2c833420c0e9d3f8f196a2  2026-08-25/schemas/transports/embedded_config.json
+05329a3ae4546f97efcf381c3b0cb279d21063e351bcf4edd00950dc14d67c9c  2026-08-25/schemas/ucp.json
+cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30  LICENSE

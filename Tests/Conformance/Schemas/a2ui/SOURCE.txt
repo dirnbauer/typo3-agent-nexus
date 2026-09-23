@@ -1,0 +1,39 @@
+A2UI (Agent-to-User Interface) - schemas vendored for the Agent Nexus conformance tests.
+
+Upstream   https://github.com/a2ui-project/a2ui (formerly google/A2UI)
+License    Apache License 2.0 (see LICENSE in this directory)
+Retrieved  2026-09-23, commit 894875de653564ccb5f79cdbdadc9166c4ce0b38 (main, 2026-09-22)
+
+v0.9.1/*.json          specification/v0_9_1/json/*  (current stable release)
+v0.9.1/basic_catalog.json   specification/v0_9_1/catalogs/basic/catalog.json
+v1.0/*.json            specification/v1_0/json/*    (release candidate, still changing)
+v1.0/basic_catalog.json     catalogs/basic/v1/catalog.json
+                       (published at https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json)
+
+SHA-256 of every vendored file:
+cb64c585030539d0efa75d6b675a431db9c5cc92545c51e09462e92143f1a55c  LICENSE
+8cc94d0a482e67048f9fc989964ca5da56fe42f531d919315a508989fb22e13e  v0.9.1/basic_catalog.json
+917ff302b883c8c50475f0fafa836c17620078e7e2089392b322dc5df01de78f  v0.9.1/client_capabilities.json
+6aefe455be9287caaf2f964ae480e8cf87706718106130908b41df19d5e982be  v0.9.1/client_data_model.json
+f049f8a554296a603cd3c1cef37dd6811006dc90e3ff52ce845d1674cd00a6b7  v0.9.1/client_to_server.json
+08d9555b79e0c23cd87ce56cd249483d2041a78c72ee605b436a4192451168c7  v0.9.1/client_to_server_list.json
+aac8653c446638a14af8e8845967813051b89e57a2e668fc1186aeb5b20d0bed  v0.9.1/client_to_server_list_wrapper.json
+ac79788e95e5bdf0a39808953593a53c1bc9fcdcdb55480f4610613c6591e94c  v0.9.1/common_types.json
+11515498484011e89b2f57084b516d591f89c595fe001ab7fdb632924ed7a3b5  v0.9.1/sample.json
+bdaf275dd2abf279e62637ead1b840744e031d94735ec4f63d0c7c2fe5347dd4  v0.9.1/server_capabilities.json
+ed1ee11b4f1e94dd08ebe0d57bedb436cb452cc546d26cae407858ae477af288  v0.9.1/server_to_client.json
+114ee3dff68c2a838f3d6ba426bd9f0d75d85251bf986ec4a601b64e7a05376a  v0.9.1/server_to_client_list.json
+b33ff49453dd8d2b91a5a842db2bbf9b4ab3995e6b1c34b3dc7e9ebca331aa70  v0.9.1/server_to_client_list_wrapper.json
+86318a04b2fda504bededba936880e1d9cd5bcbb856b6aac6377f60e0426fbe9  v1.0/agent_capabilities.json
+468c8e544dbe0b02d5d5586ebcdca399ecfa6d07a7b875d887089ce3bd2df160  v1.0/agent_to_renderer.json
+3d3fef882fe5cc22932d3a91713defaeeb329126200954c06bf9f2c56df51c56  v1.0/agent_to_renderer_list.json
+e306af2521e731db673415115d55b3d0e66453945c071e34298b4cb1dff88014  v1.0/agent_to_renderer_list_wrapper.json
+29d843fccbe24e2314a134ae04fee4d64b078e2f43fa364b1beb9b2bd6adb9f5  v1.0/basic_catalog.json
+f3c15537c179f06217b3746f9106674a747668a3109e6f380b5f3f9a52a060eb  v1.0/catalog_definition.json
+f2911c1cc05ca1dae2cf78ed18bf463816daf75c44c43bb5603144934425bcb2  v1.0/common_types.json
+923293ac283424ca08b68a951bc110f8885350baf4c8a9cb678c1647f0b22b3b  v1.0/renderer_capabilities.json
+be0890fce16c10f903bd30808e0ec012c7766212fb95c983319db73faac485eb  v1.0/renderer_data_model.json
+b23e1ca3e311f20d8a3b48620f4ca2e13a4188acd55de973075db421a0ed7e69  v1.0/renderer_to_agent.json
+98899d7d16222207af3bfd9aab12aa7b8f68dc8b5267dcf76d867236235ec5d8  v1.0/renderer_to_agent_list.json
+a0dbcaf2340def4485c287c19888aa81041ddee75e5717129457d4a39fbcc593  v1.0/renderer_to_agent_list_wrapper.json
+7df58a955dfcd5241bfd5631df8fd291eb02d66f2f9a12304d5395517d64202f  v1.0/sample.json

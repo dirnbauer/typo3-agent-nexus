@@ -13,6 +13,9 @@
         <testsuite name="Agent Nexus unit tests">
             <directory>../../Tests/Unit/</directory>
         </testsuite>
+        <testsuite name="Agent Nexus conformance tests">
+            <directory>../../Tests/Conformance/</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

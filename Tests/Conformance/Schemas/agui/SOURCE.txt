@@ -1,0 +1,14 @@
+AG-UI (Agent-User Interaction) protocol 1.0 - schema vendored for the Agent Nexus conformance tests.
+
+Upstream   https://github.com/ag-ui-protocol/ag-ui
+License    MIT (see LICENSE in this directory)
+Retrieved  2026-09-23
+
+1.0/schema.json
+    spec/1.0/schema.json at commit f08ccf853497914ef70a5f0197af45bb74915bc2 (2026-09-17, the commit the
+    1.0.0 packages were published from); byte-identical to https://docs.ag-ui.com/spec/1.0/schema.json.
+    JSON Schema draft 2020-12, $id https://ag-ui.com/spec/1.0/schema.json, one $anchor per type.
+
+SHA-256 of every vendored file:
+4b5c93226838a0e72d88e6c5df20633c686c49fcb75d9be2815c6cbf9e48e71a  1.0/schema.json
+06dcddbb6908a0c6dd4a9e8ec822eea41d5a460a53089fecccc8a68049e99241  LICENSE
