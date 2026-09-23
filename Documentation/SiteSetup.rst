@@ -112,8 +112,8 @@ Add one site set in your site configuration:
       - webconsulting/agent-nexus
 
 That set maps every ``agentnexus_*`` content element onto ``lib.contentElement``
-with the ``AgentNexusPlugin`` template, registers the plugin view paths and the
-storage pid, and keeps the deprecated CType aliases rendering.
+with the ``AgentNexusPlugin`` template and registers the plugin view paths and
+the storage pid.
 
 ..  _site-setup-desiderio:
 
@@ -127,8 +127,10 @@ the rest), so they follow its palette, spacing scale and dark mode on their own.
 
 ..  deprecated:: 3.1
     ``webconsulting/agent-nexus-desiderio`` still resolves, so a site that lists
-    it keeps working, but it no longer does anything and is removed in 4.0.
-    Replace it with ``webconsulting/agent-nexus``.
+    it keeps building — TYPO3 refuses to build a site whose dependencies name an
+    unknown set. It adds nothing beyond depending on ``webconsulting/agent-nexus``
+    and ``webconsulting/desiderio``, and it is removed in 5.0. List those two
+    sets instead.
 
     It used to add a higher-priority template root whose variants wrapped each
     element in a section, a container, a card and a protocol badge — inside the
