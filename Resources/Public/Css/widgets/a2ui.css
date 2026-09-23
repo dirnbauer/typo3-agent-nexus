@@ -105,6 +105,8 @@
 .a2ui-inquiry .a2ui-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .45rem; }
 .a2ui-inquiry .a2ui-list--horizontal { flex-direction: row; overflow-x: auto; }
 .a2ui-inquiry .a2ui-heading { margin: 0; font-size: 1.15rem; font-weight: 700; line-height: 1.3; color: var(--anx-fg); }
+.a2ui-inquiry .a2ui-heading--rank-2,
+.a2ui-inquiry .a2ui-heading--rank-3 { font-size: 1rem; }
 .a2ui-inquiry .a2ui-heading:focus { outline: none; }
 .a2ui-inquiry .a2ui-heading:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .a2ui-inquiry .a2ui-text p { margin: 0; line-height: 1.5; }
@@ -208,6 +210,9 @@
 .a2ui-inquiry .a2ui-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .a2ui-inquiry .a2ui-button[aria-busy="true"] { cursor: progress; }
 .a2ui-inquiry .a2ui-button__hint { margin: .35rem 0 0; font-size: .85rem; color: var(--anx-muted-fg); }
+/* In a row, a button's hint takes its own line below the buttons, so it never pushes the next button away. */
+.a2ui-inquiry .a2ui-row > .a2ui-button-wrap:not([style]) { display: contents; }
+.a2ui-inquiry .a2ui-row > .a2ui-button-wrap:not([style]) > .a2ui-button__hint { order: 1; flex: 1 0 100%; margin: 0; }
 
 /* tabs, dialog, media */
 .a2ui-inquiry .a2ui-tabs__list { display: flex; flex-wrap: wrap; gap: .25rem; border-bottom: 1px solid var(--anx-border); margin-bottom: .85rem; }
@@ -262,6 +267,9 @@
   .a2ui-inquiry__bar { flex-wrap: wrap; }
   .a2ui-inquiry__go { width: 100%; justify-content: center; }
   .a2ui-inquiry .a2ui-row > * { flex: 1 1 100%; }
+  /* Stacked, each button keeps its hint right below it. */
+  .a2ui-inquiry .a2ui-row > .a2ui-button-wrap:not([style]) { display: block; }
+  .a2ui-inquiry .a2ui-row > .a2ui-button-wrap:not([style]) > .a2ui-button__hint { margin: .35rem 0 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .a2ui-inquiry__live:not(:empty) { animation: none; }

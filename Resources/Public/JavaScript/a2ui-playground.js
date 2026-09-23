@@ -83,6 +83,7 @@ class Playground {
       this.surfaceId = result.surfaceId;
       this.data.textContent = JSON.stringify(this.renderer.dataModel(result.surfaceId) || {}, null, 2);
       this.provenance.textContent = result.provenance.label;
+      this.provenance.parentElement.hidden = false;
       this.showNotes(result.notes || []);
       this.say(labels.get('js.status.generated', [result.surfaceId, String(result.messages.length), result.provenance.label]));
       this.resetButton.hidden = false;
@@ -126,12 +127,13 @@ class Playground {
     const name = document.createElement('code');
     name.className = 'anx-events__name';
     name.textContent = type;
-    summary.append(index, badge, name);
+    // Spaces between the parts keep the summary readable as one sentence.
+    summary.append(index, ' ', badge, ' ', name);
     if (message.metadata) {
       const extra = document.createElement('span');
       extra.className = 'text-variant';
       extra.textContent = labels.get('js.stream.metadata');
-      summary.append(extra);
+      summary.append(' ', extra);
     }
     const pre = document.createElement('pre');
     pre.className = 'anx-code';
@@ -163,6 +165,7 @@ class Playground {
     this.count = 0;
     this.surfaceId = null;
     this.data.textContent = '{}';
+    this.provenance.parentElement.hidden = true;
     this.showNotes([]);
     this.resetButton.hidden = true;
     if (clearIntent) {

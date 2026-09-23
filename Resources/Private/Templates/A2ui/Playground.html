@@ -84,7 +84,8 @@
 
         <section class="anx-a2ui__panel" aria-labelledby="a2ui-surface-heading">
             <h2 id="a2ui-surface-heading"><f:translate domain="agent_nexus.a2ui" key="playground.surface.heading" /></h2>
-            <p class="text-variant" data-a2ui-provenance><f:translate domain="agent_nexus.a2ui" key="playground.surface.lede" /></p>
+            <p class="text-variant"><f:translate domain="agent_nexus.a2ui" key="playground.surface.lede" /></p>
+            <p class="anx-a2ui__provenance" hidden><span class="badge badge-default" data-a2ui-provenance></span></p>
             <div class="anx-a2ui__frame" data-a2ui-mount aria-labelledby="a2ui-surface-heading" role="group"></div>
             <details class="anx-a2ui__data">
                 <summary><f:translate domain="agent_nexus.a2ui" key="playground.dataModel" /></summary>
@@ -142,16 +143,16 @@
         </f:if>
     </section>
 
-    <div class="card-container anx-section">
+    <div class="anx-a2ui__info anx-section">
         <section class="card" aria-labelledby="a2ui-api-heading">
             <div class="card-header"><h2 class="card-title" id="a2ui-api-heading"><f:translate domain="agent_nexus.a2ui" key="playground.api.heading" /></h2></div>
             <div class="card-body">
                 <p><f:translate domain="agent_nexus.a2ui" key="playground.api.lede" /></p>
-                <dl class="anx-dl anx-dl--compact">
-                    <div><dt>POST</dt><dd><code>{endpoints.surfaces}</code></dd></div>
-                    <div><dt>POST</dt><dd><code>{endpoints.actions}</code></dd></div>
-                    <div><dt>GET</dt><dd><code>{endpoints.catalog}</code></dd></div>
-                </dl>
+                <ul class="anx-a2ui__endpoints">
+                    <li><span class="badge badge-info">POST</span> <code>{endpoints.surfaces}</code></li>
+                    <li><span class="badge badge-info">POST</span> <code>{endpoints.actions}</code></li>
+                    <li><span class="badge badge-default">GET</span> <code>{endpoints.catalog}</code></li>
+                </ul>
                 <pre class="anx-code" tabindex="0" aria-label="{f:translate(domain: 'agent_nexus.a2ui', key: 'playground.api.curl')}"><code>{curl}</code></pre>
                 <p class="anx-a2ui__links">
                     <a class="btn btn-default" href="{catalogUri}"><core:icon identifier="actions-list" size="small" /> <f:translate domain="agent_nexus.a2ui" key="playground.api.catalogue" /></a>

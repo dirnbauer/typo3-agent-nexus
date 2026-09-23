@@ -1012,7 +1012,9 @@ const BUILDERS = {
       if (heading || markdown) {
         const level = this.headingLevel(state, heading ? Number(heading[1]) : markdown[1].length);
         const h = document.createElement(`h${level}`);
-        h.className = 'a2ui-heading';
+        // The rank inside the surface (1 = its top heading) sizes the heading, whatever its tag.
+        const rank = Math.max(1, Math.min(3, level - this.headingBase + 1));
+        h.className = `a2ui-heading a2ui-heading--rank-${rank}`;
         this.inline(h, markdown ? markdown[2] : text);
         el.appendChild(h);
         return;
