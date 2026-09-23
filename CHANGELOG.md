@@ -4,6 +4,15 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.2] — 2026-09-23
+
+### Fixed
+
+*   PHPStan 2.2.15 knows that `openssl_pkey_export()` and `openssl_sign()`
+    write a string on success; the two redundant `is_string()` checks in
+    `EcKey` failed the level 8 analysis of the 4.0.1 CI run. `phpstan/phpstan`
+    is required at `^2.2.15`.
+
 ## [4.0.1] — 2026-09-23
 
 ### Fixed
