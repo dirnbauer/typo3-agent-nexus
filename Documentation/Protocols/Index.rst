@@ -14,7 +14,8 @@ and it renders the sequence diagram, the endpoints and the steps from the live
 services.
 
 Which version of each specification is implemented, and what changed since
-3.1, is on its own page: :ref:`spec-versions`.
+3.1, is on its own page: :ref:`spec-versions`. Where two specifications
+disagree, :ref:`known-spec-conflicts` says how Agent Nexus resolves it.
 
 ..  card-grid::
     :columns: 1
@@ -67,6 +68,7 @@ Which version of each specification is implemented, and what changed since
     :titlesonly:
 
     SpecVersions
+    KnownSpecConflicts
     A2UI
     AGUI
     A2A

@@ -51,7 +51,7 @@ jobs:
                           'Resources/Public/Icons/*.svg', 'Resources/Public/Diagrams/*.svg'):
               for f in glob.glob(pattern):
                   ET.parse(f)
-          for f in glob.glob('Tests/Conformance/Schemas/**/*.json', recursive=True):
+          for f in glob.glob('Tests/Conformance/Schemas/**/*.json', recursive=True) + glob.glob('Resources/Private/Schemas/**/*.json', recursive=True):
               json.load(open(f))
           # Every English label file has a German twin with the same units.
           ns = {'x': 'urn:oasis:names:tc:xliff:document:2.0'}

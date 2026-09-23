@@ -27,6 +27,13 @@ use Opis\JsonSchema\Validator;
  * - AP2's receipts reference `types/receipt_status.json`, a file that declares
  *   another `$id`.
  *
+ * The local overlays under Resources/Private/Schemas/Overlays are registered
+ * the same way, each under its own `$id`. An overlay never replaces an
+ * official file: it is a separate schema that refers to the official one and
+ * resolves a documented conflict between two specifications (see
+ * Documentation/Protocols/KnownSpecConflicts.rst). Validating against the
+ * official `$id` still gives the official verdict.
+ *
  * It is Opis' CompliantValidator: the plain Validator treats `default` as an
  * instruction and inserts default values into the data before it checks
  * `unevaluatedProperties`. JSON Schema defines `default` as an annotation only.
@@ -87,6 +94,12 @@ final class SchemaValidator
         return __DIR__ . '/Schemas';
     }
 
+    /** Local overlays that resolve conflicts between specifications; shipped with the extension. */
+    public static function overlayDirectory(): string
+    {
+        return dirname(__DIR__, 2) . '/Resources/Private/Schemas/Overlays';
+    }
+
     private static function validator(): Validator
     {
         if (self::$validator !== null) {
@@ -98,14 +111,16 @@ final class SchemaValidator
             throw new \RuntimeException('The schema validator has no resolver.', 1758614410);
         }
 
-        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(self::schemaDirectory(), \FilesystemIterator::SKIP_DOTS));
-        foreach ($files as $file) {
-            if (!$file instanceof \SplFileInfo || $file->getExtension() !== 'json') {
-                continue;
-            }
-            $schema = json_decode((string)file_get_contents($file->getPathname()), false);
-            if ($schema instanceof \stdClass && is_string($schema->{'$id'} ?? null)) {
-                $resolver->registerFile($schema->{'$id'}, $file->getPathname());
+        foreach ([self::schemaDirectory(), self::overlayDirectory()] as $directory) {
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory, \FilesystemIterator::SKIP_DOTS));
+            foreach ($files as $file) {
+                if (!$file instanceof \SplFileInfo || $file->getExtension() !== 'json') {
+                    continue;
+                }
+                $schema = json_decode((string)file_get_contents($file->getPathname()), false);
+                if ($schema instanceof \stdClass && is_string($schema->{'$id'} ?? null)) {
+                    $resolver->registerFile($schema->{'$id'}, $file->getPathname());
+                }
             }
         }
 

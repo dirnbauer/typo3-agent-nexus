@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/dirnbauer/typo3-agent-nexus/main/Resources/Private/Schemas/Overlays/ucp/2026-08-25/common/payment_ap2_mandate.json",
+  "title": "Payment AP2 Mandate Extension - Agent Nexus overlay",
+  "description": "A local overlay on https://ucp.dev/schemas/common/payment_ap2_mandate.json (UCP 2026-08-25). UCP's checkout_mandate pattern only admits a JWS followed by tilde-separated segments without dots, so it rejects the AP2 v0.2.0 mandate format UCP itself points to: every AP2 mandate ends with a tilde, and a delegated mandate chains its closing KB-SD-JWT behind '~~'. This overlay accepts either form and leaves everything else to the upstream schema, which stays unchanged. See Documentation/Protocols/KnownSpecConflicts.rst.",
+  "$defs": {
+    "ap2_mandate_chain": {
+      "title": "AP2 v0.2.0 mandate",
+      "description": "One SD-JWT or a delegation chain of SD-JWTs as the AP2 v0.2.0 SDK serialises it: <JWT>~<disclosure>~...~ and, per delegation step, ~<KB-SD-JWT>~<disclosure>~...~. Every token ends with a tilde; tokens are joined by the empty component that gives '~~'.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]*\\.[A-Za-z0-9_-]+(~[A-Za-z0-9_-]+)*~(~[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]*\\.[A-Za-z0-9_-]+(~[A-Za-z0-9_-]+)*~)*$"
+    },
+    "checkout_mandate": {
+      "title": "Checkout Mandate",
+      "description": "ap2.checkout_mandate: the form the upstream pattern describes, or an AP2 v0.2.0 mandate (chain).",
+      "anyOf": [
+        {
+          "$ref": "https://ucp.dev/schemas/common/payment_ap2_mandate.json#/$defs/checkout_mandate"
+        },
+        {
+          "$ref": "#/$defs/ap2_mandate_chain"
+        }
+      ]
+    },
+    "ap2_with_checkout_mandate": {
+      "type": "object",
+      "description": "AP2 extension data including checkout mandate, with the overlay's checkout_mandate.",
+      "properties": {
+        "checkout_mandate": {
+          "$ref": "#/$defs/checkout_mandate"
+        }
+      }
+    },
+    "dev.ucp.shopping.checkout": {
+      "title": "Checkout with AP2 Mandate",
+      "description": "The upstream composition with the overlay's checkout_mandate.",
+      "allOf": [
+        {
+          "$ref": "https://ucp.dev/schemas/shopping/checkout.json"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ap2": {
+              "allOf": [
+                {
+                  "$ref": "https://ucp.dev/schemas/common/payment_ap2_mandate.json#/$defs/ap2_with_merchant_authorization"
+                },
+                {
+                  "$ref": "#/$defs/ap2_with_checkout_mandate"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

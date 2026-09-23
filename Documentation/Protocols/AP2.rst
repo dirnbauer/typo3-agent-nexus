@@ -320,7 +320,9 @@ A refused payment is not a refusal: it is a 200 with ``authorised: false``.
 AP2 in UCP
 ==========
 
-UCP's AP2 mandates extension carries these mandates in a checkout.
+UCP's AP2 mandates extension carries these mandates in a checkout. Its schema
+rejects the AP2 serialisation of ``ap2.checkout_mandate``; a local overlay
+schema resolves that, see :ref:`known-spec-conflicts`.
 :php:`Webconsulting\AgentNexus\Ap2\Service\UcpMandateBridge` is the API the UCP
 business uses:
 
