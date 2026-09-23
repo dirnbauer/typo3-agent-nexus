@@ -1,9 +1,12 @@
-# Kept for compatibility only. Deprecated since 3.1: it does nothing, because
-# the widgets take their look from the host theme's shadcn tokens
-# (Resources/Public/Css/nexus-tokens.css). Sites that list it keep building -
-# TYPO3 refuses to build a site whose dependencies name an unknown set.
-# Removal is planned for 5.0: depend on "webconsulting/agent-nexus" instead.
+# Kept for compatibility only. Deprecated since 3.1: it adds no templates of its
+# own, because the widgets take their look from the host theme's shadcn tokens
+# (Resources/Public/Css/nexus-tokens.css). Its dependencies stay exactly as in
+# 3.x, because sites that list it may rely on it pulling in the Desiderio base
+# set (and its page object), and TYPO3 refuses to build a site whose
+# dependencies name an unknown set. Removal is planned for 5.0: depend on
+# "webconsulting/agent-nexus" and "webconsulting/desiderio" directly instead.
 name: webconsulting/agent-nexus-desiderio
-label: 'Agent Nexus: Desiderio rendering (deprecated, does nothing since 3.1)'
+label: 'Agent Nexus: Desiderio rendering (deprecated)'
 dependencies:
   - webconsulting/agent-nexus
+  - webconsulting/desiderio
