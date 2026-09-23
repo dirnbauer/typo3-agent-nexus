@@ -8,7 +8,8 @@ use TYPO3\CMS\Core\SingletonInterface;
 use Webconsulting\AgentNexus\A2a\Service\SkillCatalog;
 use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
 use Webconsulting\AgentNexus\Agui\Service\EventCatalog;
-use Webconsulting\AgentNexus\Ap2\Service\MandateService;
+use Webconsulting\AgentNexus\Ap2\Mandate\Check;
+use Webconsulting\AgentNexus\Ap2\Service\SampleVerification;
 use Webconsulting\AgentNexus\Ucp\Service\Merchant;
 
 /**
@@ -137,7 +138,7 @@ final class ProtocolCatalog implements SingletonInterface
         private readonly SkillCatalog $skillCatalog,
         private readonly EventCatalog $eventCatalog,
         private readonly Merchant $merchant,
-        private readonly MandateService $mandateService,
+        private readonly SampleVerification $sampleVerification,
         private readonly ComponentRegistry $componentRegistry,
     ) {}
 
@@ -307,24 +308,15 @@ final class ProtocolCatalog implements SingletonInterface
      */
     private function ap2Facts(): array
     {
-        $intent = $this->mandateService->mintIntentMandate([
-            'maxAmountCents' => 50000,
-            'currency' => 'EUR',
-            'merchants' => ['desiderio-store'],
-        ]);
-        $cart = $this->mandateService->mintCartMandate(
-            ['items' => [], 'totalCents' => 44800, 'currency' => 'EUR', 'merchant' => 'desiderio-store'],
-            (string)($intent['claims']['jti'] ?? ''),
-        );
-        $chain = $this->mandateService->verifyChain($intent['jwt'], $cart['jwt']);
+        $verdict = $this->sampleVerification->verdict();
 
         return [
-            ['label' => 'Mandate types', 'value' => 'Intent, Cart'],
+            ['label' => 'Mandate types', 'value' => 'Checkout and payment, open and closed (mandate.*.1)'],
             ['label' => 'Chain checks', 'value' => implode(', ', array_map(
-                static fn(array $c): string => (string)$c['label'],
-                $chain['checks'],
+                static fn(Check $check): string => $check->label(),
+                $verdict->checks,
             ))],
-            ['label' => 'Signing', 'value' => 'Sandbox key, no real payment network'],
+            ['label' => 'Signing', 'value' => 'ES256 sandbox keys, no real payment network'],
         ];
     }
 
