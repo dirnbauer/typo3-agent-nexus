@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Base64url without padding (RFC 4648 section 5), as JOSE and SD-JWT use it.
  *
@@ -11,6 +13,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * canonical encoding of the bytes. Hashes in SD-JWT are taken over the encoded
  * strings, so two spellings of the same bytes must never both be accepted.
  */
+#[Exclude]
 final class Base64Url
 {
     public static function encode(string $binary): string

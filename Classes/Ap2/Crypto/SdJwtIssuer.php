@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Issues SD-JWTs: every {@see Disclosable} in the claims becomes a digest in
  * the signed payload and a disclosure beside it (RFC 9901 section 4.2).
@@ -13,6 +15,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * disclosables are concealed first, so the disclosures come out inner before
  * outer — the order the AP2 SDK (python sd-jwt) produces.
  */
+#[Exclude]
 final class SdJwtIssuer
 {
     private const int MAX_DEPTH = 32;

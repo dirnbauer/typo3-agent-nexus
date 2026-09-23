@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * A token, key or signature that cannot be used: malformed input, an algorithm
  * this implementation refuses, a signature that does not verify.
@@ -11,4 +13,5 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * Verifiers catch it and turn the message into a failed check; nothing in the
  * AP2 layer lets it reach a visitor unexplained.
  */
+#[Exclude]
 final class CryptoException extends \RuntimeException {}

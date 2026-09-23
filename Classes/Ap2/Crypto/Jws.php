@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * ES256 JSON Web Signatures, compact (RFC 7515 section 7.1) and with detached
  * content (appendix F: `<header>..<signature>`, the form UCP's
@@ -14,6 +16,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * before any key is touched, and so are header parameters this implementation
  * does not understand (a `crit`, a `jku` pointing somewhere else).
  */
+#[Exclude]
 final class Jws
 {
     public const string ALGORITHM = 'ES256';

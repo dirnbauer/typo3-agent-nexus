@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Converts ECDSA signatures between the two encodings that meet here.
  *
@@ -13,6 +15,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * ES256. Mixing them up is the classic reason a PHP ES256 token fails to verify
  * everywhere else.
  */
+#[Exclude]
 final class EcSignature
 {
     /** Bytes per component for P-256. */

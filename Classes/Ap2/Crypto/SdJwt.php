@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * One SD-JWT in compact form (RFC 9901 section 4): an issuer-signed JWT, the
  * disclosures the holder chose to present, and optionally a key-binding JWT.
@@ -13,6 +15,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * AP2 closes a mandate with a KB-SD-JWT — itself an SD-JWT — instead of a
  * plain KB-JWT, so {@see DelegateChain} strings several of these together.
  */
+#[Exclude]
 final readonly class SdJwt
 {
     /**

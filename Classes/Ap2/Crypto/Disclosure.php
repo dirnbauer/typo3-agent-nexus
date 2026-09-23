@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * One SD-JWT disclosure (RFC 9901 section 4.2): the base64url encoding of
  * `[salt, name, value]` for an object property or `[salt, value]` for an array
@@ -13,6 +15,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * over a re-serialisation, so a disclosure keeps the bytes it was received
  * with.
  */
+#[Exclude]
 final readonly class Disclosure
 {
     /** 128 bits of salt, the minimum RFC 9901 section 9.3 recommends. */

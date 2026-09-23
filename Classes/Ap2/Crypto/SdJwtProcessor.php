@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Verifies SD-JWTs and applies their disclosures (RFC 9901 section 7.1).
  *
@@ -15,6 +17,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * be `_sd`/`...`, and object-property and array-element disclosures cannot be
  * swapped.
  */
+#[Exclude]
 final class SdJwtProcessor
 {
     private const int MAX_DEPTH = 32;

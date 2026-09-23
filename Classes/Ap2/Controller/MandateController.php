@@ -6,72 +6,108 @@ namespace Webconsulting\AgentNexus\Ap2\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Http\JsonResponse;
-use Webconsulting\AgentNexus\Ap2\Service\MandateLog;
+use Webconsulting\AgentNexus\Ap2\Crypto\CryptoException;
+use Webconsulting\AgentNexus\Ap2\Crypto\Json;
+use Webconsulting\AgentNexus\Ap2\Sandbox\RecordingContext;
 use Webconsulting\AgentNexus\Ap2\Service\MandateService;
+use Webconsulting\AgentNexus\Ap2\Service\StudioException;
+use Webconsulting\AgentNexus\Shared\Store\ObjectKind;
+use Webconsulting\AgentNexus\Shared\Store\ObjectStore;
+use Webconsulting\AgentNexus\Shared\Traffic\Channel;
+use Webconsulting\AgentNexus\Shared\Traffic\TrafficCapture;
 
 /**
- * Backend AJAX targets for the Mandate Studio.
+ * The mandate studio's backend endpoints: sign a mandate from the form
+ * (`agentnexus_ap2_mint`) and verify pasted tokens (`agentnexus_ap2_verify`).
  *
- * - mint:   mint an Intent or Cart Mandate (returns the signed token + claims).
- * - verify: verify a single token, or walk an Intent → Cart authorization chain.
- *
- * Runs in an authenticated backend context. Everything is sandbox-signed; no real
- * payment is ever initiated.
+ * Both answer JSON. Anything the form got wrong comes back as 422 with a
+ * label key the studio translates.
  */
-final class MandateController
+#[Autoconfigure(public: true)]
+final readonly class MandateController
 {
     public function __construct(
-        private readonly MandateService $mandates,
-        private readonly MandateLog $mandateLog,
+        private MandateService $mandates,
+        private ObjectStore $objects,
+        private UriBuilder $uriBuilder,
     ) {}
 
     public function mint(ServerRequestInterface $request): ResponseInterface
     {
-        $beUser = (int)($GLOBALS['BE_USER']->user['uid'] ?? 0);
-        $body = $this->body($request);
-        $step = (string)($body['step'] ?? 'intent');
-
-        if ($step === 'cart') {
-            $cart = is_array($body['cart'] ?? null) ? $body['cart'] : [];
-            $intentRef = (string)($body['intentRef'] ?? '');
-            $result = $this->mandates->mintCartMandate($cart, $intentRef);
-            $this->mandateLog->log(MandateLog::SOURCE_BACKEND, 'mint', 'CartMandate', false, (int)($result['claims']['cart']['totalCents'] ?? 0), $beUser);
-        } else {
-            $constraints = is_array($body['constraints'] ?? null) ? $body['constraints'] : [];
-            $result = $this->mandates->mintIntentMandate($constraints);
-            $this->mandateLog->log(MandateLog::SOURCE_BACKEND, 'mint', 'IntentMandate', false, (int)($result['claims']['constraints']['maxAmountCents'] ?? 0), $beUser);
+        try {
+            $result = $this->mandates->mint(self::body($request), new RecordingContext(Channel::Backend, 0, self::backendUser()));
+        } catch (StudioException $e) {
+            return self::error($e);
         }
-
-        return new JsonResponse(['jwt' => $result['jwt'], 'claims' => $result['claims']]);
+        $reference = Json::string($result['artefact']['reference'] ?? null);
+        self::capture($request)?->correlate($reference);
+        return new JsonResponse($result + [
+            'inspectorUri' => $this->inspectorUri($reference),
+            'relatedInspectorUris' => array_map(
+                fn(array $related): string => $this->inspectorUri(Json::string($related['reference'] ?? null)),
+                $result['related'],
+            ),
+        ]);
     }
 
     public function verify(ServerRequestInterface $request): ResponseInterface
     {
-        $beUser = (int)($GLOBALS['BE_USER']->user['uid'] ?? 0);
-        $body = $this->body($request);
-
-        $intentJwt = (string)($body['intentJwt'] ?? '');
-        $cartJwt = (string)($body['cartJwt'] ?? '');
-
-        if ($intentJwt !== '' && $cartJwt !== '') {
-            $result = $this->mandates->verifyChain($intentJwt, $cartJwt);
-            $this->mandateLog->log(MandateLog::SOURCE_BACKEND, 'verify', 'chain', (bool)$result['authorized'], (int)($result['cart']['cart']['totalCents'] ?? 0), $beUser);
-            return new JsonResponse($result);
+        try {
+            $results = $this->mandates->verify(Json::string(self::body($request)['token'] ?? null));
+        } catch (StudioException $e) {
+            return self::error($e);
         }
+        self::capture($request)?->correlate(Json::string($results[0]['reference'] ?? null));
+        foreach ($results as $index => $result) {
+            $results[$index]['inspectorUri'] = $this->inspectorUri(Json::string($result['reference'] ?? null));
+        }
+        return new JsonResponse(['results' => $results]);
+    }
 
-        // Single-token inspection (e.g. after the operator tampers with a token).
-        $single = $this->mandates->inspect((string)($body['jwt'] ?? ''));
-        $this->mandateLog->log(MandateLog::SOURCE_BACKEND, 'verify', (string)($single['claims']['typ'] ?? 'token'), (bool)$single['valid'], 0, $beUser);
-        return new JsonResponse($single);
+    private function inspectorUri(string $reference): string
+    {
+        $object = $reference === '' ? null : $this->objects->find(ObjectKind::Mandate, $reference);
+        if ($object === null) {
+            return '';
+        }
+        return (string)$this->uriBuilder->buildUriFromRoute(ObjectKind::Mandate->inspectorModule() . '.detail', ['uid' => $object->uid]);
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function body(ServerRequestInterface $request): array
+    private static function body(ServerRequestInterface $request): array
     {
-        $body = json_decode((string)$request->getBody(), true);
-        return is_array($body) ? $body : [];
+        $parsed = $request->getParsedBody();
+        if (is_array($parsed) && $parsed !== []) {
+            return Json::map($parsed);
+        }
+        $raw = (string)$request->getBody();
+        try {
+            return $raw === '' ? [] : Json::decodeObject($raw);
+        } catch (CryptoException) {
+            return [];
+        }
+    }
+
+    private static function capture(ServerRequestInterface $request): ?TrafficCapture
+    {
+        $capture = $request->getAttribute(TrafficCapture::ATTRIBUTE);
+        return $capture instanceof TrafficCapture ? $capture : null;
+    }
+
+    private static function backendUser(): int
+    {
+        $user = $GLOBALS['BE_USER'] ?? null;
+        return $user instanceof BackendUserAuthentication && is_numeric($user->user['uid'] ?? null) ? (int)$user->user['uid'] : 0;
+    }
+
+    private static function error(StudioException $e): JsonResponse
+    {
+        return new JsonResponse(['error' => ['key' => $e->key, 'message' => $e->getMessage()]], 422);
     }
 }

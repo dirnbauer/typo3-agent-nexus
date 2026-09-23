@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * JSON as the tokens carry it: compact, slashes and Unicode unescaped, and
  * decoding that insists on the shape it was asked for.
@@ -12,6 +14,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * code works with, so a malformed claim becomes an empty value the checks then
  * reject instead of a type error halfway through a verification.
  */
+#[Exclude]
 final class Json
 {
     public const int ENCODE_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR;

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Bookkeeping while {@see SdJwtProcessor} walks a payload: which disclosures
  * exist, which were used, which digests were seen.
  *
  * @internal
  */
+#[Exclude]
 final class ProcessingState
 {
     /** @var array<string, true> */

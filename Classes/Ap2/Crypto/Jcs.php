@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * The JSON Canonicalization Scheme, RFC 8785.
  *
@@ -17,6 +19,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * PHP arrays map to JSON the usual way: a list is an array, anything else an
  * object. An empty PHP array is `[]`; pass a `\stdClass` for `{}`.
  */
+#[Exclude]
 final class Jcs
 {
     private const int MAX_DEPTH = 64;

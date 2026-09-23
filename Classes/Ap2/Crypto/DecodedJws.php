@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * A compact JWS taken apart, not yet verified.
  *
@@ -12,6 +14,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * would accept: another algorithm than ES256, header parameters it does not
  * understand, a signature of the wrong size.
  */
+#[Exclude]
 final readonly class DecodedJws
 {
     /**

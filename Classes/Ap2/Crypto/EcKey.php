@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * A P-256 key: always the public point, and the private key when this side
  * signs.
@@ -12,6 +14,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * in its JWKs, so this class knows no other. Keys are imported from a PEM
  * (the sandbox key ring) or from a public JWK (a `cnf` claim, a JWK Set).
  */
+#[Exclude]
 final class EcKey
 {
     /** DER prefix of a P-256 SubjectPublicKeyInfo, up to the uncompressed point. */

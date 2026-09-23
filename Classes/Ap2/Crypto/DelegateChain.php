@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * A delegation chain of SD-JWTs (draft-gco-oauth-delegate-sd-jwt, as the AP2
  * SDK serialises it): the root SD-JWT the Trusted Surface signed, then each
@@ -16,6 +18,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * separate KB-JWT, the closing KB-SD-JWT already is one — so a trailing
  * key-binding JWT is refused. A human-present mandate is a chain of one.
  */
+#[Exclude]
 final readonly class DelegateChain
 {
     /** AP2 v0.2 flows use one or two tokens; deeper delegation is refused. */

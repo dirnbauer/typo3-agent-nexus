@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * Marks a claim, or an array element, as selectively disclosable when an
  * SD-JWT is issued: {@see SdJwtIssuer} replaces it with a digest and hands the
@@ -12,6 +14,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  *     ['checkout_jwt' => new Disclosable($jwt)]           // object property
  *     ['allowed' => [new Disclosable($merchant), …]]      // array element
  */
+#[Exclude]
 final readonly class Disclosable
 {
     public function __construct(

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Ap2\Crypto;
 
+use Symfony\Component\DependencyInjection\Attribute\Exclude;
+
 /**
  * The digests AP2 takes over tokens: disclosure digests, `sd_hash`,
  * `issuer_jwt_hash`, `checkout_hash` and receipt references.
@@ -13,6 +15,7 @@ namespace Webconsulting\AgentNexus\Ap2\Crypto;
  * when it names none). The AP2 SDK accepts the three SHA-2 lengths; so does
  * this class.
  */
+#[Exclude]
 final class Digest
 {
     public const string DEFAULT_ALGORITHM = 'sha-256';
