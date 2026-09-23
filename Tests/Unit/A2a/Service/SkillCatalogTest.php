@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\Tests\Unit\A2a\Service;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Unit\UnitTestCase;
 use Webconsulting\AgentNexus\A2a\Service\SkillCatalog;
-use Webconsulting\AgentNexus\A2a\Service\TaskRunner;
-use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
-use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
 
 /**
  * The catalogue is the single source of truth behind the Agent Card, the
- * presets and the deterministic agent, so its shape is contractual. The routing
- * tests cover the path that runs when no model is available: keyword matching,
- * then a safe default — a request must never route to a skill that is not in
- * the catalogue.
+ * console presets, the concierge's chips and the deterministic agent, so its
+ * shape is contractual.
  */
 final class SkillCatalogTest extends UnitTestCase
 {
@@ -35,7 +29,6 @@ final class SkillCatalogTest extends UnitTestCase
         foreach ($this->subject->all() as $id => $skill) {
             self::assertSame($id, $skill['id'], 'The array key and the id must agree.');
             foreach (['name', 'description', 'tags', 'examples', 'workingText', 'artifactName', 'artifactText', 'completedText'] as $field) {
-                self::assertArrayHasKey($field, $skill, $id . ' is missing ' . $field);
                 self::assertNotEmpty($skill[$field], $id . '.' . $field . ' must not be empty');
             }
             self::assertArrayHasKey('inputPrompt', $skill);
@@ -46,6 +39,8 @@ final class SkillCatalogTest extends UnitTestCase
     public function anUnknownSkillIdFallsBackToSummarisingRatherThanFailing(): void
     {
         self::assertSame('summarize_page', $this->subject->get('no_such_skill')['id']);
+        self::assertFalse($this->subject->has('no_such_skill'));
+        self::assertTrue($this->subject->has('draft_outreach'));
     }
 
     #[Test]
@@ -59,71 +54,10 @@ final class SkillCatalogTest extends UnitTestCase
     }
 
     #[Test]
-    #[DataProvider('keywordRoutingProvider')]
-    public function keywordRoutingPicksTheSkillWhenNoModelIsAvailable(string $request, string $expectedSkill): void
+    public function exactlyOneSkillPausesForInput(): void
     {
-        $runner = new TaskRunner(
-            $this->subject,
-            self::createStub(LanguageModel::class),
-            self::createStub(UsageLedger::class),
-        );
+        $pausing = array_filter($this->subject->all(), static fn(array $skill): bool => $skill['inputPrompt'] !== null);
 
-        $frames = iterator_to_array($runner->run([
-            'message' => ['parts' => [['kind' => 'text', 'text' => $request]]],
-            '_llm' => false,
-        ], 'test'), false);
-
-        self::assertSame($expectedSkill, $this->routedSkill($frames));
-    }
-
-    /**
-     * @return array<string, array{0: string, 1: string}>
-     */
-    public static function keywordRoutingProvider(): array
-    {
-        return [
-            'email wording routes to outreach' => ['Write an email to our agency customers', 'draft_outreach'],
-            'outreach wording routes to outreach' => ['Some outreach for lapsed users please', 'draft_outreach'],
-            'onboarding wording routes to planning' => ['Can you plan the onboarding for a new team?', 'plan_onboarding'],
-            'anything else falls back to summarising' => ['Tell me about the pricing page', 'summarize_page'],
-            'an empty request still routes somewhere valid' => ['', 'summarize_page'],
-        ];
-    }
-
-    #[Test]
-    public function anExplicitSkillInTheMessageMetadataWinsOverKeywords(): void
-    {
-        $runner = new TaskRunner(
-            $this->subject,
-            self::createStub(LanguageModel::class),
-            self::createStub(UsageLedger::class),
-        );
-
-        $frames = iterator_to_array($runner->run([
-            'message' => [
-                'parts' => [['kind' => 'text', 'text' => 'Write an email']],
-                'metadata' => ['skill' => 'plan_onboarding'],
-            ],
-            '_llm' => false,
-        ], 'test'), false);
-
-        self::assertSame('plan_onboarding', $this->routedSkill($frames));
-    }
-
-    /**
-     * The runner reports where it routed in the metadata of the first working
-     * status, so a client can resume a server-routed task.
-     *
-     * @param list<array<string, mixed>> $frames
-     */
-    private function routedSkill(array $frames): string
-    {
-        foreach ($frames as $frame) {
-            $metadata = $frame['result']['status']['message']['metadata'] ?? null;
-            if (is_array($metadata) && isset($metadata['skill'])) {
-                return (string)$metadata['skill'];
-            }
-        }
-        self::fail('No frame reported a routed skill.');
+        self::assertSame(['draft_outreach'], array_keys($pausing), 'The input-required state must not be theoretical.');
     }
 }

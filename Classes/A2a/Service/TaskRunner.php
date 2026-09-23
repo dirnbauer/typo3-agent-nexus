@@ -4,227 +4,209 @@ declare(strict_types=1);
 
 namespace Webconsulting\AgentNexus\A2a\Service;
 
-use TYPO3\CMS\Core\SingletonInterface;
-use Webconsulting\AgentNexus\A2a\Protocol\Frames;
+use Webconsulting\AgentNexus\A2a\Protocol\Artifact;
+use Webconsulting\AgentNexus\A2a\Protocol\Ids;
+use Webconsulting\AgentNexus\A2a\Protocol\Message;
+use Webconsulting\AgentNexus\A2a\Protocol\Part;
+use Webconsulting\AgentNexus\A2a\Protocol\Task;
+use Webconsulting\AgentNexus\A2a\Protocol\TaskState;
+use Webconsulting\AgentNexus\A2a\Server\CallContext;
 use Webconsulting\AgentNexus\Shared\Llm\LanguageModel;
 use Webconsulting\AgentNexus\Shared\Llm\UsageLedger;
+use Webconsulting\AgentNexus\Shared\Traffic\Channel;
 
 /**
- * The site's A2A agent: a task executor.
+ * The site's A2A agent: decides what to do with a message.
  *
- * It turns an incoming A2A message into a strictly-ordered stream of JSON-RPC
- * frames that walk a Task through its lifecycle:
+ * A new task is routed to one of the catalogue's skills — the skill the
+ * client pinned in `message.metadata.skill`, else the model's choice (with a
+ * rationale), else keyword matching, which always works. The skill then either
+ * pauses for input (TASK_STATE_INPUT_REQUIRED) or produces its artifact and
+ * completes. A message that answers a paused task continues the skill it was
+ * routed to.
  *
- *   submitted → working → (input-required → … → working) → completed
- *
- * producing an Artifact along the way. Skills whose `inputPrompt` is set pause in
- * `input-required` and ask the caller for one more detail before finishing — the
- * cooperative loop that makes A2A more than fire-and-forget.
- *
- * On the frontend a real model (nr-llm, soft dependency) can take over the two
- * content decisions — which skill to route to (with a visible rationale) and
- * the artifact text — while the lifecycle frames stay identical for every
- * client. Keyword routing and scripted artifacts remain the always-working
- * fallback.
+ * The plan says what happens; {@see \Webconsulting\AgentNexus\A2a\Server\A2aServer}
+ * carries it out, so the lifecycle is identical for every client and binding.
+ * A model can only change two things: which skill is chosen and the artifact
+ * text. The scripted text is the fallback for every model failure.
  */
-final class TaskRunner implements SingletonInterface
+final readonly class TaskRunner
 {
+    public const string SKILL_METADATA_KEY = 'skill';
+
     public function __construct(
-        private readonly SkillCatalog $skillCatalog,
-        private readonly LanguageModel $llmClient,
-        private readonly UsageLedger $usageTracker,
+        private SkillCatalog $skills,
+        private LanguageModel $languageModel,
+        private UsageLedger $usageLedger,
     ) {}
 
-    /**
-     * @param array<string, mixed> $params A2A MessageSendParams (`{message:{…}}`)
-     *                                     plus server-injected _settings/_llm
-     * @return \Generator<int, array<string, mixed>>
-     */
-    public function run(array $params, string $source, int|string $rpcId = 1): \Generator
+    public function plan(Task $task, Message $incoming, bool $resuming, CallContext $context): TurnPlan
     {
-        $message = is_array($params['message'] ?? null) ? $params['message'] : [];
-        $metadata = is_array($message['metadata'] ?? null) ? $message['metadata'] : [];
-        $settings = is_array($params['_settings'] ?? null) ? $params['_settings'] : [];
-        $useLlm = (bool)($params['_llm'] ?? false);
-        $text = mb_substr($this->textOf($message), 0, 600);
-
-        $routing = null;
-        $skillId = is_string($metadata['skill'] ?? null) && $metadata['skill'] !== ''
-            ? $metadata['skill']
-            : null;
-        if ($skillId === null && $useLlm && $text !== '') {
-            $routing = $this->routeWithLlm($text);
-            $skillId = $routing['skill'] ?? null;
+        if ($resuming) {
+            return $this->continuePlan($task, $incoming, $context);
         }
-        $skillId ??= $this->inferSkill($text);
-        $skill = $this->skillCatalog->get($skillId);
 
-        $resume = ($metadata['resume'] ?? false) === true;
-        $input = trim((string)($metadata['input'] ?? ''));
+        $request = mb_substr($incoming->text(), 0, 600);
+        [$skillId, $routedBy, $rationale] = $this->route($incoming, $request, $context);
+        $skill = $this->skills->get($skillId);
 
-        $taskId = is_string($message['taskId'] ?? null) && $message['taskId'] !== ''
-            ? $message['taskId']
-            : 'task-' . substr(md5($source . $skillId . microtime(false)), 0, 10);
-        $contextId = is_string($message['contextId'] ?? null) && $message['contextId'] !== ''
-            ? $message['contextId']
-            : 'ctx-' . substr(md5($taskId), 0, 8);
+        $workingText = $routedBy === 'model' && $context->showRationale && $rationale !== ''
+            ? sprintf('Routed to “%s” — %s', $skill['name'], $rationale)
+            : $skill['workingText'];
+        $metadata = ['skillId' => $skill['id'], 'routedBy' => $routedBy];
 
-        if (!$resume) {
-            yield Frames::result($rpcId, Frames::task($taskId, $contextId));
-
-            // A model-routed task explains itself: the routing rationale rides
-            // in the working status so callers can show *why* it routed.
-            $workingText = ($routing !== null && ($settings['show_rationale'] ?? '1') !== '0')
-                ? sprintf('Routed to “%s” — %s', (string)$skill['name'], $routing['rationale'])
-                : (string)$skill['workingText'];
-            yield Frames::result($rpcId, Frames::status($taskId, $contextId, 'working', $workingText, false, ['skill' => $skillId]));
-
-            // Cooperative pause: ask the caller for the missing detail, then end
-            // THIS turn without a terminal state. The task is not done. The
-            // resolved skill travels in the metadata so the resume targets it
-            // even when the server picked it (auto-routing).
-            if (!empty($skill['inputPrompt'])) {
-                yield Frames::result($rpcId, Frames::status($taskId, $contextId, 'input-required', (string)$skill['inputPrompt'], true, ['skill' => $skillId]));
-                return;
-            }
+        $steps = [PlanStep::status(TaskState::Working, $workingText, $metadata)];
+        if ($skill['inputPrompt'] !== null && $skill['inputPrompt'] !== '') {
+            $steps[] = PlanStep::status(TaskState::InputRequired, $skill['inputPrompt']);
         } else {
-            $ack = (string)($skill['resumeText'] ?? 'Got it — finishing the task now…');
-            if ($input !== '') {
-                $ack .= ' (for: ' . mb_substr($input, 0, 80) . ')';
-            }
-            yield Frames::result($rpcId, Frames::status($taskId, $contextId, 'working', $ack));
+            $steps[] = PlanStep::artifact(fn(): Artifact => $this->artifact($skill['id'], $request, '', $context));
+            $steps[] = PlanStep::status(TaskState::Completed, $skill['completedText']);
         }
 
-        // Produce the artifact, streamed chunk by chunk (append). When allowed,
-        // a real model writes it for the actual request; the scripted text is
-        // the ever-working fallback.
-        $artifactText = ($useLlm && ($settings['use_llm'] ?? '1') !== '0')
-            ? $this->writeArtifactWithLlm($skill, $text, $input)
-            : null;
-        $artifactText ??= (string)$skill['artifactText'];
-
-        $artifactId = 'art-' . substr(md5($taskId), 0, 8);
-        yield Frames::result($rpcId, Frames::artifactStart($taskId, $artifactId, (string)$skill['artifactName'], (string)$skill['description']));
-        foreach ($this->chunks($artifactText) as $chunk) {
-            yield Frames::result($rpcId, Frames::artifactChunk($taskId, $artifactId, $chunk));
-        }
-        yield Frames::result($rpcId, Frames::artifactEnd($taskId, $artifactId));
-
-        yield Frames::result($rpcId, Frames::status($taskId, $contextId, 'completed', (string)$skill['completedText'], true));
+        return new TurnPlan($skill['id'], $skill['name'], $steps, $metadata);
     }
 
     /**
-     * Ask the model which catalog skill fits the request. Any malformed or
-     * failed answer returns null and keyword routing takes over.
-     *
-     * @return array{skill: string, rationale: string}|null
+     * The answer to a question the skill asked: acknowledge it, write the
+     * artifact for the original request plus the answer, complete.
      */
-    private function routeWithLlm(string $text): ?array
+    private function continuePlan(Task $task, Message $incoming, CallContext $context): TurnPlan
     {
-        $catalog = [];
-        foreach ($this->skillCatalog->all() as $id => $skill) {
-            $catalog[] = ['id' => $id, 'description' => (string)$skill['description']];
+        $skill = $this->skills->get($task->metadataString('skillId'));
+        $answer = mb_substr($incoming->text(), 0, 600);
+        $acknowledgement = $skill['resumeText'] ?? 'Got it — finishing the task now…';
+        if ($answer !== '') {
+            $acknowledgement .= ' (for: ' . mb_substr($answer, 0, 80) . ')';
         }
+        $request = mb_substr($task->request(), 0, 600);
 
-        try {
-            $completion = $this->llmClient->completeJson(
-                'You route requests to exactly one skill of a website agent. Skills: '
-                . json_encode($catalog, JSON_UNESCAPED_SLASHES)
-                . ' Reply as JSON: {"skill": "<id>", "rationale": "<one short sentence, plain text>"}.',
-                $text,
-                null,
-                160,
-            );
-            $skillId = (string)($completion['data']['skill'] ?? '');
-            if (!array_key_exists($skillId, $this->skillCatalog->all())) {
-                return null;
-            }
-            $this->recordUsage($completion);
-            return [
-                'skill' => $skillId,
-                'rationale' => mb_substr(trim((string)($completion['data']['rationale'] ?? 'best match in the skill catalog')), 0, 240),
-            ];
-        } catch (\Throwable) {
-            return null;
-        }
+        return new TurnPlan($skill['id'], $skill['name'], [
+            PlanStep::status(TaskState::Working, $acknowledgement),
+            PlanStep::artifact(fn(): Artifact => $this->artifact($skill['id'], $request, $answer, $context)),
+            PlanStep::status(TaskState::Completed, $skill['completedText']),
+        ]);
     }
 
     /**
-     * Model-written artifact grounded in the skill's scripted example; null on
-     * any failure so the scripted artifact ships instead.
-     *
-     * @param array<string, mixed> $skill
+     * @return array{0: string, 1: 'request'|'model'|'keywords', 2: string} skill id, how it was chosen, rationale
      */
-    private function writeArtifactWithLlm(array $skill, string $text, string $input): ?string
+    private function route(Message $incoming, string $request, CallContext $context): array
     {
-        if ($text === '' && $input === '') {
-            return null;
+        $pinned = $incoming->metadata[self::SKILL_METADATA_KEY] ?? null;
+        if (is_string($pinned) && $this->skills->has($pinned)) {
+            return [$pinned, 'request', ''];
         }
-        try {
-            $completion = $this->llmClient->completeText(
-                'You are the "' . (string)$skill['name'] . '" skill of a website agent. '
-                . 'Produce the deliverable for the request as concise markdown (no preamble, no code fences), '
-                . 'matching the tone and shape of this example deliverable: ' . (string)$skill['artifactText'],
-                trim($text . ($input !== '' ? "\nAdditional detail: " . $input : '')),
-                null,
-                400,
-            );
-            $this->recordUsage($completion);
-            return $completion['text'] !== '' ? $completion['text'] : null;
-        } catch (\Throwable) {
-            return null;
-        }
-    }
-
-    /**
-     * @param array{promptTokens: int, completionTokens: int, cost: ?float} $completion
-     */
-    private function recordUsage(array $completion): void
-    {
-        $this->usageTracker->record(
-            'a2a',
-            UsageLedger::SOURCE_FRONTEND,
-            'default',
-            (int)$completion['promptTokens'],
-            (int)$completion['completionTokens'],
-            $completion['cost'] !== null ? (float)$completion['cost'] : null,
-        );
-    }
-
-    /**
-     * @param array<string, mixed> $message
-     */
-    private function textOf(array $message): string
-    {
-        $parts = is_array($message['parts'] ?? null) ? $message['parts'] : [];
-        $text = '';
-        foreach ($parts as $part) {
-            if (is_array($part) && ($part['kind'] ?? '') === 'text') {
-                $text .= ' ' . (string)($part['text'] ?? '');
+        if ($context->useModel && $request !== '') {
+            $routing = $this->routeWithModel($request, $context);
+            if ($routing !== null) {
+                return [$routing['skill'], 'model', $routing['rationale']];
             }
         }
-        return trim($text);
+        return [$this->routeByKeywords($request), 'keywords', ''];
     }
 
-    private function inferSkill(string $text): string
+    public function routeByKeywords(string $request): string
     {
-        $t = mb_strtolower($text);
-        if (str_contains($t, 'email') || str_contains($t, 'outreach') || str_contains($t, 'reach out')) {
+        $text = mb_strtolower($request);
+        if (str_contains($text, 'email') || str_contains($text, 'outreach') || str_contains($text, 'reach out')) {
             return 'draft_outreach';
         }
-        if (str_contains($t, 'onboard') || str_contains($t, 'plan')) {
+        if (str_contains($text, 'onboard') || str_contains($text, 'plan')) {
             return 'plan_onboarding';
         }
         return 'summarize_page';
     }
 
-    /** @return list<string> word chunks with trailing spaces, for streamed artifacts */
-    private function chunks(string $text): array
+    /**
+     * Ask the model which catalogue skill fits. Any malformed or failed
+     * answer returns null and keyword routing takes over.
+     *
+     * @return array{skill: string, rationale: string}|null
+     */
+    private function routeWithModel(string $request, CallContext $context): ?array
     {
-        $out = [];
-        foreach (preg_split('/(\s+)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY) ?: [] as $token) {
-            $out[] = $token;
+        $catalog = [];
+        foreach ($this->skills->all() as $id => $skill) {
+            $catalog[] = ['id' => $id, 'description' => $skill['description']];
         }
-        return $out;
+
+        try {
+            $completion = $this->languageModel->completeJson(
+                'You route requests to exactly one skill of a website agent. Skills: '
+                . json_encode($catalog, JSON_UNESCAPED_SLASHES)
+                . ' Reply as JSON: {"skill": "<id>", "rationale": "<one short sentence, plain text>"}.',
+                $request,
+                null,
+                min(160, $context->maxOutputTokens),
+            );
+        } catch (\Throwable) {
+            return null;
+        }
+        $this->recordUsage($completion, $context);
+
+        $skillId = $completion['data']['skill'] ?? null;
+        if (!is_string($skillId) || !$this->skills->has($skillId)) {
+            return null;
+        }
+        $rationale = $completion['data']['rationale'] ?? null;
+
+        return [
+            'skill' => $skillId,
+            'rationale' => mb_substr(trim(is_string($rationale) ? $rationale : ''), 0, 240),
+        ];
+    }
+
+    /**
+     * The skill's deliverable: written by the model for this request when the
+     * caller may use one, the scripted example otherwise. The artifact says
+     * which in its metadata.
+     */
+    private function artifact(string $skillId, string $request, string $answer, CallContext $context): Artifact
+    {
+        $skill = $this->skills->get($skillId);
+        $text = null;
+        $model = '';
+        if ($context->useModel && ($request !== '' || $answer !== '')) {
+            try {
+                $completion = $this->languageModel->completeText(
+                    'You are the "' . $skill['name'] . '" skill of a website agent. '
+                    . 'Produce the deliverable for the request as concise markdown (no preamble, no code fences), '
+                    . 'matching the tone and shape of this example deliverable: ' . $skill['artifactText'],
+                    trim($request . ($answer !== '' ? "\nAdditional detail: " . $answer : '')),
+                    null,
+                    $context->maxOutputTokens,
+                );
+                $this->recordUsage($completion, $context);
+                if (trim($completion['text']) !== '') {
+                    $text = trim($completion['text']);
+                    $model = $completion['model'];
+                }
+            } catch (\Throwable) {
+                $text = null;
+            }
+        }
+
+        return new Artifact(
+            Ids::uuid(),
+            [Part::text($text ?? $skill['artifactText'], 'text/markdown')],
+            $skill['artifactName'],
+            $skill['description'],
+            $text !== null ? ['writtenBy' => 'model', 'model' => $model] : ['writtenBy' => 'script'],
+        );
+    }
+
+    /**
+     * @param array{promptTokens: int, completionTokens: int, cost: ?float, model: string} $completion
+     */
+    private function recordUsage(array $completion, CallContext $context): void
+    {
+        $this->usageLedger->record(
+            'a2a',
+            $context->channel === Channel::Backend ? UsageLedger::SOURCE_BACKEND : UsageLedger::SOURCE_FRONTEND,
+            $completion['model'] !== '' ? $completion['model'] : 'default',
+            $completion['promptTokens'],
+            $completion['completionTokens'],
+            $completion['cost'],
+        );
     }
 }

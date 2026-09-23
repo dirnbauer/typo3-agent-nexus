@@ -8,16 +8,18 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * The skills the site's A2A agent advertises — the single source of truth behind
- * the Agent Card, the backend presets, the Skill Inspector and the deterministic
- * agent's scripts. Each skill optionally has an `inputPrompt`: when present the
- * task pauses in the A2A `input-required` state and asks the calling agent (or a
- * human) for more detail before it finishes — the cooperative equivalent of a
- * human-in-the-loop gate.
+ * the Agent Card, the console presets, the concierge's skill chips, the Agent
+ * Card screen and the deterministic agent's scripts. Each skill optionally has
+ * an `inputPrompt`: when present the task pauses in TASK_STATE_INPUT_REQUIRED
+ * and asks the calling agent (or a human) for more detail before it finishes —
+ * the cooperative equivalent of a human-in-the-loop gate.
+ *
+ * @phpstan-type Skill array{id: string, name: string, description: string, tags: list<string>, examples: list<string>, workingText: string, inputPrompt: string|null, resumeText?: string, artifactName: string, artifactText: string, completedText: string}
  */
 final class SkillCatalog implements SingletonInterface
 {
     /**
-     * @return array<string, array<string, mixed>>
+     * @return array<string, Skill>
      */
     public function all(): array
     {
@@ -63,11 +65,19 @@ final class SkillCatalog implements SingletonInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * The skill with this id; an unknown id falls back to summarising rather
+     * than failing.
+     *
+     * @return Skill
      */
     public function get(string $id): array
     {
         $all = $this->all();
         return $all[$id] ?? $all['summarize_page'];
+    }
+
+    public function has(string $id): bool
+    {
+        return array_key_exists($id, $this->all());
     }
 }
