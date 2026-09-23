@@ -9,36 +9,31 @@ use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * Per-IP fixed-window rate limiting for the frontend eID endpoints, one
- * implementation instead of six copies. Fails OPEN when the cache is
- * unavailable — these are demo endpoints; a broken cache must not take the
- * page down with them.
+ * Per-client fixed-window rate limiting for the public endpoints.
+ *
+ * Buckets are independent counters, conventionally `<protocol>` for a
+ * protocol's requests and `<protocol>.llm` for the tighter budget of requests
+ * that reach a real model. Fails OPEN when the cache is unavailable — these are
+ * demo endpoints, and a broken cache must not take the page down with them.
  */
 final class RateLimiter implements SingletonInterface
 {
+    public const string CACHE = 'agentnexus';
+
     public function __construct(
         private readonly CacheManager $cacheManager,
     ) {}
 
-    /**
-     * @param string $cacheName one of the protocol caches (a2ui, agui, a2a, ucp, ap2)
-     * @param string $bucket separates limits within one cache (e.g. 'default' vs 'llm')
-     */
-    public function passes(
-        ServerRequestInterface $request,
-        string $cacheName,
-        int $limit,
-        int $windowSeconds,
-        string $bucket = 'default',
-    ): bool {
+    public function passes(ServerRequestInterface $request, string $bucket, int $limit, int $windowSeconds): bool
+    {
         try {
-            $cache = $this->cacheManager->getCache($cacheName);
+            $cache = $this->cacheManager->getCache(self::CACHE);
         } catch (\Throwable) {
             return true;
         }
 
         $ip = (string)($request->getServerParams()['REMOTE_ADDR'] ?? 'unknown');
-        $key = 'rl_' . $bucket . '_' . sha1($ip);
+        $key = 'rl_' . preg_replace('/[^a-z0-9_]/i', '_', $bucket) . '_' . sha1($ip);
         $count = (int)$cache->get($key);
         if ($count >= $limit) {
             return false;

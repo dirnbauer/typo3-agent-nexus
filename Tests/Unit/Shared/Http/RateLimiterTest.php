@@ -41,9 +41,9 @@ final class RateLimiterTest extends UnitTestCase
         $subject = new RateLimiter($this->cacheManager($this->countingCache()));
         $request = $this->requestFrom('203.0.113.10');
 
-        self::assertTrue($subject->passes($request, 'a2ui', 1, 60, 'default'));
-        self::assertFalse($subject->passes($request, 'a2ui', 1, 60, 'default'));
-        self::assertTrue($subject->passes($request, 'a2ui', 1, 60, 'llm'), 'An exhausted bucket must not block another one.');
+        self::assertTrue($subject->passes($request, 'a2ui', 1, 60));
+        self::assertFalse($subject->passes($request, 'a2ui', 1, 60));
+        self::assertTrue($subject->passes($request, 'a2ui.llm', 1, 60), 'An exhausted bucket must not block another one.');
     }
 
     #[Test]
