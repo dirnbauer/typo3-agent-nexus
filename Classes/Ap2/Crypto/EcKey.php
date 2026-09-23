@@ -39,7 +39,7 @@ final class EcKey
     public static function generate(string $kidPrefix): self
     {
         $key = openssl_pkey_new(['private_key_type' => OPENSSL_KEYTYPE_EC, 'curve_name' => 'prime256v1']);
-        if ($key === false || !openssl_pkey_export($key, $pem) || !is_string($pem)) {
+        if ($key === false || !openssl_pkey_export($key, $pem)) {
             throw new CryptoException('OpenSSL could not create a P-256 key: ' . (string)openssl_error_string(), 1758700161);
         }
         $unnamed = self::fromPrivatePem($pem);
@@ -159,7 +159,7 @@ final class EcKey
             throw new CryptoException('A public key cannot sign.', 1758700169);
         }
         $this->privateHandle ??= openssl_pkey_get_private($this->privatePem) ?: null;
-        if ($this->privateHandle === null || !openssl_sign($data, $der, $this->privateHandle, OPENSSL_ALGO_SHA256) || !is_string($der)) {
+        if ($this->privateHandle === null || !openssl_sign($data, $der, $this->privateHandle, OPENSSL_ALGO_SHA256)) {
             throw new CryptoException('OpenSSL could not sign: ' . (string)openssl_error_string(), 1758700170);
         }
         return EcSignature::derToRaw($der);
