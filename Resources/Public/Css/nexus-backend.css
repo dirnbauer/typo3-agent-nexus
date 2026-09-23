@@ -144,9 +144,6 @@ pre.anx-code:focus-visible { outline: 2px solid var(--typo3-component-focus-bord
 .anx-overview__meta { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1.25rem; }
 .anx-overview__cards { margin-top: 0.5rem; }
 .anx-overview__cards .card { border-top: 3px solid var(--accent); }
-.anx-overview__card-head { display: flex; align-items: center; gap: 0.6rem; }
-.anx-overview__card-head .card-title { margin: 0; }
-.anx-overview__name { display: block; font-size: var(--anx-text-xs); color: var(--anx-muted-fg); }
 .anx-overview__health { margin-left: auto; }
 .anx-overview__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .anx-overview__spec td:first-child { white-space: nowrap; }
