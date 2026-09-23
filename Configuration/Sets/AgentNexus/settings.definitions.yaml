@@ -2,10 +2,11 @@ settings:
   agentNexus.storagePid:
     label: 'Storage folder'
     description: >-
-      Page uid of the folder that holds Agent Nexus records (A2UI inquiries,
-      AG-UI leads, A2A requests, UCP orders, AP2 authorizations). The
-      agentnexus:seed-site command creates this folder and writes the uid here.
-      0 stores everything on the page that triggered the request.
+      Page uid of the folder that holds the protocol objects the frontend
+      widgets create (A2UI surfaces and submitted data, AG-UI runs and leads,
+      A2A tasks, UCP checkout sessions, AP2 mandates). The agentnexus:seed-site
+      command creates this folder and writes the uid here. 0 stores every
+      object on the page that created it.
     type: int
     default: 0
     category: agentNexus
