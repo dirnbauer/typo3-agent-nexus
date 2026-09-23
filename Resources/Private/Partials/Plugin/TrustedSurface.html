@@ -4,7 +4,7 @@
 <section class="anx anx--frontend anx-accent--ap2 ap2-ts"
          data-accent="{f:if(condition: settings.accent, then: settings.accent, else: 'ap2')}"
          data-ap2-surface
-         data-run-url="/index.php?eID=ap2_authorize"
+         data-endpoint="{endpoint}"
          data-page="{pageId}"
          data-ce="{data.uid}"
          data-show-events="{f:if(condition: settings.show_events, then: '1', else: '0')}">
@@ -17,28 +17,41 @@
             </span>
             <f:if condition="{data.header}"><h2 class="ap2-ts__title">{data.header}</h2></f:if>
             <f:if condition="{settings.intro}"><p class="ap2-ts__intro">{settings.intro}</p></f:if>
-            <p class="ap2-ts__sim">Sandbox demo: mandates are signed with a demo key and <strong>nothing is charged</strong>.</p>
+            <p class="ap2-ts__sim">Sandbox demo: mandates are signed with demo keys and <strong>nothing is charged</strong>.</p>
         </div>
 
-        <div class="ap2-ts__cart">
-            <div class="ap2-ts__cart-row"><span>Agency Bundle</span><span>€149.00</span></div>
-            <div class="ap2-ts__cart-row"><span>Onboarding Add-on</span><span>€299.00</span></div>
-            <div class="ap2-ts__cart-total"><span>Total</span><span data-ap2-total>€448.00</span></div>
+        <div class="ap2-ts__list">
+            <p class="ap2-ts__list-title">The agent asks you to approve this shopping list at {merchant}:</p>
+            <ul>
+                <f:for each="{shoppingList}" as="line">
+                    <li class="ap2-ts__line">
+                        <span class="ap2-ts__line-title">{line.title}</span>
+                        <span class="ap2-ts__options">
+                            <f:for each="{line.options}" as="option" iteration="loop">
+                                <span class="ap2-ts__option">{option.title} <span class="ap2-ts__price">{option.price}</span></span><f:if condition="{loop.isLast}"><f:else> <span class="ap2-ts__or">or</span> </f:else></f:if>
+                            </f:for>
+                        </span>
+                    </li>
+                </f:for>
+            </ul>
         </div>
 
-        <label class="ap2-ts__cap">
-            <span>Your spending cap (€)</span>
-            <input type="number" data-ap2-cap value="500" min="1" />
-        </label>
+        <div class="ap2-ts__cap">
+            <label for="ap2-cap-{data.uid}">Your spending cap (€)</label>
+            <input type="number" id="ap2-cap-{data.uid}" data-ap2-cap value="{defaultCap}" min="1" max="100000" step="1" inputmode="decimal" aria-describedby="ap2-cap-hint-{data.uid}" />
+            <p class="ap2-ts__hint" id="ap2-cap-hint-{data.uid}">You approve the list and the cap once. The agent then shops alone and signs with its own key.</p>
+        </div>
 
-        <button type="button" class="ap2-ts__go" data-ap2-run>
-            <span>Approve this purchase</span>
-            <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
-        </button>
+        <div class="ap2-ts__buttons">
+            <button type="button" class="ap2-ts__go" data-ap2-run="within">
+                <span>Approve this purchase</span>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M3 8h9M8.5 4.5 12 8l-3.5 3.5"/></svg>
+            </button>
+            <button type="button" class="ap2-ts__alt" data-ap2-run="over" aria-describedby="ap2-over-hint-{data.uid}">Test your cap</button>
+        </div>
+        <p class="ap2-ts__hint" id="ap2-over-hint-{data.uid}">Test your cap: the agent picks a cart above it, and the payment is refused.</p>
 
-        <div class="ap2-ts__result" data-ap2-result></div>
-
-        <div class="ap2-ts__mandates" data-ap2-mandates hidden></div>
+        <div class="ap2-ts__result" data-ap2-result aria-live="polite"></div>
     </div>
 
     <noscript>
