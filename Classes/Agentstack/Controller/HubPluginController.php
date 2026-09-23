@@ -28,6 +28,8 @@ use Webconsulting\AgentNexus\Agentstack\Service\ProtocolStatusService;
  */
 final class HubPluginController extends ActionController
 {
+    private const int ENDPOINTS_PER_CARD = 3;
+
     public function __construct(
         private readonly ProtocolCatalog $protocolCatalog,
         private readonly ProtocolStatusService $protocolStatusService,
@@ -50,8 +52,9 @@ final class HubPluginController extends ActionController
      * One card per protocol: its description joined to its current health.
      *
      * @return list<array{
-     *     key: string, label: string, name: string, edge: string, tagline: string, spec: string,
-     *     endpoints: list<array{id: string, path: string, method: string, description: string}>,
+     *     key: string, label: string, name: string, edge: string, tagline: string, spec: string, specVersion: string,
+     *     endpoints: list<array{id: string, method: string, path: string, binding: string, description: string, widget: bool}>,
+     *     moreEndpoints: int,
      *     headline: array{label: string, value: string}|null,
      *     status: ProtocolStatus
      * }>
@@ -65,6 +68,9 @@ final class HubPluginController extends ActionController
 
         $cards = [];
         foreach ($this->protocolCatalog->all() as $protocol) {
+            // A card names the entry points another agent would call; the
+            // widgets' own endpoints and the long tail stay on the protocol page.
+            $public = array_values(array_filter($protocol['endpoints'], static fn(array $endpoint): bool => !$endpoint['widget']));
             $cards[] = [
                 'key' => $protocol['key'],
                 'label' => $protocol['label'],
@@ -72,7 +78,9 @@ final class HubPluginController extends ActionController
                 'edge' => $protocol['edge'],
                 'tagline' => $protocol['tagline'],
                 'spec' => $protocol['spec'],
-                'endpoints' => $protocol['endpoints'],
+                'specVersion' => $protocol['specVersion'],
+                'endpoints' => array_slice($public, 0, self::ENDPOINTS_PER_CARD),
+                'moreEndpoints' => max(0, count($public) - self::ENDPOINTS_PER_CARD),
                 // The first fact is the countable one ("20 catalog components",
                 // "6 event families"); the rest are prose that would not fit.
                 'headline' => $protocol['facts'][0] ?? null,

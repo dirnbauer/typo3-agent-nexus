@@ -30,6 +30,9 @@
                 </p>
 
                 <h3 class="anx-hub__name">{card.name}</h3>
+                <f:if condition="{card.specVersion}">
+                    <p class="anx-hub__version">Implements {card.label} {card.specVersion}</p>
+                </f:if>
                 <p class="anx-hub__tagline">{card.tagline}</p>
 
                 <f:if condition="{card.headline}">
@@ -44,9 +47,12 @@
                         <f:for each="{card.endpoints}" as="endpoint">
                             <li>
                                 <span class="anx-hub__method">{endpoint.method}</span>
-                                <code>{endpoint.id}</code>
+                                <code>{endpoint.path}</code>
                             </li>
                         </f:for>
+                        <f:if condition="{card.moreEndpoints}">
+                            <li class="anx-hub__more">and {card.moreEndpoints} more</li>
+                        </f:if>
                     </ul>
                 </f:if>
 

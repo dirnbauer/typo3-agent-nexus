@@ -84,6 +84,12 @@
   font-size: var(--anx-text-lg);
   line-height: 1.25;
 }
+.anx-hub__version {
+  margin: 0;
+  font-size: var(--anx-text-xs);
+  font-weight: 600;
+  color: var(--anx-muted-fg);
+}
 .anx-hub__tagline {
   margin: 0;
   font-size: var(--anx-text-sm);
@@ -129,6 +135,7 @@
   color: var(--anx-muted-fg);
   overflow-wrap: anywhere;
 }
+.anx-hub__endpoints .anx-hub__more { color: var(--anx-muted-fg); }
 .anx-hub__method {
   flex: none;
   font-family: var(--anx-font-mono);

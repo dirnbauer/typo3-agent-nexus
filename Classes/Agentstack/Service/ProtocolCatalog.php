@@ -10,136 +10,110 @@ use Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry;
 use Webconsulting\AgentNexus\Agui\Service\EventCatalog;
 use Webconsulting\AgentNexus\Ap2\Mandate\Check;
 use Webconsulting\AgentNexus\Ap2\Service\SampleVerification;
+use Webconsulting\AgentNexus\Shared\Http\Api\Route;
+use Webconsulting\AgentNexus\Shared\Http\Api\RouteRegistry;
+use Webconsulting\AgentNexus\Shared\Protocol;
 use Webconsulting\AgentNexus\Ucp\Service\Merchant;
 
 /**
- * One description per protocol, assembled from the services that actually run it.
+ * One description per protocol, assembled from the services that run it.
  *
- * The "Protocol info" frontend plugin and the backend hub both need the same
- * answer to "what is this protocol, what does it expose here, and how does a
- * request flow through it". Rather than restating that in templates, this
- * catalogue derives every number from the live source of truth: the A2A skills
- * the agent advertises, the AG-UI event families it can emit, the merchant's own
- * product catalogue, the A2UI component registry and a real AP2 mandate chain.
+ * The "Protocol info" and "Protocol hub" elements and the backend overview all
+ * need the same answer to "what is this protocol, which version of it runs
+ * here, what does it expose and how does a request flow through it". Rather
+ * than restating that in templates, this catalogue derives it: the endpoints
+ * from the API routes that are actually served, the specification version from
+ * {@see SpecificationVersions}, and every number from its source — the A2A
+ * skills, the AG-UI event catalogue, the merchant's products, the A2UI basic
+ * catalogue and a real, verified AP2 mandate chain.
  *
  * Diagrams are build artifacts, not content: `npm run diagrams` renders
  * Build/Diagrams/*.mmd into Resources/Public/Diagrams/*.svg and those files are
  * committed, so neither an editor nor CI ever needs node or Chromium.
  */
-final class ProtocolCatalog implements SingletonInterface
+final readonly class ProtocolCatalog implements SingletonInterface
 {
     /** @var list<string> */
-    public const PROTOCOLS = ['a2ui', 'agui', 'a2a', 'ucp', 'ap2'];
+    public const array PROTOCOLS = ['a2ui', 'agui', 'a2a', 'ucp', 'ap2'];
 
-    private const DIAGRAM_BASE = 'EXT:agent_nexus/Resources/Public/Diagrams/';
+    private const string DIAGRAM_BASE = 'EXT:agent_nexus/Resources/Public/Diagrams/';
 
-    /**
-     * Public eID endpoints per protocol. Mirrors the registrations in
-     * ext_localconf.php — keep both in step.
-     *
-     * @var array<string, list<array{id: string, path: string, method: string, description: string}>>
-     */
-    private const ENDPOINTS = [
-        'a2ui' => [
-            ['id' => 'a2ui_generate', 'path' => '/index.php?eID=a2ui_generate', 'method' => 'POST', 'description' => 'Turns a visitor\'s request into an A2UI surface: a flat list of components from the catalogue.'],
-            ['id' => 'a2ui_submit', 'path' => '/index.php?eID=a2ui_submit', 'method' => 'POST', 'description' => 'Stores the completed form as an inquiry record.'],
-        ],
-        'agui' => [
-            ['id' => 'agui_assistant', 'path' => '/index.php?eID=agui_assistant', 'method' => 'POST', 'description' => 'Streams one agent run as AG-UI events over SSE, including the approval step.'],
-        ],
-        'a2a' => [
-            ['id' => 'a2a_card', 'path' => '/index.php?eID=a2a_card', 'method' => 'GET', 'description' => 'Returns the Agent Card: who this agent is, where to reach it and which skills it offers.'],
-            ['id' => 'a2a_rpc', 'path' => '/index.php?eID=a2a_rpc', 'method' => 'POST', 'description' => 'Accepts JSON-RPC 2.0 calls for message/send and message/stream.'],
-            ['id' => 'a2a_concierge', 'path' => '/index.php?eID=a2a_concierge', 'method' => 'POST', 'description' => 'Runs the concierge on this page: it delegates a task and streams each status change.'],
-        ],
-        'ucp' => [
-            ['id' => 'ucp_manifest', 'path' => '/index.php?eID=ucp_manifest', 'method' => 'GET', 'description' => 'Returns the merchant manifest, which a shopping agent reads before it builds a cart.'],
-            ['id' => 'ucp_checkout', 'path' => '/index.php?eID=ucp_checkout', 'method' => 'POST', 'description' => 'Streams the agent\'s checkout up to the point where a person has to approve it.'],
-        ],
-        'ap2' => [
-            ['id' => 'ap2_authorize', 'path' => '/index.php?eID=ap2_authorize', 'method' => 'POST', 'description' => 'Creates and signs the Intent and Cart mandates, then returns the verified chain.'],
-        ],
-    ];
-
-    /** @var array<string, array{label: string, name: string, edge: string, tagline: string, spec: string}> */
-    private const META = [
+    /** @var array<string, array{label: string, name: string, edge: string, tagline: string}> */
+    private const array META = [
         'a2ui' => [
             'label' => 'A2UI',
             'name' => 'Agent-to-UI',
             'edge' => 'agent ↔ UI',
             'tagline' => 'The agent describes an interface as data. The site builds it only from components it already trusts.',
-            'spec' => 'https://github.com/google/A2UI',
         ],
         'agui' => [
             'label' => 'AG-UI',
             'name' => 'Agent-User Interaction',
             'edge' => 'agent ↔ user',
             'tagline' => 'An agent run arrives as a stream of typed events. The page shows each step and asks you to approve.',
-            'spec' => 'https://docs.ag-ui.com',
         ],
         'a2a' => [
             'label' => 'A2A',
             'name' => 'Agent-to-Agent',
             'edge' => 'agent ↔ agent',
             'tagline' => 'An Agent Card tells other agents what this site can do. They send it a task and get a result back.',
-            'spec' => 'https://a2a-protocol.org',
         ],
         'ucp' => [
             'label' => 'UCP',
             'name' => 'Universal Commerce Protocol',
             'edge' => 'agent ↔ merchant',
-            'tagline' => 'A shop publishes a manifest and an agent checks out from it. A person approves before any order is placed.',
-            'spec' => 'https://www.universalcommerce.org',
+            'tagline' => 'A shop publishes a UCP profile and an agent checks out through its API. A person approves before any order is placed.',
         ],
         'ap2' => [
             'label' => 'AP2',
             'name' => 'Agent Payments Protocol',
             'edge' => 'agent ↔ payment',
-            'tagline' => 'Two linked, signed mandates prove that a person approved this exact purchase, within their limits.',
-            'spec' => 'https://ap2-protocol.org',
+            'tagline' => 'Signed mandates prove that a person approved this exact purchase, within the limits they set.',
         ],
     ];
 
     /** @var array<string, list<array{title: string, text: string}>> */
-    private const HOW_IT_WORKS = [
+    private const array HOW_IT_WORKS = [
         'a2ui' => [
             ['title' => 'Intent', 'text' => 'The visitor types what they need in one line. Nothing is generated yet.'],
-            ['title' => 'Generation', 'text' => 'The agent replies with a surface: a flat list of components. Each one points to its children by id.'],
-            ['title' => 'Validation', 'text' => 'TYPO3 checks every component against its registry. It drops unknown components and properties instead of rendering them.'],
-            ['title' => 'Submission', 'text' => 'The visitor fills in the form and sends it. TYPO3 stores it as an inquiry record.'],
+            ['title' => 'Messages', 'text' => 'The agent answers with A2UI messages: a new surface, its components and its data. Each component points to its children by id.'],
+            ['title' => 'Validation', 'text' => 'TYPO3 checks every component against the official basic catalogue. It drops unknown components and properties instead of rendering them.'],
+            ['title' => 'Action', 'text' => 'The visitor fills in the form and sends it. The renderer reports an action with the form data, and TYPO3 stores it with the surface.'],
         ],
         'agui' => [
-            ['title' => 'Run start', 'text' => 'The browser opens an SSE stream. The server replies with RUN_STARTED and a thread id.'],
-            ['title' => 'Streamed answer', 'text' => 'Reasoning and text arrive in small pieces, so the page fills in while the agent works.'],
-            ['title' => 'Approval gate', 'text' => 'Before it saves anything, the agent sends a confirm tool call and stops. Nothing happens until a person decides.'],
-            ['title' => 'Apply', 'text' => 'After approval the run continues, TYPO3 stores the lead and RUN_FINISHED closes the stream.'],
+            ['title' => 'Run input', 'text' => 'The client posts a RunAgentInput: the thread, a run id and the conversation.'],
+            ['title' => 'Stream', 'text' => 'The agent reasons, answers and proposes a change as a tool call. Every event arrives on its own line of the stream.'],
+            ['title' => 'Interrupt', 'text' => 'The run ends with an interrupt. Nothing is written until a person answers it.'],
+            ['title' => 'Resume', 'text' => 'The next run answers the interrupt. Only an approval carries out the change.'],
         ],
         'a2a' => [
-            ['title' => 'Discovery', 'text' => 'The calling agent fetches the Agent Card. It learns this agent\'s skills, transport and authentication.'],
-            ['title' => 'Delegation', 'text' => 'It sends a message over JSON-RPC. The server creates a Task with an id and a context id.'],
-            ['title' => 'Lifecycle', 'text' => 'Status updates move the task to working. If a skill needs more detail, the task moves to input-required.'],
-            ['title' => 'Artifacts', 'text' => 'The result comes back as a named artifact, streamed in chunks. The task then reaches completed.'],
+            ['title' => 'Discovery', 'text' => 'The calling agent reads the Agent Card. It learns this agent\'s skills, its endpoints and the protocol version.'],
+            ['title' => 'Delegation', 'text' => 'It sends a message over JSON-RPC or HTTP. The server creates a task with an id and a context id.'],
+            ['title' => 'Lifecycle', 'text' => 'Status updates move the task to working. If a skill needs more detail, the task waits for input until a message names it.'],
+            ['title' => 'Artifacts', 'text' => 'The result comes back as a named artifact, streamed in chunks. The task completes, and the agent can read it again later.'],
         ],
         'ucp' => [
-            ['title' => 'Manifest', 'text' => 'The agent reads the merchant manifest: currency, capabilities, checkout endpoint and catalogue.'],
-            ['title' => 'Cart', 'text' => 'It builds a cart from the real catalogue. Prices come from the catalogue; the model never invents one.'],
-            ['title' => 'Approval', 'text' => 'The stream stops at authorization.required and shows the priced cart to a person.'],
-            ['title' => 'Confirmation', 'text' => 'Only an explicit approval produces order.confirmed. Every order in this demo is simulated.'],
+            ['title' => 'Profile', 'text' => 'The agent reads the business profile: the UCP version, the checkout endpoint and what the shop supports.'],
+            ['title' => 'Checkout', 'text' => 'It opens a checkout session with products from the real catalogue. Prices come from the shop; a model never sets one.'],
+            ['title' => 'Approval', 'text' => 'The session is ready to complete. The agent stops and shows the priced checkout to a person.'],
+            ['title' => 'Completion', 'text' => 'Only an approval completes the checkout and creates the order. Every payment in this demo is simulated.'],
         ],
         'ap2' => [
-            ['title' => 'Intent Mandate', 'text' => 'A person allows an agent to spend up to a cap, at named merchants, until the mandate expires.'],
-            ['title' => 'Cart Mandate', 'text' => 'A second mandate covers one fully priced cart. It points to the first mandate and fixes that exact purchase.'],
-            ['title' => 'Verification', 'text' => 'The site checks the chain: both signatures, the link between the mandates, the merchant and the cap.'],
-            ['title' => 'Receipt', 'text' => 'The verified chain serves as the receipt. Mandates here are signed with a sandbox key, and nothing is charged.'],
+            ['title' => 'Open mandates', 'text' => 'A trusted surface signs two open mandates for the agent: what it may buy, from which merchant, up to which amount.'],
+            ['title' => 'Signed checkout', 'text' => 'The merchant signs the checkout. Its hash ties every later mandate to exactly this purchase.'],
+            ['title' => 'Closed mandates', 'text' => 'The agent closes both mandates for this checkout with its own key. It cannot go beyond what the open mandates allow.'],
+            ['title' => 'Verification', 'text' => 'The merchant and the payment processor check every signature, hash and limit, then return receipts. Nothing is charged.'],
         ],
     ];
 
     public function __construct(
-        private readonly SkillCatalog $skillCatalog,
-        private readonly EventCatalog $eventCatalog,
-        private readonly Merchant $merchant,
-        private readonly SampleVerification $sampleVerification,
-        private readonly ComponentRegistry $componentRegistry,
+        private SkillCatalog $skillCatalog,
+        private EventCatalog $eventCatalog,
+        private Merchant $merchant,
+        private SampleVerification $sampleVerification,
+        private ComponentRegistry $componentRegistry,
+        private RouteRegistry $routeRegistry,
+        private SpecificationVersions $specificationVersions,
     ) {}
 
     /**
@@ -156,7 +130,7 @@ final class ProtocolCatalog implements SingletonInterface
     }
 
     /**
-     * Everything the protocol info element and the hub need about one protocol.
+     * Everything the elements and the overview need about one protocol.
      *
      * @return array{
      *     key: string,
@@ -165,9 +139,11 @@ final class ProtocolCatalog implements SingletonInterface
      *     edge: string,
      *     tagline: string,
      *     spec: string,
+     *     specVersion: string,
+     *     specLatest: string,
      *     diagram: string,
      *     diagramAlt: string,
-     *     endpoints: list<array{id: string, path: string, method: string, description: string}>,
+     *     endpoints: list<array{id: string, method: string, path: string, binding: string, description: string, widget: bool}>,
      *     howItWorks: list<array{title: string, text: string}>,
      *     facts: list<array{label: string, value: string}>
      * }
@@ -176,6 +152,8 @@ final class ProtocolCatalog implements SingletonInterface
     {
         $key = $this->has($protocol) ? $protocol : self::PROTOCOLS[0];
         $meta = self::META[$key];
+        $enum = Protocol::from($key);
+        $spec = $this->specificationVersions->for($enum);
 
         return [
             'key' => $key,
@@ -183,10 +161,12 @@ final class ProtocolCatalog implements SingletonInterface
             'name' => $meta['name'],
             'edge' => $meta['edge'],
             'tagline' => $meta['tagline'],
-            'spec' => $meta['spec'],
+            'spec' => $spec['url'],
+            'specVersion' => $spec['implemented'],
+            'specLatest' => $spec['latest'],
             'diagram' => self::DIAGRAM_BASE . $key . '.svg',
             'diagramAlt' => $meta['label'] . ' sequence diagram: ' . $meta['edge'],
-            'endpoints' => self::ENDPOINTS[$key],
+            'endpoints' => $this->endpoints($enum),
             'howItWorks' => self::HOW_IT_WORKS[$key],
             'facts' => $this->facts($key),
         ];
@@ -194,9 +174,9 @@ final class ProtocolCatalog implements SingletonInterface
 
     /**
      * @return list<array{
-     *     key: string, label: string, name: string, edge: string, tagline: string, spec: string,
-     *     diagram: string, diagramAlt: string,
-     *     endpoints: list<array{id: string, path: string, method: string, description: string}>,
+     *     key: string, label: string, name: string, edge: string, tagline: string,
+     *     spec: string, specVersion: string, specLatest: string, diagram: string, diagramAlt: string,
+     *     endpoints: list<array{id: string, method: string, path: string, binding: string, description: string, widget: bool}>,
      *     howItWorks: list<array{title: string, text: string}>,
      *     facts: list<array{label: string, value: string}>
      * }>
@@ -207,16 +187,22 @@ final class ProtocolCatalog implements SingletonInterface
     }
 
     /**
-     * Endpoint ids a protocol registers, for the hub's health check.
+     * The endpoints this installation serves for a protocol, as routed.
      *
-     * @return list<string>
+     * @return list<array{id: string, method: string, path: string, binding: string, description: string, widget: bool}>
      */
-    public function endpointIds(string $protocol): array
+    public function endpoints(Protocol $protocol): array
     {
-        if (!$this->has($protocol)) {
-            return [];
-        }
-        return array_map(static fn(array $e): string => $e['id'], self::ENDPOINTS[$protocol]);
+        $apiBasePath = $this->routeRegistry->apiBasePath();
+
+        return array_map(static fn(Route $route): array => [
+            'id' => $route->id,
+            'method' => implode(', ', $route->methods),
+            'path' => $route->uri($apiBasePath),
+            'binding' => $route->binding,
+            'description' => $route->description,
+            'widget' => $route->widget,
+        ], $this->routeRegistry->forProtocol($protocol));
     }
 
     /**
@@ -244,7 +230,7 @@ final class ProtocolCatalog implements SingletonInterface
     {
         $manifest = $this->componentRegistry->getCatalogManifest();
         $containers = array_filter($manifest, static fn(array $c): bool => $c['container']);
-        $categories = array_unique(array_map(static fn(array $c): string => $c['category'], $manifest));
+        $categories = array_values(array_unique(array_map(static fn(array $c): string => $c['category'], $manifest)));
 
         return [
             ['label' => 'Catalogue components', 'value' => (string)count($manifest)],
@@ -301,8 +287,8 @@ final class ProtocolCatalog implements SingletonInterface
     }
 
     /**
-     * Runs a real (sandbox-signed) mandate chain so the element shows the checks
-     * that actually gate a payment, not a prose summary of them.
+     * Verifies a real (sandbox-signed) mandate chain, so the element shows the
+     * checks that actually gate a payment, not a prose summary of them.
      *
      * @return list<array{label: string, value: string}>
      */
