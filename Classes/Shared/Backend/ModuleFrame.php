@@ -6,8 +6,6 @@ namespace Webconsulting\AgentNexus\Shared\Backend;
 
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Module\ModuleInterface;
-use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\Components\ComponentFactory;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -18,7 +16,8 @@ use TYPO3\CMS\Core\Page\PageRenderer;
  *
  * One call gives a module the same DocHeader as every other: the title from
  * the module's own label, the v14 submodule menu (the third-level screens of a
- * protocol, of the inspector), a reload button and a shortcut. It also loads
+ * protocol, of the inspector) and a shortcut; v14 adds the reload button
+ * itself. It also loads
  * the design-system layers — tokens first, then primitives, then the backend
  * layer — so a module only names what it adds on top.
  */
@@ -35,7 +34,6 @@ final readonly class ModuleFrame
 
     public function __construct(
         private ModuleTemplateFactory $moduleTemplateFactory,
-        private ComponentFactory $componentFactory,
         private PageRenderer $pageRenderer,
     ) {}
 
@@ -77,11 +75,7 @@ final readonly class ModuleFrame
             );
         }
 
-        $moduleTemplate->getDocHeaderComponent()->getButtonBar()->addButton(
-            $this->componentFactory->createReloadButton($request->getUri()),
-            ButtonBar::BUTTON_POSITION_RIGHT,
-        );
-
+        // v14 adds the reload button by itself.
         return $moduleTemplate;
     }
 
