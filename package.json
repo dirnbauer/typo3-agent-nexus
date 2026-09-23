@@ -8,6 +8,6 @@
     "diagrams:check": "node Build/check-diagrams.mjs"
   },
   "devDependencies": {
-    "@mermaid-js/mermaid-cli": "^11.12.0"
+    "@mermaid-js/mermaid-cli": "^11.17.0"
   }
 }
