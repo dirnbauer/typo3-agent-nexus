@@ -13,7 +13,7 @@
                             <type>text</type>
                             <cols>48</cols>
                             <rows>3</rows>
-                            <default>See how you approve an agent's purchase. An Intent Mandate sets your limits, a Cart Mandate fixes the order, and both are checked before payment.</default>
+                            <default>See how you approve an agent's purchase. You approve a shopping list and a spending cap once; the agent then shops on its own, and every mandate it signs is checked before payment.</default>
                         </config>
                     </settings.intro>
                     <settings.accent>

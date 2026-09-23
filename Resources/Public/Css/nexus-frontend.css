@@ -99,6 +99,13 @@
   background: var(--anx-bg);
   transition: border-color .15s, box-shadow .15s;
 }
+/* One focus ring for every control in every widget, in the protocol's
+   text-strength accent so it keeps 3:1 against the widget's background. */
+.anx :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+  border-radius: var(--anx-radius-sm);
+}
 .a2ui-inquiry__bar:focus-within,
 .agui-asst__bar:focus-within,
 .a2a-cc__bar:focus-within {

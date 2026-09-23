@@ -189,14 +189,6 @@ p.ap2-ts__muted { margin: .5rem 0 0; }
   background: color-mix(in srgb, var(--accent) 5%, transparent);
 }
 
-/* Shared focus ring for every Agent Nexus frontend widget (kept here until it moves to nexus-frontend.css). */
-:is(.a2ui-inquiry, .agui-asst, .a2a-cc, .ucp-cc, .ap2-ts, .anx-info)
-  :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: var(--anx-radius-sm);
-}
-
 @media (max-width: 560px) {
   .ap2-ts__go,
   .ap2-ts__alt { width: 100%; justify-content: center; }

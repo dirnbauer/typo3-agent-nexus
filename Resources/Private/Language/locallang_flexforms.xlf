@@ -62,11 +62,11 @@
         <unit id="checkout.useLlm.label"><segment><source>Model-written recommendation rationale</source></segment></unit>
         <unit id="checkout.useLlm.description"><segment><source>The shopping agent's reasoning text is written by a real model (via nr-llm), grounded in the fixed cart. Cart contents and prices always stay deterministic. Global switch, budget and rate limits still apply.</source></segment></unit>
 
-        <!-- AP2: Signed Quote Authorization -->
-        <unit id="trusted.sheet"><segment><source>Signed Quote Authorization</source></segment></unit>
+        <!-- AP2: Signed quote approval -->
+        <unit id="trusted.sheet"><segment><source>Signed quote approval</source></segment></unit>
         <unit id="trusted.intro.description"><segment><source>Shown above the trusted surface.</source></segment></unit>
         <unit id="trusted.showMandates.label"><segment><source>Show the signed mandates</source></segment></unit>
-        <unit id="trusted.showMandates.description"><segment><source>Reveals the issued Intent + Cart Mandate tokens (JWS) under the result. Great for explaining the protocol.</source></segment></unit>
+        <unit id="trusted.showMandates.description"><segment><source>Shows every signed token (SD-JWT) with its claims and disclosures under the result.</source></segment></unit>
         <unit id="trusted.useLlm.label"><segment><source>Plain-language chain explanation (model)</source></segment></unit>
         <unit id="trusted.useLlm.description"><segment><source>Adds a short model-written explanation of the verified mandate chain to the receipt. The mandates and verification are always deterministic. Also requires the AP2 LLM toggle in the extension settings (off by default).</source></segment></unit>
 
