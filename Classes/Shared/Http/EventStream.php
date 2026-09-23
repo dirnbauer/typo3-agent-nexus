@@ -71,6 +71,32 @@ final class EventStream extends Stream implements SelfEmittableStreamInterface
     }
 
     /**
+     * The same stream, with an observer that sees every frame as it goes out
+     * and is told when the stream is over — normally, on an error, or because
+     * the client hung up. The traffic log records streams this way, since their
+     * frames only exist while the body is being emitted.
+     *
+     * @param \Closure(array<string, mixed>): void $onFrame
+     * @param \Closure(): void $onEnd
+     */
+    public function observed(\Closure $onFrame, \Closure $onEnd): self
+    {
+        $frames = $this->frames;
+        $observedFrames = (static function () use ($frames, $onFrame, $onEnd): \Generator {
+            try {
+                foreach ($frames as $frame) {
+                    $onFrame($frame);
+                    yield $frame;
+                }
+            } finally {
+                $onEnd();
+            }
+        })();
+
+        return new self($observedFrames, $this->openingComment, $this->delayMs);
+    }
+
+    /**
      * Production path: write each frame as it is produced and flush, so the UI
      * sees the agent work rather than the finished result.
      */

@@ -19,3 +19,10 @@ parameters:
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
     checkUninitializedProperties: true
     reportUnmatchedIgnoredErrors: true
+    typo3:
+        requestGetAttributeMapping:
+            # Backend routing puts the matched route on every backend request.
+            route: TYPO3\CMS\Backend\Routing\Route
+            # Set by Shared\Http\Api\ApiRouter on every request it serves.
+            agentnexus.route: Webconsulting\AgentNexus\Shared\Http\Api\RouteMatch
+            agentnexus.traffic: Webconsulting\AgentNexus\Shared\Traffic\TrafficCapture

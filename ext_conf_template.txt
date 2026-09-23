@@ -1,3 +1,24 @@
+# cat=api/enable; type=string; label=API base path: Path prefix of the protocol endpoints (A2A JSON-RPC and HTTP+JSON, AG-UI, A2UI, UCP REST, AP2). Change it only if a site already uses the default for its own pages.
+apiBasePath = /api/agent-nexus
+
+# cat=api/enable; type=boolean; label=Publish well-known documents: Serve /.well-known/agent-card.json (A2A) and /.well-known/ucp (UCP) on every host of this installation. Turn it off if another extension publishes them.
+publishWellKnown = 1
+
+# cat=traffic/enable; type=boolean; label=Record the traffic log: Write one row per protocol exchange (request, response, streamed events) for the backend traffic log.
+trafficEnabled = 1
+
+# cat=traffic/enable; type=int+; label=Traffic retention (days): The agentnexus:cleanup command deletes traffic entries older than this. 0 keeps them until they are deleted by hand.
+trafficRetentionDays = 14
+
+# cat=traffic/enable; type=boolean; label=Record request and response bodies: When off, the traffic log keeps only method, path, status, timing and headers.
+trafficCaptureBodies = 1
+
+# cat=traffic/enable; type=boolean; label=Mask personal data: Replace names, email addresses, phone numbers and addresses in recorded bodies before they are stored.
+trafficRedactPersonalData = 1
+
+# cat=traffic/enable; type=int+; label=Protocol object retention (days): The agentnexus:cleanup command deletes tasks, runs, checkout sessions and mandates not changed for this long. 0 keeps them.
+objectRetentionDays = 90
+
 # cat=llm/enable; type=boolean; label=Enable frontend LLM calls: Global switch for all real LLM usage from the frontend plugins. When off, every plugin falls back to its deterministic scripted demo.
 llmFrontendEnabled = 1
 

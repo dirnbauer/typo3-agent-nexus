@@ -9,6 +9,20 @@ services:
     exclude:
       - '../Classes/A2ui/Domain/Model/*'
       - '../Classes/Agui/Event/*'
+      # Value objects, built by hand, never injected.
+      - '../Classes/Shared/Http/Api/Route.php'
+      - '../Classes/Shared/Http/Api/RouteMatch.php'
+      - '../Classes/Shared/Store/ProtocolObject.php'
+      - '../Classes/Shared/Store/ObjectFilter.php'
+      - '../Classes/Shared/Traffic/TrafficCapture.php'
+      - '../Classes/Shared/Traffic/TrafficFilter.php'
+
+  # Middlewares are fetched from the container by class name.
+  Webconsulting\AgentNexus\Shared\Http\Api\ApiRouter:
+    public: true
+
+  Webconsulting\AgentNexus\Shared\Http\Api\BackendTrafficRecorder:
+    public: true
 
   Webconsulting\AgentNexus\A2ui\Service\AgentService:
     public: true
