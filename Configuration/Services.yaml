@@ -7,9 +7,8 @@ services:
   Webconsulting\AgentNexus\:
     resource: '../Classes/*'
     exclude:
-      - '../Classes/A2ui/Domain/Model/*'
-      - '../Classes/Agui/Event/*'
       # Value objects, built by hand, never injected.
+      - '../Classes/A2ui/Domain/Model/*'
       - '../Classes/Shared/Http/Api/Route.php'
       - '../Classes/Shared/Http/Api/RouteMatch.php'
       - '../Classes/Shared/Store/ProtocolObject.php'
@@ -17,94 +16,18 @@ services:
       - '../Classes/Shared/Traffic/TrafficCapture.php'
       - '../Classes/Shared/Traffic/TrafficFilter.php'
 
-  # Middlewares are fetched from the container by class name.
+  # Route handlers, backend controllers and AJAX targets declare themselves
+  # public (#[AsController], #[Autoconfigure(public: true)]); the middlewares
+  # are fetched from the container by class name.
   Webconsulting\AgentNexus\Shared\Http\Api\ApiRouter:
     public: true
 
   Webconsulting\AgentNexus\Shared\Http\Api\BackendTrafficRecorder:
     public: true
 
-  Webconsulting\AgentNexus\A2ui\Service\AgentService:
-    public: true
-
-  Webconsulting\AgentNexus\A2ui\Service\RendererService:
-    public: true
-
-  Webconsulting\AgentNexus\A2ui\Domain\Repository\ComponentRegistry:
-    public: true
-
-  Webconsulting\AgentNexus\A2a\Service\TaskRunner:
-    public: true
-
-  Webconsulting\AgentNexus\A2a\Service\AgentCard:
-    public: true
-
-  Webconsulting\AgentNexus\A2a\Service\TaskLogger:
-    public: true
-
-  Webconsulting\AgentNexus\A2a\Service\SkillCatalog:
-    public: true
-
-  Webconsulting\AgentNexus\A2a\Controller\SendController:
-    public: true
-
-  Webconsulting\AgentNexus\Agui\Service\AgentRunner:
-    public: true
-
-  Webconsulting\AgentNexus\Agui\Service\RunLogger:
-    public: true
-
-  Webconsulting\AgentNexus\Agui\Service\EventCatalog:
-    public: true
-
-  Webconsulting\AgentNexus\Agui\Controller\RunController:
-    public: true
-
-  Webconsulting\AgentNexus\Ap2\Service\MandateService:
-    public: true
-
-  Webconsulting\AgentNexus\Ap2\Service\Jwt:
-    public: true
-
-  Webconsulting\AgentNexus\Ap2\Service\MandateLog:
-    public: true
-
-  Webconsulting\AgentNexus\Ap2\Controller\MandateController:
-    public: true
-
-  Webconsulting\AgentNexus\Ucp\Service\CheckoutRunner:
-    public: true
-
-  Webconsulting\AgentNexus\Ucp\Service\Merchant:
-    public: true
-
-  Webconsulting\AgentNexus\Ucp\Service\OrderLogger:
-    public: true
-
-  Webconsulting\AgentNexus\Ucp\Controller\CheckoutController:
-    public: true
-
-  # Shared layer — fetched via makeInstance from the eID endpoints, so the
-  # container must expose them.
-  Webconsulting\AgentNexus\Shared\Llm\LlmClient:
-    public: true
-
+  # What the protocols need from a model, and the ledger its spend goes to.
   Webconsulting\AgentNexus\Shared\Llm\LanguageModel:
     alias: Webconsulting\AgentNexus\Shared\Llm\LlmClient
-    public: true
-
-  Webconsulting\AgentNexus\Shared\Llm\LlmGuard:
-    public: true
-
-  Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker:
-    public: true
 
   Webconsulting\AgentNexus\Shared\Llm\UsageLedger:
     alias: Webconsulting\AgentNexus\Shared\Llm\LlmUsageTracker
-    public: true
-
-  Webconsulting\AgentNexus\Shared\Http\RateLimiter:
-    public: true
-
-  Webconsulting\AgentNexus\Shared\Http\PluginSettings:
-    public: true
