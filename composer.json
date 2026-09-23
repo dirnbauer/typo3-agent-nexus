@@ -29,6 +29,7 @@
     },
     "require": {
         "php": "^8.4",
+        "ext-openssl": "*",
         "typo3/cms-backend": "^14.3.7",
         "typo3/cms-core": "^14.3.7",
         "typo3/cms-extbase": "^14.3.7",
