@@ -4,6 +4,15 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.3] — 2026-09-23
+
+### Changed
+
+*   The seeded AP2 page describes the AP2 v0.2 flow: you sign one open
+    mandate with what the agent may buy and your spending cap, and the agent
+    closes it with its own key. It still described the two v0.1 mandates
+    (intent and cart).
+
 ## [4.0.2] — 2026-09-23
 
 ### Fixed

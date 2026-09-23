@@ -98,7 +98,7 @@ final class SeedSiteCommand extends Command
             'slug' => 'ap2',
             'ctype' => 'agentnexus_trustedsurface',
             'header' => 'Prove the purchase was authorised',
-            'intro' => '<p>AP2 proves that a person approved a payment an agent makes. It uses two signed mandates: one sets your limits, the other fixes the exact cart. The site checks both signatures, the link between them, the merchant and the spending cap. Mandates here are signed with a sandbox key.</p>',
+            'intro' => '<p>AP2 proves that a person approved a payment an agent makes. You sign one open mandate that names what the agent may buy and your spending cap. The agent closes it with its own key when it checks out, and the site checks both signatures, the link between them, the merchant and the cap. Mandates here are signed with sandbox keys.</p>',
         ],
     ];
 
