@@ -4,6 +4,13 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.0.4] — 2026-09-24
+
+### Changed
+
+*   The seeded AP2 page splits its 27-word sentence about closing the
+    mandate in two, so it stays within the lab's 25-word limit.
+
 ## [4.0.3] — 2026-09-23
 
 ### Changed
