@@ -4,6 +4,28 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.0] — 2026-09-27
+
+### Changed
+
+*   The protocol sequence diagrams are made with
+    [Archify](https://github.com/tt-a1i/archify) (MIT) instead of Mermaid:
+    phases, activation bars, typed arrows (request, return, security, async),
+    a legend and summary cards, in light and dark. The protocol info plugin
+    shows them in embed mode, follows the page's theme and sizes the frame to
+    the diagram; below 44rem the diagram keeps a readable width and scrolls
+    sideways. The caption opens the full viewer with guided chapters, a live
+    trace, pan and zoom, and PNG/SVG export.
+*   The diagrams were rewritten for readability: internal steps are notes on
+    their message, the AP2 failure and success paths are separate phases, and
+    every diagram passes Archify's `showcase` quality profile.
+*   `npm run diagrams` renders `Build/Diagrams/*.json` with a pinned Archify
+    commit into `Resources/Public/Diagrams/*.html`; the Mermaid sources, the
+    SVGs and the `@mermaid-js/mermaid-cli` dependency are gone.
+    `npm run diagrams:check` still verifies the committed files by hash.
+*   The A2UI catalogue module's image example uses the module icon instead
+    of the old A2UI diagram.
+
 ## [4.0.4] — 2026-09-24
 
 ### Changed
