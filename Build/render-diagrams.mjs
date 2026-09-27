@@ -19,7 +19,7 @@
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 
@@ -122,6 +122,10 @@ function main() {
   const archify = archifyDir();
   const work = mkdtempSync(join(tmpdir(), 'anx-diagrams-'));
   const lock = { note: 'Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.', archify: ARCHIFY, generator: sha(readFileSync(new URL(import.meta.url))), diagrams: {} };
+  // Leftovers of an interrupted earlier delivery into the public folder.
+  for (const entry of readdirSync(OUT)) {
+    if (entry.startsWith('.archify-delivery-')) rmSync(join(OUT, entry), { recursive: true, force: true });
+  }
   try {
     for (const file of readdirSync(SRC).filter((name) => name.endsWith('.json')).sort()) {
       const key = basename(file, '.json');
@@ -133,11 +137,15 @@ function main() {
       if (validation.ok !== true) {
         throw new Error(`${file} does not pass the showcase profile:\n  ${diagnostics(validation).join('\n  ')}`);
       }
-      const output = join(OUT, `${key}.html`);
-      const delivery = run(archify, ['deliver', 'sequence', spec, output, '--quality', 'showcase', '--json']);
+      // `deliver` keeps a private snapshot next to its output, so it writes
+      // into the work directory and only the finished HTML is copied over.
+      const delivered = join(work, `${key}.html`);
+      const delivery = run(archify, ['deliver', 'sequence', spec, delivered, '--quality', 'showcase', '--json']);
       if (delivery.ok !== true) {
         throw new Error(`${file} was not delivered:\n  ${diagnostics(delivery).join('\n  ')}`);
       }
+      const output = join(OUT, `${key}.html`);
+      copyFileSync(delivered, output);
       lock.diagrams[key] = { source: sha(sourceBytes), html: sha(readFileSync(output)) };
       console.log(`${key}: ${output.slice(ROOT.length)}`);
     }
