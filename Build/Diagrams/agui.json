@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AG-UI 1.0: one streamed run with an approval",
+    "locale": "en",
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "start",
+        "label": "Start the run",
+        "focus": [
+          "visitor",
+          "widget",
+          "typo3"
+        ],
+        "note": "The widget posts RunAgentInput; TYPO3 opens the event stream with RUN_STARTED."
+      },
+      {
+        "id": "stream",
+        "label": "Stream the answer",
+        "focus": [
+          "typo3",
+          "model",
+          "widget"
+        ],
+        "note": "Reasoning, text chunks from the model, an activity snapshot and a tool call arrive as typed events."
+      },
+      {
+        "id": "approve",
+        "label": "Ask for approval",
+        "focus": [
+          "typo3",
+          "widget",
+          "visitor"
+        ],
+        "note": "The run ends with an interrupt; the widget renders the approval form from its schema."
+      },
+      {
+        "id": "resume",
+        "label": "Resume and finish",
+        "focus": [
+          "visitor",
+          "widget",
+          "typo3"
+        ],
+        "note": "The same thread resumes, the tool call gets its result and the run finishes."
+      }
+    ],
+    "viewBox": [
+      1080,
+      680
+    ]
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor",
+      "sublabel": "on the page"
+    },
+    {
+      "id": "widget",
+      "type": "frontend",
+      "label": "Assistant widget",
+      "sublabel": "AG-UI 1.0 client"
+    },
+    {
+      "id": "typo3",
+      "type": "backend",
+      "label": "TYPO3",
+      "sublabel": "POST /api/agent-nexus/ag-ui"
+    },
+    {
+      "id": "model",
+      "type": "cloud",
+      "label": "Model",
+      "sublabel": "nr-llm, optional"
+    }
+  ],
+  "phases": [
+    {
+      "label": "Start",
+      "messages": [
+        "ask",
+        "run-input",
+        "run-started"
+      ]
+    },
+    {
+      "label": "Stream",
+      "messages": [
+        "reasoning",
+        "stream-answer",
+        "text-chunks",
+        "text-content",
+        "activity",
+        "tool-call"
+      ]
+    },
+    {
+      "label": "Interrupt",
+      "messages": [
+        "interrupt",
+        "approval-form"
+      ]
+    },
+    {
+      "label": "Resume",
+      "messages": [
+        "confirm",
+        "resume",
+        "tool-result",
+        "success"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "ask",
+      "from": "visitor",
+      "to": "widget",
+      "label": "asks a question",
+      "variant": "default"
+    },
+    {
+      "id": "run-input",
+      "from": "widget",
+      "to": "typo3",
+      "label": "RunAgentInput (threadId, runId, messages)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "run-started",
+      "from": "typo3",
+      "to": "widget",
+      "label": "RUN_STARTED · protocolVersion 1.0",
+      "variant": "return"
+    },
+    {
+      "id": "reasoning",
+      "from": "typo3",
+      "to": "widget",
+      "label": "REASONING_START … REASONING_END",
+      "variant": "return"
+    },
+    {
+      "id": "stream-answer",
+      "from": "typo3",
+      "to": "model",
+      "label": "stream the answer",
+      "variant": "emphasis"
+    },
+    {
+      "id": "text-chunks",
+      "from": "model",
+      "to": "typo3",
+      "label": "text chunks",
+      "variant": "return"
+    },
+    {
+      "id": "text-content",
+      "from": "typo3",
+      "to": "widget",
+      "label": "TEXT_MESSAGE_CONTENT …",
+      "variant": "return"
+    },
+    {
+      "id": "activity",
+      "from": "typo3",
+      "to": "widget",
+      "label": "ACTIVITY_SNAPSHOT · plan comparison",
+      "variant": "return"
+    },
+    {
+      "id": "tool-call",
+      "from": "typo3",
+      "to": "widget",
+      "label": "TOOL_CALL_START / ARGS / END",
+      "variant": "return"
+    },
+    {
+      "id": "interrupt",
+      "from": "typo3",
+      "to": "widget",
+      "label": "RUN_FINISHED · outcome: interrupt",
+      "variant": "security"
+    },
+    {
+      "id": "approval-form",
+      "from": "widget",
+      "to": "visitor",
+      "label": "approval form from responseSchema",
+      "variant": "dashed"
+    },
+    {
+      "id": "confirm",
+      "from": "visitor",
+      "to": "widget",
+      "label": "confirms and sends",
+      "variant": "default"
+    },
+    {
+      "id": "resume",
+      "from": "widget",
+      "to": "typo3",
+      "label": "RunAgentInput · same thread, resume",
+      "variant": "emphasis"
+    },
+    {
+      "id": "tool-result",
+      "from": "typo3",
+      "to": "widget",
+      "label": "TOOL_CALL_RESULT · same tool call",
+      "variant": "return"
+    },
+    {
+      "id": "success",
+      "from": "typo3",
+      "to": "widget",
+      "label": "RUN_FINISHED · outcome: success",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "widget",
+      "from": "ask",
+      "to": "success",
+      "type": "frontend"
+    },
+    {
+      "participant": "typo3",
+      "from": "run-input",
+      "to": "interrupt",
+      "type": "backend"
+    },
+    {
+      "participant": "model",
+      "from": "stream-answer",
+      "to": "text-chunks",
+      "type": "cloud"
+    },
+    {
+      "participant": "typo3",
+      "from": "resume",
+      "to": "success",
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Typed event stream",
+      "items": [
+        "One POST opens a stream of typed AG-UI events",
+        "Reasoning, text, activity and tool calls each have their own event",
+        "The widget renders every step as it arrives"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Human in the loop",
+      "items": [
+        "RUN_FINISHED with outcome interrupt pauses the run",
+        "The approval form is generated from responseSchema",
+        "Nothing is applied before the visitor confirms"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Same thread, same call",
+      "items": [
+        "The resume keeps threadId and the pending tool call",
+        "TOOL_CALL_RESULT answers exactly that call",
+        "The run closes with outcome success"
+      ]
+    }
+  ]
+}

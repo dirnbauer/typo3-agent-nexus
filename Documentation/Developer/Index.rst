@@ -30,7 +30,7 @@ Layout
         Backend/                       the frame every backend screen shares
     Configuration/Backend/             the module set and the AJAX routes
     Configuration/Sets/                the frontend rendering glue
-    Build/Diagrams/                    Mermaid sources for the sequence diagrams
+    Build/Diagrams/                    Archify sources for the sequence diagrams
     Tests/Conformance/Schemas/         the official specification schemas
 
 Requests
@@ -153,24 +153,34 @@ anything inspecting the response — read the whole stream through
 Diagrams
 ========
 
-The sequence diagrams are build artifacts, not content:
+The protocol sequence diagrams are build artifacts, not content. They are made
+with `Archify <https://github.com/tt-a1i/archify>`__ (MIT), which renders a
+typed JSON document into a self-contained, interactive HTML file:
 
 ..  code-block:: bash
 
-    npm ci
     npm run diagrams
 
-That renders :file:`Build/Diagrams/*.mmd` into
-:file:`Resources/Public/Diagrams/*.svg`, each carrying its own light and dark
-palette so it works as a plain ``<img>``. The SVGs are committed, so neither
-editors nor the site ever need node or Chromium.
+That reads :file:`Build/Diagrams/*.json` (the format is described in
+:file:`Build/Diagrams/README.md`), adds the coordinates, validates every
+diagram against Archify's ``showcase`` quality profile and writes
+:file:`Resources/Public/Diagrams/*.html`. Archify is not an npm package: the
+script clones the commit pinned in :file:`Build/render-diagrams.mjs` into
+:file:`Build/.archify` on first use, or uses ``ARCHIFY_DIR``. The HTML files
+are committed, so neither editors nor the site ever need node or Archify.
 
-Rendering also writes :file:`Build/diagrams.lock.json`, holding the hash of
-every source, of the renderer and of every generated SVG. ``npm run
-diagrams:check`` verifies those hashes and is what CI runs, because a re-render
-cannot be compared across machines: mermaid sizes a sequence diagram from
-measured text, so the available fonts and the Chromium build decide the
-geometry. The hash check still catches the two mistakes that matter, a source
-edited without re-rendering and a hand-edited SVG, and needs no browser.
+The protocol info plugin shows a diagram in an iframe in Archify's embed mode.
+:file:`Resources/Public/JavaScript/protocol-diagram.js` passes the page's
+theme (``?theme=light|dark``, following desiderio's ``.dark`` class) and sizes
+the frame to the diagram; the caption links to the full viewer with its
+guided chapters, trace and export. The files are same-origin, which the
+height measurement needs and ``X-Frame-Options: SAMEORIGIN`` allows.
 
-Commit the lock file together with the SVGs.
+Rendering also writes :file:`Build/diagrams.lock.json`, holding the Archify
+commit and the hash of every source, of the renderer and of every generated
+file. ``npm run diagrams:check`` verifies those hashes and is what CI runs, so
+it catches a source edited without re-rendering and a hand-edited diagram
+without node modules, Archify or a browser. Rendering is deterministic: a
+second run changes nothing.
+
+Commit the lock file together with the HTML files.

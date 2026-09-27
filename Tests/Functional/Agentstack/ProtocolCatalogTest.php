@@ -81,10 +81,10 @@ final class ProtocolCatalogTest extends AbstractAgentNexusTestCase
     {
         foreach ($this->subject->protocols() as $protocol) {
             self::assertSame(
-                'EXT:agent_nexus/Resources/Public/Diagrams/' . $protocol . '.svg',
+                'EXT:agent_nexus/Resources/Public/Diagrams/' . $protocol . '.html',
                 $this->subject->get($protocol)['diagram'],
             );
-            self::assertFileExists(dirname(__DIR__, 3) . '/Resources/Public/Diagrams/' . $protocol . '.svg');
+            self::assertFileExists(dirname(__DIR__, 3) . '/Resources/Public/Diagrams/' . $protocol . '.html');
         }
     }
 

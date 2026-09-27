@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "UCP: from a wish to an approved sandbox order",
+    "locale": "en",
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "wish",
+        "label": "Take the wish",
+        "focus": [
+          "visitor",
+          "agent",
+          "profile"
+        ],
+        "note": "The shopping agent reads the business profile to find the checkout capability."
+      },
+      {
+        "id": "checkout",
+        "label": "Price a checkout",
+        "focus": [
+          "agent",
+          "checkout",
+          "visitor"
+        ],
+        "note": "A checkout session is created and priced from the catalogue."
+      },
+      {
+        "id": "approve",
+        "label": "Ask for approval",
+        "focus": [
+          "agent",
+          "visitor"
+        ],
+        "note": "The run pauses: complete_checkout is proposed, not sent."
+      },
+      {
+        "id": "complete",
+        "label": "Complete as approved",
+        "focus": [
+          "visitor",
+          "agent",
+          "checkout"
+        ],
+        "note": "After approval the agent adds the email and completes exactly the approved checkout."
+      }
+    ],
+    "viewBox": [
+      1080,
+      680
+    ]
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor",
+      "sublabel": "AG-UI 1.0 client"
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Shopping agent",
+      "sublabel": "/api/agent-nexus/ucp/agent"
+    },
+    {
+      "id": "profile",
+      "type": "security",
+      "label": "Business profile",
+      "sublabel": "/.well-known/ucp"
+    },
+    {
+      "id": "checkout",
+      "type": "database",
+      "label": "Checkout API",
+      "sublabel": "/ucp/checkout-sessions"
+    }
+  ],
+  "phases": [
+    {
+      "label": "Wish",
+      "messages": [
+        "wish",
+        "get-profile",
+        "profile"
+      ]
+    },
+    {
+      "label": "Checkout",
+      "messages": [
+        "create",
+        "priced",
+        "show"
+      ]
+    },
+    {
+      "label": "Approval",
+      "messages": [
+        "interrupt"
+      ]
+    },
+    {
+      "label": "Complete",
+      "messages": [
+        "approved",
+        "update",
+        "ready",
+        "complete",
+        "order",
+        "success"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "wish",
+      "from": "visitor",
+      "to": "agent",
+      "label": "RunAgentInput · the wish",
+      "variant": "emphasis"
+    },
+    {
+      "id": "get-profile",
+      "from": "agent",
+      "to": "profile",
+      "label": "GET the profile",
+      "variant": "default"
+    },
+    {
+      "id": "profile",
+      "from": "profile",
+      "to": "agent",
+      "label": "services · checkout capability · sandbox_pay",
+      "variant": "return"
+    },
+    {
+      "id": "create",
+      "from": "agent",
+      "to": "checkout",
+      "label": "create_checkout · UCP-Agent, Idempotency-Key",
+      "variant": "emphasis"
+    },
+    {
+      "id": "priced",
+      "from": "checkout",
+      "to": "agent",
+      "label": "201 incomplete · priced from the catalogue",
+      "variant": "return"
+    },
+    {
+      "id": "show",
+      "from": "agent",
+      "to": "visitor",
+      "label": "tool calls · reasoning · the priced checkout",
+      "variant": "return"
+    },
+    {
+      "id": "interrupt",
+      "from": "agent",
+      "to": "visitor",
+      "label": "RUN_FINISHED · interrupt: Approve this order",
+      "variant": "security",
+      "note": "complete_checkout is proposed, not sent"
+    },
+    {
+      "id": "approved",
+      "from": "visitor",
+      "to": "agent",
+      "label": "resume · approved, email",
+      "variant": "emphasis"
+    },
+    {
+      "id": "update",
+      "from": "agent",
+      "to": "checkout",
+      "label": "update_checkout · buyer.email",
+      "variant": "default"
+    },
+    {
+      "id": "ready",
+      "from": "checkout",
+      "to": "agent",
+      "label": "ready_for_complete",
+      "variant": "return"
+    },
+    {
+      "id": "complete",
+      "from": "agent",
+      "to": "checkout",
+      "label": "complete_checkout · exactly as approved",
+      "variant": "emphasis"
+    },
+    {
+      "id": "order",
+      "from": "checkout",
+      "to": "agent",
+      "label": "completed · order (sandbox, no payment)",
+      "variant": "return"
+    },
+    {
+      "id": "success",
+      "from": "agent",
+      "to": "visitor",
+      "label": "tool result · RUN_FINISHED: success",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "agent",
+      "from": "wish",
+      "to": "interrupt",
+      "type": "backend"
+    },
+    {
+      "participant": "checkout",
+      "from": "create",
+      "to": "priced",
+      "type": "database"
+    },
+    {
+      "participant": "agent",
+      "from": "approved",
+      "to": "success",
+      "type": "backend"
+    },
+    {
+      "participant": "checkout",
+      "from": "update",
+      "to": "order",
+      "type": "database"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Profile-driven",
+      "items": [
+        "/.well-known/ucp names the services and capabilities",
+        "The agent uses only what the profile offers",
+        "Prices always come from the catalogue"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Approval before completion",
+      "items": [
+        "complete_checkout is proposed, never sent unasked",
+        "The visitor approves the exact order",
+        "The completed call matches the approval"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Sandbox",
+      "items": [
+        "Orders are real UCP objects",
+        "No payment is taken",
+        "Idempotency keys make retries safe"
+      ]
+    }
+  ]
+}

@@ -28,8 +28,9 @@ use Webconsulting\AgentNexus\Ucp\Service\Merchant;
  * catalogue and a real, verified AP2 mandate chain.
  *
  * Diagrams are build artifacts, not content: `npm run diagrams` renders
- * Build/Diagrams/*.mmd into Resources/Public/Diagrams/*.svg and those files are
- * committed, so neither an editor nor CI ever needs node or Chromium.
+ * Build/Diagrams/*.json with Archify into self-contained, interactive
+ * Resources/Public/Diagrams/*.html files, and those are committed, so neither
+ * an editor nor CI ever needs node, Archify or a browser.
  */
 final readonly class ProtocolCatalog implements SingletonInterface
 {
@@ -164,7 +165,7 @@ final readonly class ProtocolCatalog implements SingletonInterface
             'spec' => $spec['url'],
             'specVersion' => $spec['implemented'],
             'specLatest' => $spec['latest'],
-            'diagram' => self::DIAGRAM_BASE . $key . '.svg',
+            'diagram' => self::DIAGRAM_BASE . $key . '.html',
             'diagramAlt' => $meta['label'] . ' sequence diagram: ' . $meta['edge'],
             'endpoints' => $this->endpoints($enum),
             'howItWorks' => self::HOW_IT_WORKS[$key],

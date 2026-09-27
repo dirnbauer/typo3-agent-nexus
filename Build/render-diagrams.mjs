@@ -1,204 +1,150 @@
 /**
- * Render Build/Diagrams/*.mmd to standalone, theme-aware SVG assets.
+ * Render Build/Diagrams/*.json to interactive Archify sequence diagrams.
  *
- * Dev-only (`npm run diagrams`); the generated SVGs are committed under
- * Resources/Public/Diagrams, so neither editors nor CI ever need node or
- * Chromium — and the frontend can reference them as plain images.
+ * Dev-only (`npm run diagrams`); the generated HTML files are committed under
+ * Resources/Public/Diagrams, so neither editors nor CI ever need node, Archify
+ * or a browser. The protocol info plugin shows each file in an iframe in
+ * Archify's embed mode; see Build/Diagrams/README.md for the source format.
  *
- * Because an <img>-loaded SVG is its own document, page-level custom properties
- * do not reach it. Each file therefore carries its own palette: mermaid renders
- * with a placeholder hex palette, those hexes are swapped for var(--anx-*), and
- * a small stylesheet defining those variables (light plus a prefers-color-scheme
- * dark block, and the protocol's accent) is injected into the SVG itself.
+ * Archify (https://github.com/tt-a1i/archify, MIT) is not an npm package. The
+ * pinned commit below is cloned into Build/.archify on first use (gitignored);
+ * set ARCHIFY_DIR to use an existing checkout of the same commit instead.
  *
- * Mermaid sizes a sequence diagram from measured text, so the geometry depends
- * on the fonts and Chromium build of whoever renders it: the same sources give
- * a different viewBox on macOS than on a Linux runner. Re-rendering in CI and
- * diffing the result therefore cannot work. Instead this writes Build/diagrams.lock.json,
- * recording the hash of every source, of this renderer and of
- * each generated file; `npm run diagrams:check` (Build/check-diagrams.mjs)
- * verifies those hashes without node modules or a browser. Keep the transforms
- * deterministic anyway, so re-rendering on one machine stays a no-op.
+ * Every document must pass Archify's `showcase` quality profile: 9 artifact
+ * checks, no composition errors, no warnings. `deliver` then renders the
+ * exact validated bytes. Build/diagrams.lock.json records the Archify commit
+ * and the hashes of each source, of this script and of each generated file;
+ * Build/check-diagrams.mjs verifies them without node modules or a browser.
  */
 
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const SRC = join(ROOT, 'Build/Diagrams');
 const OUT = join(ROOT, 'Resources/Public/Diagrams');
+const MANIFEST = join(ROOT, 'Build/diagrams.lock.json');
 
-const LABELS = {
-  a2ui: 'A2UI v0.9.1 sequence: visitor intent, generated surface, action and confirmation',
-  agui: 'AG-UI 1.0 sequence: streamed run, interrupt and resumed approval',
-  a2a: 'A2A 1.0 sequence: Agent Card discovery, streamed task and artifact delivery',
-  ucp: 'UCP sequence: profile discovery, checkout session and approved order',
-  ap2: 'AP2 v0.2.0 sequence: checkout and payment mandates, verified before the order',
+export const ARCHIFY = {
+  repository: 'https://github.com/tt-a1i/archify.git',
+  commit: '9e35d2b0b39b155553ba9fcfe0b4f2a5198dd993',
 };
 
-/** Protocol accents — must stay in step with --anx-accent-* in nexus-tokens.css. */
-const ACCENTS = {
-  a2ui: { light: '#7c3aed', dark: '#a78bfa' },
-  agui: { light: '#2563eb', dark: '#60a5fa' },
-  a2a: { light: '#059669', dark: '#34d399' },
-  ucp: { light: '#d97706', dark: '#fbbf24' },
-  ap2: { light: '#e11d48', dark: '#fb7185' },
-};
+// Layout rhythm. Archify needs at least 28 px between messages that share
+// horizontal space; 32 px keeps the labels clear of each other.
+const TOP = 165;
+const STEP = 32;
+const PHASE_GAP = 14;
+const BOTTOM = 90;
 
-// Placeholder palette rendered by mermaid, swapped for tokens afterwards.
-const THEME = {
-  theme: 'base',
-  themeVariables: {
-    fontFamily: 'inherit',
-    fontSize: '13px',
-    actorBkg: '#101010',
-    actorBorder: '#202020',
-    actorTextColor: '#303030',
-    actorLineColor: '#404040',
-    signalColor: '#505050',
-    signalTextColor: '#606060',
-    noteBkgColor: '#707070',
-    noteBorderColor: '#808080',
-    noteTextColor: '#909090',
-    sequenceNumberColor: '#a0a0a0',
-    labelBoxBkgColor: '#101010',
-    labelBoxBorderColor: '#202020',
-    labelTextColor: '#303030',
-    loopTextColor: '#606060',
-  },
-  sequence: {
-    mirrorActors: false,
-    useMaxWidth: false,
-    actorMargin: 34,
-    messageMargin: 30,
-    boxMargin: 8,
-    noteMargin: 8,
-    bottomMarginAdj: 2,
-  },
-};
+const sha = (value) => createHash('sha256').update(value).digest('hex');
 
-const SWAPS = [
-  // placeholder palette from themeVariables
-  [/#101010/gi, 'var(--anx-surface-1)'],
-  [/#202020/gi, 'var(--anx-border)'],
-  [/#303030/gi, 'var(--anx-fg)'],
-  [/#404040/gi, 'var(--anx-border)'],
-  [/#505050/gi, 'var(--anx-accent)'],
-  [/#606060/gi, 'var(--anx-fg)'],
-  [/#707070/gi, 'var(--anx-note-bg)'],
-  [/#808080/gi, 'var(--anx-note-border)'],
-  [/#909090/gi, 'var(--anx-fg)'],
-  [/#a0a0a0/gi, 'var(--anx-card)'],
-  // mermaid defaults that ignore themeVariables
-  [/#eaeaea/gi, 'var(--anx-surface-1)'],
-  [/#EDF2AE/gi, 'var(--anx-note-bg)'],
-  [/stroke="#666"/gi, 'stroke="var(--anx-border)"'],
-  [/stroke="#999"/gi, 'stroke="var(--anx-border)"'],
-  [/fill:#333/gi, 'fill:var(--anx-fg)'],
-  [/#0b0b0b/gi, 'var(--anx-accent)'],
-  [/stroke="#000000"/gi, 'stroke="var(--anx-accent)"'],
-  [/font-family:\s*"?trebuchet ms"?[^;"']*/gi, 'font-family:inherit'],
-  [/font-family:\s*inherit,\s*sans-serif/gi, 'font-family:inherit'],
-];
-
-function palette(key) {
-  const accent = ACCENTS[key] ?? ACCENTS.a2ui;
-  return `<style>
-svg{
-  --anx-fg:#1b1f26;
-  --anx-card:#ffffff;
-  --anx-surface-1:#f4f6f9;
-  --anx-border:#d5dae1;
-  --anx-accent:${accent.light};
-  --anx-note-bg:color-mix(in srgb, var(--anx-accent) 10%, var(--anx-card));
-  --anx-note-border:color-mix(in srgb, var(--anx-accent) 45%, var(--anx-border));
-  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+function archifyDir() {
+  const dir = process.env.ARCHIFY_DIR ?? join(ROOT, 'Build/.archify');
+  if (!existsSync(join(dir, '.git'))) {
+    execFileSync('git', ['clone', '--quiet', ARCHIFY.repository, dir], { stdio: 'inherit' });
+  }
+  const head = execFileSync('git', ['-C', dir, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+  if (head !== ARCHIFY.commit) {
+    execFileSync('git', ['-C', dir, 'fetch', '--quiet', 'origin', ARCHIFY.commit], { stdio: 'inherit' });
+    execFileSync('git', ['-C', dir, 'checkout', '--quiet', ARCHIFY.commit], { stdio: 'inherit' });
+  }
+  return join(dir, 'archify');
 }
-@media (prefers-color-scheme: dark){
-  svg{
-    --anx-fg:#e7eaef;
-    --anx-card:#171a1f;
-    --anx-surface-1:#20242b;
-    --anx-border:#343a44;
-    --anx-accent:${accent.dark};
+
+/** Turn phases and activation spans into Archify coordinates. */
+export function layout(source) {
+  const { phases, activations, ...document } = structuredClone(source);
+  const ids = new Set(document.messages.map((message) => message.id));
+  const y = new Map();
+  const segments = [];
+  let cursor = TOP;
+  for (const phase of phases) {
+    const start = cursor;
+    for (const id of phase.messages) {
+      if (!ids.has(id)) throw new Error(`phase "${phase.label}" names unknown message "${id}"`);
+      if (y.has(id)) throw new Error(`message "${id}" is in more than one phase`);
+      y.set(id, cursor);
+      cursor += STEP;
+    }
+    segments.push({ from: start - 15, to: cursor - STEP + 15, label: phase.label });
+    cursor += PHASE_GAP;
+  }
+  for (const message of document.messages) {
+    if (!y.has(message.id)) throw new Error(`message "${message.id}" is in no phase`);
+    message.y = y.get(message.id);
+  }
+  // Archify draws messages in document order; keep that order equal to y.
+  document.messages.sort((a, b) => a.y - b.y);
+  document.segments = segments;
+  document.activations = activations.map((span) => ({
+    participant: span.participant,
+    from: y.get(span.from) - 5,
+    to: y.get(span.to) + 6,
+    type: span.type,
+  }));
+  const needed = Math.ceil((Math.max(...y.values()) + BOTTOM) / 10) * 10;
+  const [width, height] = document.meta.viewBox;
+  document.meta.viewBox = [width, Math.max(height, needed)];
+  return document;
+}
+
+function run(archify, args) {
+  try {
+    return JSON.parse(execFileSync('node', [join(archify, 'bin/archify.mjs'), ...args], { cwd: archify, encoding: 'utf8' }));
+  } catch (error) {
+    const output = String(error.stdout ?? '');
+    try {
+      return JSON.parse(output);
+    } catch {
+      throw new Error(`archify ${args[0]} failed:\n${output}${error.stderr ?? ''}`);
+    }
   }
 }
-</style>`;
+
+function diagnostics(receipt) {
+  const found = [];
+  const walk = (node) => {
+    if (Array.isArray(node)) node.forEach(walk);
+    else if (node && typeof node === 'object') {
+      if (typeof node.code === 'string' && typeof node.severity === 'string') found.push(`${node.severity} ${node.code}: ${node.message ?? ''}`);
+      else Object.values(node).forEach(walk);
+    }
+  };
+  walk(receipt);
+  return [...new Set(found)];
 }
 
-function postProcess(svg, key) {
-  let out = svg;
-  for (const [pattern, replacement] of SWAPS) out = out.replace(pattern, replacement);
+function main() {
+  const archify = archifyDir();
+  const work = mkdtempSync(join(tmpdir(), 'anx-diagrams-'));
+  const lock = { note: 'Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.', archify: ARCHIFY, generator: sha(readFileSync(new URL(import.meta.url))), diagrams: {} };
+  try {
+    for (const file of readdirSync(SRC).filter((name) => name.endsWith('.json')).sort()) {
+      const key = basename(file, '.json');
+      const sourceBytes = readFileSync(join(SRC, file));
+      const spec = join(work, `${key}.sequence.json`);
+      writeFileSync(spec, `${JSON.stringify(layout(JSON.parse(sourceBytes)), null, 2)}\n`);
 
-  // Responsive, labelled root; touch ONLY the opening <svg> tag. Consumers size
-  // the image with CSS against the preserved viewBox.
-  out = out.replace(/<svg[^>]*>/, (tag) => tag
-    .replace(/\s(width|height)="[^"]*"/g, '')
-    .replace(/\sstyle="[^"]*"/, '')
-    .replace(/<svg /, '<svg class="anx-mm" data-mm="' + key + '" '));
-
-  // Standalone SVGs are read by assistive tech as images, so the label has to
-  // live inside the document rather than on a host element.
-  out = out.replace(/(<svg[^>]*>)/, `$1<title>${LABELS[key] ?? key}</title>${palette(key)}`);
-
-  return out;
+      const validation = run(archify, ['validate', 'sequence', spec, '--quality', 'showcase', '--json']);
+      if (validation.ok !== true) {
+        throw new Error(`${file} does not pass the showcase profile:\n  ${diagnostics(validation).join('\n  ')}`);
+      }
+      const output = join(OUT, `${key}.html`);
+      const delivery = run(archify, ['deliver', 'sequence', spec, output, '--quality', 'showcase', '--json']);
+      if (delivery.ok !== true) {
+        throw new Error(`${file} was not delivered:\n  ${diagnostics(delivery).join('\n  ')}`);
+      }
+      lock.diagrams[key] = { source: sha(sourceBytes), html: sha(readFileSync(output)) };
+      console.log(`${key}: ${output.slice(ROOT.length)}`);
+    }
+  } finally {
+    rmSync(work, { recursive: true, force: true });
+  }
+  writeFileSync(MANIFEST, `${JSON.stringify(lock, null, 2)}\n`);
 }
 
-mkdirSync(OUT, { recursive: true });
-const work = mkdtempSync(join(tmpdir(), 'anx-mmd-'));
-writeFileSync(join(work, 'config.json'), JSON.stringify(THEME));
-
-// mermaid-cli renders through headless Chromium. Ubuntu 24.04 (and the GitHub
-// runners built on it) restrict unprivileged user namespaces with AppArmor, so
-// Chromium's own sandbox cannot start and the process aborts with "No usable
-// sandbox". The inputs here are the .mmd files in this repository, so dropping
-// the sandbox costs nothing: nothing untrusted is ever loaded into the browser.
-writeFileSync(
-  join(work, 'puppeteer.json'),
-  JSON.stringify({ args: ['--no-sandbox', '--disable-dev-shm-usage'] }),
-);
-
-const sources = readdirSync(SRC).filter((file) => file.endsWith('.mmd')).sort();
-for (const file of sources) {
-  const key = basename(file, '.mmd');
-  const svgPath = join(work, `${key}.svg`);
-  execFileSync('npx', [
-    '--no-install', 'mmdc',
-    '-i', join(SRC, file),
-    '-o', svgPath,
-    '-c', join(work, 'config.json'),
-    '-p', join(work, 'puppeteer.json'),
-    '-b', 'transparent',
-    // unique id per diagram: the embedded stylesheet scopes all rules to it
-    '--svgId', `anx-mm-${key}`,
-    '--quiet',
-  ], { stdio: 'inherit' });
-
-  writeFileSync(join(OUT, `${key}.svg`), `${postProcess(readFileSync(svgPath, 'utf8'), key)}\n`);
-  console.log(`rendered ${file} -> Resources/Public/Diagrams/${key}.svg`);
-}
-
-rmSync(work, { recursive: true, force: true });
-
-const sha = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
-writeFileSync(
-  join(ROOT, 'Build/diagrams.lock.json'),
-  `${JSON.stringify(
-    {
-      note: 'Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.',
-      generator: sha(join(ROOT, 'Build/render-diagrams.mjs')),
-      diagrams: Object.fromEntries(
-        sources.map((file) => {
-          const key = basename(file, '.mmd');
-          return [key, { source: sha(join(SRC, file)), svg: sha(join(OUT, `${key}.svg`)) }];
-        }),
-      ),
-    },
-    null,
-    2,
-  )}\n`,
-);
-console.log('wrote Build/diagrams.lock.json');
+if (import.meta.url === `file://${process.argv[1]}`) main();

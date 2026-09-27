@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "A2UI v0.9.1: a generated form, an action and a confirmation",
+    "locale": "en",
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "intent",
+        "label": "Describe the need",
+        "focus": [
+          "visitor",
+          "renderer",
+          "binding",
+          "agent"
+        ],
+        "note": "One sentence becomes a surface request with the client's version and capabilities."
+      },
+      {
+        "id": "surface",
+        "label": "Draw the surface",
+        "focus": [
+          "agent",
+          "binding",
+          "renderer"
+        ],
+        "note": "The agent answers with components and a data model; the binding sanitises them before they reach the page."
+      },
+      {
+        "id": "action",
+        "label": "Send the form",
+        "focus": [
+          "visitor",
+          "renderer",
+          "binding"
+        ],
+        "note": "The filled form goes back as an action with its data model, and a confirmation surface replaces it."
+      },
+      {
+        "id": "discard",
+        "label": "Start over",
+        "focus": [
+          "visitor",
+          "renderer",
+          "binding"
+        ],
+        "note": "A discard action removes the surface."
+      }
+    ],
+    "viewBox": [
+      1080,
+      680
+    ]
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor",
+      "sublabel": "on the page"
+    },
+    {
+      "id": "renderer",
+      "type": "frontend",
+      "label": "Renderer",
+      "sublabel": "inquiry widget"
+    },
+    {
+      "id": "binding",
+      "type": "backend",
+      "label": "A2UI binding",
+      "sublabel": "/api/agent-nexus/a2ui"
+    },
+    {
+      "id": "agent",
+      "type": "cloud",
+      "label": "Agent",
+      "sublabel": "model or built-in generator"
+    }
+  ],
+  "phases": [
+    {
+      "label": "Intent",
+      "messages": [
+        "describe",
+        "create"
+      ]
+    },
+    {
+      "label": "Surface",
+      "messages": [
+        "ask-agent",
+        "components",
+        "surface-messages"
+      ]
+    },
+    {
+      "label": "Action",
+      "messages": [
+        "fill",
+        "post-action",
+        "confirmation"
+      ]
+    },
+    {
+      "label": "Discard",
+      "messages": [
+        "start-over",
+        "discard",
+        "delete"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "describe",
+      "from": "visitor",
+      "to": "renderer",
+      "label": "describes a need in one sentence",
+      "variant": "default"
+    },
+    {
+      "id": "create",
+      "from": "renderer",
+      "to": "binding",
+      "label": "POST /surfaces · intent, v0.9.1, capabilities",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ask-agent",
+      "from": "binding",
+      "to": "agent",
+      "label": "request + basic catalogue",
+      "variant": "emphasis"
+    },
+    {
+      "id": "components",
+      "from": "agent",
+      "to": "binding",
+      "label": "components + data model",
+      "variant": "return"
+    },
+    {
+      "id": "surface-messages",
+      "from": "binding",
+      "to": "renderer",
+      "label": "createSurface · updateComponents · updateDataModel",
+      "variant": "return",
+      "note": "sanitised against the basic catalogue"
+    },
+    {
+      "id": "fill",
+      "from": "visitor",
+      "to": "renderer",
+      "label": "fills in the form and sends it",
+      "variant": "default"
+    },
+    {
+      "id": "post-action",
+      "from": "renderer",
+      "to": "binding",
+      "label": "POST /actions · action + a2uiClientDataModel",
+      "variant": "emphasis"
+    },
+    {
+      "id": "confirmation",
+      "from": "binding",
+      "to": "renderer",
+      "label": "updateComponents + updateDataModel · confirmation",
+      "variant": "return",
+      "note": "action and data model stored on the surface"
+    },
+    {
+      "id": "start-over",
+      "from": "visitor",
+      "to": "renderer",
+      "label": "Start over",
+      "variant": "default"
+    },
+    {
+      "id": "discard",
+      "from": "renderer",
+      "to": "binding",
+      "label": "POST /actions · discard",
+      "variant": "dashed"
+    },
+    {
+      "id": "delete",
+      "from": "binding",
+      "to": "renderer",
+      "label": "deleteSurface",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "renderer",
+      "from": "create",
+      "to": "delete",
+      "type": "frontend"
+    },
+    {
+      "participant": "binding",
+      "from": "create",
+      "to": "surface-messages",
+      "type": "backend"
+    },
+    {
+      "participant": "agent",
+      "from": "ask-agent",
+      "to": "components",
+      "type": "cloud"
+    },
+    {
+      "participant": "binding",
+      "from": "post-action",
+      "to": "confirmation",
+      "type": "backend"
+    },
+    {
+      "participant": "binding",
+      "from": "discard",
+      "to": "delete",
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "violet",
+      "title": "Surfaces, not markup",
+      "items": [
+        "The agent sends components and a data model",
+        "The renderer draws them with the site's own form controls",
+        "Only the basic catalogue is allowed through"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Actions carry the data",
+      "items": [
+        "A submitted form is an action with a2uiClientDataModel",
+        "The binding stores both on the surface",
+        "The answer is another surface update"
+      ]
+    },
+    {
+      "dot": "slate",
+      "title": "Lifecycle",
+      "items": [
+        "createSurface opens a surface",
+        "updateComponents and updateDataModel change it",
+        "deleteSurface ends it"
+      ]
+    }
+  ]
+}

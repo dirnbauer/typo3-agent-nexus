@@ -1,13 +1,11 @@
 /**
- * Verify that the committed diagram SVGs belong to the committed sources.
+ * Verify that the committed diagram HTML files belong to the committed sources.
  *
- * Re-rendering in CI and diffing cannot work: mermaid sizes a sequence diagram
- * from measured text, so fonts and the Chromium build decide the geometry and
- * the same sources produce a different viewBox on a Linux runner than on the
- * author's machine. What actually needs guarding is that nobody edits a .mmd,
- * or this renderer, without re-running `npm run diagrams` — and that nobody
- * hand-edits a generated SVG. Both are hashes, so this needs no node modules
- * and no browser.
+ * Rendering needs Archify and a pinned commit of it (Build/render-diagrams.mjs),
+ * which CI does not have. What actually needs guarding is that nobody edits a
+ * source or the renderer without re-running `npm run diagrams`, and that nobody
+ * hand-edits a generated file. Both are hashes, so this needs no node modules,
+ * no Archify and no browser.
  */
 
 import { createHash } from 'node:crypto';
@@ -31,42 +29,43 @@ const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
 const recorded = manifest.diagrams ?? {};
 
 if (manifest.generator !== sha(join(ROOT, 'Build/render-diagrams.mjs'))) {
-  problems.push('Build/render-diagrams.mjs changed since the SVGs were rendered.');
+  problems.push('Build/render-diagrams.mjs changed since the diagrams were rendered.');
 }
 
 const keys = readdirSync(SRC)
-  .filter((file) => file.endsWith('.mmd'))
-  .map((file) => basename(file, '.mmd'))
+  .filter((file) => file.endsWith('.json'))
+  .map((file) => basename(file, '.json'))
   .sort();
 
 for (const key of keys) {
   const entry = recorded[key];
   if (entry === undefined) {
-    problems.push(`Build/Diagrams/${key}.mmd has never been rendered.`);
+    problems.push(`Build/Diagrams/${key}.json has never been rendered.`);
     continue;
   }
-  if (!existsSync(join(OUT, `${key}.svg`))) {
-    problems.push(`Resources/Public/Diagrams/${key}.svg is missing.`);
-    continue;
+  if (entry.source !== sha(join(SRC, `${key}.json`))) {
+    problems.push(`Build/Diagrams/${key}.json changed since it was rendered.`);
   }
-  if (entry.source !== sha(join(SRC, `${key}.mmd`))) {
-    problems.push(`Build/Diagrams/${key}.mmd changed since ${key}.svg was rendered.`);
-  }
-  if (entry.svg !== sha(join(OUT, `${key}.svg`))) {
-    problems.push(`Resources/Public/Diagrams/${key}.svg was edited by hand.`);
+  const html = join(OUT, `${key}.html`);
+  if (!existsSync(html)) {
+    problems.push(`Resources/Public/Diagrams/${key}.html is missing.`);
+  } else if (entry.html !== sha(html)) {
+    problems.push(`Resources/Public/Diagrams/${key}.html was changed by hand.`);
   }
 }
 
-for (const key of Object.keys(recorded).sort()) {
-  if (!keys.includes(key)) {
-    problems.push(`diagrams.lock.json still lists "${key}", which has no source any more.`);
+for (const key of Object.keys(recorded)) {
+  if (!keys.includes(key)) problems.push(`Build/diagrams.lock.json lists "${key}", which has no source.`);
+}
+
+for (const file of readdirSync(OUT)) {
+  if (!keys.includes(basename(file, '.html')) || !file.endsWith('.html')) {
+    problems.push(`Resources/Public/Diagrams/${file} is not produced by any source.`);
   }
 }
 
 if (problems.length > 0) {
-  for (const problem of problems) console.error(`::error::${problem}`);
-  console.error('Run "npm run diagrams" and commit Resources/Public/Diagrams.');
+  console.error(`Diagrams are out of date:\n  ${problems.join('\n  ')}\nRun "npm run diagrams".`);
   process.exit(1);
 }
-
 console.log(`${keys.length} diagrams match their sources.`);

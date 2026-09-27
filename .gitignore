@@ -5,10 +5,11 @@
 /node_modules/
 
 # Resolved dependencies. Agent Nexus is a library: the lock file belongs to the
-# project that installs it, not here. package-lock.json is the exception — the
-# committed sequence diagrams have to be reproducible, so the renderer's
-# dependencies are pinned.
+# project that installs it, not here.
 composer.lock
+
+# Archify checkout used by `npm run diagrams` (pinned in Build/render-diagrams.mjs).
+/Build/.archify/
 
 # Tool caches
 /.php-cs-fixer.cache

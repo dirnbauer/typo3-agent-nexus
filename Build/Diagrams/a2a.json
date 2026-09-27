@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "A2A 1.0: discovery, a streamed task and its artifact",
+    "locale": "en",
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "discover",
+        "label": "Discover",
+        "focus": [
+          "client",
+          "card"
+        ],
+        "note": "The client reads the Agent Card to find interfaces and skills."
+      },
+      {
+        "id": "task",
+        "label": "Start the task",
+        "focus": [
+          "client",
+          "server",
+          "store"
+        ],
+        "note": "A streamed message creates a task that moves from SUBMITTED to WORKING."
+      },
+      {
+        "id": "input",
+        "label": "Ask for input",
+        "focus": [
+          "server",
+          "store",
+          "client"
+        ],
+        "note": "The task pauses in INPUT_REQUIRED and the stream closes."
+      },
+      {
+        "id": "artifact",
+        "label": "Deliver the artifact",
+        "focus": [
+          "client",
+          "server",
+          "store"
+        ],
+        "note": "The answer resumes the task; artifact chunks stream back until COMPLETED."
+      },
+      {
+        "id": "read",
+        "label": "Read it back",
+        "focus": [
+          "client",
+          "server",
+          "store"
+        ],
+        "note": "GetTask and ListTasks return the stored task."
+      }
+    ],
+    "viewBox": [
+      1080,
+      680
+    ]
+  },
+  "participants": [
+    {
+      "id": "client",
+      "type": "external",
+      "label": "Client agent",
+      "sublabel": "any A2A 1.0 client"
+    },
+    {
+      "id": "card",
+      "type": "security",
+      "label": "Agent Card",
+      "sublabel": "/.well-known/agent-card.json"
+    },
+    {
+      "id": "server",
+      "type": "backend",
+      "label": "TYPO3 A2A server",
+      "sublabel": "/api/agent-nexus/a2a/jsonrpc"
+    },
+    {
+      "id": "store",
+      "type": "database",
+      "label": "Task store",
+      "sublabel": "protocol object store"
+    }
+  ],
+  "phases": [
+    {
+      "label": "Discover",
+      "messages": [
+        "get-card",
+        "card"
+      ]
+    },
+    {
+      "label": "Task",
+      "messages": [
+        "send",
+        "submitted",
+        "task",
+        "working",
+        "status-working"
+      ]
+    },
+    {
+      "label": "Input",
+      "messages": [
+        "input-required",
+        "status-input"
+      ]
+    },
+    {
+      "label": "Artifact",
+      "messages": [
+        "answer",
+        "resumed",
+        "chunks",
+        "completed",
+        "status-completed"
+      ]
+    },
+    {
+      "label": "Read",
+      "messages": [
+        "get-task",
+        "read",
+        "stored-task"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "get-card",
+      "from": "client",
+      "to": "card",
+      "label": "GET the Agent Card",
+      "variant": "default"
+    },
+    {
+      "id": "card",
+      "from": "card",
+      "to": "client",
+      "label": "supportedInterfaces · skills · A2A 1.0",
+      "variant": "return"
+    },
+    {
+      "id": "send",
+      "from": "client",
+      "to": "server",
+      "label": "SendStreamingMessage · A2A-Version: 1.0",
+      "variant": "emphasis"
+    },
+    {
+      "id": "submitted",
+      "from": "server",
+      "to": "store",
+      "label": "save task · SUBMITTED",
+      "variant": "dashed"
+    },
+    {
+      "id": "task",
+      "from": "server",
+      "to": "client",
+      "label": "task",
+      "variant": "return"
+    },
+    {
+      "id": "working",
+      "from": "server",
+      "to": "store",
+      "label": "save · WORKING",
+      "variant": "dashed"
+    },
+    {
+      "id": "status-working",
+      "from": "server",
+      "to": "client",
+      "label": "statusUpdate · WORKING",
+      "variant": "return"
+    },
+    {
+      "id": "input-required",
+      "from": "server",
+      "to": "store",
+      "label": "save · INPUT_REQUIRED",
+      "variant": "dashed"
+    },
+    {
+      "id": "status-input",
+      "from": "server",
+      "to": "client",
+      "label": "statusUpdate · INPUT_REQUIRED, stream closes",
+      "variant": "security"
+    },
+    {
+      "id": "answer",
+      "from": "client",
+      "to": "server",
+      "label": "SendStreamingMessage with taskId · the answer",
+      "variant": "emphasis"
+    },
+    {
+      "id": "resumed",
+      "from": "server",
+      "to": "client",
+      "label": "task · statusUpdate WORKING",
+      "variant": "return"
+    },
+    {
+      "id": "chunks",
+      "from": "server",
+      "to": "client",
+      "label": "artifactUpdate chunks · append, lastChunk",
+      "variant": "return"
+    },
+    {
+      "id": "completed",
+      "from": "server",
+      "to": "store",
+      "label": "save · artifact, COMPLETED",
+      "variant": "dashed"
+    },
+    {
+      "id": "status-completed",
+      "from": "server",
+      "to": "client",
+      "label": "statusUpdate · COMPLETED, stream closes",
+      "variant": "return"
+    },
+    {
+      "id": "get-task",
+      "from": "client",
+      "to": "server",
+      "label": "GetTask / ListTasks",
+      "variant": "default"
+    },
+    {
+      "id": "read",
+      "from": "server",
+      "to": "store",
+      "label": "read",
+      "variant": "dashed"
+    },
+    {
+      "id": "stored-task",
+      "from": "server",
+      "to": "client",
+      "label": "the stored Task",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "server",
+      "from": "send",
+      "to": "status-input",
+      "type": "backend"
+    },
+    {
+      "participant": "server",
+      "from": "answer",
+      "to": "status-completed",
+      "type": "backend"
+    },
+    {
+      "participant": "server",
+      "from": "get-task",
+      "to": "stored-task",
+      "type": "backend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Discovery first",
+      "items": [
+        "The Agent Card lists interfaces and skills",
+        "Clients pick the JSON-RPC binding from supportedInterfaces",
+        "No out-of-band configuration"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Task states",
+      "items": [
+        "SUBMITTED, WORKING, INPUT_REQUIRED, COMPLETED",
+        "Every change is stored before it is streamed",
+        "A closed stream never loses the task"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Artifacts in chunks",
+      "items": [
+        "artifactUpdate appends until lastChunk",
+        "The finished artifact stays on the task",
+        "GetTask and ListTasks read it back"
+      ]
+    }
+  ]
+}

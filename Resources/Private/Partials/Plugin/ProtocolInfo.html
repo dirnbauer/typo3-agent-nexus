@@ -26,12 +26,25 @@
     </f:if>
 
     <f:if condition="{sections.diagram}">
-        <figure class="anx-info__diagram">
-            <img class="anx-mm"
-                 src="{f:uri.resource(path: 'Diagrams/{protocol.key}.svg', extensionName: 'agent_nexus')}"
-                 alt="{protocol.diagramAlt}"
-                 loading="lazy" />
-            <figcaption>{protocol.name}: one request from start to finish.</figcaption>
+        <f:variable name="diagramUrl" value="{f:uri.resource(path: 'Diagrams/{protocol.key}.html', extensionName: 'agent_nexus')}" />
+        <f:comment>
+            An Archify sequence diagram (Build/Diagrams). protocol-diagram.js
+            switches the frame to embed mode, follows the page's theme and sizes
+            it to the diagram; without it the full viewer loads in the frame.
+        </f:comment>
+        <figure class="anx-info__diagram" data-anx-diagram>
+            <div class="anx-info__diagram-scroll">
+                <iframe class="anx-info__diagram-frame"
+                        src="{diagramUrl}"
+                        data-anx-diagram-frame
+                        data-anx-diagram-src="{diagramUrl}"
+                        title="{protocol.diagramAlt}"
+                        loading="lazy"></iframe>
+            </div>
+            <figcaption>
+                <span>{protocol.name}: one request from start to finish.</span>
+                <a class="anx-info__diagram-open" href="{diagramUrl}" target="_blank" rel="noopener" data-anx-diagram-open>Open the interactive diagram<span class="anx-sr-only"> (opens in a new tab)</span></a>
+            </figcaption>
         </figure>
     </f:if>
 

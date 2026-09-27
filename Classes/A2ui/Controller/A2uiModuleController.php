@@ -102,7 +102,7 @@ final readonly class A2uiModuleController
             ['version' => $version->value],
         );
         $imageUrl = (string)$this->resourcePublisher->generateUri(
-            $this->resourceFactory->createPublicResource('EXT:agent_nexus/Resources/Public/Diagrams/a2ui.svg'),
+            $this->resourceFactory->createPublicResource('EXT:agent_nexus/Resources/Public/Icons/agentnexus-module-a2ui.svg'),
             $request,
         );
 

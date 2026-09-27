@@ -1,26 +1,30 @@
 {
   "note": "Written by Build/render-diagrams.mjs. Verified by Build/check-diagrams.mjs.",
-  "generator": "c3ed7de354f12167138dc882efddc560bcd93300fd19cefd4964e8b4bd40d87f",
+  "archify": {
+    "repository": "https://github.com/tt-a1i/archify.git",
+    "commit": "9e35d2b0b39b155553ba9fcfe0b4f2a5198dd993"
+  },
+  "generator": "b78a4aa3d747e8ad05a58fe84485e941db18a0a22196d78ca246af125571dc9b",
   "diagrams": {
     "a2a": {
-      "source": "920b35131dfe5ae005bb325d92ad4fc66afc2b114fcf783565d76663f5b39b0c",
-      "svg": "b8bd6b2a9472b8883a8b24b3eb8cb14b65886376799e2e14352bc389cb03923e"
+      "source": "0b8698356174197158513207ca5b637de8c1327b98bbabaeb7919d52cffe6657",
+      "html": "6a0a6a6506a08ac9b6b4bb4641b1c9a5e7cbef6618a85c438c2f603ab103d094"
     },
     "a2ui": {
-      "source": "43fe1ac97205077b2ab6ea552872c98370aab72b5bfbf6cd6c5e4b4a0ecbe5f7",
-      "svg": "1f14aa48aa989efd9fd1e4936495c761b8eeea8807bc5add0f1bcd57d47c17bf"
+      "source": "9f75230d6ee54c2f2b05fe3eda129797dda00850645b3b27d90c2534a4a42cda",
+      "html": "9e684d66d0e0cc2370603611ebbeb2c16769df1249b3741df6ec8a5509a1b63b"
     },
     "agui": {
-      "source": "77b955c9fd931e626ac46594e9c817bed7a9de4e15ecfcd40edda67c2b94cf68",
-      "svg": "4700e9bde3c23b7aaed15845fc1e531b651bde30f14bc44ad58ac8c0a3ea3f41"
+      "source": "20f6007079d5da6b762d4377e1ce159d277b7661c3492b83791dc786ffc89c0b",
+      "html": "4e61d144986f12912602f9bf3ab4ab4268a3f069044875dc68709ef0153cbe9a"
     },
     "ap2": {
-      "source": "a63fe1ee42fd5e3e7ee6534f9c837ac644649e2fbe51f69fd86ba473a97b6b3e",
-      "svg": "828fca36fd725a42ff262b80d1efd12189fc23e3ee26373657c40bfd9bc01d9b"
+      "source": "b01eb301c2feabbff5e84d74ad30ba16367bcecdc9ca6d18aa1f4f828aaebd43",
+      "html": "c5d7fb7a45e62397888046f790489fb52f18255f5dc01ce26c15b7b9f1050cb0"
     },
     "ucp": {
-      "source": "96026947b7f063208c2f8c4c2cc817ab0d912fab5fea8d3911c497395e27c4d8",
-      "svg": "e4f92ae2d41796ebeab0353924b5f6b247fca0458a101161a8ec51b642544d9b"
+      "source": "05c71779f8c1dd160e69ecae0bc8dfcc20b8334b9f39ec966f55536dc940cf46",
+      "html": "a8369d73865238fbab55b222020a7aa77f2cf24ef25d7aaeca963fd83c6b506c"
     }
   }
 }

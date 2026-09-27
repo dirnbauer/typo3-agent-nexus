@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "AP2 v0.2.0: signed mandates, verified before the order",
+    "locale": "en",
+    "column_fit": "spread",
+    "animation": "trace",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "mandate",
+        "label": "Open mandates",
+        "focus": [
+          "visitor",
+          "surface",
+          "agent"
+        ],
+        "note": "The visitor approves a list and a cap; the Trusted Surface signs open mandates bound to the agent's key."
+      },
+      {
+        "id": "cart",
+        "label": "Build the cart",
+        "focus": [
+          "agent",
+          "merchant",
+          "credentials"
+        ],
+        "note": "The merchant signs the checkout; merchant and credential provider each send a challenge."
+      },
+      {
+        "id": "close",
+        "label": "Close the mandates",
+        "focus": [
+          "agent",
+          "credentials"
+        ],
+        "note": "The agent closes both mandates with its key and presents the payment mandate."
+      },
+      {
+        "id": "fail",
+        "label": "If a check fails",
+        "focus": [
+          "credentials",
+          "agent",
+          "visitor"
+        ],
+        "note": "An unresolved constraint sends the visitor back to approve this exact order."
+      },
+      {
+        "id": "pass",
+        "label": "If every check passes",
+        "focus": [
+          "agent",
+          "merchant",
+          "processor",
+          "surface",
+          "visitor"
+        ],
+        "note": "Credential, checkout receipt and payment receipt arrive; the surface shows every check."
+      }
+    ],
+    "viewBox": [
+      1080,
+      700
+    ]
+  },
+  "participants": [
+    {
+      "id": "visitor",
+      "type": "external",
+      "label": "Visitor",
+      "sublabel": "human present"
+    },
+    {
+      "id": "surface",
+      "type": "security",
+      "label": "Trusted Surface",
+      "sublabel": "/ap2/authorize"
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Shopping agent",
+      "sublabel": "holds its key"
+    },
+    {
+      "id": "merchant",
+      "type": "frontend",
+      "label": "Merchant",
+      "sublabel": "signed UCP checkout"
+    },
+    {
+      "id": "credentials",
+      "type": "security",
+      "label": "Credential provider",
+      "sublabel": "payment mandate"
+    },
+    {
+      "id": "processor",
+      "type": "cloud",
+      "label": "Payment processor",
+      "sublabel": "simulated"
+    }
+  ],
+  "phases": [
+    {
+      "label": "Mandates",
+      "messages": [
+        "approve",
+        "open-mandates"
+      ]
+    },
+    {
+      "label": "Cart",
+      "messages": [
+        "cart",
+        "checkout-jwt",
+        "merchant-nonce",
+        "provider-nonce"
+      ]
+    },
+    {
+      "label": "Close",
+      "messages": [
+        "present-payment"
+      ]
+    },
+    {
+      "label": "Check fails",
+      "messages": [
+        "unresolved",
+        "back"
+      ]
+    },
+    {
+      "label": "Checks pass",
+      "messages": [
+        "credential",
+        "present-checkout",
+        "checkout-receipt",
+        "pay",
+        "payment-receipt",
+        "authorised"
+      ]
+    }
+  ],
+  "messages": [
+    {
+      "id": "approve",
+      "from": "visitor",
+      "to": "surface",
+      "label": "approves a list and a spending cap",
+      "variant": "emphasis"
+    },
+    {
+      "id": "open-mandates",
+      "from": "surface",
+      "to": "agent",
+      "label": "open checkout + payment mandates",
+      "variant": "security",
+      "note": "SD-JWT, ES256, cnf = agent key"
+    },
+    {
+      "id": "cart",
+      "from": "agent",
+      "to": "merchant",
+      "label": "cart within the constraints",
+      "variant": "emphasis"
+    },
+    {
+      "id": "checkout-jwt",
+      "from": "merchant",
+      "to": "agent",
+      "label": "checkout_jwt · signed UCP checkout",
+      "variant": "return"
+    },
+    {
+      "id": "merchant-nonce",
+      "from": "merchant",
+      "to": "agent",
+      "label": "challenge · nonce",
+      "variant": "return"
+    },
+    {
+      "id": "provider-nonce",
+      "from": "credentials",
+      "to": "agent",
+      "label": "challenge · nonce",
+      "variant": "return"
+    },
+    {
+      "id": "present-payment",
+      "from": "agent",
+      "to": "credentials",
+      "label": "open ~ closed payment mandate",
+      "variant": "security",
+      "note": "closed with kb+sd-jwt: sd_hash, aud, nonce"
+    },
+    {
+      "id": "unresolved",
+      "from": "credentials",
+      "to": "agent",
+      "label": "unresolved_constraint + payment_receipt (Error)",
+      "variant": "return"
+    },
+    {
+      "id": "back",
+      "from": "agent",
+      "to": "surface",
+      "label": "approve this exact order",
+      "variant": "dashed"
+    },
+    {
+      "id": "credential",
+      "from": "credentials",
+      "to": "agent",
+      "label": "payment credential",
+      "variant": "return"
+    },
+    {
+      "id": "present-checkout",
+      "from": "agent",
+      "to": "merchant",
+      "label": "open ~ closed checkout mandate",
+      "variant": "security"
+    },
+    {
+      "id": "checkout-receipt",
+      "from": "merchant",
+      "to": "agent",
+      "label": "checkout_receipt · Success",
+      "variant": "return"
+    },
+    {
+      "id": "pay",
+      "from": "merchant",
+      "to": "processor",
+      "label": "credential + payment mandate",
+      "variant": "emphasis"
+    },
+    {
+      "id": "payment-receipt",
+      "from": "processor",
+      "to": "merchant",
+      "label": "payment_receipt · Success, simulated",
+      "variant": "return"
+    },
+    {
+      "id": "authorised",
+      "from": "surface",
+      "to": "visitor",
+      "label": "authorised · every token, every check",
+      "variant": "return"
+    }
+  ],
+  "activations": [
+    {
+      "participant": "agent",
+      "from": "open-mandates",
+      "to": "authorised",
+      "type": "backend"
+    },
+    {
+      "participant": "credentials",
+      "from": "present-payment",
+      "to": "credential",
+      "type": "security"
+    },
+    {
+      "participant": "merchant",
+      "from": "cart",
+      "to": "payment-receipt",
+      "type": "frontend"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Mandates, not trust",
+      "items": [
+        "Open mandates carry the visitor's constraints",
+        "Each is bound to the agent's key (cnf)",
+        "The agent closes them per checkout with a fresh nonce"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Fail closed",
+      "items": [
+        "A failed constraint returns an error receipt",
+        "The visitor must approve the exact order",
+        "Nothing is charged on the way"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Every check shown",
+      "items": [
+        "Checkout and payment receipts both arrive",
+        "The Trusted Surface lists every token and check",
+        "Payments here are simulated"
+      ]
+    }
+  ]
+}
