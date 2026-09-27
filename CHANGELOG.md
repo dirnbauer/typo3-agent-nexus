@@ -4,6 +4,15 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.1] — 2026-09-27
+
+### Fixed
+
+*   4.1.0 shipped a stray copy of the AG-UI diagram in a hidden
+    `.archify-delivery-*` folder under `Resources/Public/Diagrams`. The
+    renderer now delivers into its work directory and copies only the
+    finished files.
+
 ## [4.1.0] — 2026-09-27
 
 ### Changed
