@@ -173,7 +173,7 @@ The protocol info plugin shows a diagram in an iframe in Archify's embed mode.
 :file:`Resources/Public/JavaScript/protocol-diagram.js` passes the page's
 theme (``?theme=light|dark``, following desiderio's ``.dark`` class) and sizes
 the frame to the diagram; the caption links to the full viewer with its
-guided chapters, trace and export. The files are same-origin, which the
+diagram navigation, trace and export. The files are same-origin, which the
 height measurement needs and ``X-Frame-Options: SAMEORIGIN`` allows.
 
 Rendering also writes :file:`Build/diagrams.lock.json`, holding the Archify
@@ -182,5 +182,16 @@ file. ``npm run diagrams:check`` verifies those hashes and is what CI runs, so
 it catches a source edited without re-rendering and a hand-edited diagram
 without node modules, Archify or a browser. Rendering is deterministic: a
 second run changes nothing.
+
+Archify v3.2.0 replaces the older Guided/Story viewer. The authored protocol
+messages, notes, participants and chapter metadata stay unchanged; the new
+renderer uses larger row spacing and an automatic canvas with legend clearance
+and responsive Reader scrolling. Both validation and delivery must report zero
+errors and warnings.
+``npm run test:diagrams`` checks these layout contracts without dependencies.
+
+The separate CI lint gate uses Python 3.15.1 with the development-only
+:file:`Build/requirements-lint.txt` pins for pip and PyYAML. These do not
+become runtime dependencies.
 
 Commit the lock file together with the HTML files.

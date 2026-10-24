@@ -30,15 +30,14 @@ const MANIFEST = join(ROOT, 'Build/diagrams.lock.json');
 
 export const ARCHIFY = {
   repository: 'https://github.com/tt-a1i/archify.git',
-  commit: '9e35d2b0b39b155553ba9fcfe0b4f2a5198dd993',
+  commit: '208acba8d412335185b2056fedf54b3405df43fb',
 };
 
-// Layout rhythm. Archify needs at least 28 px between messages that share
-// horizontal space; 32 px keeps the labels clear of each other.
+// Archify 3.2 showcase labels and wrapped notes need more vertical room.
+// Together with PHASE_GAP, 42 px clears the two-line AP2 mandate note.
 const TOP = 165;
-const STEP = 32;
+const STEP = 42;
 const PHASE_GAP = 14;
-const BOTTOM = 90;
 
 const sha = (value) => createHash('sha256').update(value).digest('hex');
 
@@ -56,8 +55,9 @@ function archifyDir() {
 }
 
 /** Turn phases and activation spans into Archify coordinates. */
-export function layout(source) {
+export function layout(source, output) {
   const { phases, activations, ...document } = structuredClone(source);
+  document.meta.output = output;
   const ids = new Set(document.messages.map((message) => message.id));
   const y = new Map();
   const segments = [];
@@ -86,9 +86,10 @@ export function layout(source) {
     to: y.get(span.to) + 6,
     type: span.type,
   }));
-  const needed = Math.ceil((Math.max(...y.values()) + BOTTOM) / 10) * 10;
-  const [width, height] = document.meta.viewBox;
-  document.meta.viewBox = [width, Math.max(height, needed)];
+  // Stable Archify sizes the canvas from the full timeline and wrapped notes,
+  // including legend clearance, and declares width-first Reader scrolling.
+  // An explicit legacy viewBox would disable that intrinsic fit contract.
+  delete document.meta.viewBox;
   return document;
 }
 
@@ -105,12 +106,17 @@ function run(archify, args) {
   }
 }
 
+export function passesQuality(receipt) {
+  const summary = receipt.validation ?? receipt.composition?.summary;
+  return receipt.ok === true && summary?.errors === 0 && summary?.warnings === 0;
+}
+
 function diagnostics(receipt) {
   const found = [];
   const walk = (node) => {
     if (Array.isArray(node)) node.forEach(walk);
     else if (node && typeof node === 'object') {
-      if (typeof node.code === 'string' && typeof node.severity === 'string') found.push(`${node.severity} ${node.code}: ${node.message ?? ''}`);
+      if (typeof node.code === 'string' && typeof node.severity === 'string') found.push(`${node.severity} ${node.code}: ${node.message ?? node.detail ?? ''}`);
       else Object.values(node).forEach(walk);
     }
   };
@@ -131,17 +137,17 @@ function main() {
       const key = basename(file, '.json');
       const sourceBytes = readFileSync(join(SRC, file));
       const spec = join(work, `${key}.sequence.json`);
-      writeFileSync(spec, `${JSON.stringify(layout(JSON.parse(sourceBytes)), null, 2)}\n`);
+      writeFileSync(spec, `${JSON.stringify(layout(JSON.parse(sourceBytes), `${key}.html`), null, 2)}\n`);
 
       const validation = run(archify, ['validate', 'sequence', spec, '--quality', 'showcase', '--json']);
-      if (validation.ok !== true) {
+      if (!passesQuality(validation)) {
         throw new Error(`${file} does not pass the showcase profile:\n  ${diagnostics(validation).join('\n  ')}`);
       }
       // `deliver` keeps a private snapshot next to its output, so it writes
       // into the work directory and only the finished HTML is copied over.
       const delivered = join(work, `${key}.html`);
       const delivery = run(archify, ['deliver', 'sequence', spec, delivered, '--quality', 'showcase', '--json']);
-      if (delivery.ok !== true) {
+      if (!passesQuality(delivery)) {
         throw new Error(`${file} was not delivered:\n  ${diagnostics(delivery).join('\n  ')}`);
       }
       const output = join(OUT, `${key}.html`);

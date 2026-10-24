@@ -38,15 +38,20 @@ jobs:
           find Classes Configuration Tests ext_localconf.php -name '*.php' -print0 \
             | xargs -0 -n1 -P4 php -l > /dev/null
 
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.15.1'
+
+      - name: Install Python lint dependencies
+        run: python3 -m pip install --upgrade --requirement Build/requirements-lint.txt
+
       - name: Lint YAML, XLIFF, FlexForms, SVG and JSON
         run: |
           python3 - <<'PY'
           import glob, json, sys, xml.etree.ElementTree as ET
-          import importlib.util
-          if importlib.util.find_spec('yaml'):
-              import yaml
-              for f in glob.glob('Configuration/**/*.yaml', recursive=True):
-                  yaml.safe_load(open(f))
+          import yaml
+          for f in glob.glob('Configuration/**/*.yaml', recursive=True):
+              yaml.safe_load(open(f))
           for pattern in ('Resources/Private/Language/*.xlf', 'Configuration/FlexForms/*.xml',
                           'Resources/Public/Icons/*.svg', 'Resources/Public/Diagrams/*.svg'):
               for f in glob.glob(pattern):
@@ -194,5 +199,7 @@ jobs:
       # hand-edited diagram, without node modules, Archify or a browser.
       - name: Pin npm 12.2.1
         run: npm install --global npm@12.2.1
+      - name: Verify stable renderer layout contracts
+        run: npm run test:diagrams
       - name: Check the diagrams against their sources
         run: npm run diagrams:check

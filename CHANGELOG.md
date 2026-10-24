@@ -4,6 +4,22 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.2] — 2026-10-24
+
+### Changed
+
+*   Rebuild all five protocol diagrams with stable Archify v3.2.0, pinned to
+    its release commit. Its viewer replaces Guided/Story with diagram
+    navigation, trace and export; the protocol messages, participants, notes
+    and authored chapter metadata are unchanged.
+*   Supply the required portable output name, increase message spacing
+    and use the responsive automatic canvas with legend clearance for current
+    showcase checks. Fail on warnings in both validation and delivery. Add
+    dependency-free layout regression tests to the existing diagram CI gate.
+*   Pin the existing CI Python lint runtime to 3.15.1 with current pip and
+    PyYAML. YAML validation now requires its parser instead of silently
+    skipping that check when it is unavailable.
+
 ## [4.1.1] — 2026-09-27
 
 ### Fixed
