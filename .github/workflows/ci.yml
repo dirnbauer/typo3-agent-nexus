@@ -185,12 +185,14 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '24'
+          node-version: '26.12.1'
 
       # Hash check, not a re-render: rendering needs a pinned Archify checkout
       # (Build/render-diagrams.mjs). Build/diagrams.lock.json records the hash
       # of every source, of the renderer and of every generated HTML file, so
       # this still catches an edited source that was never re-rendered and a
       # hand-edited diagram, without node modules, Archify or a browser.
+      - name: Pin npm 12.2.1
+        run: npm install --global npm@12.2.1
       - name: Check the diagrams against their sources
         run: npm run diagrams:check
