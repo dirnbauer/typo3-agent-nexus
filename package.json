@@ -6,6 +6,6 @@
   "scripts": {
     "diagrams": "node Build/render-diagrams.mjs",
     "diagrams:check": "node Build/check-diagrams.mjs",
-    "test:diagrams": "node --test Tests/JavaScript/DiagramLayout.test.mjs"
+    "test:diagrams": "node --test Tests/JavaScript/*.test.mjs"
   }
 }

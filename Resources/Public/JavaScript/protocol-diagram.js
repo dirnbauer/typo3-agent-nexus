@@ -33,8 +33,16 @@ function setUp(figure) {
 
   frame.addEventListener('load', () => {
     observer?.disconnect();
-    const body = frame.contentDocument?.body;
-    if (!body) return;
+    const loaded = frame.contentDocument;
+    if (!loaded?.body) return;
+    const desired = withParams(base, { embed: '1', theme: pageTheme() });
+    // A browser may commit the parser's original lazy src after show() set src.
+    // Reconcile the loaded document, including the theme, before measuring it.
+    if (loaded.URL !== desired) {
+      frame.src = desired;
+      return;
+    }
+    const body = loaded.body;
     fit();
     observer = new ResizeObserver(fit);
     observer.observe(body);

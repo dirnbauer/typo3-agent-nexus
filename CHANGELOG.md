@@ -20,6 +20,14 @@ follows [Semantic Versioning](https://semver.org/).
     PyYAML. YAML validation now requires its parser instead of silently
     skipping that check when it is unavailable.
 
+### Fixed
+
+*   Reconcile the actual loaded diagram URL after a lazy iframe navigation.
+    Cold mobile loads can commit the initial full viewer after JavaScript has
+    selected embed mode; the frame now reapplies its current embed and theme
+    URL before measuring, while retaining asset cache busting and full-viewer
+    caption links. Add regressions for light, dark and already-correct loads.
+
 ## [4.1.1] — 2026-09-27
 
 ### Fixed
