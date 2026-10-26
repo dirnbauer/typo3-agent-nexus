@@ -17,13 +17,18 @@ use TYPO3\CMS\Core\SingletonInterface;
  * ends `$windowSeconds` later, however many requests follow: the entry keeps
  * its end, so counting a request never extends it.
  *
- * Fails OPEN when the cache is unavailable — these are demo endpoints, and a
- * broken cache must not take the page down with them. The cache is in no flush
- * group, so clearing caches during a demo does not reset a visitor's budget.
+ * Protocol buckets fail OPEN when the cache is unavailable — these are demo
+ * endpoints, and a broken cache must not take the page down with them. Model
+ * buckets (`*.llm`) fail CLOSED: every caller answers a deny with its scripted
+ * fallback, so the page stays up while paid model calls stay bounded. The
+ * cache is in no flush group, so clearing caches during a demo does not reset
+ * a visitor's budget.
  */
 final readonly class RateLimiter implements SingletonInterface
 {
     public const string CACHE = 'agentnexus';
+
+    public const string MODEL_BUCKET_SUFFIX = '.llm';
 
     /**
      * @param (\Closure(): int)|null $clock the current Unix time; tests pass their own
@@ -52,7 +57,7 @@ final readonly class RateLimiter implements SingletonInterface
             }
             $cache->set($key, ['count' => $count + 1, 'endsAt' => $endsAt], [], $endsAt - $now);
         } catch (\Throwable) {
-            // Unavailable, unreadable or unwritable: let the request through.
+            return !str_ends_with($bucket, self::MODEL_BUCKET_SUFFIX);
         }
         return true;
     }

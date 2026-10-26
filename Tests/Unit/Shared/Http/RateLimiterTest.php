@@ -85,6 +85,19 @@ final class RateLimiterTest extends UnitTestCase
         self::assertTrue($subject->passes($this->requestFrom('203.0.113.10'), 'a2ui', 1, 60));
     }
 
+    #[Test]
+    public function aBrokenCacheFailsClosedForModelBucketsSoPaidCallsStayBounded(): void
+    {
+        $cacheManager = self::createStub(CacheManager::class);
+        $cacheManager->method('getCache')->willThrowException(new \RuntimeException('no such cache', 1751400101));
+
+        $subject = new RateLimiter($cacheManager);
+
+        self::assertFalse($subject->passes($this->requestFrom('203.0.113.10'), 'a2ui.llm', 10, 60));
+        self::assertFalse($subject->passes($this->requestFrom('203.0.113.10'), 'agui.llm', 10, 60));
+        self::assertTrue($subject->passes($this->requestFrom('203.0.113.10'), 'agui', 10, 60), 'Protocol buckets still fail open.');
+    }
+
     private function requestFrom(string $ip): ServerRequest
     {
         return new ServerRequest('https://example.org/', 'POST', null, [], ['REMOTE_ADDR' => $ip]);

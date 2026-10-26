@@ -4,6 +4,15 @@ All notable changes to Agent Nexus are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 follows [Semantic Versioning](https://semver.org/).
 
+## [4.1.3] — 2026-10-26
+
+### Security
+
+*   Model rate-limit buckets (`*.llm`) now fail closed when the rate-limit
+    cache is unavailable, unreadable or unwritable. Each caller already answers
+    a denied model call with its scripted fallback, so the demos stay up while
+    paid model calls stay bounded. Protocol buckets still fail open.
+
 ## [4.1.2] — 2026-10-24
 
 ### Changed
